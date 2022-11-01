@@ -15,26 +15,21 @@ namespace XHTD_SERVICES.Data.Entities
     public partial class tblVehicle
     {
         public int IDVehicle { get; set; }
-        public int IDStore { get; set; }
         public string Vehicle { get; set; }
-        public double Tonnage { get; set; }
-        public double TonnageDefault { get; set; }
+        public Nullable<double> Tonnage { get; set; }
+        public Nullable<double> TonnageDefault { get; set; }
         public string NameDriver { get; set; }
         public string IdCardNumber { get; set; }
-        public string HeightVehicle { get; set; }
-        public string WidthVehicle { get; set; }
-        public string LongVehicle { get; set; }
-        public System.DateTime DayCreate { get; set; }
-        public System.DateTime DayUpdate { get; set; }
-        public string UserCreate { get; set; }
-        public string UserUpdate { get; set; }
-        public int UnladenWeight1 { get; set; }
-        public int UnladenWeight2 { get; set; }
-        public int UnladenWeight3 { get; set; }
-        public bool IsSetMediumUnladenWeight { get; set; }
-        public System.DateTime CreateDay { get; set; }
+        public Nullable<double> HeightVehicle { get; set; }
+        public Nullable<double> WidthVehicle { get; set; }
+        public Nullable<double> LongVehicle { get; set; }
+        public Nullable<int> UnladenWeight1 { get; set; }
+        public Nullable<int> UnladenWeight2 { get; set; }
+        public Nullable<int> UnladenWeight3 { get; set; }
+        public Nullable<bool> IsSetMediumUnladenWeight { get; set; }
+        public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
-        public System.DateTime UpdateDay { get; set; }
+        public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
     }
 }

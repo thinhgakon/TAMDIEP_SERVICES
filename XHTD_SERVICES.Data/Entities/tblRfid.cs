@@ -20,11 +20,11 @@ namespace XHTD_SERVICES.Data.Entities
         public System.DateTime DayReleased { get; set; }
         public System.DateTime DayExpired { get; set; }
         public string Note { get; set; }
-        public bool State { get; set; }
-        public System.DateTime LastEnter { get; set; }
-        public System.DateTime CreatedDay { get; set; }
-        public string CreatedBy { get; set; }
-        public System.DateTime UpdateDay { get; set; }
+        public Nullable<bool> State { get; set; }
+        public Nullable<System.DateTime> LastEnter { get; set; }
+        public Nullable<System.DateTime> CreateDay { get; set; }
+        public string CreateBy { get; set; }
+        public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
     }
 }

@@ -12,15 +12,19 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblTroughOrderOperating
+    public partial class tblDevice
     {
-        public int Id { get; set; }
-        public string DeliveryCode { get; set; }
-        public string Vehicle { get; set; }
-        public Nullable<System.DateTime> CreatedOn { get; set; }
-        public Nullable<System.DateTime> ModifiedOn { get; set; }
-        public Nullable<int> Status { get; set; }
-        public string LogResponse { get; set; }
+        public string CodeParent { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public Nullable<int> OperID { get; set; }
+        public Nullable<int> DoorOrAuxoutID { get; set; }
+        public Nullable<int> OutputAddrType { get; set; }
+        public Nullable<int> DoorAction { get; set; }
+        public Nullable<int> InputPort { get; set; }
+        public Nullable<int> OutputPort { get; set; }
+        public string Ipaddress { get; set; }
+        public string Port { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }

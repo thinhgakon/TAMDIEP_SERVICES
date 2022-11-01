@@ -17,14 +17,12 @@ namespace XHTD_SERVICES.Data.Entities
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public string ProductId { get; set; }
-        public string Height { get; set; }
-        public string Width { get; set; }
-        public string Long { get; set; }
+        public Nullable<double> Height { get; set; }
+        public Nullable<double> Width { get; set; }
+        public Nullable<double> Long { get; set; }
         public Nullable<bool> Working { get; set; }
         public Nullable<bool> Problem { get; set; }
         public Nullable<bool> State { get; set; }
-        public string ProductTypes { get; set; }
         public string DeliveryCodeCurrent { get; set; }
         public Nullable<double> PlanQuantityCurrent { get; set; }
         public Nullable<double> CountQuantityCurrent { get; set; }

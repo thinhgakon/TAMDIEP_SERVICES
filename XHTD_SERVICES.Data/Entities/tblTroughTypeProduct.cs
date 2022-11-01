@@ -12,16 +12,11 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblAccount
+    public partial class tblTroughTypeProduct
     {
         public int Id { get; set; }
-        public string UserName { get; set; }
-        public string FullName { get; set; }
-        public string PassWord { get; set; }
-        public Nullable<int> GroupId { get; set; }
-        public Nullable<bool> State { get; set; }
-        public string DeviceId { get; set; }
-        public Nullable<System.DateTime> DeviceIdDayUpdate { get; set; }
+        public string TroughCode { get; set; }
+        public string TypeProduct { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }

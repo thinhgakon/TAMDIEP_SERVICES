@@ -18,15 +18,15 @@ namespace XHTD_SERVICES.Data.Entities
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public System.DateTime Birthday { get; set; }
+        public Nullable<System.DateTime> Birthday { get; set; }
         public string Gender { get; set; }
         public string IdCard { get; set; }
         public string Address { get; set; }
         public string UserName { get; set; }
-        public bool State { get; set; }
-        public System.DateTime CreateDay { get; set; }
+        public Nullable<bool> State { get; set; }
+        public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
-        public System.DateTime UpdateDay { get; set; }
+        public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
     }
 }
