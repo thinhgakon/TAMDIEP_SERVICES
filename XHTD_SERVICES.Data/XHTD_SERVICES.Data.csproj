@@ -71,10 +71,16 @@
     <Compile Include="Entities\tblConfigApp.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\tblDriver.cs">
+    <Compile Include="Entities\tblDevice.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\tblDriver1.cs">
+    <Compile Include="Entities\tblDeviceGroup.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblDeviceOperating.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblDriver.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblDriverVehicle.cs">
@@ -101,7 +107,7 @@
     <Compile Include="Entities\tblTrough.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\tblTroughOrderOperating.cs">
+    <Compile Include="Entities\tblTroughTypeProduct.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblVehicle.cs">
