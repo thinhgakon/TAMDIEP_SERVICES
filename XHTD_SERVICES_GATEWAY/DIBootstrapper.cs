@@ -22,6 +22,7 @@ namespace XHTD_SERVICES_GATEWAY
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
+            builder.RegisterType<RfidRepository>().AsSelf();
 
             RegisterScheduler(builder);
 

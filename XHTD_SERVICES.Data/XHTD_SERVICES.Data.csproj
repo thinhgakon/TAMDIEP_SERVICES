@@ -125,6 +125,7 @@
     <Compile Include="Models\Response\OrderItemResponse.cs" />
     <Compile Include="Models\Response\SearchOrderResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\RfidRepository.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\AccountRepository.cs" />

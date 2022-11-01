@@ -7,6 +7,7 @@ using System.Globalization;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using log4net;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -130,6 +131,79 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 log.Error($@"Cancel Order {orderId} Error: " + ex.Message);
                 Console.WriteLine($@"Cancel Order {orderId} Error: " + ex.Message);
+            }
+        }
+
+        public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
+        {
+            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "" && x.Step < 8);
+            return order;
+        }
+
+        public async Task UpdateOrderEntraceGateway(string cardNo)
+        {
+            try
+            {
+                string calcelTime = DateTime.Now.ToString();
+
+                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == 4 && x.DriverName != null).ToListAsync();
+
+                if (orders == null || orders.Count == 0)
+                {
+                    return;
+                }
+
+                foreach ( var order in orders)
+                {
+                    order.Confirm1 = 1;
+                    order.Confirm2 = 1;
+                    order.TimeConfirm2 = DateTime.Now;
+                    order.Step = 2;
+                    order.IndexOrder = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
+
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo}");
+                    log.Info($@"Xác thực vào cổng {cardNo}");
+                }
+
+                await _appDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                log.Error($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+            }
+        }
+
+        public async Task UpdateOrderExitGateway(string cardNo)
+        {
+            try
+            {
+                string calcelTime = DateTime.Now.ToString();
+
+                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= 5 && x.Step < 8 && x.DriverName != null).ToListAsync();
+
+                if (orders == null || orders.Count == 0)
+                {
+                    return;
+                }
+
+                foreach (var order in orders)
+                {
+                    order.Confirm8 = 1;
+                    order.TimeConfirm8 = DateTime.Now;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
+
+                    Console.WriteLine($@"Xác thực ra cổng {cardNo}");
+                    log.Info($@"Xác thực ra cổng {cardNo}");
+                }
+
+                await _appDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                log.Error($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
+                Console.WriteLine($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
             }
         }
     }
