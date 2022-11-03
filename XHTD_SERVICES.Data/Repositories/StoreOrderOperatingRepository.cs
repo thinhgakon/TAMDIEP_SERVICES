@@ -136,21 +136,21 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
         {
-            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "" && x.Step < 8);
+            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo  && (x.DriverUserName ?? "") != "" && x.Step < 8);
             return order;
         }
 
-        public async Task UpdateOrderEntraceGateway(string cardNo)
+        public async Task<bool> UpdateOrderEntraceGateway(string cardNo)
         {
             try
             {
                 string calcelTime = DateTime.Now.ToString();
 
-                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == 4 && x.DriverName != null).ToListAsync();
+                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.DriverName != null).ToListAsync();
 
                 if (orders == null || orders.Count == 0)
                 {
-                    return;
+                    return false;
                 }
 
                 foreach ( var order in orders)
@@ -167,15 +167,17 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
 
                 await _appDbContext.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
                 Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                return false;
             }
         }
 
-        public async Task UpdateOrderExitGateway(string cardNo)
+        public async Task<bool> UpdateOrderExitGateway(string cardNo)
         {
             try
             {
@@ -185,13 +187,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (orders == null || orders.Count == 0)
                 {
-                    return;
+                    return false ;
                 }
 
                 foreach (var order in orders)
                 {
                     order.Confirm8 = 1;
                     order.TimeConfirm8 = DateTime.Now;
+                    order.Step = 8;
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
 
                     Console.WriteLine($@"Xác thực ra cổng {cardNo}");
@@ -199,11 +202,13 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
 
                 await _appDbContext.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
                 log.Error($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
                 Console.WriteLine($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
+                return false;
             }
         }
     }

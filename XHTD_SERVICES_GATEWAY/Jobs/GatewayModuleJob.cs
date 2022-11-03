@@ -60,7 +60,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             });
         }
 
-        public async void AuthenticateGatewayModule()
+        public void AuthenticateGatewayModule()
         {
             /*
              * 1. Connect Device
@@ -122,7 +122,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public void ReadDataFromC3400()
+        public async void ReadDataFromC3400()
         {
             Console.WriteLine(" call f ReadDataFromC3400");
             if (DeviceConnected)
@@ -161,25 +161,46 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 else
                                 {
                                     Console.WriteLine($"Tag {cardNoCurrent} khong hop le => Bo qua.");
+                                    continue;
                                 }
 
                                 // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                //var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
+                                var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
+                                if (orderCurrent == null) {
+                                    Console.WriteLine($"Tag {cardNoCurrent} khong co don hang hop le");
+                                    continue; 
+                                }
 
-                                // 6, 7, 8, 9
-                                /*
+                                /* 4. Cập nhật đơn hàng
+                                 * Luồng vào - ra
+                                 * Xác định theo doorId của RFID: biết tag do anten nào nhận diện thì biết dc là xe ra hay vào
+                                 * Hoặc theo Step của đơn hàng
+                                 */
+
+                                var isUpdatedOrder = false;
+
+                                // Luồng vào
                                 if (orderCurrent.Step < 6)
                                 {
-                                    await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
+                                // Luồng ra
                                 else
                                 {
-                                    await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
-                                */
 
-                                // 10, 11, 12
-                                // OpenBarrier();
+                                if (isUpdatedOrder)
+                                {
+                                    /*
+                                     * Tắt đèn đỏ
+                                     * Bật đèn xanh
+                                     * Mở barrier
+                                     * Ghi log thiết bị
+                                     */
+
+                                    // OpenBarrier();
+                                }
                             }
                         }
                         else
