@@ -79,40 +79,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
              */
 
             // 1. Connect Device
-            ConnectGatewayModule();
+            while (!DeviceConnected)
+            {
+                ConnectGatewayModule();
+            }
 
             // 2. Đọc dữ liệu từ thiết bị
-            var str = GetDataFromDevice();
+            ReadDataFromC3400();
 
-            // 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
-            string[] tmp = str?.Split(',');
-
-            var cardNoCurrent = tmp?[2]?.ToString();
-
-            // 4. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
-            bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
-
-            // 5. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-            var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
-
-            // 6, 7, 8, 9
-            if (orderCurrent.Step < 6)
-            {
-                await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
-            }
-            else
-            {
-                await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
-            }
-
-            // 10, 11, 12
-            // OpenBarrier();
         }
         public bool ConnectGatewayModule()
         {
+            Console.WriteLine(" call f ConnectGatewayModule");
             try
             {
-                string str = "protocol=TCP,ipaddress=10.15.15.86,port=2681,timeout=2000,passwd=";
+                string str = "protocol=TCP,ipaddress=192.168.1.75,port=4370,timeout=2000,passwd=";
                 int ret = 0;
                 if (IntPtr.Zero == h21)
                 {
@@ -141,30 +122,75 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public string GetDataFromDevice()
+        public void ReadDataFromC3400()
         {
-            int ret = 0, buffersize = 256;
-            string str = "";
-            string[] tmp = null;
-            byte[] buffer = new byte[256];
-
-            if (IntPtr.Zero != h21)
+            Console.WriteLine(" call f ReadDataFromC3400");
+            if (DeviceConnected)
             {
-                ret = GetRTLog(h21, ref buffer[0], buffersize);
-                if (ret >= 0)
+                while (DeviceConnected)
                 {
-                    str = Encoding.Default.GetString(buffer);
-                    return str;
-                }
-                else
-                {
-                    log.Warn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
-                    DeviceConnected = false;
-                    h21 = IntPtr.Zero;
-                    AuthenticateGatewayModule();
+                    int ret = 0, buffersize = 256;
+                    string str = "";
+                    string[] tmp = null;
+                    byte[] buffer = new byte[256];
+
+                    if (IntPtr.Zero != h21)
+                    {
+                        ret = GetRTLog(h21, ref buffer[0], buffersize);
+                        if (ret >= 0)
+                        {
+                            str = Encoding.Default.GetString(buffer);
+                            tmp = str.Split(',');
+
+                            // Trường hợp bắt được tag RFID
+                            if (tmp[2] != "0" && tmp[2] != "") {
+
+                                // 1. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
+                                var cardNoCurrent = tmp[2]?.ToString();
+                                var doorCurrent = tmp[3]?.ToString();
+
+                                Console.WriteLine($"Phat hien tag {cardNoCurrent} tai door {doorCurrent}");
+
+                                // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
+                                bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
+
+                                if (isValid)
+                                {
+                                    Console.WriteLine($"Tag {cardNoCurrent} hop le.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Tag {cardNoCurrent} khong hop le => Bo qua.");
+                                }
+
+                                // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                //var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
+
+                                // 6, 7, 8, 9
+                                /*
+                                if (orderCurrent.Step < 6)
+                                {
+                                    await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
+                                }
+                                else
+                                {
+                                    await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
+                                }
+                                */
+
+                                // 10, 11, 12
+                                // OpenBarrier();
+                            }
+                        }
+                        else
+                        {
+                            log.Warn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
+                            DeviceConnected = false;
+                            h21 = IntPtr.Zero;
+                        }
+                    }
                 }
             }
-            return null;
         }
 
         public void OpenBarrier()

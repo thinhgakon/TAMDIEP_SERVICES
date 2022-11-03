@@ -21,7 +21,7 @@ namespace XHTD_SERVICES.Data.Repositories
         public bool CheckValidCode(string code)
         {
             bool isValid = false;
-            if (code.StartsWith("10") || code.StartsWith("20") || code.StartsWith("21") || code.StartsWith("22"))
+            if (code.StartsWith("8") || code.StartsWith("5") || code.StartsWith("21") || code.StartsWith("22"))
             {
                 isValid = _appDbContext.tblRfids.Any(x => x.Code == code);
             }
