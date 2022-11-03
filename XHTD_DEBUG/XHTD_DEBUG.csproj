@@ -120,16 +120,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\SyncOrderJob.cs" />
-    <Compile Include="Jobs\SyncOrderStatusJob.cs" />
-    <Compile Include="Models\Request\GetTokenRequest.cs" />
-    <Compile Include="Models\Request\SearchOrderRequest.cs" />
-    <Compile Include="Models\Response\GetTokenResponse.cs" />
-    <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schedules\JobScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -139,6 +131,10 @@
     <ProjectReference Include="..\XHTD_SERVICES.Data\XHTD_SERVICES.Data.csproj">
       <Project>{ee357022-f104-42f0-bfbc-a5c4e9791300}</Project>
       <Name>XHTD_SERVICES.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_GATEWAY\XHTD_SERVICES_GATEWAY.csproj">
+      <Project>{a155e121-cc6a-4a34-8808-d142454bb3db}</Project>
+      <Name>XHTD_SERVICES_GATEWAY</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

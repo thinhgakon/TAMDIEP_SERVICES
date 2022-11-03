@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using Autofac;
-using XHTD_SYNC_ORDER.Jobs;
-using XHTD_SYNC_ORDER.Schedules;
 using Autofac.Extras.Quartz;
 using System.Collections.Specialized;
 using log4net;
+using XHTD_SERVICES_GATEWAY;
+using XHTD_SERVICES_GATEWAY.Schedules;
 
-namespace XHTD_SYNC_ORDER
+namespace XHTD_DEBUG
 { 
     internal class Program
     {
