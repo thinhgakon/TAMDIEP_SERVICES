@@ -65,6 +65,12 @@
     <Compile Include="Entities\tblAccountGroup.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblCategoriesDevice.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblCategory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblCompany.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
