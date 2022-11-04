@@ -8,6 +8,7 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using log4net;
 using System.Data.Entity;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -88,7 +89,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         State = websaleOrder.status,
                         IndexOrder = 0,
                         IndexOrder2 = 0,
-                        Step = 0,
+                        Step = (int)OrderStep.CHUA_XAC_THUC,
                         IsVoiced = false,
                         LogJobAttach = $@"#Sync Order",
                         IsSyncedByNewWS = true
@@ -114,7 +115,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 string calcelTime = DateTime.Now.ToString();
 
-                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && (x.Step != 8 && x.Step != 9));
+                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && x.Step != (int)OrderStep.DA_HOAN_THANH);
                 if (order != null)
                 {
                     order.IsVoiced = true;
@@ -136,7 +137,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
         {
-            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo  && (x.DriverUserName ?? "") != "" && x.Step < 8);
+            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo  && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_HOAN_THANH);
             return order;
         }
 
@@ -158,7 +159,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Confirm1 = 1;
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = DateTime.Now;
-                    order.Step = 2;
+                    order.Step = (int)OrderStep.DA_VAO_CONG;
                     order.IndexOrder = 0;
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
 
@@ -183,7 +184,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 string calcelTime = DateTime.Now.ToString();
 
-                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= 5 && x.Step < 8 && x.DriverName != null).ToListAsync();
+                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH && x.DriverName != null).ToListAsync();
 
                 if (orders == null || orders.Count == 0)
                 {
