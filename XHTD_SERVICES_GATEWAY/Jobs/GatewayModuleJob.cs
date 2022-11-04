@@ -36,6 +36,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private Result PLC_Result;
 
+        private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
+
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -64,8 +66,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 log.Info("start GatewayModule Job");
                 Console.WriteLine("start GatewayModule Job");
                 AuthenticateGatewayModule();
-
-                TestBarrier();
             });
         }
 
@@ -160,6 +160,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 Console.WriteLine($"Phat hien tag {cardNoCurrent} tai door {doorCurrent}");
 
+                                if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
+
+                                if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                {
+                                    Console.WriteLine($@"========== cardno exist on list, vao======== {cardNoCurrent}");
+                                    log.Warn($@"========== cardno exist on list, vao======== {cardNoCurrent}");
+                                    continue;
+                                }
+
                                 // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
@@ -208,7 +217,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                      * Ghi log thiết bị
                                      */
 
-                                    // OpenBarrier();
+                                    tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                    // TestBarrier();
                                 }
                             }
                         }
@@ -217,16 +228,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             log.Warn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
+
+                            AuthenticateGatewayModule();
                         }
                     }
                 }
             }
-        }
-
-        public void OpenBarrier()
-        {
-            Console.WriteLine("--------------open barrier--------------");
-            log.Info("--------------open barrier--------------");
         }
 
         public void TestBarrier()
