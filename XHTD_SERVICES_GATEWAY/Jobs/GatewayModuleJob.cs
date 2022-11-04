@@ -104,6 +104,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             ReadDataFromC3400();
 
         }
+
         public bool ConnectGatewayModule()
         {
             Console.WriteLine(" call f ConnectGatewayModule");
@@ -168,6 +169,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 Console.WriteLine($"Phat hien tag {cardNoCurrent} tai door {doorCurrent}");
 
                                 if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
+                                var cardLogs = String.Join(";", tmpCardNoLst.Select(x => x.LogCat).ToArray());
+                                Console.WriteLine($@"========== log list  ======== {cardLogs}");
 
                                 if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
@@ -191,9 +194,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                 var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
-                                if (orderCurrent == null) {
+                                if (orderCurrent == null) { 
+
                                     Console.WriteLine($"Tag {cardNoCurrent} khong co don hang hop le");
                                     continue; 
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Tag {cardNoCurrent} co don hang hop le {orderCurrent.DeliveryCode}");
                                 }
 
                                 /* 4. Cập nhật đơn hàng
@@ -207,11 +215,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 // Luồng vào
                                 if (orderCurrent.Step < 6)
                                 {
+                                    Console.WriteLine($"Update don hang luong vao");
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 // Luồng ra
                                 else
                                 {
+                                    Console.WriteLine($"Update don hang luong ra");
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
 
@@ -224,9 +234,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                      * Ghi log thiết bị
                                      */
 
+                                    Console.WriteLine($"Update don hang thanh cong");
+
+                                    Console.WriteLine($"Them {cardNoCurrent} vao tmpCardNoLst");
+
                                     tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
-                                    // TestBarrier();
+                                    Console.WriteLine($"Mo barrier");
+                                    TestBarrier();
+
+                                    Console.WriteLine($"Bat den xanh");
+                                    TestTrafficLight();
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Update don hang KHONG thanh cong");
                                 }
                             }
                         }
