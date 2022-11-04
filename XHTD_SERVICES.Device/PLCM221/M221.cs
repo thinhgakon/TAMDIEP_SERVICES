@@ -17,19 +17,19 @@ namespace XHTD_SERVICES.Device.PLCM221
             _plc.ResponseTimeout = 1000;
         }
 
-        public Result Connect(string ipAddress, int port)
+        public M221Result Connect(string ipAddress, int port)
         {
-            return _plc.Connect(ipAddress, port);
+            return (M221Result)_plc.Connect(ipAddress, port);
         }
 
-        public Result CheckInputPorts(bool[] PortsValue)
+        public M221Result CheckInputPorts(bool[] PortsValue)
         {
-            return _plc.CheckInputPorts(PortsValue);
+            return (M221Result)_plc.CheckInputPorts(PortsValue);
         }
 
-        public Result ShuttleOutputPort(byte q)
+        public M221Result ShuttleOutputPort(byte q)
         {
-            return _plc.ShuttleOutputPort(q);
+            return (M221Result)_plc.ShuttleOutputPort(q);
         }
 
         public string GetLastErrorString()

@@ -15,7 +15,6 @@ using System.Configuration;
 using System.Collections.Specialized;
 using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
-using NDTan;
 using XHTD_SERVICES.Device.PLCM221;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
@@ -36,7 +35,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private static bool DeviceConnected = false;
 
-        private Result PLC_Result;
+        private M221Result PLC_Result;
 
         private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
 
@@ -248,12 +247,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             PLC_Result = _barrier.Connect("192.168.1.61", 502);
 
-            if (PLC_Result == Result.SUCCESS)
+            if (PLC_Result == M221Result.SUCCESS)
             {
                 Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _barrier.GetLastErrorString());
 
                 PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
-                if (PLC_Result == Result.SUCCESS)
+                if (PLC_Result == M221Result.SUCCESS)
                 {
                     Console.WriteLine("Tat/bat Barrier OK");
                 }
@@ -268,12 +267,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             PLC_Result = _trafficLight.Connect("192.168.1.61", 502);
 
-            if (PLC_Result == Result.SUCCESS)
+            if (PLC_Result == M221Result.SUCCESS)
             {
                 Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _trafficLight.GetLastErrorString());
 
-                PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("2")));
-                if (PLC_Result == Result.SUCCESS)
+                PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("5")));
+                if (PLC_Result == M221Result.SUCCESS)
                 {
                     Console.WriteLine("Tat/bat Traffic Light OK");
                 }
