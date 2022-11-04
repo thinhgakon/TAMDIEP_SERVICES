@@ -89,7 +89,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         State = websaleOrder.status,
                         IndexOrder = 0,
                         IndexOrder2 = 0,
-                        Step = (int)OrderStep.CHUA_XAC_THUC,
+                        Step = (int)OrderStep.CHUA_NHAN_DON,
                         IsVoiced = false,
                         LogJobAttach = $@"#Sync Order",
                         IsSyncedByNewWS = true
@@ -115,7 +115,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 string calcelTime = DateTime.Now.ToString();
 
-                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && x.Step != (int)OrderStep.DA_HOAN_THANH);
+                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && (x.Step != (int)OrderStep.DA_HOAN_THANH && x.Step != (int)OrderStep.DA_GIAO_HANG));
                 if (order != null)
                 {
                     order.IsVoiced = true;
