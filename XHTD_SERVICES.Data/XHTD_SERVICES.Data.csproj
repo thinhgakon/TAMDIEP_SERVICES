@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="Models\Response\OrderItemResponse.cs" />
     <Compile Include="Models\Response\SearchOrderResponse.cs" />
+    <Compile Include="Models\Values\OrderStep.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RfidRepository.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.cs" />
