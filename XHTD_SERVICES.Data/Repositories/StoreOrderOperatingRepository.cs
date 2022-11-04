@@ -152,7 +152,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH).ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {
@@ -167,9 +167,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_VAO_CONG;
                         order.IndexOrder = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
-
-                        Console.WriteLine($@"Xác thực vào cổng {cardNo}");
-                        log.Info($@"Xác thực vào cổng {cardNo}");
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -192,7 +189,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH && x.DriverName != null).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH).ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {

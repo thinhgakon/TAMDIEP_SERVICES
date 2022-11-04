@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -70,8 +71,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(() =>
             {
-                log.Info("start GatewayModule Job");
-                Console.WriteLine("start GatewayModule Job");
+                log.Info("start gateway service");
+                Console.WriteLine("start gateway service");
+                Console.WriteLine("----------------------------");
                 AuthenticateGatewayModule();
             });
         }
@@ -107,7 +109,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModule()
         {
-            Console.WriteLine(" call f ConnectGatewayModule");
+            Console.Write("start connect to C3-400 ... ");
             try
             {
                 string str = "protocol=TCP,ipaddress=192.168.1.75,port=4370,timeout=2000,passwd=";
@@ -117,13 +119,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
+                        Console.WriteLine("connected");
                         log.Info("--------------connected--------------");
-                        Console.WriteLine("--------------connected--------------");
                         DeviceConnected = true;
                     }
                     else
                     {
-                        Console.WriteLine("--------------connected failed--------------");
+                        Console.WriteLine("connected failed");
                         log.Info("--------------connected failed--------------");
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -141,7 +143,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            Console.WriteLine(" call f ReadDataFromC3400");
+            Console.WriteLine("start read data from C3-400 ...");
             if (DeviceConnected)
             {
                 while (DeviceConnected)
@@ -166,42 +168,46 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
 
-                                Console.WriteLine($"Phat hien tag {cardNoCurrent} tai door {doorCurrent}");
+                                Console.WriteLine("----------------------------");
+                                Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
                                 var cardLogs = String.Join(";", tmpCardNoLst.Select(x => x.LogCat).ToArray());
-                                Console.WriteLine($@"========== log list  ======== {cardLogs}");
+                                //Console.WriteLine($@"========== log list  ======== {cardLogs}");
 
                                 if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
                                     Console.WriteLine($@"========== cardno exist on list, vao======== {cardNoCurrent}");
-                                    log.Warn($@"========== cardno exist on list, vao======== {cardNoCurrent}");
                                     continue;
                                 }
 
                                 // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
+                                Console.Write($"1. Kiem tra tag {cardNoCurrent} hop le: ");
+
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
                                 if (isValid)
                                 {
-                                    Console.WriteLine($"Tag {cardNoCurrent} hop le.");
+                                    Console.WriteLine($"CO");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Tag {cardNoCurrent} khong hop le => Bo qua.");
+                                    Console.WriteLine($"KHONG => Ket thuc");
                                     continue;
                                 }
 
                                 // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
+
                                 var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
                                 if (orderCurrent == null) { 
 
-                                    Console.WriteLine($"Tag {cardNoCurrent} khong co don hang hop le");
+                                    Console.WriteLine($"KHONG => Ket thuc");
                                     continue; 
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Tag {cardNoCurrent} co don hang hop le {orderCurrent.DeliveryCode}");
+                                    Console.WriteLine($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
                                 }
 
                                 /* 4. Cập nhật đơn hàng
@@ -210,18 +216,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                  * Hoặc theo Step của đơn hàng
                                  */
 
+                                Console.Write($"3. Update don hang: ");
                                 var isUpdatedOrder = false;
 
                                 // Luồng vào
-                                if (orderCurrent.Step < 6)
+                                if (orderCurrent.Step < (int)OrderStep.DA_LAY_HANG)
                                 {
-                                    Console.WriteLine($"Update don hang luong vao");
+                                    Console.WriteLine($"vao cong");
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 // Luồng ra
                                 else
                                 {
-                                    Console.WriteLine($"Update don hang luong ra");
+                                    Console.WriteLine($"ra cong");
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
 
@@ -234,17 +241,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                      * Ghi log thiết bị
                                      */
 
-                                    Console.WriteLine($"Update don hang thanh cong");
-
-                                    Console.WriteLine($"Them {cardNoCurrent} vao tmpCardNoLst");
+                                    Console.WriteLine($"4. Update don hang thanh cong.");
 
                                     tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
-                                    Console.WriteLine($"Mo barrier");
-                                    TestBarrier();
+                                    // Mở barrier
+                                    Console.WriteLine($"5. Mo barrier ... ");
+                                    OpenBarrier();
 
-                                    Console.WriteLine($"Bat den xanh");
-                                    TestTrafficLight();
+                                    // Bật đèn xanh giao thông
+                                    Console.WriteLine($"6. Bat den xanh ... ");
+                                    OpenTrafficLight();
                                 }
                                 else
                                 {
@@ -265,43 +272,51 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public void TestBarrier()
+        public void OpenBarrier()
         {
             PLC_Result = _barrier.Connect("192.168.1.61", 502);
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _barrier.GetLastErrorString());
+                Console.WriteLine($"5.1. Connected to PLC ... {_barrier.GetLastErrorString()}");
 
                 PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
                 if (PLC_Result == M221Result.SUCCESS)
                 {
-                    Console.WriteLine("Tat/bat Barrier OK");
+                    Console.WriteLine("5.2. Tat/bat Barrier: OK");
+                }
+                else
+                {
+                    Console.WriteLine("5.2. Tat/bat Barrier: ERROR");
                 }
             }
             else
             {
-                Console.WriteLine("Connect to PLC at 192.168.1.61 not ok - " + _barrier.GetLastErrorString());
+                Console.WriteLine($"5.1. Connect failed to PLC ... {_barrier.GetLastErrorString()}");
             }
         }
 
-        public void TestTrafficLight()
+        public void OpenTrafficLight()
         {
             PLC_Result = _trafficLight.Connect("192.168.1.61", 502);
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _trafficLight.GetLastErrorString());
+                Console.WriteLine($"6.1. Connected to PLC ... {_trafficLight.GetLastErrorString()}");
 
                 PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("5")));
                 if (PLC_Result == M221Result.SUCCESS)
                 {
-                    Console.WriteLine("Tat/bat Traffic Light OK");
+                    Console.WriteLine("6.2. Tat/bat Traffic Light: OK");
+                }
+                else
+                {
+                    Console.WriteLine("6.2. Tat/bat Traffic Light: ERROR");
                 }
             }
             else
             {
-                Console.WriteLine("Connect to PLC at 192.168.1.61 not ok - " + _trafficLight.GetLastErrorString());
+                Console.WriteLine($"6.1. Connect failed to PLC {_trafficLight.GetLastErrorString()}");
             }
         }
     }
