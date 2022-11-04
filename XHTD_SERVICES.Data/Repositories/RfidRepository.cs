@@ -23,7 +23,10 @@ namespace XHTD_SERVICES.Data.Repositories
             bool isValid = false;
             if (code.StartsWith("8") || code.StartsWith("5") || code.StartsWith("21") || code.StartsWith("22"))
             {
-                isValid = _appDbContext.tblRfids.Any(x => x.Code == code);
+                using (var dbContext = new XHTD_Entities())
+                {
+                    isValid = dbContext.tblRfids.Any(x => x.Code == code);
+                }
             }
             
             return isValid;

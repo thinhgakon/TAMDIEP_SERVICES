@@ -137,79 +137,88 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
         {
-            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH);
-            return order;
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                return order;
+            }
         }
 
         public async Task<bool> UpdateOrderEntraceGateway(string cardNo)
         {
-            try
+            using (var dbContext = new XHTD_Entities())
             {
-                string calcelTime = DateTime.Now.ToString();
-
-                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
-
-                if (orders == null || orders.Count == 0)
+                try
                 {
+                    string calcelTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm1 = 1;
+                        order.Confirm2 = 1;
+                        order.TimeConfirm2 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_VAO_CONG;
+                        order.IndexOrder = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
+
+                        Console.WriteLine($@"Xác thực vào cổng {cardNo}");
+                        log.Info($@"Xác thực vào cổng {cardNo}");
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
                     return false;
                 }
-
-                foreach ( var order in orders)
-                {
-                    order.Confirm1 = 1;
-                    order.Confirm2 = 1;
-                    order.TimeConfirm2 = DateTime.Now;
-                    order.Step = (int)OrderStep.DA_VAO_CONG;
-                    order.IndexOrder = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
-
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo}");
-                    log.Info($@"Xác thực vào cổng {cardNo}");
-                }
-
-                await _appDbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                log.Error($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
-                Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
-                return false;
             }
         }
 
         public async Task<bool> UpdateOrderExitGateway(string cardNo)
         {
-            try
+            using (var dbContext = new XHTD_Entities())
             {
-                string calcelTime = DateTime.Now.ToString();
-
-                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH && x.DriverName != null).ToListAsync();
-
-                if (orders == null || orders.Count == 0)
+                try
                 {
-                    return false ;
-                }
+                    string calcelTime = DateTime.Now.ToString();
 
-                foreach (var order in orders)
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH && x.DriverName != null).ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
+
+                        Console.WriteLine($@"Xác thực ra cổng {cardNo}");
+                        log.Info($@"Xác thực ra cổng {cardNo}");
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
                 {
-                    order.Confirm8 = 1;
-                    order.TimeConfirm8 = DateTime.Now;
-                    order.Step = (int)OrderStep.DA_HOAN_THANH;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
-
-                    Console.WriteLine($@"Xác thực ra cổng {cardNo}");
-                    log.Info($@"Xác thực ra cổng {cardNo}");
+                    log.Error($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
+                    return false;
                 }
-
-                await _appDbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                log.Error($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
-                Console.WriteLine($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
-                return false;
             }
         }
     }
