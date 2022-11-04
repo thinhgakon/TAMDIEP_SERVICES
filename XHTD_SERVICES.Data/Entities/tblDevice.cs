@@ -14,6 +14,7 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class tblDevice
     {
+        public int Id { get; set; }
         public string CodeParent { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }

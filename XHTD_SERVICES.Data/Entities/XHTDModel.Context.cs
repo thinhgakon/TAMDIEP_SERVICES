@@ -27,6 +27,8 @@ namespace XHTD_SERVICES.Data.Entities
     
         public virtual DbSet<tblAccount> tblAccounts { get; set; }
         public virtual DbSet<tblAccountGroup> tblAccountGroups { get; set; }
+        public virtual DbSet<tblCategory> tblCategories { get; set; }
+        public virtual DbSet<tblCategoriesDevice> tblCategoriesDevices { get; set; }
         public virtual DbSet<tblConfigApp> tblConfigApps { get; set; }
         public virtual DbSet<tblDevice> tblDevices { get; set; }
         public virtual DbSet<tblDeviceGroup> tblDeviceGroups { get; set; }

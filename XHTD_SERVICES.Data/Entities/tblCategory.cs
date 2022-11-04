@@ -12,16 +12,13 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblRfid
+    public partial class tblCategory
     {
         public int Id { get; set; }
         public string Code { get; set; }
-        public string Vehicle { get; set; }
-        public Nullable<System.DateTime> DayReleased { get; set; }
-        public Nullable<System.DateTime> DayExpired { get; set; }
-        public string Note { get; set; }
+        public string Name { get; set; }
         public Nullable<bool> State { get; set; }
-        public Nullable<System.DateTime> LastEnter { get; set; }
+        public Nullable<int> ShowIndex { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }

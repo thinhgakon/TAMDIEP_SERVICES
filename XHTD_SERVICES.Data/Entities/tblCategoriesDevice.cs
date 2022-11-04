@@ -12,19 +12,27 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblRfid
+    public partial class tblCategoriesDevice
     {
         public int Id { get; set; }
+        public string CatCode { get; set; }
+        public string ManCode { get; set; }
         public string Code { get; set; }
-        public string Vehicle { get; set; }
-        public Nullable<System.DateTime> DayReleased { get; set; }
-        public Nullable<System.DateTime> DayExpired { get; set; }
-        public string Note { get; set; }
+        public string Name { get; set; }
+        public string IpAddress { get; set; }
+        public Nullable<int> PortNumber { get; set; }
+        public Nullable<int> PortNumberDeviceIn { get; set; }
+        public Nullable<int> PortNumberDeviceOut { get; set; }
+        public Nullable<int> PortNumberDeviceIn1 { get; set; }
+        public Nullable<int> PortNumberDeviceOut1 { get; set; }
+        public Nullable<int> PortNumberDeviceIn2 { get; set; }
+        public Nullable<int> PortNumberDeviceOut2 { get; set; }
+        public string Descriptioon { get; set; }
         public Nullable<bool> State { get; set; }
-        public Nullable<System.DateTime> LastEnter { get; set; }
+        public Nullable<int> ShowIndex { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
-        public Nullable<System.DateTime> UpdateDay { get; set; }
+        public Nullable<System.DateTime> UpdayeDay { get; set; }
         public string UpdateBy { get; set; }
     }
 }

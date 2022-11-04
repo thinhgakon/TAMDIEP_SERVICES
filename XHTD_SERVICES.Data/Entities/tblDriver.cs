@@ -21,6 +21,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> Birthday { get; set; }
         public string Gender { get; set; }
         public string IdCard { get; set; }
+        public string IdCardImgFront { get; set; }
+        public string IdCardImgBack { get; set; }
         public string Address { get; set; }
         public string UserName { get; set; }
         public Nullable<bool> State { get; set; }
