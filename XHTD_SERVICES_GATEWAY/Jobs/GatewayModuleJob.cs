@@ -172,12 +172,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
-                                var cardLogs = String.Join(";", tmpCardNoLst.Select(x => x.LogCat).ToArray());
-                                //Console.WriteLine($@"========== log list  ======== {cardLogs}");
 
                                 if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
-                                    Console.WriteLine($@"========== cardno exist on list, vao======== {cardNoCurrent}");
+                                    Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
                                     continue;
                                 }
 
@@ -192,7 +190,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"KHONG => Ket thuc");
+                                    Console.WriteLine($"KHONG => Ket thuc.");
                                     continue;
                                 }
 
@@ -202,7 +200,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
                                 if (orderCurrent == null) { 
 
-                                    Console.WriteLine($"KHONG => Ket thuc");
+                                    Console.WriteLine($"KHONG => Ket thuc.");
                                     continue; 
                                 }
                                 else
@@ -216,7 +214,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                  * Hoặc theo Step của đơn hàng
                                  */
 
-                                Console.Write($"3. Update don hang: ");
+                                Console.Write($"3. Tien hanh update don hang: ");
                                 var isUpdatedOrder = false;
 
                                 // Luồng vào
@@ -246,16 +244,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                     // Mở barrier
-                                    Console.WriteLine($"5. Mo barrier ... ");
+                                    Console.WriteLine($"5. Mo barrier");
                                     OpenBarrier();
 
                                     // Bật đèn xanh giao thông
-                                    Console.WriteLine($"6. Bat den xanh ... ");
+                                    Console.WriteLine($"6. Bat den xanh");
                                     OpenTrafficLight();
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Update don hang KHONG thanh cong");
+                                    Console.WriteLine($"4. Update don hang KHONG thanh cong => Ket thuc.");
                                 }
                             }
                         }
