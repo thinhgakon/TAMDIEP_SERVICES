@@ -137,7 +137,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
         {
-            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo  && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_HOAN_THANH);
+            var order = _appDbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH);
             return order;
         }
 
@@ -147,7 +147,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 string calcelTime = DateTime.Now.ToString();
 
-                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.DriverName != null).ToListAsync();
+                var orders = await _appDbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
 
                 if (orders == null || orders.Count == 0)
                 {
@@ -195,7 +195,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     order.Confirm8 = 1;
                     order.TimeConfirm8 = DateTime.Now;
-                    order.Step = 8;
+                    order.Step = (int)OrderStep.DA_HOAN_THANH;
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
 
                     Console.WriteLine($@"Xác thực ra cổng {cardNo}");
