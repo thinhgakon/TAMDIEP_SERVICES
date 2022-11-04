@@ -26,6 +26,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<RfidRepository>().AsSelf();
             builder.RegisterType<Barrier>().AsSelf();
+            builder.RegisterType<TrafficLight>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
 
             RegisterScheduler(builder);

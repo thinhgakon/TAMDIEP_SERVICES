@@ -30,6 +30,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly Barrier _barrier;
 
+        protected readonly TrafficLight _trafficLight;
+
         private IntPtr h21 = IntPtr.Zero;
 
         private static bool DeviceConnected = false;
@@ -47,11 +49,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
-        public GatewayModuleJob(StoreOrderOperatingRepository storeOrderOperatingRepository, RfidRepository rfidRepository, Barrier barrier)
+        public GatewayModuleJob(
+            StoreOrderOperatingRepository storeOrderOperatingRepository, 
+            RfidRepository rfidRepository, 
+            Barrier barrier,
+            TrafficLight trafficLight
+            )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _rfidRepository = rfidRepository;
             _barrier = barrier;
+            _trafficLight = trafficLight;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -247,12 +255,32 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
                 if (PLC_Result == Result.SUCCESS)
                 {
-                    Console.WriteLine("Tat/bat OK");
+                    Console.WriteLine("Tat/bat Barrier OK");
                 }
             }
             else
             {
                 Console.WriteLine("Connect to PLC at 192.168.1.61 not ok - " + _barrier.GetLastErrorString());
+            }
+        }
+
+        public void TestTrafficLight()
+        {
+            PLC_Result = _trafficLight.Connect("192.168.1.61", 502);
+
+            if (PLC_Result == Result.SUCCESS)
+            {
+                Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _trafficLight.GetLastErrorString());
+
+                PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("2")));
+                if (PLC_Result == Result.SUCCESS)
+                {
+                    Console.WriteLine("Tat/bat Traffic Light OK");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Connect to PLC at 192.168.1.61 not ok - " + _trafficLight.GetLastErrorString());
             }
         }
     }
