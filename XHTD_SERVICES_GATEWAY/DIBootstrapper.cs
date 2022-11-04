@@ -11,6 +11,8 @@ using XHTD_SERVICES_GATEWAY.Schedules;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_GATEWAY.Jobs;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Device.PLCM221;
+using NDTan;
 
 namespace XHTD_SERVICES_GATEWAY
 {
@@ -23,6 +25,8 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<RfidRepository>().AsSelf();
+            builder.RegisterType<Barrier>().AsSelf();
+            builder.RegisterType<PLC>().AsSelf();
 
             RegisterScheduler(builder);
 

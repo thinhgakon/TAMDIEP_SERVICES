@@ -15,6 +15,8 @@ using System.Configuration;
 using System.Collections.Specialized;
 using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
+using NDTan;
+using XHTD_SERVICES.Device.PLCM221;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -26,9 +28,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly RfidRepository _rfidRepository;
 
+        protected readonly Barrier _barrier;
+
         private IntPtr h21 = IntPtr.Zero;
 
         private static bool DeviceConnected = false;
+
+        private Result PLC_Result;
 
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -39,10 +45,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
-        public GatewayModuleJob(StoreOrderOperatingRepository storeOrderOperatingRepository, RfidRepository rfidRepository)
+        public GatewayModuleJob(StoreOrderOperatingRepository storeOrderOperatingRepository, RfidRepository rfidRepository, Barrier barrier)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _rfidRepository = rfidRepository;
+            _barrier = barrier;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -57,6 +64,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 log.Info("start GatewayModule Job");
                 Console.WriteLine("start GatewayModule Job");
                 AuthenticateGatewayModule();
+
+                TestBarrier();
             });
         }
 
@@ -218,6 +227,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             Console.WriteLine("--------------open barrier--------------");
             log.Info("--------------open barrier--------------");
+        }
+
+        public void TestBarrier()
+        {
+            PLC_Result = _barrier.Connect("192.168.1.61", 502);
+
+            if (PLC_Result == Result.SUCCESS)
+            {
+                Console.WriteLine("Connect to PLC at 192.168.1.61 ok - " + _barrier.GetLastErrorString());
+
+                PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
+                if (PLC_Result == Result.SUCCESS)
+                {
+                    Console.WriteLine("Tat/bat OK");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Connect to PLC at 192.168.1.61 not ok - " + _barrier.GetLastErrorString());
+            }
         }
     }
 }
