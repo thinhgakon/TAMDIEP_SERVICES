@@ -135,11 +135,20 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public tblStoreOrderOperating GetCurrentOrderByCardNoReceiving(string cardNo)
+        public tblStoreOrderOperating GetCurrentOrderEntraceGatewayByCardNoReceiving(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG);
+                return order;
+            }
+        }
+
+        public tblStoreOrderOperating GetCurrentOrderExitGatewayByCardNoReceiving(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_CAN_RA);
                 return order;
             }
         }
@@ -152,7 +161,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_HOAN_THANH).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {
@@ -189,7 +198,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step >= (int)OrderStep.DANG_LAY_HANG && x.Step < (int)OrderStep.DA_HOAN_THANH).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_CAN_RA).ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {

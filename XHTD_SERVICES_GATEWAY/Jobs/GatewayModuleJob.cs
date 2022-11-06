@@ -43,7 +43,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private M221Result PLC_Result;
 
-        private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
+
+        private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
 
@@ -89,7 +91,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 log.Info("----------------------------");
 
                 // Get devices info
-                await GetDevicesInfo();
+                await LoadDevicesInfo();
 
                 AuthenticateGatewayModule();
             });
@@ -124,7 +126,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         }
 
-        public async Task GetDevicesInfo()
+        public async Task LoadDevicesInfo()
         {
             var devices = await _categoriesDevicesRepository.GetDevices("BV");
 
@@ -209,20 +211,42 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
 
+                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
+
+                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+
                                 Console.WriteLine("----------------------------");
                                 Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 log.Info("----------------------------");
                                 log.Info($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
-                                if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
+                                // Luồng vào
+                                if(isLuongVao) {
+                                    if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
-                                if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    {
+                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+
+                                        continue;
+                                    }
+                                }
+                                // Luồng ra
+                                else if (isLuongRa)
                                 {
-                                    Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-                                    log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                    if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
 
-                                    continue;
+                                    if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    {
+                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+
+                                        continue;
+                                    }
                                 }
 
                                 // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
@@ -241,6 +265,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
 
+                                    // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
+                                    // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+
                                     continue;
                                 }
 
@@ -248,8 +275,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
                                 log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
-                                var orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
-                                if (orderCurrent == null) { 
+                                tblStoreOrderOperating orderCurrent = null;
+                                if (isLuongVao)
+                                {
+                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderEntraceGatewayByCardNoReceiving(cardNoCurrent);
+                                }
+                                else if (isLuongRa){
+                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderExitGatewayByCardNoReceiving(cardNoCurrent);
+                                }
+
+                                if (orderCurrent == null) {
 
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
@@ -274,7 +309,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var isUpdatedOrder = false;
 
                                 // Luồng vào
-                                if (orderCurrent.Step < (int)OrderStep.DA_LAY_HANG)
+                                if (isLuongVao)
                                 {
                                     Console.WriteLine($"vao cong");
                                     log.Info($"vao cong");
@@ -282,7 +317,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 // Luồng ra
-                                else
+                                else if (isLuongRa)
                                 {
                                     Console.WriteLine($"ra cong");
                                     log.Info($"ra cong");
@@ -302,19 +337,40 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     Console.WriteLine($"4. Update don hang thanh cong.");
                                     log.Info($"4. Update don hang thanh cong.");
 
-                                    tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                    // Mở barrier
-                                    Console.WriteLine($"5. Mo barrier");
-                                    log.Info($"5. Mo barrier");
+                                    if (isLuongVao)
+                                    {
+                                        tmpCardNoLst_In.Add(newCardNoLog);
 
-                                    OpenBarrier();
+                                        // Mở barrier
+                                        Console.WriteLine($"5. Mo barrier vao");
+                                        log.Info($"5. Mo barrier vao");
 
-                                    // Bật đèn xanh giao thông
-                                    Console.WriteLine($"6. Bat den xanh");
-                                    log.Info($"6. Bat den xanh");
+                                        OpenBarrier("VAO", "BV.M221.BRE-1");
 
-                                    OpenTrafficLight();
+                                        // Bật đèn xanh giao thông
+                                        Console.WriteLine($"6. Bat den xanh vao");
+                                        log.Info($"6. Bat den xanh vao");
+
+                                        OpenTrafficLight();
+                                    }
+                                    else if (isLuongRa)
+                                    {
+                                        tmpCardNoLst_Out.Add(newCardNoLog);
+
+                                        // Mở barrier
+                                        Console.WriteLine($"5. Mo barrier ra");
+                                        log.Info($"5. Mo barrier ra");
+
+                                        OpenBarrier("RA", "BV.M221.BRE-2");
+
+                                        // Bật đèn xanh giao thông
+                                        Console.WriteLine($"6. Bat den xanh ra");
+                                        log.Info($"6. Bat den xanh ra");
+
+                                        OpenTrafficLight();
+                                    }
                                 }
                                 else
                                 {
@@ -336,11 +392,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public async void OpenBarrier()
+        public async void OpenBarrier(string luong, string code)
         {
             var newLog = new CategoriesDevicesLogItemResponse
             {
-                Code = "code",
+                Code = code,
                 ActionType = 1,
                 ActionInfo = "info",
                 ActionDate = DateTime.Now,
