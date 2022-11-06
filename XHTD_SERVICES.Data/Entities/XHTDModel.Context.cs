@@ -29,6 +29,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblAccountGroup> tblAccountGroups { get; set; }
         public virtual DbSet<tblCategory> tblCategories { get; set; }
         public virtual DbSet<tblCategoriesDevice> tblCategoriesDevices { get; set; }
+        public virtual DbSet<tblCategoriesDevicesLog> tblCategoriesDevicesLogs { get; set; }
         public virtual DbSet<tblConfigApp> tblConfigApps { get; set; }
         public virtual DbSet<tblDevice> tblDevices { get; set; }
         public virtual DbSet<tblDeviceGroup> tblDeviceGroups { get; set; }
@@ -38,6 +39,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblNotification> tblNotifications { get; set; }
         public virtual DbSet<tblRfid> tblRfids { get; set; }
         public virtual DbSet<tblRfidSign> tblRfidSigns { get; set; }
+        public virtual DbSet<tblStoreOrderLocation> tblStoreOrderLocations { get; set; }
         public virtual DbSet<tblStoreOrderOperating> tblStoreOrderOperatings { get; set; }
         public virtual DbSet<tblStoreOrderOperatingPriority> tblStoreOrderOperatingPriorities { get; set; }
         public virtual DbSet<tblTrough> tblTroughs { get; set; }
