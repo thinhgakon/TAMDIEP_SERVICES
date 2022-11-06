@@ -25,6 +25,8 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<RfidRepository>().AsSelf();
+            builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
+            builder.RegisterType<CategoriesDevicesLogRepository>().AsSelf();
             builder.RegisterType<Barrier>().AsSelf();
             builder.RegisterType<TrafficLight>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();

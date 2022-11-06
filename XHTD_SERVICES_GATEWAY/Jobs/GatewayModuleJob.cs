@@ -17,6 +17,7 @@ using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Data.Models.Values;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -27,6 +28,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly RfidRepository _rfidRepository;
+
+        protected readonly CategoriesDevicesRepository _categoriesDevicesRepository;
+
+        protected readonly CategoriesDevicesLogRepository _categoriesDevicesLogRepository;
 
         protected readonly Barrier _barrier;
 
@@ -40,6 +45,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
 
+        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
+
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -51,13 +58,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public GatewayModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository, 
-            RfidRepository rfidRepository, 
+            RfidRepository rfidRepository,
+            CategoriesDevicesRepository categoriesDevicesRepository,
+            CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             Barrier barrier,
             TrafficLight trafficLight
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _rfidRepository = rfidRepository;
+            _categoriesDevicesRepository = categoriesDevicesRepository;
+            _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
         }
@@ -69,13 +80,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 Console.WriteLine("start gateway service");
                 Console.WriteLine("----------------------------");
 
                 log.Info("start gateway service");
                 log.Info("----------------------------");
+
+                // Get devices info
+                await GetDevicesInfo();
 
                 AuthenticateGatewayModule();
             });
@@ -110,6 +124,23 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         }
 
+        public async Task GetDevicesInfo()
+        {
+            var devices = await _categoriesDevicesRepository.GetDevices("BV");
+
+            c3400 = devices.FirstOrDefault(x => x.Code == "BV.C3-400");
+            rfidRa1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-1");
+            rfidRa2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-2");
+            rfidVao1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-1");
+            rfidVao2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-2");
+
+            m221 = devices.FirstOrDefault(x => x.Code == "BV.M221");
+            barrierVao = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-1");
+            barrierRa = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-2");
+            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-1");
+            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-2");
+        }
+
         public bool ConnectGatewayModule()
         {
             Console.Write("start connect to C3-400 ... ");
@@ -117,7 +148,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             try
             {
-                string str = "protocol=TCP,ipaddress=192.168.1.75,port=4370,timeout=2000,passwd=";
+                string str = $"protocol=TCP,ipaddress={c3400?.IpAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
                 int ret = 0;
                 if (IntPtr.Zero == h21)
                 {
@@ -305,8 +336,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public void OpenBarrier()
+        public async void OpenBarrier()
         {
+            var newLog = new CategoriesDevicesLogItemResponse
+            {
+                Code = "code",
+                ActionType = 1,
+                ActionInfo = "info",
+                ActionDate = DateTime.Now,
+            };
+
             PLC_Result = _barrier.Connect("192.168.1.61", 502);
 
             if (PLC_Result == M221Result.SUCCESS)
@@ -317,6 +356,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
                 if (PLC_Result == M221Result.SUCCESS)
                 {
+                    await _categoriesDevicesLogRepository.CreateAsync(newLog);
+
                     Console.WriteLine("5.2. Tat/bat Barrier: OK");
                     log.Info("5.2. Tat/bat Barrier: OK");
                 }
