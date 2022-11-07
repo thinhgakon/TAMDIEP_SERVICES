@@ -347,7 +347,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"5. Mo barrier vao");
                                         log.Info($"5. Mo barrier vao");
 
-                                        OpenBarrier("VAO", "BV.M221.BRE-1");
+                                        OpenBarrier("VAO", "BV.M221.BRE-1", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
 
                                         // Bật đèn xanh giao thông
                                         Console.WriteLine($"6. Bat den xanh vao");
@@ -363,7 +363,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"5. Mo barrier ra");
                                         log.Info($"5. Mo barrier ra");
 
-                                        OpenBarrier("RA", "BV.M221.BRE-2");
+                                        OpenBarrier("RA", "BV.M221.BRE-2", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
 
                                         // Bật đèn xanh giao thông
                                         Console.WriteLine($"6. Bat den xanh ra");
@@ -392,35 +392,48 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public async void OpenBarrier(string luong, string code)
+        public async void OpenBarrier(string luong, string code, string vehicle, string deliveryCode)
         {
+            string luongText = luong == "VAO" ? "vào" : "ra";
+            int portNumberDeviceIn = luong == "VAO" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "VAO" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+
             var newLog = new CategoriesDevicesLogItemResponse
             {
                 Code = code,
                 ActionType = 1,
-                ActionInfo = "info",
+                ActionInfo = $"Mở barrier cho xe {vehicle} {luongText}, theo đơn hàng {deliveryCode}",
                 ActionDate = DateTime.Now,
             };
 
-            PLC_Result = _barrier.Connect("192.168.1.61", 502);
+            PLC_Result = _barrier.Connect($"{m221.IpAddress}", (int)m221.PortNumber);
 
             if (PLC_Result == M221Result.SUCCESS)
             {
                 Console.WriteLine($"5.1. Connected to PLC ... {_barrier.GetLastErrorString()}");
                 log.Info($"5.1. Connected to PLC ... {_barrier.GetLastErrorString()}");
 
-                PLC_Result = _barrier.ShuttleOutputPort((byte.Parse("1")));
+                bool[] Ports = new bool[24];
+                PLC_Result = _barrier.CheckInputPorts(Ports);
+
                 if (PLC_Result == M221Result.SUCCESS)
                 {
-                    await _categoriesDevicesLogRepository.CreateAsync(newLog);
+                    if (!Ports[portNumberDeviceIn])
+                    {
+                        PLC_Result = _barrier.ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
+                        if (PLC_Result == M221Result.SUCCESS)
+                        {
+                            await _categoriesDevicesLogRepository.CreateAsync(newLog);
 
-                    Console.WriteLine("5.2. Tat/bat Barrier: OK");
-                    log.Info("5.2. Tat/bat Barrier: OK");
-                }
-                else
-                {
-                    Console.WriteLine("5.2. Tat/bat Barrier: ERROR");
-                    log.Info("5.2. Tat/bat Barrier: ERROR");
+                            Console.WriteLine("5.2. Open barrier: OK");
+                            log.Info("5.2. Open barrier: OK");
+                        }
+                        else
+                        {
+                            Console.WriteLine("5.2. Open barrier: ERROR");
+                            log.Info("5.2. Open barrier: ERROR");
+                        }
+                    }
                 }
             }
             else
