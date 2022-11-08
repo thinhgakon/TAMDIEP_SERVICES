@@ -36,9 +36,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     dbContext.tblCategoriesDevicesLogs.Add(newLog);
                     await dbContext.SaveChangesAsync();
-
-                    Console.WriteLine($@"Inserted device log");
-                    log.Info($@"Inserted device log");
                 }
                 catch (Exception ex)
                 {
