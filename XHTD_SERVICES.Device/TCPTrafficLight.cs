@@ -26,7 +26,7 @@ namespace XHTD_SERVICES.Device
             IpAddress = ipAddress;
         }
 
-        public void TurnOnGreenOffRed()
+        public bool TurnOnGreenOffRed()
         {
             try
             {
@@ -53,15 +53,18 @@ namespace XHTD_SERVICES.Device
                 // 5. Close
                 stream.Close();
                 client.Close();
+
+                return true;
             }
 
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                return false;
             }
         }
 
-        public void TurnOffGreenOnRed()
+        public bool TurnOffGreenOnRed()
         {
             try
             {
@@ -88,15 +91,18 @@ namespace XHTD_SERVICES.Device
                 // 5. Close
                 stream.Close();
                 client.Close();
+
+                return true;
             }
 
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                return false;
             }
         }
 
-        public void TurnOffGreenOffRed()
+        public bool TurnOffGreenOffRed()
         {
             try
             {
@@ -123,11 +129,14 @@ namespace XHTD_SERVICES.Device
                 // 5. Close
                 stream.Close();
                 client.Close();
+
+                return true;
             }
 
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                return false;
             }
         }
     }

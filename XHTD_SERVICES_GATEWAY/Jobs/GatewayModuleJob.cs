@@ -449,7 +449,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
 
             _trafficLight.Connect($"{ipAddress}");
-            _trafficLight.TurnOnGreenOffRed();
+            var isSuccess = _trafficLight.TurnOnGreenOffRed();
+            if (isSuccess)
+            {
+                Console.WriteLine("6.1. Open TrafficLight: OK");
+                log.Info("5.2. Open TrafficLight: OK");
+            }
+            else
+            {
+                Console.WriteLine("6.1. Open TrafficLight: Failed");
+                log.Info("5.2. Open TrafficLight: Failed");
+            }
         }
     }
 }
