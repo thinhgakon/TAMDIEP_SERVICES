@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XHTD_SERVICES_GATEWAY", "XH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XHTD_SERVICES.Device", "XHTD_SERVICES.Device\XHTD_SERVICES.Device.csproj", "{8C1CCDC9-CB05-4CF4-97FA-317307D97978}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XHTD_SERVICES_TRAM951", "XHTD_SERVICES_TRAM951\XHTD_SERVICES_TRAM951.csproj", "{D666C53B-F604-4979-9EB4-A122F530028F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8C1CCDC9-CB05-4CF4-97FA-317307D97978}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C1CCDC9-CB05-4CF4-97FA-317307D97978}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C1CCDC9-CB05-4CF4-97FA-317307D97978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D666C53B-F604-4979-9EB4-A122F530028F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D666C53B-F604-4979-9EB4-A122F530028F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D666C53B-F604-4979-9EB4-A122F530028F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D666C53B-F604-4979-9EB4-A122F530028F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
