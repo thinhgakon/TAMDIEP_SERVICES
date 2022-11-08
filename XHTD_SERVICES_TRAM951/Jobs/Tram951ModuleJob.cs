@@ -128,17 +128,17 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("BV");
+            var devices = await _categoriesDevicesRepository.GetDevices("951");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "BV.C3-400");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-2");
-            rfidVao1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-1");
-            rfidVao2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-2");
+            c3400 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1");
+            rfidRa1 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.RA-1");
+            rfidRa2 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.RA-2");
+            rfidVao1 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.VAO-1");
+            rfidVao2 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.VAO-2");
 
-            m221 = devices.FirstOrDefault(x => x.Code == "BV.M221");
-            barrierVao = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-1");
-            barrierRa = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-2");
+            m221 = devices.FirstOrDefault(x => x.Code == "951.M221");
+            barrierVao = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-VAO");
+            barrierRa = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-RA");
             trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-1");
             trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-2");
         }
