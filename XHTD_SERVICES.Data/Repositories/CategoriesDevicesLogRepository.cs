@@ -22,25 +22,29 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task CreateAsync(CategoriesDevicesLogItemResponse item)
         {
-            try {
-                var newLog = new tblCategoriesDevicesLog
-                {
-                    Code = item.Code,
-                    ActionType = item.ActionType,
-                    ActionInfo = item.ActionInfo,
-                    ActionDate = item.ActionDate,
-                };
-
-                _appDbContext.tblCategoriesDevicesLogs.Add(newLog);
-                await _appDbContext.SaveChangesAsync();
-
-                Console.WriteLine($@"Inserted device log");
-                log.Info($@"Inserted device log");
-            }
-            catch(Exception ex)
+            using (var dbContext = new XHTD_Entities())
             {
-                log.Error("CreateAsync device log Error: " + ex.Message); ;
-                Console.WriteLine("CreateAsync device log Error: " + ex.Message);
+                try
+                {
+                    var newLog = new tblCategoriesDevicesLog
+                    {
+                        Code = item.Code,
+                        ActionType = item.ActionType,
+                        ActionInfo = item.ActionInfo,
+                        ActionDate = item.ActionDate,
+                    };
+
+                    dbContext.tblCategoriesDevicesLogs.Add(newLog);
+                    await dbContext.SaveChangesAsync();
+
+                    Console.WriteLine($@"Inserted device log");
+                    log.Info($@"Inserted device log");
+                }
+                catch (Exception ex)
+                {
+                    log.Error("CreateAsync device log Error: " + ex.Message); ;
+                    Console.WriteLine("CreateAsync device log Error: " + ex.Message);
+                }
             }
         }
     }

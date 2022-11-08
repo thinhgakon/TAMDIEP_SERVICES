@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
+using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Entities;
 
@@ -35,7 +36,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly Barrier _barrier;
 
-        protected readonly TrafficLight _trafficLight;
+        protected readonly TCPTrafficLight _trafficLight;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -64,7 +65,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             Barrier barrier,
-            TrafficLight trafficLight
+            TCPTrafficLight trafficLight
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -139,8 +140,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             m221 = devices.FirstOrDefault(x => x.Code == "BV.M221");
             barrierVao = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-1");
             barrierRa = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-2");
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-1");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-2");
+            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.DGT-1");
+            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.DGT-2");
         }
 
         public bool ConnectGatewayModule()
@@ -353,7 +354,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"6. Bat den xanh vao");
                                         log.Info($"6. Bat den xanh vao");
 
-                                        OpenTrafficLight();
+                                        OpenTrafficLight("VAO");
                                     }
                                     else if (isLuongRa)
                                     {
@@ -369,7 +370,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"6. Bat den xanh ra");
                                         log.Info($"6. Bat den xanh ra");
 
-                                        OpenTrafficLight();
+                                        OpenTrafficLight("RA");
                                     }
                                 }
                                 else
@@ -443,32 +444,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public void OpenTrafficLight()
+        public void OpenTrafficLight(string luong)
         {
-            PLC_Result = _trafficLight.Connect("192.168.1.61", 502);
+            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
 
-            if (PLC_Result == M221Result.SUCCESS)
-            {
-                Console.WriteLine($"6.1. Connected to PLC ... {_trafficLight.GetLastErrorString()}");
-                log.Info($"6.1. Connected to PLC ... {_trafficLight.GetLastErrorString()}");
-
-                PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("5")));
-                if (PLC_Result == M221Result.SUCCESS)
-                {
-                    Console.WriteLine("6.2. Tat/bat Traffic Light: OK");
-                    log.Info("6.2. Tat/bat Traffic Light: OK");
-                }
-                else
-                {
-                    Console.WriteLine("6.2. Tat/bat Traffic Light: ERROR");
-                    log.Info("6.2. Tat/bat Traffic Light: ERROR");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"6.1. Connect failed to PLC {_trafficLight.GetLastErrorString()}");
-                log.Info($"6.1. Connect failed to PLC {_trafficLight.GetLastErrorString()}");
-            }
+            _trafficLight.Connect($"{ipAddress}");
+            _trafficLight.TurnOnGreenOffRed();
         }
     }
 }

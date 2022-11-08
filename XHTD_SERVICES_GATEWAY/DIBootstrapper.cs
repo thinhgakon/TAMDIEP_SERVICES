@@ -12,6 +12,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_GATEWAY.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Device.PLCM221;
+using XHTD_SERVICES.Device;
 using NDTan;
 
 namespace XHTD_SERVICES_GATEWAY
@@ -28,7 +29,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
             builder.RegisterType<CategoriesDevicesLogRepository>().AsSelf();
             builder.RegisterType<Barrier>().AsSelf();
-            builder.RegisterType<TrafficLight>().AsSelf();
+            builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
 
             RegisterScheduler(builder);
