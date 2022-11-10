@@ -100,19 +100,31 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         public void AuthenticateTram951Module()
         {
             /*
-             * 1. Connect Device
-             * 2. Đọc dữ liệu từ thiết bị
-             * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
-             * 4. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
-             * (do 1 xe có thể có nhiều tag ngoài hệ thống)
+             * Áp dụng tại trạm cân, dùng chung cho cả cân ra và cân vào ở mỗi bàn cân
+             * 1. Connect Device C3-400
+             * 2. Đọc dữ liệu từ thiết bị C3-400
+             * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent. 
+             * Khi đọc được tag thì nghĩa là xe đã lên bàn cân
+             * 4. Kiểm tra cardNoCurrent có hợp lệ hay không
              * 5. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 6. Xác định xe đang vào hay ra cổng qua field Step của đơn hàng (<6 => vào cổng)
-             * 7. Cập nhật đơn hàng: Step
-             * 8. Cập nhật index (số thứ tự) các đơn hàng
-             * 9. Ghi log
-             * 10. Bắn tín hiệu thông báo
-             * 11. Bật đèn xanh giao thông, mở barrier
-             * 12. Hiển thị led
+             * 6. Xác định xe cân vao hay can ra theo gia tri door từ C3-400
+             * 7. Kiểm tra xe có vi phạm cảm biến
+             * 8. Bắt đầu lấy giá trị từ cân. Kiểm tra giá trị cân ổn định
+             * 9. Bật đèn đỏ
+             * 10. Đóng barrier
+             * 11. Cân vào: 
+             *     +  Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
+             *     cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
+             *     vào khối lượng không tải của phương tiện;
+             *     Cân ra: 
+             *     + Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
+             *     cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
+             * 10. Bật đèn xanh
+             * 11. Mở barrier để xe rời bàn cân
+             * 12. Cân vào
+             *     + Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+             *     Cân ra:
+             *     + Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
              */
 
             // 1. Connect Device
