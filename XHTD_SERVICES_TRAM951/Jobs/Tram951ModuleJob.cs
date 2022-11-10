@@ -93,11 +93,11 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateGatewayModule();
+                AuthenticateTram951Module();
             });
         }
 
-        public void AuthenticateGatewayModule()
+        public void AuthenticateTram951Module()
         {
             /*
              * 1. Connect Device
@@ -118,7 +118,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             // 1. Connect Device
             while (!DeviceConnected)
             {
-                ConnectGatewayModule();
+                ConnectTram951Module();
             }
 
             // 2. Đọc dữ liệu từ thiết bị
@@ -143,7 +143,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-2");
         }
 
-        public bool ConnectGatewayModule()
+        public bool ConnectTram951Module()
         {
             Console.Write("start connect to C3-400 ... ");
             log.Info("start connect to C3-400 ... ");
@@ -175,8 +175,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($@"ConnectGatewayModule : {ex.Message}");
-                log.Error($@"ConnectGatewayModule : {ex.StackTrace}");
+                Console.WriteLine($@"ConnectTram951Module : {ex.Message}");
+                log.Error($@"ConnectTram951Module : {ex.StackTrace}");
 
                 return false;
             }
@@ -385,7 +385,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
-                            AuthenticateGatewayModule();
+                            AuthenticateTram951Module();
                         }
                     }
                 }
