@@ -69,6 +69,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="HttpRequest.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
+    <Compile Include="Models\Request\SearchOrderRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Response\GetTokenResponse.cs" />
   </ItemGroup>
