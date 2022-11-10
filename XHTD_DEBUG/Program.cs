@@ -9,8 +9,8 @@ using Autofac;
 using Autofac.Extras.Quartz;
 using System.Collections.Specialized;
 using log4net;
-using XHTD_SERVICES_GATEWAY;
-using XHTD_SERVICES_GATEWAY.Schedules;
+using XHTD_SERVICES_TRAM951;
+using XHTD_SERVICES_TRAM951.Schedules;
 
 namespace XHTD_DEBUG
 { 

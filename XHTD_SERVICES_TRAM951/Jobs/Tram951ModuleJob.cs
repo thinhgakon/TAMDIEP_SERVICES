@@ -19,6 +19,9 @@ using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Entities;
+using Microsoft.AspNetCore.SignalR.Client;
+using NDTan;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_TRAM951.Jobs
 {
@@ -51,6 +54,14 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa, sensor1, sensor2;
+
+        private List<int> scaleValues = new List<int>();
+
+        private string ScaleHubURL;
+
+        private bool ÍsJustReceivedScaleData = false;
+
+        private HubConnection Connection { get; set; }
 
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -99,7 +110,104 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                 await LoadDevicesInfo();
 
                 AuthenticateTram951Module();
+
+                HandleHubConnection();
+
+                ReadDataFromScale();
             });
+        }
+
+        public void ReadDataFromScale()
+        {
+            while (true)
+            {
+                if (ÍsJustReceivedScaleData)
+                {
+                    Console.Write("Scale Values:");
+
+                    var scaleText = String.Join(",", scaleValues);
+                    Console.WriteLine(scaleText);
+
+                    var tbc = Calculator.TrungBinhCong(scaleValues);
+                    var isOnDinh = Calculator.CheckBalanceValues(scaleValues, 1);
+
+                    Console.WriteLine("tbc: " + tbc);
+
+                    if (isOnDinh)
+                    {
+                        Console.WriteLine("can on dinh");
+                    }
+                    else
+                    {
+                        Console.WriteLine("can chua on dinh");
+                    }
+
+                    ÍsJustReceivedScaleData = false;
+                }
+            }
+        }
+
+        public async void HandleHubConnection()
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+            ScaleHubURL = apiUrl["ScaleHub"];
+
+            var reconnectSeconds = new List<TimeSpan> { TimeSpan.Zero, TimeSpan.Zero, TimeSpan.FromSeconds(5) };
+
+            var i = 5;
+            while (i <= 7200)
+            {
+                reconnectSeconds.Add(TimeSpan.FromSeconds(i));
+                i++;
+            }
+
+            Connection = new HubConnectionBuilder()
+                .WithUrl($"{ScaleHubURL}")
+                //.WithAutomaticReconnect()
+                .Build();
+
+            Connection.On<string>("SendOffersToUser", data =>
+            {
+                ÍsJustReceivedScaleData = true;
+                int result = Int32.Parse(data);
+
+                //todo, adding updates tolist for example
+                scaleValues.Add(result);
+
+                if (scaleValues.Count > 5) { 
+                    scaleValues.RemoveRange(0, 1); 
+                }
+            });
+
+            try
+            {
+                await Connection.StartAsync();
+                Console.WriteLine("Connected!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Disconnect!");
+            }
+
+            Connection.Reconnecting += connectionId =>
+            {
+                Console.WriteLine("Reconnecting....");
+                return Task.CompletedTask;
+            };
+
+            Connection.Reconnected += connectionId =>
+            {
+                Console.WriteLine("Connected!");
+                return Task.CompletedTask;
+            };
+
+            Connection.Closed += async (error) =>
+            {
+                Console.WriteLine("Closed!");
+
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await Connection.StartAsync();
+            };
         }
 
         public void AuthenticateTram951Module()
@@ -320,15 +428,16 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                  * 4. Kiểm tra xe có vi phạm cảm biến
                                  */
                                 var isValidSensor = CheckValidSensor();
-                                if (isValidSensor)
-                                {
-
-                                }
-                                else
+                                if (!isValidSensor)
                                 {
                                     // Vi phạm cảm biến
                                     continue;
                                 }
+
+                                /*
+                                 * 5. Kiểm tra cân ổn định
+                                 */
+
 
                                 /* 4. Cập nhật đơn hàng
                                  * Luồng vào - ra
