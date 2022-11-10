@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PLCM221\Sensor.cs" />
     <Compile Include="PLCM221\M221Result.cs" />
     <Compile Include="PLCM221\TrafficLight.cs" />
     <Compile Include="PLCM221\Barrier.cs" />

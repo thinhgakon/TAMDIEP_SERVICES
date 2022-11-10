@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using XHTD_SERVICES_TRAM951.Models.Values;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
+using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Entities;
 
@@ -35,7 +36,9 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         protected readonly Barrier _barrier;
 
-        protected readonly TrafficLight _trafficLight;
+        protected readonly TCPTrafficLight _trafficLight;
+
+        protected readonly Sensor _sensor;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -47,7 +50,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
+        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa, sensor1, sensor2;
 
         [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -64,7 +67,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             Barrier barrier,
-            TrafficLight trafficLight
+            TCPTrafficLight trafficLight,
+            Sensor sensor
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -73,6 +77,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
+            _sensor = sensor;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -107,7 +112,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
              * Khi đọc được tag thì nghĩa là xe đã lên bàn cân
              * 4. Kiểm tra cardNoCurrent có hợp lệ hay không
              * 5. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 6. Xác định xe cân vao hay can ra theo gia tri door từ C3-400
+             * 6. Xác định xe cân vao hay cân ra theo gia tri door từ C3-400
              * 7. Kiểm tra xe có vi phạm cảm biến
              * 8. Bắt đầu lấy giá trị từ cân. Kiểm tra giá trị cân ổn định
              * 9. Bật đèn đỏ
@@ -151,8 +156,10 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             m221 = devices.FirstOrDefault(x => x.Code == "951.M221");
             barrierVao = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-VAO");
             barrierRa = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-RA");
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-1");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.M221.DGT-2");
+            trafficLightVao = devices.FirstOrDefault(x => x.Code == "951.M221.DGT-1");
+            trafficLightRa = devices.FirstOrDefault(x => x.Code == "951.M221.DGT-2");
+            sensor1 = devices.FirstOrDefault(x => x.Code == "951.M221.SENSOR-1");
+            sensor2 = devices.FirstOrDefault(x => x.Code == "951.M221.SENSOR-2");
         }
 
         public bool ConnectTram951Module()
@@ -309,6 +316,20 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     log.Info($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
                                 }
 
+                                /*
+                                 * 4. Kiểm tra xe có vi phạm cảm biến
+                                 */
+                                var isValidSensor = CheckValidSensor();
+                                if (isValidSensor)
+                                {
+
+                                }
+                                else
+                                {
+                                    // Vi phạm cảm biến
+                                    continue;
+                                }
+
                                 /* 4. Cập nhật đơn hàng
                                  * Luồng vào - ra
                                  * Xác định theo doorId của RFID: biết tag do anten nào nhận diện thì biết dc là xe ra hay vào
@@ -365,7 +386,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                         Console.WriteLine($"6. Bat den xanh vao");
                                         log.Info($"6. Bat den xanh vao");
 
-                                        OpenTrafficLight();
+                                        OpenTrafficLight("VAO");
                                     }
                                     else if (isLuongRa)
                                     {
@@ -381,7 +402,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                         Console.WriteLine($"6. Bat den xanh ra");
                                         log.Info($"6. Bat den xanh ra");
 
-                                        OpenTrafficLight();
+                                        OpenTrafficLight("RA");
                                     }
                                 }
                                 else
@@ -455,31 +476,53 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             }
         }
 
-        public void OpenTrafficLight()
+        public bool CheckValidSensor()
         {
-            PLC_Result = _trafficLight.Connect("192.168.1.61", 502);
+            int portNumberDeviceIn1 = (int)sensor1.PortNumberDeviceIn;
+            int portNumberDeviceIn2 = (int)sensor2.PortNumberDeviceIn;
+
+            PLC_Result = _sensor.Connect($"{m221.IpAddress}", (int)m221.PortNumber);
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine($"6.1. Connected to PLC ... {_trafficLight.GetLastErrorString()}");
-                log.Info($"6.1. Connected to PLC ... {_trafficLight.GetLastErrorString()}");
+                bool[] Ports = new bool[24];
+                PLC_Result = _barrier.CheckInputPorts(Ports);
 
-                PLC_Result = _trafficLight.ShuttleOutputPort((byte.Parse("5")));
                 if (PLC_Result == M221Result.SUCCESS)
                 {
-                    Console.WriteLine("6.2. Tat/bat Traffic Light: OK");
-                    log.Info("6.2. Tat/bat Traffic Light: OK");
+                    if (Ports[portNumberDeviceIn1] || Ports[portNumberDeviceIn2])
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("6.2. Tat/bat Traffic Light: ERROR");
-                    log.Info("6.2. Tat/bat Traffic Light: ERROR");
+                    return false;
                 }
+
+                return true;
             }
             else
             {
-                Console.WriteLine($"6.1. Connect failed to PLC {_trafficLight.GetLastErrorString()}");
-                log.Info($"6.1. Connect failed to PLC {_trafficLight.GetLastErrorString()}");
+                return false;
+            }
+        }
+
+        public void OpenTrafficLight(string luong)
+        {
+            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+
+            _trafficLight.Connect($"{ipAddress}");
+            var isSuccess = _trafficLight.TurnOnGreenOffRed();
+            if (isSuccess)
+            {
+                Console.WriteLine("6.1. Open TrafficLight: OK");
+                log.Info("5.2. Open TrafficLight: OK");
+            }
+            else
+            {
+                Console.WriteLine("6.1. Open TrafficLight: Failed");
+                log.Info("5.2. Open TrafficLight: Failed");
             }
         }
     }
