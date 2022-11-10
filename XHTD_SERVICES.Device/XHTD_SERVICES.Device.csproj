@@ -49,7 +49,6 @@
     <Compile Include="PLCM221\M221Result.cs" />
     <Compile Include="PLCM221\TrafficLight.cs" />
     <Compile Include="PLCM221\Barrier.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="PLCM221\M221.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPTrafficLight.cs" />
