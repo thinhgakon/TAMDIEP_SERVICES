@@ -15,6 +15,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using XHTD_SERVICES_SYNC_ORDER.Models.Values;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Helper.Models.Request;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -53,14 +54,31 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             List<OrderItemResponse> websaleOrders = GetWebsaleOrder();
 
-            if(websaleOrders == null || websaleOrders.Count == 0)
+            if (websaleOrders == null || websaleOrders.Count == 0)
             {
                 return;
             }
 
+            bool isChanged = false;
+
             foreach (var websaleOrder in websaleOrders)
             {
-                await SyncWebsaleOrderToDMS(websaleOrder);
+                bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
+
+                if (!isChanged) isChanged = isSynced;
+            }
+
+            if (isChanged)
+            {
+                NotificationRequest notification = new NotificationRequest
+                {
+                    FromService = "SYNC_ORDER",
+                    Content = "Đồng bộ đơn hàng thành công",
+                };
+
+                var messageContent = JsonConvert.SerializeObject(notification);
+
+                Notification.SendMsg(messageContent);
             }
         }
 
@@ -99,8 +117,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             return responseData.collection.OrderBy(x => x.id).ToList();
         }
 
-        public async Task SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
+        public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
         {
+            bool isSynced = false;
+
             var stateId = 0;
             switch (websaleOrder.status.ToUpper())
             {
@@ -133,11 +153,13 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (stateId != (int)OrderState.DA_HUY && stateId != (int)OrderState.DA_XUAT_HANG)
             {
-                await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+                isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
             }
             else if (stateId == (int)OrderState.DA_HUY){
-                await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
+                isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
             }
+
+            return isSynced;
         }
     }
 }

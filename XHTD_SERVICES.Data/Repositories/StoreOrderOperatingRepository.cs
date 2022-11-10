@@ -30,8 +30,10 @@ namespace XHTD_SERVICES.Data.Repositories
             return false;
         }
 
-        public async Task CreateAsync(OrderItemResponse websaleOrder)
+        public async Task<bool> CreateAsync(OrderItemResponse websaleOrder)
         {
+            bool isSynced = false;
+
             try {
                 string typeProduct = "";
                 string productNameUpper = websaleOrder.productName.ToUpper();
@@ -100,17 +102,25 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     Console.WriteLine($@"Inserted order {websaleOrder.id}");
                     log.Info($@"Inserted order {websaleOrder.id}");
+
+                    isSynced = true;
                 }
+
+                return isSynced;
             }
             catch(Exception ex)
             {
                 log.Error("CreateAsync OrderItemResponse Error: " + ex.Message); ;
                 Console.WriteLine("CreateAsync OrderItemResponse Error: " + ex.Message);
+
+                return isSynced;
             }
         }
 
-        public async Task CancelOrder(int? orderId)
+        public async Task<bool> CancelOrder(int? orderId)
         {
+            bool isSynced = false;
+
             try
             {
                 string calcelTime = DateTime.Now.ToString();
@@ -126,12 +136,18 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     Console.WriteLine($@"Cancel Order {orderId}");
                     log.Info($@"Cancel Order {orderId}");
+
+                    isSynced = true;
                 }
+
+                return isSynced;
             }
             catch (Exception ex)
             {
                 log.Error($@"Cancel Order {orderId} Error: " + ex.Message);
                 Console.WriteLine($@"Cancel Order {orderId} Error: " + ex.Message);
+
+                return isSynced;
             }
         }
 
