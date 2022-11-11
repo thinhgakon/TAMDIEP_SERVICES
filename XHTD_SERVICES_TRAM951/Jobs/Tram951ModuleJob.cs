@@ -59,7 +59,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         private string ScaleHubURL;
 
-        private bool ÍsJustReceivedScaleData = false;
+        private bool IsJustReceivedScaleData = false;
 
         private HubConnection Connection { get; set; }
 
@@ -121,7 +121,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         {
             while (true)
             {
-                if (ÍsJustReceivedScaleData)
+                if (IsJustReceivedScaleData)
                 {
                     Console.Write("Scale Values:");
 
@@ -142,7 +142,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                         Console.WriteLine("can chua on dinh");
                     }
 
-                    ÍsJustReceivedScaleData = false;
+                    IsJustReceivedScaleData = false;
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
             Connection.On<string>("SendOffersToUser", data =>
             {
-                ÍsJustReceivedScaleData = true;
+                IsJustReceivedScaleData = true;
                 int result = Int32.Parse(data);
 
                 //todo, adding updates tolist for example
