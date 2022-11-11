@@ -128,21 +128,30 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                     var scaleText = String.Join(",", scaleValues);
                     Console.WriteLine(scaleText);
 
-                    var tbc = Calculator.TrungBinhCong(scaleValues);
-                    var isOnDinh = Calculator.CheckBalanceValues(scaleValues, 1);
-
-                    Console.WriteLine("tbc: " + tbc);
-
-                    if (isOnDinh)
-                    {
-                        Console.WriteLine("can on dinh");
-                    }
-                    else
-                    {
-                        Console.WriteLine("can chua on dinh");
-                    }
+                    KiemTraCanOnDinh();
 
                     IsJustReceivedScaleData = false;
+                }
+            }
+        }
+
+        public void KiemTraCanOnDinh()
+        {
+            while (true) {
+                var tbc = Calculator.TrungBinhCong(scaleValues);
+                var isOnDinh = Calculator.CheckBalanceValues(scaleValues, 1);
+
+                Console.WriteLine("tbc: " + tbc);
+
+                if (isOnDinh)
+                {
+                    Console.WriteLine("can on dinh");
+                    Console.WriteLine("Gia tri can hien tai: " + scaleValues.LastOrDefault().ToString() );
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("can chua on dinh");
                 }
             }
         }
