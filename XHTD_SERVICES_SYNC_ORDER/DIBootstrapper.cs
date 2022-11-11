@@ -5,6 +5,7 @@ using XHTD_SERVICES_SYNC_ORDER.Schedules;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_SYNC_ORDER.Jobs;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_SYNC_ORDER
 {
@@ -17,6 +18,7 @@ namespace XHTD_SERVICES_SYNC_ORDER
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<VehicleRepository>().AsSelf();
+            builder.RegisterType<Notification>().AsSelf();
 
             RegisterScheduler(builder);
 

@@ -21,16 +21,19 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
         protected readonly VehicleRepository _vehicleRepository;
+        protected readonly Notification _notification;
 
         private static string strToken;
 
         public SyncOrderJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository
+            VehicleRepository vehicleRepository,
+            Notification notification
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -71,15 +74,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (isChanged)
             {
-                NotificationRequest notification = new NotificationRequest
-                {
-                    FromService = "SYNC_ORDER",
-                    Content = "Đồng bộ đơn hàng thành công",
-                };
-
-                var messageContent = JsonConvert.SerializeObject(notification);
-
-                Notification.SendMsg(messageContent);
+                _notification.SendNotification("SYNC_ORDER", null, null, null, null, "Đồng bộ đơn hàng thành công");
             }
         }
 

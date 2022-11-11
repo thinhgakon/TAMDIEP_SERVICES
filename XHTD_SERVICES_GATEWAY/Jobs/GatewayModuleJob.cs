@@ -12,6 +12,9 @@ using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Entities;
+using Newtonsoft.Json;
+using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Helper.Models.Request;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -30,6 +33,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         protected readonly Barrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
+
+        protected readonly Notification _notification;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -56,7 +61,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             Barrier barrier,
-            TCPTrafficLight trafficLight
+            TCPTrafficLight trafficLight,
+            Notification notification
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -65,6 +71,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -258,6 +265,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
 
+                                    _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định phương tiện");
+
                                     // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                     // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
 
@@ -281,6 +290,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
+
+                                    _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định đơn hàng hợp lệ");
 
                                     continue; 
                                 }

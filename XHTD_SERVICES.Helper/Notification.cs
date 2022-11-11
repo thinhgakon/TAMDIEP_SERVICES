@@ -13,9 +13,9 @@ using Newtonsoft.Json;
 
 namespace XHTD_SERVICES.Helper
 {
-    public static class Notification
+    public class Notification
     {
-        public static void SendMsg(string messageContent)
+        public void SendMsg(string messageContent)
         {
             IRestResponse response = HttpRequest.GetDMSToken();
 
@@ -28,6 +28,30 @@ namespace XHTD_SERVICES.Helper
             {
                 HttpRequest.SendDMSMsg(strToken, messageContent);
             }
+        }
+
+        public void SendNotification(
+            string fromService,
+            string fromDevice,
+            string vehicle,
+            string cardNo,
+            string deliveryCode,
+            string content
+            )
+        {
+            NotificationRequest notification = new NotificationRequest
+            {
+                FromService = fromService,
+                FromDevice = fromDevice,
+                Vehicle = vehicle,
+                CardNo = cardNo,
+                DeliveryCode = deliveryCode,
+                Content = content,
+            };
+
+            var messageContent = JsonConvert.SerializeObject(notification);
+
+            SendMsg(messageContent);
         }
     }
 }
