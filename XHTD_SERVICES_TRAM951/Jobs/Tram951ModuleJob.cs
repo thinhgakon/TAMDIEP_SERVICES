@@ -407,27 +407,30 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
                                 log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
-                                tblStoreOrderOperating orderCurrent = null;
+                                List<tblStoreOrderOperating> currentOrders = null;
                                 if (isLuongVao)
                                 {
-                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderEntraceGatewayByCardNoReceiving(cardNoCurrent);
+                                    currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGatewayByCardNoReceiving(cardNoCurrent);
                                 }
-                                else if (isLuongRa){
-                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderExitGatewayByCardNoReceiving(cardNoCurrent);
+                                else if (isLuongRa)
+                                {
+                                    currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGatewayByCardNoReceiving(cardNoCurrent);
                                 }
 
-                                if (orderCurrent == null) {
+                                if (currentOrders == null || currentOrders.Count == 0)
+                                {
 
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
 
-                                    continue; 
+                                    continue;
                                 }
-                                else
-                                {
-                                    Console.WriteLine($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
-                                    log.Info($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
-                                }
+
+                                var currentOrder = currentOrders.FirstOrDefault();
+                                var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
+
+                                Console.WriteLine($"CO. DeliveryCode = {deliveryCodes}");
+                                log.Info($"CO. DeliveryCode = {deliveryCodes}");
 
                                 // 3.5. Kiểm tra xe có vi phạm cảm biến
                                 var isValidSensor = CheckValidSensor();

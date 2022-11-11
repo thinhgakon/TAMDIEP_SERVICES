@@ -268,27 +268,29 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
                                 log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
-                                tblStoreOrderOperating orderCurrent = null;
+                                List <tblStoreOrderOperating> currentOrders = null;
                                 if (isLuongVao)
                                 {
-                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderEntraceGatewayByCardNoReceiving(cardNoCurrent);
+                                    currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGatewayByCardNoReceiving(cardNoCurrent);
                                 }
                                 else if (isLuongRa){
-                                    orderCurrent = _storeOrderOperatingRepository.GetCurrentOrderExitGatewayByCardNoReceiving(cardNoCurrent);
+                                    currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGatewayByCardNoReceiving(cardNoCurrent);
                                 }
 
-                                if (orderCurrent == null) {
+                                if (currentOrders == null || currentOrders.Count == 0) {
 
                                     Console.WriteLine($"KHONG => Ket thuc.");
                                     log.Info($"KHONG => Ket thuc.");
 
                                     continue; 
                                 }
-                                else
-                                {
-                                    Console.WriteLine($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
-                                    log.Info($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
-                                }
+
+                                var currentOrder = currentOrders.FirstOrDefault();
+                                var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
+
+                                Console.WriteLine($"CO. DeliveryCode = {deliveryCodes}");
+                                log.Info($"CO. DeliveryCode = {deliveryCodes}");
+                                
 
                                 // 3.5. Cập nhật đơn hàng
                                 Console.Write($"3. Tien hanh update don hang: ");
@@ -334,7 +336,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"5. Mo barrier vao");
                                         log.Info($"5. Mo barrier vao");
 
-                                        OpenBarrier("VAO", "BV.M221.BRE-1", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
+                                        OpenBarrier("VAO", "BV.M221.BRE-1", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
                                         Console.WriteLine($"6. Bat den xanh vao");
@@ -350,7 +352,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         Console.WriteLine($"5. Mo barrier ra");
                                         log.Info($"5. Mo barrier ra");
 
-                                        OpenBarrier("RA", "BV.M221.BRE-2", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
+                                        OpenBarrier("RA", "BV.M221.BRE-2", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
                                         Console.WriteLine($"6. Bat den xanh ra");

@@ -151,21 +151,21 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public tblStoreOrderOperating GetCurrentOrderEntraceGatewayByCardNoReceiving(string cardNo)
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGatewayByCardNoReceiving(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_VAO_CONG);
-                return order;
+                var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
+                return orders;
             }
         }
 
-        public tblStoreOrderOperating GetCurrentOrderExitGatewayByCardNoReceiving(string cardNo)
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGatewayByCardNoReceiving(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var order = dbContext.tblStoreOrderOperatings.OrderByDescending(x => x.Id).FirstOrDefault(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA);
-                return order;
+                var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA).ToListAsync();
+                return orders;
             }
         }
 
