@@ -105,11 +105,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
              * * 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
              * * 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
              * * 3.5. Cập nhật đơn hàng: Step
-             * * 3.6. Cập nhật index (số thứ tự) các đơn hàng
-             * * 3.7. Bật đèn xanh giao thông, mở barrier
-             * * 3.8. Ghi log thiết bị
-             * * 3.9. Bắn tín hiệu thông báo
-             * * 3.10. Hiển thị led
+             * * 3.6. Bật đèn xanh giao thông, mở barrier
+             * * 3.7. Ghi log thiết bị
+             * * 3.8. Bắn tín hiệu thông báo
+             * * 3.9. Hiển thị led
              */
 
             // 1. Connect Device
@@ -301,14 +300,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
 
-                                // 3.6. Cập nhật index (số thứ tự) các đơn hàng
-
                                 if (isUpdatedOrder)
                                 {
                                     /*
-                                     * 3.7. Bật đèn xanh giao thông, mở barrier
-                                     * 3.8. Ghi log thiết bị
-                                     * 3.9. Bắn tín hiệu thông báo
+                                     * 3.6. Bật đèn xanh giao thông, mở barrier
+                                     * 3.7. Ghi log thiết bị
+                                     * 3.8. Bắn tín hiệu thông báo
                                      */
 
                                     WriteLineLog($"4. Update don hang thanh cong.");
