@@ -594,31 +594,13 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             int portNumberDeviceIn1 = (int)sensor1.PortNumberDeviceIn;
             int portNumberDeviceIn2 = (int)sensor2.PortNumberDeviceIn;
 
-            PLC_Result = _sensor.Connect($"{m221.IpAddress}", (int)m221.PortNumber);
-
-            if (PLC_Result == M221Result.SUCCESS)
+            List<int> portNumberDeviceIns = new List<int>
             {
-                bool[] Ports = new bool[24];
-                PLC_Result = _barrier.CheckInputPorts(Ports);
+                portNumberDeviceIn1,
+                portNumberDeviceIn2
+            };
 
-                if (PLC_Result == M221Result.SUCCESS)
-                {
-                    if (Ports[portNumberDeviceIn1] || Ports[portNumberDeviceIn2])
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return _sensor.CheckValid(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIns);
         }
 
         public void OpenTrafficLight(string luong)
