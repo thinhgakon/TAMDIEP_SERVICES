@@ -407,40 +407,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 ActionDate = DateTime.Now,
             };
 
-            PLC_Result = _barrier.Connect($"{m221.IpAddress}", (int)m221.PortNumber);
-
-            if (PLC_Result == M221Result.SUCCESS)
+            var isOpenSuccess = _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+            if (isOpenSuccess)
             {
-                Console.WriteLine($"5.1. Connected to PLC ... {_barrier.GetLastErrorString()}");
-                log.Info($"5.1. Connected to PLC ... {_barrier.GetLastErrorString()}");
-
-                bool[] Ports = new bool[24];
-                PLC_Result = _barrier.CheckInputPorts(Ports);
-
-                if (PLC_Result == M221Result.SUCCESS)
-                {
-                    if (!Ports[portNumberDeviceIn])
-                    {
-                        PLC_Result = _barrier.ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
-                        if (PLC_Result == M221Result.SUCCESS)
-                        {
-                            await _categoriesDevicesLogRepository.CreateAsync(newLog);
-
-                            Console.WriteLine("5.2. Open barrier: OK");
-                            log.Info("5.2. Open barrier: OK");
-                        }
-                        else
-                        {
-                            Console.WriteLine("5.2. Open barrier: ERROR");
-                            log.Info("5.2. Open barrier: ERROR");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine($"5.1. Connect failed to PLC ... {_barrier.GetLastErrorString()}");
-                log.Info($"5.1. Connect failed to PLC ... {_barrier.GetLastErrorString()}");
+                await _categoriesDevicesLogRepository.CreateAsync(newLog);
             }
         }
 
