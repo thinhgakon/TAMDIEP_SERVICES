@@ -35,8 +35,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private static bool DeviceConnected = false;
 
-        private M221Result PLC_Result;
-
         private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
