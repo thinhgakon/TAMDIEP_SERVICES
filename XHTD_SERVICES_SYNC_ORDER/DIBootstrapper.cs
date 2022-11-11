@@ -1,12 +1,6 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XHTD_SERVICES_SYNC_ORDER.Schedules;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_SYNC_ORDER.Jobs;
