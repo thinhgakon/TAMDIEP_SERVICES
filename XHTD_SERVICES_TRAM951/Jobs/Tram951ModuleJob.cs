@@ -453,13 +453,22 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 var currentScaleValue = scaleValues.LastOrDefault();
 
                                 // 3.8. Bật đèn đỏ
-
                                 // 3.9. Đóng barrier
+                                if (isLuongVao)
+                                {
+                                    TurnOnRedTrafficLight("VAO");
+                                    CloseBarrier("VAO");
+                                }
+                                else if (isLuongRa)
+                                {
+                                    TurnOnRedTrafficLight("RA");
+                                    CloseBarrier("RA");
+                                }
 
                                 /*
                                  * 3.10. Xử lý đơn hàng
                                  * * Cân vào: 
-                                 * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
+                                 * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý, 
                                  * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
                                  * * * vào khối lượng không tải của phương tiện;
                                  * * Cân ra: 
@@ -468,8 +477,17 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                  */
 
                                 // 3.11. Bật đèn xanh
-
                                 // 3.12. Mở barrier để xe rời bàn cân
+                                if (isLuongVao)
+                                {
+                                    TurnOnGreenTrafficLight("VAO");
+                                    OpenBarrier("VAO");
+                                }
+                                else if (isLuongRa)
+                                {
+                                    TurnOnGreenTrafficLight("RA");
+                                    OpenBarrier("RA");
+                                }
 
                                 /*
                                  * 3.13. Xử lý sau cân
@@ -518,34 +536,10 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     if (isLuongVao)
                                     {
                                         tmpCardNoLst_In.Add(newCardNoLog);
-
-                                        // Mở barrier
-                                        Console.WriteLine($"5. Mo barrier vao");
-                                        log.Info($"5. Mo barrier vao");
-
-                                        OpenBarrier("VAO", "BV.M221.BRE-1", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
-
-                                        // Bật đèn xanh giao thông
-                                        Console.WriteLine($"6. Bat den xanh vao");
-                                        log.Info($"6. Bat den xanh vao");
-
-                                        OpenTrafficLight("VAO");
                                     }
                                     else if (isLuongRa)
                                     {
                                         tmpCardNoLst_Out.Add(newCardNoLog);
-
-                                        // Mở barrier
-                                        Console.WriteLine($"5. Mo barrier ra");
-                                        log.Info($"5. Mo barrier ra");
-
-                                        OpenBarrier("RA", "BV.M221.BRE-2", orderCurrent.Vehicle, orderCurrent.DeliveryCode);
-
-                                        // Bật đèn xanh giao thông
-                                        Console.WriteLine($"6. Bat den xanh ra");
-                                        log.Info($"6. Bat den xanh ra");
-
-                                        OpenTrafficLight("RA");
                                     }
                                 }
                                 else
@@ -568,25 +562,38 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             }
         }
 
-        public async void OpenBarrier(string luong, string code, string vehicle, string deliveryCode)
+        public void OpenBarrier(string luong)
         {
-            string luongText = luong == "VAO" ? "vào" : "ra";
             int portNumberDeviceIn = luong == "VAO" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
             int portNumberDeviceOut = luong == "VAO" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-            var newLog = new CategoriesDevicesLogItemResponse
-            {
-                Code = code,
-                ActionType = 1,
-                ActionInfo = $"Mở barrier cho xe {vehicle} {luongText}, theo đơn hàng {deliveryCode}",
-                ActionDate = DateTime.Now,
-            };
+            _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+        }
 
-            var isOpenSuccess = _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
-            if (isOpenSuccess)
-            {
-                await _categoriesDevicesLogRepository.CreateAsync(newLog);
-            }
+        public void CloseBarrier(string luong)
+        {
+            int portNumberDeviceIn = luong == "VAO" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "VAO" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+
+            _barrier.TurnOff(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+        }
+
+        public void TurnOnGreenTrafficLight(string luong)
+        {
+            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+
+            _trafficLight.Connect($"{ipAddress}");
+
+            _trafficLight.TurnOnGreenOffRed();
+        }
+
+        public void TurnOnRedTrafficLight(string luong)
+        {
+            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+
+            _trafficLight.Connect($"{ipAddress}");
+
+            _trafficLight.TurnOffGreenOnRed();
         }
 
         public bool CheckValidSensor()
@@ -601,24 +608,6 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             };
 
             return _sensor.CheckValid(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIns);
-        }
-
-        public void OpenTrafficLight(string luong)
-        {
-            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
-
-            _trafficLight.Connect($"{ipAddress}");
-            var isSuccess = _trafficLight.TurnOnGreenOffRed();
-            if (isSuccess)
-            {
-                Console.WriteLine("6.1. Open TrafficLight: OK");
-                log.Info("5.2. Open TrafficLight: OK");
-            }
-            else
-            {
-                Console.WriteLine("6.1. Open TrafficLight: Failed");
-                log.Info("5.2. Open TrafficLight: Failed");
-            }
         }
     }
 }
