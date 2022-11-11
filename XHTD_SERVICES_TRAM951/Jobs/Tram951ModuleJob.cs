@@ -222,31 +222,35 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         public void AuthenticateTram951Module()
         {
             /*
-             * Áp dụng tại trạm cân, dùng chung cho cả cân ra và cân vào ở mỗi bàn cân
+             * == Dùng chung cho cả cân ra và cân vào ở mỗi bàn cân == 
              * 1. Connect Device C3-400
              * 2. Đọc dữ liệu từ thiết bị C3-400
              * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent. 
-             * Khi đọc được tag thì nghĩa là xe đã lên bàn cân
-             * 4. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * 5. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 6. Xác định xe cân vao hay cân ra theo gia tri door từ C3-400
-             * 7. Kiểm tra xe có vi phạm cảm biến
-             * 8. Bắt đầu lấy giá trị từ cân. Kiểm tra giá trị cân ổn định
-             * 9. Bật đèn đỏ
-             * 10. Đóng barrier
-             * 11. Cân vào: 
-             *     +  Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
-             *     cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
-             *     vào khối lượng không tải của phương tiện;
-             *     Cân ra: 
-             *     + Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
-             *     cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
-             * 10. Bật đèn xanh
-             * 11. Mở barrier để xe rời bàn cân
-             * 12. Cân vào
-             *     + Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
-             *     Cân ra:
-             *     + Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
+             * *  Khi đọc được cardNoCurrent thì nghĩa là xe đã lên bàn cân
+             * * * 3.1. Xác định xe cân vào hay cân ra theo gia tri door từ C3-400
+             * * * 3.2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
+             * * * 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
+             * * * 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+             * * * 3.5. Kiểm tra xe có vi phạm cảm biến
+             * * * 3.6. Kiểm tra trạng thái cân ổn định
+             * * * 3.7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
+             * * * 3.8. Bật đèn đỏ
+             * * * 3.9. Đóng barrier
+             * * * 3.10. Xử lý đơn hàng
+             * * * * Cân vào: 
+             * * * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
+             * * * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
+             * * * * * vào khối lượng không tải của phương tiện;
+             * * * * Cân ra: 
+             * * * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
+             * * * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
+             * * * 3.11. Bật đèn xanh
+             * * * 3.12. Mở barrier để xe rời bàn cân
+             * * * 3.13. Xử lý sau cân
+             * * * * Cân vào:
+             * * * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+             * * * * Cân ra:
+             * * * * * Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
              */
 
             // 1. Connect Device
@@ -343,15 +347,9 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             // Trường hợp bắt được tag RFID
                             if (tmp[2] != "0" && tmp[2] != "") {
 
-                                // 1. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
+                                // 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
-
-                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
-
-                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
                                 Console.WriteLine("----------------------------");
                                 Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
@@ -359,8 +357,16 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 log.Info("----------------------------");
                                 log.Info($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
-                                // Luồng vào
-                                if(isLuongVao) {
+                                // 3.1.Xác định xe cân vào hay cân ra theo gia tri door từ C3 - 400
+                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
+
+                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+
+
+                                // 3.2.Loại bỏ các cardNoCurrent đã, đang xử lý(đã check trước đó)
+                                if (isLuongVao) {
                                     if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
                                     if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
@@ -371,7 +377,6 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                         continue;
                                     }
                                 }
-                                // Luồng ra
                                 else if (isLuongRa)
                                 {
                                     if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
@@ -385,7 +390,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     }
                                 }
 
-                                // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
+                                // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                 Console.Write($"1. Kiem tra tag {cardNoCurrent} hop le: ");
                                 log.Info($"1. Kiem tra tag {cardNoCurrent} hop le: ");
 
@@ -407,7 +412,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     continue;
                                 }
 
-                                // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                 Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
                                 log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
@@ -433,9 +438,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     log.Info($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
                                 }
 
-                                /*
-                                 * 4. Kiểm tra xe có vi phạm cảm biến
-                                 */
+                                // 3.5. Kiểm tra xe có vi phạm cảm biến
                                 var isValidSensor = CheckValidSensor();
                                 if (!isValidSensor)
                                 {
@@ -443,15 +446,35 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     continue;
                                 }
 
+                                // 3.6.Kiểm tra trạng thái cân ổn định
+
+                                // 3.7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
+
+                                // 3.8. Bật đèn đỏ
+
+                                // 3.9. Đóng barrier
+
                                 /*
-                                 * 5. Kiểm tra cân ổn định
+                                 * 3.10. Xử lý đơn hàng
+                                 * * Cân vào: 
+                                 * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
+                                 * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
+                                 * * * vào khối lượng không tải của phương tiện;
+                                 * * Cân ra: 
+                                 * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
+                                 * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
                                  */
 
+                                // 3.11. Bật đèn xanh
 
-                                /* 4. Cập nhật đơn hàng
-                                 * Luồng vào - ra
-                                 * Xác định theo doorId của RFID: biết tag do anten nào nhận diện thì biết dc là xe ra hay vào
-                                 * Hoặc theo Step của đơn hàng
+                                // 3.12. Mở barrier để xe rời bàn cân
+
+                                /*
+                                 * 3.13. Xử lý sau cân
+                                 * * Cân vào:
+                                 * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+                                 * * Cân ra:
+                                 * * * Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
                                  */
 
                                 Console.Write($"3. Tien hanh update don hang: ");
