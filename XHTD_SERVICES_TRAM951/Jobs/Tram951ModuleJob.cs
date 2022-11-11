@@ -91,11 +91,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
             await Task.Run(async () =>
             {
-                Console.WriteLine("start tram951 service");
-                Console.WriteLine("----------------------------");
-
-                log.Info("start tram951 service");
-                log.Info("----------------------------");
+                WriteLineLog("start tram951 service");
+                WriteLineLog("----------------------------");
 
                 // Get devices info
                 await LoadDevicesInfo();
@@ -276,8 +273,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool ConnectTram951Module()
         {
-            Console.Write("start connect to C3-400 ... ");
-            log.Info("start connect to C3-400 ... ");
+            WriteLog("start connect to C3-400 ... ");
 
             try
             {
@@ -288,15 +284,13 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        Console.WriteLine("connected");
-                        log.Info("connected");
+                        WriteLineLog("connected");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        Console.WriteLine("connected failed");
-                        log.Info("connected failed");
+                        WriteLineLog("connected failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -306,8 +300,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($@"ConnectTram951Module : {ex.Message}");
-                log.Error($@"ConnectTram951Module : {ex.StackTrace}");
+                WriteLineLog($@"ConnectTram951Module : {ex.Message}");
 
                 return false;
             }
@@ -315,8 +308,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public async void ReadDataFromC3400()
         {
-            Console.WriteLine("start read data from C3-400 ...");
-            log.Info("start read data from C3-400 ...");
+            WriteLineLog("start read data from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -342,11 +334,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
 
-                                Console.WriteLine("----------------------------");
-                                Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
-
-                                log.Info("----------------------------");
-                                log.Info($"Tag {cardNoCurrent} door {doorCurrent} ... ");
+                                WriteLineLog("----------------------------");
+                                WriteLineLog($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 // 3.1.Xác định xe cân vào hay cân ra theo gia tri door từ C3 - 400
                                 var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
@@ -362,8 +351,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                     if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
@@ -374,28 +362,24 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                     if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
                                 }
 
                                 // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                Console.Write($"1. Kiem tra tag {cardNoCurrent} hop le: ");
-                                log.Info($"1. Kiem tra tag {cardNoCurrent} hop le: ");
+                                WriteLog($"1. Kiem tra tag {cardNoCurrent} hop le: ");
 
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
                                 if (isValid)
                                 {
-                                    Console.WriteLine($"CO");
-                                    log.Info($"CO");
+                                    WriteLineLog($"CO");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"KHONG => Ket thuc.");
-                                    log.Info($"KHONG => Ket thuc.");
+                                    WriteLineLog($"KHONG => Ket thuc.");
 
                                     // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                     // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
@@ -404,8 +388,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 }
 
                                 // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
-                                log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
+                                WriteLog($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
                                 List<tblStoreOrderOperating> currentOrders = null;
                                 if (isLuongVao)
@@ -420,8 +403,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 if (currentOrders == null || currentOrders.Count == 0)
                                 {
 
-                                    Console.WriteLine($"KHONG => Ket thuc.");
-                                    log.Info($"KHONG => Ket thuc.");
+                                    WriteLineLog($"KHONG => Ket thuc.");
 
                                     continue;
                                 }
@@ -429,8 +411,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 var currentOrder = currentOrders.FirstOrDefault();
                                 var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
-                                Console.WriteLine($"CO. DeliveryCode = {deliveryCodes}");
-                                log.Info($"CO. DeliveryCode = {deliveryCodes}");
+                                WriteLineLog($"CO. DeliveryCode = {deliveryCodes}");
 
                                 // 3.5. Kiểm tra xe có vi phạm cảm biến
                                 var isValidSensor = CheckValidSensor();
@@ -491,24 +472,21 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                  * * * Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
                                  */
 
-                                Console.Write($"3. Tien hanh update don hang: ");
-                                log.Info($"3. Tien hanh update don hang: ");
+                                WriteLog($"3. Tien hanh update don hang: ");
 
                                 var isUpdatedOrder = false;
 
                                 // Luồng vào
                                 if (isLuongVao)
                                 {
-                                    Console.WriteLine($"vao cong");
-                                    log.Info($"vao cong");
+                                    WriteLineLog($"vao cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 // Luồng ra
                                 else if (isLuongRa)
                                 {
-                                    Console.WriteLine($"ra cong");
-                                    log.Info($"ra cong");
+                                    WriteLineLog($"ra cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
@@ -522,8 +500,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                      * Ghi log thiết bị
                                      */
 
-                                    Console.WriteLine($"4. Update don hang thanh cong.");
-                                    log.Info($"4. Update don hang thanh cong.");
+                                    WriteLineLog($"4. Update don hang thanh cong.");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -538,8 +515,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"4. Update don hang KHONG thanh cong => Ket thuc.");
-                                    log.Info($"4. Update don hang KHONG thanh cong => Ket thuc.");
+                                    WriteLineLog($"4. Update don hang KHONG thanh cong => Ket thuc.");
                                 }
                             }
                         }
@@ -602,6 +578,18 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             };
 
             return _sensor.CheckValid(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIns);
+        }
+
+        public void WriteLineLog(string message)
+        {
+            Console.WriteLine($"{message}");
+            log.Info($"{message}");
+        }
+
+        public void WriteLog(string message)
+        {
+            Console.Write($"{message}");
+            log.Info($"{message}");
         }
     }
 }

@@ -51,8 +51,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            Console.WriteLine("start process SyncOrderJob");
-            log.Info("start process SyncOrderJob");
+            WriteLineLog("start process SyncOrderJob");
 
             GetToken();
 
@@ -91,8 +90,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine("getToken error: " + ex.Message);
-                log.Error("getToken error: " + ex.Message);
+                WriteLineLog("getToken error: " + ex.Message);
             }
         }
 
@@ -103,8 +101,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (response.StatusDescription.Equals("Unauthorized"))
             {
-                Console.WriteLine("Unauthorized GetWebsaleOrder");
-                log.Error("Unauthorized GetWebsaleOrder");
+                WriteLineLog("Unauthorized GetWebsaleOrder");
+
                 return null;
             }
 
@@ -167,6 +165,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
 
             return isSynced;
+        }
+
+        public void WriteLineLog(string message)
+        {
+            Console.WriteLine($"{message}");
+            log.Info($"{message}");
         }
     }
 }

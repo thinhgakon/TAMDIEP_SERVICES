@@ -83,11 +83,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                Console.WriteLine("start gateway service");
-                Console.WriteLine("----------------------------");
-
-                log.Info("start gateway service");
-                log.Info("----------------------------");
+                WriteLineLog("start gateway service");
+                WriteLineLog("----------------------------");
 
                 // Get devices info
                 await LoadDevicesInfo();
@@ -145,8 +142,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModule()
         {
-            Console.Write("start connect to C3-400 ... ");
-            log.Info("start connect to C3-400 ... ");
+            WriteLog("start connect to C3-400 ... ");
 
             try
             {
@@ -157,15 +153,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        Console.WriteLine("connected");
-                        log.Info("connected");
+                        WriteLineLog("connected");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        Console.WriteLine("connected failed");
-                        log.Info("connected failed");
+                        WriteLineLog("connected failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -175,8 +169,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($@"ConnectGatewayModule : {ex.Message}");
-                log.Error($@"ConnectGatewayModule : {ex.StackTrace}");
+                WriteLineLog($@"ConnectGatewayModule : {ex.Message}");
 
                 return false;
             }
@@ -184,8 +177,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            Console.WriteLine("start read data from C3-400 ...");
-            log.Info("start read data from C3-400 ...");
+            WriteLineLog("start read data from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -211,11 +203,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
 
-                                Console.WriteLine("----------------------------");
-                                Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
-
-                                log.Info("----------------------------");
-                                log.Info($"Tag {cardNoCurrent} door {doorCurrent} ... ");
+                                WriteLineLog("----------------------------");
+                                WriteLineLog($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 // 3.1.Xác định xe vào hay ra cổng theo gia tri door từ C3-400
                                 var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
@@ -230,8 +219,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
@@ -242,28 +230,24 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        Console.WriteLine($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-                                        log.Info($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
                                 }
 
                                 // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                Console.Write($"1. Kiem tra tag {cardNoCurrent} hop le: ");
-                                log.Info($"1. Kiem tra tag {cardNoCurrent} hop le: ");
+                                WriteLog($"1. Kiem tra tag {cardNoCurrent} hop le: ");
 
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
                                 if (isValid)
                                 {
-                                    Console.WriteLine($"CO");
-                                    log.Info($"CO");
+                                    WriteLineLog($"CO");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"KHONG => Ket thuc.");
-                                    log.Info($"KHONG => Ket thuc.");
+                                    WriteLineLog($"KHONG => Ket thuc.");
 
                                     _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định phương tiện");
 
@@ -274,8 +258,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 }
 
                                 // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
-                                log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
+                                WriteLog($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
                                 List <tblStoreOrderOperating> currentOrders = null;
                                 if (isLuongVao)
@@ -288,8 +271,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 if (currentOrders == null || currentOrders.Count == 0) {
 
-                                    Console.WriteLine($"KHONG => Ket thuc.");
-                                    log.Info($"KHONG => Ket thuc.");
+                                    WriteLineLog($"KHONG => Ket thuc.");
 
                                     _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định đơn hàng hợp lệ");
 
@@ -299,27 +281,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var currentOrder = currentOrders.FirstOrDefault();
                                 var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
-                                Console.WriteLine($"CO. DeliveryCode = {deliveryCodes}");
-                                log.Info($"CO. DeliveryCode = {deliveryCodes}");
-                                
+                                WriteLineLog($"CO. DeliveryCode = {deliveryCodes}");
 
                                 // 3.5. Cập nhật đơn hàng
-                                Console.Write($"3. Tien hanh update don hang: ");
-                                log.Info($"3. Tien hanh update don hang: ");
+                                WriteLog($"3. Tien hanh update don hang: ");
 
                                 var isUpdatedOrder = false;
 
                                 if (isLuongVao)
                                 {
-                                    Console.WriteLine($"vao cong");
-                                    log.Info($"vao cong");
+                                    WriteLineLog($"vao cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 else if (isLuongRa)
                                 {
-                                    Console.WriteLine($"ra cong");
-                                    log.Info($"ra cong");
+                                    WriteLineLog($"ra cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
@@ -334,8 +311,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                      * 3.9. Bắn tín hiệu thông báo
                                      */
 
-                                    Console.WriteLine($"4. Update don hang thanh cong.");
-                                    log.Info($"4. Update don hang thanh cong.");
+                                    WriteLineLog($"4. Update don hang thanh cong.");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -344,14 +320,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
                                         // Mở barrier
-                                        Console.WriteLine($"5. Mo barrier vao");
-                                        log.Info($"5. Mo barrier vao");
+                                        WriteLineLog($"5. Mo barrier vao");
 
                                         OpenBarrier("VAO", "BV.M221.BRE-1", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
-                                        Console.WriteLine($"6. Bat den xanh vao");
-                                        log.Info($"6. Bat den xanh vao");
+                                        WriteLineLog($"6. Bat den xanh vao");
 
                                         OpenTrafficLight("VAO");
                                     }
@@ -360,22 +334,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_Out.Add(newCardNoLog);
 
                                         // Mở barrier
-                                        Console.WriteLine($"5. Mo barrier ra");
-                                        log.Info($"5. Mo barrier ra");
+                                        WriteLineLog($"5. Mo barrier ra");
 
                                         OpenBarrier("RA", "BV.M221.BRE-2", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
-                                        Console.WriteLine($"6. Bat den xanh ra");
-                                        log.Info($"6. Bat den xanh ra");
+                                        WriteLineLog($"6. Bat den xanh ra");
 
                                         OpenTrafficLight("RA");
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"4. Update don hang KHONG thanh cong => Ket thuc.");
-                                    log.Info($"4. Update don hang KHONG thanh cong => Ket thuc.");
+                                    WriteLineLog($"4. Update don hang KHONG thanh cong => Ket thuc.");
                                 }
                             }
                         }
@@ -421,14 +392,24 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var isSuccess = _trafficLight.TurnOnGreenOffRed();
             if (isSuccess)
             {
-                Console.WriteLine("6.1. Open TrafficLight: OK");
-                log.Info("5.2. Open TrafficLight: OK");
+                WriteLineLog("6.1. Open TrafficLight: OK");
             }
             else
             {
-                Console.WriteLine("6.1. Open TrafficLight: Failed");
-                log.Info("5.2. Open TrafficLight: Failed");
+                WriteLineLog("6.1. Open TrafficLight: Failed");
             }
+        }
+
+        public void WriteLineLog(string message)
+        {
+            Console.WriteLine($"{message}");
+            log.Info($"{message}");
+        }
+
+        public void WriteLog(string message)
+        {
+            Console.Write($"{message}");
+            log.Info($"{message}");
         }
     }
 }
