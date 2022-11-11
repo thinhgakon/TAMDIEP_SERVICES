@@ -6,18 +6,11 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
 using XHTD_SERVICES_GATEWAY.Models.Response;
 using XHTD_SERVICES.Data.Models.Response;
-using XHTD_SERVICES_GATEWAY.Models.Request;
-using Newtonsoft.Json;
-using System.Configuration;
-using System.Collections.Specialized;
-using XHTD_SERVICES_GATEWAY.Models.Values;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
-using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs

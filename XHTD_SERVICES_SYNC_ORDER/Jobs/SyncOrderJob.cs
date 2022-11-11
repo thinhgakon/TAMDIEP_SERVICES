@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Quartz;
 using log4net;
@@ -9,10 +8,7 @@ using XHTD_SERVICES.Data.Repositories;
 using RestSharp;
 using XHTD_SERVICES_SYNC_ORDER.Models.Response;
 using XHTD_SERVICES.Data.Models.Response;
-using XHTD_SERVICES_SYNC_ORDER.Models.Request;
 using Newtonsoft.Json;
-using System.Configuration;
-using System.Collections.Specialized;
 using XHTD_SERVICES_SYNC_ORDER.Models.Values;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
