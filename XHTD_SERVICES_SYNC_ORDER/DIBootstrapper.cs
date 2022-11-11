@@ -22,6 +22,7 @@ namespace XHTD_SERVICES_SYNC_ORDER
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
+            builder.RegisterType<VehicleRepository>().AsSelf();
 
             RegisterScheduler(builder);
 

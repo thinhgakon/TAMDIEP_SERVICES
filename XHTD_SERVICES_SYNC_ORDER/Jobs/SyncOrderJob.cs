@@ -20,12 +20,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+        protected readonly VehicleRepository _vehicleRepository;
 
         private static string strToken;
 
-        public SyncOrderJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public SyncOrderJob(
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
+            VehicleRepository vehicleRepository
+            )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -150,6 +155,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             if (stateId != (int)OrderState.DA_HUY && stateId != (int)OrderState.DA_XUAT_HANG)
             {
                 isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+
+                /*
+                 * Đơn hàng mới
+                 * Kiểm tra biển số xe trong đơn hàng đã có trong bảng phương tiện (tblVehicle), 
+                 * nếu chưa có thì thêm biển số xe vào bảng phương tiện
+                 */ 
+                if (isSynced)
+                {
+                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                    await _vehicleRepository.CreateAsync(vehicleCode);
+                }
             }
             else if (stateId == (int)OrderState.DA_HUY){
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
