@@ -101,19 +101,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         public void AuthenticateGatewayModule()
         {
             /*
-             * 1. Connect Device
-             * 2. Đọc dữ liệu từ thiết bị
-             * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
-             * 4. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
-             * (do 1 xe có thể có nhiều tag ngoài hệ thống)
-             * 5. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 6. Xác định xe đang vào hay ra cổng qua field Step của đơn hàng (<6 => vào cổng)
-             * 7. Cập nhật đơn hàng: Step
-             * 8. Cập nhật index (số thứ tự) các đơn hàng
-             * 9. Ghi log
-             * 10. Bắn tín hiệu thông báo
-             * 11. Bật đèn xanh giao thông, mở barrier
-             * 12. Hiển thị led
+             * == Dùng chung cho cả cổng ra và cổng vào == 
+             * 1. Connect Device C3-400
+             * 2. Đọc dữ liệu từ thiết bị C3-400
+             * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent. 
+             * * 3.1. Xác định xe vào hay ra cổng theo gia tri door từ C3-400
+             * * 3.2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
+             * * 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
+             * * 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+             * * 3.5. Cập nhật đơn hàng: Step
+             * * 3.6. Cập nhật index (số thứ tự) các đơn hàng
+             * * 3.7. Bật đèn xanh giao thông, mở barrier
+             * * 3.8. Ghi log thiết bị
+             * * 3.9. Bắn tín hiệu thông báo
+             * * 3.10. Hiển thị led
              */
 
             // 1. Connect Device
@@ -208,15 +209,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             // Trường hợp bắt được tag RFID
                             if (tmp[2] != "0" && tmp[2] != "") {
 
-                                // 1. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
+                                // 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
-
-                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
-
-                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
                                 Console.WriteLine("----------------------------");
                                 Console.WriteLine($"Tag {cardNoCurrent} door {doorCurrent} ... ");
@@ -224,8 +219,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 log.Info("----------------------------");
                                 log.Info($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
-                                // Luồng vào
-                                if(isLuongVao) {
+                                // 3.1.Xác định xe vào hay ra cổng theo gia tri door từ C3-400
+                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
+
+                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+
+                                // 3.2.Loại bỏ các cardNoCurrent đã, đang xử lý(đã check trước đó)
+                                if (isLuongVao) {
                                     if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
                                     if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
@@ -236,7 +238,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         continue;
                                     }
                                 }
-                                // Luồng ra
                                 else if (isLuongRa)
                                 {
                                     if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
@@ -250,7 +251,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                 }
 
-                                // 2. Kiểm tra cardNoCurrent có tồn tại trong hệ thống RFID hay ko 
+                                // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                 Console.Write($"1. Kiem tra tag {cardNoCurrent} hop le: ");
                                 log.Info($"1. Kiem tra tag {cardNoCurrent} hop le: ");
 
@@ -272,7 +273,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     continue;
                                 }
 
-                                // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                 Console.Write($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
                                 log.Info($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
@@ -298,18 +299,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     log.Info($"CO. DeliveryCode = {orderCurrent.DeliveryCode}");
                                 }
 
-                                /* 4. Cập nhật đơn hàng
-                                 * Luồng vào - ra
-                                 * Xác định theo doorId của RFID: biết tag do anten nào nhận diện thì biết dc là xe ra hay vào
-                                 * Hoặc theo Step của đơn hàng
-                                 */
-
+                                // 3.5. Cập nhật đơn hàng
                                 Console.Write($"3. Tien hanh update don hang: ");
                                 log.Info($"3. Tien hanh update don hang: ");
 
                                 var isUpdatedOrder = false;
 
-                                // Luồng vào
                                 if (isLuongVao)
                                 {
                                     Console.WriteLine($"vao cong");
@@ -317,7 +312,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
-                                // Luồng ra
                                 else if (isLuongRa)
                                 {
                                     Console.WriteLine($"ra cong");
@@ -326,13 +320,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
 
+                                // 3.6. Cập nhật index (số thứ tự) các đơn hàng
+
                                 if (isUpdatedOrder)
                                 {
                                     /*
-                                     * Tắt đèn đỏ
-                                     * Bật đèn xanh
-                                     * Mở barrier
-                                     * Ghi log thiết bị
+                                     * 3.7. Bật đèn xanh giao thông, mở barrier
+                                     * 3.8. Ghi log thiết bị
+                                     * 3.9. Bắn tín hiệu thông báo
                                      */
 
                                     Console.WriteLine($"4. Update don hang thanh cong.");
