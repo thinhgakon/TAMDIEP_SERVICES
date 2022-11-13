@@ -36,6 +36,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly Notification _notification;
 
+        protected readonly GatewayLogger _gatewayLogger;
+
         private IntPtr h21 = IntPtr.Zero;
 
         private static bool DeviceConnected = false;
@@ -62,7 +64,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             Barrier barrier,
             TCPTrafficLight trafficLight,
-            Notification notification
+            Notification notification,
+            GatewayLogger gatewayLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -72,6 +75,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _barrier = barrier;
             _trafficLight = trafficLight;
             _notification = notification;
+            _gatewayLogger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)

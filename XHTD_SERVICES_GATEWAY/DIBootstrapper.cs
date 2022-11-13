@@ -27,6 +27,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
+            builder.RegisterType<GatewayLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
