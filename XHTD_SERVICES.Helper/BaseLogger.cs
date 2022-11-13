@@ -15,21 +15,30 @@ namespace XHTD_SERVICES.Helper
         public void LogDebug(string message)
         {
             logger.Debug(message);
+            Console.WriteLine(message);
         }
 
         public void LogError(string message)
         {
             logger.Error(message);
+            Console.WriteLine(message);
         }
 
         public void LogInfo(string message)
         {
             logger.Info(message);
+            Console.WriteLine(message);
         }
 
         public void LogWarn(string message)
         {
             logger.Warn(message);
+            Console.WriteLine(message);
+        }
+
+        public void LogConsole(string message)
+        {
+            Console.WriteLine(message);
         }
     }
 }

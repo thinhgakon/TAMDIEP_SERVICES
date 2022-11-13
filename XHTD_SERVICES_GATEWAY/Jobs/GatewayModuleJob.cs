@@ -20,8 +20,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 {
     public class GatewayModuleJob : IJob
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly RfidRepository _rfidRepository;
@@ -87,14 +85,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                WriteLineLog("start gateway service");
-                WriteLineLog("----------------------------");
+                _gatewayLogger.LogInfo("start gateway service");
+                _gatewayLogger.LogInfo("----------------------------");
 
                 // Get devices info
                 await LoadDevicesInfo();
 
                 AuthenticateGatewayModule();
-            });
+            });                                                                                                                     
         }
 
         public void AuthenticateGatewayModule()
@@ -145,7 +143,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModule()
         {
-            WriteLog("start connect to C3-400 ... ");
+            _gatewayLogger.LogInfo("start connect to C3-400 ... ");
 
             try
             {
@@ -156,13 +154,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        WriteLineLog("connected");
+                        _gatewayLogger.LogInfo("connected");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        WriteLineLog("connected failed");
+                        _gatewayLogger.LogInfo("connected failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -172,7 +170,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                WriteLineLog($@"ConnectGatewayModule : {ex.Message}");
+                _gatewayLogger.LogInfo($@"ConnectGatewayModule : {ex.Message}");
 
                 return false;
             }
@@ -180,7 +178,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            WriteLineLog("start read data from C3-400 ...");
+            _gatewayLogger.LogInfo("start read data from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -206,8 +204,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
 
-                                WriteLineLog("----------------------------");
-                                WriteLineLog($"Tag {cardNoCurrent} door {doorCurrent} ... ");
+                                _gatewayLogger.LogInfo("----------------------------");
+                                _gatewayLogger.LogInfo($"Tag {cardNoCurrent} door {doorCurrent} ... ");
 
                                 // 3.1.Xác định xe vào hay ra cổng theo gia tri door từ C3-400
                                 var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
@@ -222,7 +220,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        _gatewayLogger.LogInfo($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
@@ -233,24 +231,24 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
-                                        WriteLineLog($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
+                                        _gatewayLogger.LogInfo($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
 
                                         continue;
                                     }
                                 }
 
                                 // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                WriteLog($"1. Kiem tra tag {cardNoCurrent} hop le: ");
+                                _gatewayLogger.LogInfo($"1. Kiem tra tag {cardNoCurrent} hop le: ");
 
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
                                 if (isValid)
                                 {
-                                    WriteLineLog($"CO");
+                                    _gatewayLogger.LogInfo($"CO");
                                 }
                                 else
                                 {
-                                    WriteLineLog($"KHONG => Ket thuc.");
+                                    _gatewayLogger.LogInfo($"KHONG => Ket thuc.");
 
                                     _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định phương tiện");
 
@@ -261,7 +259,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 }
 
                                 // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                WriteLog($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
+                                _gatewayLogger.LogInfo($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
 
                                 List <tblStoreOrderOperating> currentOrders = null;
                                 if (isLuongVao)
@@ -274,7 +272,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 if (currentOrders == null || currentOrders.Count == 0) {
 
-                                    WriteLineLog($"KHONG => Ket thuc.");
+                                    _gatewayLogger.LogInfo($"KHONG => Ket thuc.");
 
                                     _notification.SendNotification("GETWAY", null, null, cardNoCurrent, null, "Không xác định đơn hàng hợp lệ");
 
@@ -284,22 +282,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var currentOrder = currentOrders.FirstOrDefault();
                                 var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
-                                WriteLineLog($"CO. DeliveryCode = {deliveryCodes}");
+                                _gatewayLogger.LogInfo($"CO. DeliveryCode = {deliveryCodes}");
 
                                 // 3.5. Cập nhật đơn hàng
-                                WriteLog($"3. Tien hanh update don hang: ");
+                                _gatewayLogger.LogInfo($"3. Tien hanh update don hang: ");
 
                                 var isUpdatedOrder = false;
 
                                 if (isLuongVao)
                                 {
-                                    WriteLineLog($"vao cong");
+                                    _gatewayLogger.LogInfo($"vao cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
                                 }
                                 else if (isLuongRa)
                                 {
-                                    WriteLineLog($"ra cong");
+                                    _gatewayLogger.LogInfo($"ra cong");
 
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
                                 }
@@ -312,7 +310,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                      * 3.8. Bắn tín hiệu thông báo
                                      */
 
-                                    WriteLineLog($"4. Update don hang thanh cong.");
+                                    _gatewayLogger.LogInfo($"4. Update don hang thanh cong.");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -321,12 +319,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
                                         // Mở barrier
-                                        WriteLineLog($"5. Mo barrier vao");
+                                        _gatewayLogger.LogInfo($"5. Mo barrier vao");
 
                                         OpenBarrier("VAO", "BV.M221.BRE-1", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
-                                        WriteLineLog($"6. Bat den xanh vao");
+                                        _gatewayLogger.LogInfo($"6. Bat den xanh vao");
 
                                         OpenTrafficLight("VAO");
                                     }
@@ -335,25 +333,25 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_Out.Add(newCardNoLog);
 
                                         // Mở barrier
-                                        WriteLineLog($"5. Mo barrier ra");
+                                        _gatewayLogger.LogInfo($"5. Mo barrier ra");
 
                                         OpenBarrier("RA", "BV.M221.BRE-2", currentOrder.Vehicle, deliveryCodes);
 
                                         // Bật đèn xanh giao thông
-                                        WriteLineLog($"6. Bat den xanh ra");
+                                        _gatewayLogger.LogInfo($"6. Bat den xanh ra");
 
                                         OpenTrafficLight("RA");
                                     }
                                 }
                                 else
                                 {
-                                    WriteLineLog($"4. Update don hang KHONG thanh cong => Ket thuc.");
+                                    _gatewayLogger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
                                 }
                             }
                         }
                         else
                         {
-                            log.Warn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
+                            _gatewayLogger.LogWarn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
@@ -393,24 +391,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var isSuccess = _trafficLight.TurnOnGreenOffRed();
             if (isSuccess)
             {
-                WriteLineLog("6.1. Open TrafficLight: OK");
+                _gatewayLogger.LogInfo("6.1. Open TrafficLight: OK");
             }
             else
             {
-                WriteLineLog("6.1. Open TrafficLight: Failed");
+                _gatewayLogger.LogInfo("6.1. Open TrafficLight: Failed");
             }
-        }
-
-        public void WriteLineLog(string message)
-        {
-            Console.WriteLine($"{message}");
-            log.Info($"{message}");
-        }
-
-        public void WriteLog(string message)
-        {
-            Console.Write($"{message}");
-            log.Info($"{message}");
         }
     }
 }

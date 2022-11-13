@@ -123,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
+    <Compile Include="SyncOrderLogger.cs" />
     <Compile Include="Jobs\SyncOrderJob.cs" />
     <Compile Include="Jobs\SyncOrderStatusJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />

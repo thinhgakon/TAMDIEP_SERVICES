@@ -17,23 +17,27 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
     public class SyncOrderJob : IJob
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+
         protected readonly VehicleRepository _vehicleRepository;
+
         protected readonly Notification _notification;
+
+        protected readonly SyncOrderLogger _syncOrderLogger;
 
         private static string strToken;
 
         public SyncOrderJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
-            Notification notification
+            Notification notification,
+            SyncOrderLogger syncOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
             _notification = notification;
+            _syncOrderLogger = syncOrderLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -51,7 +55,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            WriteLineLog("start process SyncOrderJob");
+            _syncOrderLogger.LogInfo("start process SyncOrderJob");
 
             GetToken();
 
@@ -90,7 +94,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             catch (Exception ex)
             {
-                WriteLineLog("getToken error: " + ex.Message);
+                _syncOrderLogger.LogInfo("getToken error: " + ex.Message);
             }
         }
 
@@ -101,7 +105,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (response.StatusDescription.Equals("Unauthorized"))
             {
-                WriteLineLog("Unauthorized GetWebsaleOrder");
+                _syncOrderLogger.LogInfo("Unauthorized GetWebsaleOrder");
 
                 return null;
             }
@@ -165,12 +169,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
 
             return isSynced;
-        }
-
-        public void WriteLineLog(string message)
-        {
-            Console.WriteLine($"{message}");
-            log.Info($"{message}");
         }
     }
 }
