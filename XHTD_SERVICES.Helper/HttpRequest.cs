@@ -121,5 +121,15 @@ namespace XHTD_SERVICES.Helper
 
             return response;
         }
+
+        public static bool UpdateWeightInWebSale()
+        {
+            return true;
+        }
+
+        public static bool UpdateWeightOutWebSale()
+        {
+            return true;
+        }
     }
 }

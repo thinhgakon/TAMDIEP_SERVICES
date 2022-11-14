@@ -433,66 +433,37 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 CloseBarrier("RA");
                             }
 
-                            /*
-                                * 3.10. Xử lý đơn hàng
-                                * * Cân vào: 
-                                * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý, 
-                                * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
-                                * * * vào khối lượng không tải của phương tiện;
-                                * * Cân ra: 
-                                * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
-                                * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
-                                */
-
-                            // 3.11. Bật đèn xanh
-                            // 3.12. Mở barrier để xe rời bàn cân
-                            if (isLuongVao)
-                            {
-                                TurnOnGreenTrafficLight("VAO");
-                                OpenBarrier("VAO");
-                            }
-                            else if (isLuongRa)
-                            {
-                                TurnOnGreenTrafficLight("RA");
-                                OpenBarrier("RA");
-                            }
-
-                            /*
-                                * 3.13. Xử lý sau cân
-                                * * Cân vào:
-                                * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
-                                * * Cân ra:
-                                * * * Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
-                                */
-
-                            _tram951Logger.LogInfo($"3. Tien hanh update don hang: ");
-
+                           /*
+                            * 3.10. Xử lý sau khi da lay duoc gia tri can on dinh
+                            * * Cân vào: 
+                            * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
+                            * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                            * * * Cập nhật khối lượng không tải của phương tiện
+                            * * Cân ra: 
+                            * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
+                            * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                            */
+                            var isUpdatedWeightInWebSale = false;
                             var isUpdatedOrder = false;
 
-                            // Luồng vào
                             if (isLuongVao)
                             {
-                                _tram951Logger.LogInfo($"vao cong");
-
-                                isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
+                                isUpdatedWeightInWebSale = HttpRequest.UpdateWeightInWebSale();
+                                if (isUpdatedWeightInWebSale) { 
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceTram951(cardNoCurrent, currentScaleValue);
+                                }
                             }
-                            // Luồng ra
                             else if (isLuongRa)
                             {
-                                _tram951Logger.LogInfo($"ra cong");
-
-                                isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
+                                isUpdatedWeightInWebSale = HttpRequest.UpdateWeightOutWebSale();
+                                if (isUpdatedWeightInWebSale)
+                                {
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitTram951(cardNoCurrent, currentScaleValue);
+                                }
                             }
 
                             if (isUpdatedOrder)
                             {
-                                /*
-                                    * Tắt đèn đỏ
-                                    * Bật đèn xanh
-                                    * Mở barrier
-                                    * Ghi log thiết bị
-                                    */
-
                                 _tram951Logger.LogInfo($"4. Update don hang thanh cong.");
 
                                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -510,6 +481,28 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             {
                                 _tram951Logger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
                             }
+
+                            // 3.11. Bật đèn xanh
+                            // 3.12. Mở barrier để xe rời bàn cân
+                            if (isLuongVao)
+                            {
+                                TurnOnGreenTrafficLight("VAO");
+                                OpenBarrier("VAO");
+                            }
+                            else if (isLuongRa)
+                            {
+                                TurnOnGreenTrafficLight("RA");
+                                OpenBarrier("RA");
+                            }
+
+                           /*
+                            * 3.13. Xử lý sau cân
+                            * * Cân vào:
+                            * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
+                            * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
+                            * * Cân ra:
+                            * * * Gửi thông tin ra cổng bảo vệ (chỉ khi ko cân tự động được)
+                            */
                         }
                     }
                 }

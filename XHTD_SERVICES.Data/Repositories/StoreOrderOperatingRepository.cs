@@ -243,5 +243,76 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public async Task<bool> UpdateOrderEntraceTram951(string cardNo, int weightIn)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string calcelTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_VAO_CONG).ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Step = (int)OrderStep.DA_CAN_VAO;
+                        order.WeightIn = weightIn;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {calcelTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cân vào {cardNo} Error: " + ex.Message);
+                    Console.WriteLine($@"Cân vào {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateOrderExitTram951(string cardNo, int weightOut)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string calcelTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_LAY_HANG).ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Step = (int)OrderStep.DA_CAN_RA;
+                        order.WeightOut = weightOut;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {calcelTime} ";
+
+                        Console.WriteLine($@"Cân ra {cardNo}");
+                        log.Info($@"Cân ra {cardNo}");
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cân ra {cardNo} Error: " + ex.Message);
+                    Console.WriteLine($@"Cân ra {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
     }
 }
