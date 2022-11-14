@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Quartz;
-using log4net;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_GATEWAY.Models.Response;
 using XHTD_SERVICES.Data.Models.Response;
@@ -14,7 +12,6 @@ using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Entities;
 using Newtonsoft.Json;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -129,8 +126,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             Connection.On<string>("SendOffersToUser", data =>
             {
-                IsJustReceivedHubData = true;
-                HubValue = data;
+                var fakeHubResponse = JsonConvert.DeserializeObject<FakeHubResponse>(data);
+                if (fakeHubResponse != null && fakeHubResponse.RFIDData != null && fakeHubResponse.RFIDData != "") { 
+                    IsJustReceivedHubData = true;
+                    HubValue = fakeHubResponse.RFIDData;
+                }
             });
 
             try
@@ -234,6 +234,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (IsJustReceivedHubData)
                     {
+                        IsJustReceivedHubData = false;
+
                         str = HubValue;
                         tmp = str.Split(',');
 
