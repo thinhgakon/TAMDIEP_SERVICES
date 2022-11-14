@@ -48,9 +48,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private string HubURL;
 
-        private string HubValue;
+        private string RFIDValue;
 
-        private bool IsJustReceivedHubData = false;
+        private bool IsJustReceivedRFIDData = false;
 
         private HubConnection Connection { get; set; }
 
@@ -126,10 +126,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             Connection.On<string>("SendOffersToUser", data =>
             {
-                var fakeHubResponse = JsonConvert.DeserializeObject<FakeHubResponse>(data);
-                if (fakeHubResponse != null && fakeHubResponse.RFIDData != null && fakeHubResponse.RFIDData != "") { 
-                    IsJustReceivedHubData = true;
-                    HubValue = fakeHubResponse.RFIDData;
+                var fakeHubResponse = JsonConvert.DeserializeObject<FakeRFIDResponse>(data);
+                if (fakeHubResponse != null && fakeHubResponse.RFIDData != null && fakeHubResponse.RFIDData != "") {
+                    IsJustReceivedRFIDData = true;
+                    RFIDValue = fakeHubResponse.RFIDData;
                 }
             });
 
@@ -232,11 +232,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     string str;
                     string[] tmp = null;
 
-                    if (IsJustReceivedHubData)
+                    if (IsJustReceivedRFIDData)
                     {
-                        IsJustReceivedHubData = false;
+                        IsJustReceivedRFIDData = false;
 
-                        str = HubValue;
+                        str = RFIDValue;
                         tmp = str.Split(',');
 
                         // Trường hợp bắt được tag RFID

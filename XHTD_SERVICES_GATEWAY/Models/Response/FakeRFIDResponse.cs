@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_GATEWAY.Models.Response
 {
-    public class FakeHubResponse
+    public class FakeRFIDResponse
     {
         public string RFIDData { get; set; }
     }

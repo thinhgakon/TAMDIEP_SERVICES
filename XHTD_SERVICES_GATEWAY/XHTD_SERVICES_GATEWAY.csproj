@@ -231,7 +231,7 @@
     <Compile Include="Jobs\GatewayModuleJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
-    <Compile Include="Models\Response\FakeHubResponse.cs" />
+    <Compile Include="Models\Response\FakeRFIDResponse.cs" />
     <Compile Include="Models\Response\GetTokenResponse.cs" />
     <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="ProjectInstaller.cs">
