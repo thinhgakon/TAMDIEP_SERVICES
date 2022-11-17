@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Jobs\CallInTroughJob.cs" />
     <Compile Include="CallInTroughLogger.cs" />
     <Compile Include="ProjectInstaller.cs">
