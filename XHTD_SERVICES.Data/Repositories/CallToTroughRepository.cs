@@ -26,45 +26,51 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public bool IsInProgress(int orderId)
         {
-            var record = _appDbContext.tblCallToTroughs.FirstOrDefault(x => x.OrderId == orderId && x.IsDone == false);
-            if (record != null)
+            using (var dbContext = new XHTD_Entities())
             {
-                return true;
+                var record = dbContext.tblCallToTroughs.FirstOrDefault(x => x.OrderId == orderId && x.IsDone == false);
+                if (record != null)
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
         public async Task CreateAsync(int orderId, string troughCode)
         {
-            try
+            using (var dbContext = new XHTD_Entities())
             {
-                if (!IsInProgress(orderId))
+                try
                 {
-                    var newItem = new tblCallToTrough
+                    if (!IsInProgress(orderId))
                     {
-                        OrderId = orderId,
-                        Trough = troughCode,
-                        CountTry = 0,
-                        CallLog = $@"Xe được mời vào lúc {DateTime.Now}.",
-                        IsDone = false,
-                        CreateDay = DateTime.Now,
-                        UpdateDay = DateTime.Now,
-                    };
+                        var newItem = new tblCallToTrough
+                        {
+                            OrderId = orderId,
+                            Trough = troughCode,
+                            CountTry = 0,
+                            CallLog = $@"Xe được mời vào lúc {DateTime.Now}.",
+                            IsDone = false,
+                            CreateDay = DateTime.Now,
+                            UpdateDay = DateTime.Now,
+                        };
 
-                    _appDbContext.tblCallToTroughs.Add(newItem);
-                    await _appDbContext.SaveChangesAsync();
+                        dbContext.tblCallToTroughs.Add(newItem);
+                        await dbContext.SaveChangesAsync();
 
-                    Console.WriteLine("Them order vao hang doi: " + orderId);
+                        Console.WriteLine("Them order vao hang doi: " + orderId);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Da ton tai order trong hang doi: " + orderId);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Da ton tai order trong hang doi: " + orderId);
+                    log.Error("CreateAsync vehicle log Error: " + ex.Message); ;
+                    Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                log.Error("CreateAsync vehicle log Error: " + ex.Message); ;
-                Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
             }
         }
     }
