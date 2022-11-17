@@ -60,7 +60,7 @@
           <Property Name="OrderId" Type="int" Nullable="false" />
           <Property Name="Trough" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CountTry" Type="int" Nullable="false" />
-          <Property Name="CallLog" Type="text" />
+          <Property Name="CallLog" Type="nvarchar(max)" />
           <Property Name="IsDone" Type="bit" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="UpdateDay" Type="datetime" />
@@ -637,7 +637,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="Trough" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
-          <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsDone" Type="Boolean" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />

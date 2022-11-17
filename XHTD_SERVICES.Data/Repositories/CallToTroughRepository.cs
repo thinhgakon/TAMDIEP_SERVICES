@@ -21,7 +21,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public int GetNumberOrderInQueue(string troughCode)
         {
-            return _appDbContext.tblCallToTroughs.Where(x => x.Trough == troughCode && x.IsDone == false).Count();
+            using (var dbContext = new XHTD_Entities())
+            {
+                return dbContext.tblCallToTroughs.Where(x => x.Trough == troughCode && x.IsDone == false).Count();
+            }
         }
 
         public bool IsInProgress(int orderId)

@@ -274,11 +274,11 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public List<tblStoreOrderOperating> GetOrdersSortByIndex(int quantity)
+        public async Task<List<tblStoreOrderOperating>> GetOrdersSortByIndex(int quantity)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var orders = dbContext.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_CAN_VAO && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(quantity).ToList();
+                var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_CAN_VAO && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(quantity).ToListAsync();
                 return orders;
             }
         }

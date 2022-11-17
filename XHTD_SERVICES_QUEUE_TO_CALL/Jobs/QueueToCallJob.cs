@@ -110,7 +110,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async void PushOrderToQueue(string troughcode, int quantity)
         {
-            var orders = _storeOrderOperatingRepository.GetOrdersSortByIndex(quantity);
+            var orders = await _storeOrderOperatingRepository.GetOrdersSortByIndex(quantity);
             if (orders == null || orders.Count == 0)
             {
                 return;
