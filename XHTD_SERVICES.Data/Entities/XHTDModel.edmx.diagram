@@ -4,31 +4,33 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="51dff6e1660748c0a95cee89bb71e2fe" Name="Diagram1">
+      <Diagram DiagramId="91d13d44ee3a48c5bb22ad7eeea22093" Name="Diagram1">
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccount" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroup" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroupFunction" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategory" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategoriesDevice" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategoriesDevicesLog" Width="1.5" PointX="4.75" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblConfigApp" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDevice" Width="1.5" PointX="6.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDeviceGroup" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDeviceOperating" Width="1.5" PointX="8.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDriver" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDriverVehicle" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblFunction" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblNotification" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblRfid" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblRfidSign" Width="1.5" PointX="10.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderLocation" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingPriority" Width="1.5" PointX="6.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblSystemParamete" Width="1.5" PointX="8.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTrough" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTroughTypeProduct" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblVehicle" Width="1.5" PointX="14.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCompany" Width="1.5" PointX="14.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCallToTrough" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategory" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategoriesDevice" Width="1.5" PointX="4.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCategoriesDevicesLog" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblConfigApp" Width="1.5" PointX="6.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDevice" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDeviceGroup" Width="1.5" PointX="8.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDeviceOperating" Width="1.5" PointX="0.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDriver" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblDriverVehicle" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblFunction" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblNotification" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblRfid" Width="1.5" PointX="10.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblRfidSign" Width="1.5" PointX="2.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderLocation" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Width="1.5" PointX="12.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingPriority" Width="1.5" PointX="8.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblSystemParameter" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTrough" Width="1.5" PointX="14.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTroughTypeProduct" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTypeProduct" Width="1.5" PointX="14.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblVehicle" Width="1.5" PointX="14.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCompany" Width="1.5" PointX="0.75" PointY="15.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingVoice" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>

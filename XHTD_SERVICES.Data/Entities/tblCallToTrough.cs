@@ -12,15 +12,15 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblSystemParamete
+    public partial class tblCallToTrough
     {
         public int Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public int OrderId { get; set; }
+        public string Trough { get; set; }
+        public int CountTry { get; set; }
+        public string CallLog { get; set; }
+        public Nullable<bool> IsDone { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
-        public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
-        public string UpdateBy { get; set; }
     }
 }

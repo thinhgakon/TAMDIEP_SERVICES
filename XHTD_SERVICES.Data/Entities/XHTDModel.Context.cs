@@ -28,6 +28,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblAccount> tblAccounts { get; set; }
         public virtual DbSet<tblAccountGroup> tblAccountGroups { get; set; }
         public virtual DbSet<tblAccountGroupFunction> tblAccountGroupFunctions { get; set; }
+        public virtual DbSet<tblCallToTrough> tblCallToTroughs { get; set; }
         public virtual DbSet<tblCategory> tblCategories { get; set; }
         public virtual DbSet<tblCategoriesDevice> tblCategoriesDevices { get; set; }
         public virtual DbSet<tblCategoriesDevicesLog> tblCategoriesDevicesLogs { get; set; }
@@ -44,9 +45,10 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblStoreOrderLocation> tblStoreOrderLocations { get; set; }
         public virtual DbSet<tblStoreOrderOperating> tblStoreOrderOperatings { get; set; }
         public virtual DbSet<tblStoreOrderOperatingPriority> tblStoreOrderOperatingPriorities { get; set; }
-        public virtual DbSet<tblSystemParamete> tblSystemParametes { get; set; }
+        public virtual DbSet<tblSystemParameter> tblSystemParameters { get; set; }
         public virtual DbSet<tblTrough> tblTroughs { get; set; }
         public virtual DbSet<tblTroughTypeProduct> tblTroughTypeProducts { get; set; }
+        public virtual DbSet<tblTypeProduct> tblTypeProducts { get; set; }
         public virtual DbSet<tblVehicle> tblVehicles { get; set; }
         public virtual DbSet<tblCompany> tblCompanies { get; set; }
         public virtual DbSet<tblStoreOrderOperatingVoice> tblStoreOrderOperatingVoices { get; set; }

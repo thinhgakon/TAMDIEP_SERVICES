@@ -52,6 +52,19 @@
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="tblCallToTrough">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="Trough" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CountTry" Type="int" Nullable="false" />
+          <Property Name="CallLog" Type="text" />
+          <Property Name="IsDone" Type="bit" />
+          <Property Name="CreateDay" Type="datetime" />
+          <Property Name="UpdateDay" Type="datetime" />
+        </EntityType>
         <EntityType Name="tblCategories">
           <Key>
             <PropertyRef Name="Code" />
@@ -201,8 +214,8 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="Birthday" Type="datetime" />
           <Property Name="Gender" Type="nvarchar" MaxLength="50" />
           <Property Name="IdCard" Type="nvarchar" MaxLength="50" />
-          <Property Name="IdCardImgFront" Type="nvarchar" MaxLength="350" />
-          <Property Name="IdCardImgBack" Type="nvarchar" MaxLength="350" />
+          <Property Name="IdCardImgFront" Type="nvarchar" MaxLength="500" />
+          <Property Name="IdCardImgBack" Type="nvarchar" MaxLength="500" />
           <Property Name="Address" Type="nvarchar" MaxLength="500" />
           <Property Name="UserName" Type="nvarchar" MaxLength="50" />
           <Property Name="State" Type="bit" />
@@ -420,7 +433,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="tblSystemParametes">
+        <EntityType Name="tblSystemParameter">
           <Key>
             <PropertyRef Name="Code" />
           </Key>
@@ -471,6 +484,19 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="tblTypeProduct">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="State" Type="bit" />
+          <Property Name="CreateDay" Type="datetime" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdateDay" Type="datetime" />
+          <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="tblVehicle">
           <Key>
             <PropertyRef Name="IDVehicle" />
@@ -497,6 +523,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblAccount" EntityType="Self.tblAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAccountGroup" EntityType="Self.tblAccountGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAccountGroupFunction" EntityType="Self.tblAccountGroupFunction" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCallToTrough" EntityType="Self.tblCallToTrough" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategories" EntityType="Self.tblCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategoriesDevices" EntityType="Self.tblCategoriesDevices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategoriesDevicesLog" EntityType="Self.tblCategoriesDevicesLog" Schema="dbo" store:Type="Tables" />
@@ -513,9 +540,10 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblStoreOrderLocation" EntityType="Self.tblStoreOrderLocation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblStoreOrderOperating" EntityType="Self.tblStoreOrderOperating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblStoreOrderOperatingPriority" EntityType="Self.tblStoreOrderOperatingPriority" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="tblSystemParametes" EntityType="Self.tblSystemParametes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblSystemParameter" EntityType="Self.tblSystemParameter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblTrough" EntityType="Self.tblTrough" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblTroughTypeProduct" EntityType="Self.tblTroughTypeProduct" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblTypeProduct" EntityType="Self.tblTypeProduct" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblVehicle" EntityType="Self.tblVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCompany" EntityType="Self.tblCompany" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -600,6 +628,19 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tblCallToTrough">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="Trough" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CountTry" Type="Int32" Nullable="false" />
+          <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsDone" Type="Boolean" />
+          <Property Name="CreateDay" Type="DateTime" Precision="3" />
+          <Property Name="UpdateDay" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -730,8 +771,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Birthday" Type="DateTime" Precision="3" />
           <Property Name="Gender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IdCard" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IdCardImgFront" Type="String" MaxLength="350" FixedLength="false" Unicode="true" />
-          <Property Name="IdCardImgBack" Type="String" MaxLength="350" FixedLength="false" Unicode="true" />
+          <Property Name="IdCardImgFront" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IdCardImgBack" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="Boolean" />
@@ -932,7 +973,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="tblSystemParamete">
+        <EntityType Name="tblSystemParameter">
           <Key>
             <PropertyRef Name="Code" />
           </Key>
@@ -978,6 +1019,19 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TroughCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="TypeProduct" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreateDay" Type="DateTime" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdateDay" Type="DateTime" Precision="3" />
+          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tblTypeProduct">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="Boolean" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
@@ -1042,6 +1096,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblAccounts" EntityType="Self.tblAccount" />
           <EntitySet Name="tblAccountGroups" EntityType="Self.tblAccountGroup" />
           <EntitySet Name="tblAccountGroupFunctions" EntityType="Self.tblAccountGroupFunction" />
+          <EntitySet Name="tblCallToTroughs" EntityType="Self.tblCallToTrough" />
           <EntitySet Name="tblCategories" EntityType="Self.tblCategory" />
           <EntitySet Name="tblCategoriesDevices" EntityType="Self.tblCategoriesDevice" />
           <EntitySet Name="tblCategoriesDevicesLogs" EntityType="Self.tblCategoriesDevicesLog" />
@@ -1058,9 +1113,10 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblStoreOrderLocations" EntityType="Self.tblStoreOrderLocation" />
           <EntitySet Name="tblStoreOrderOperatings" EntityType="Self.tblStoreOrderOperating" />
           <EntitySet Name="tblStoreOrderOperatingPriorities" EntityType="Self.tblStoreOrderOperatingPriority" />
-          <EntitySet Name="tblSystemParametes" EntityType="Self.tblSystemParamete" />
+          <EntitySet Name="tblSystemParameters" EntityType="Self.tblSystemParameter" />
           <EntitySet Name="tblTroughs" EntityType="Self.tblTrough" />
           <EntitySet Name="tblTroughTypeProducts" EntityType="Self.tblTroughTypeProduct" />
+          <EntitySet Name="tblTypeProducts" EntityType="Self.tblTypeProduct" />
           <EntitySet Name="tblVehicles" EntityType="Self.tblVehicle" />
           <EntitySet Name="tblCompanies" EntityType="Self.tblCompany" />
           <EntitySet Name="tblStoreOrderOperatingVoices" EntityType="Self.tblStoreOrderOperatingVoice" />
@@ -1118,6 +1174,20 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblCallToTroughs">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallToTrough">
+              <MappingFragment StoreEntitySet="tblCallToTrough">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="Trough" ColumnName="Trough" />
+                <ScalarProperty Name="CountTry" ColumnName="CountTry" />
+                <ScalarProperty Name="CallLog" ColumnName="CallLog" />
+                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
+                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
+                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1468,9 +1538,9 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="tblSystemParametes">
-            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblSystemParamete">
-              <MappingFragment StoreEntitySet="tblSystemParametes">
+          <EntitySetMapping Name="tblSystemParameters">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblSystemParameter">
+              <MappingFragment StoreEntitySet="tblSystemParameter">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1515,6 +1585,20 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
                 <ScalarProperty Name="TypeProduct" ColumnName="TypeProduct" />
+                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
+                <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblTypeProducts">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTypeProduct">
+              <MappingFragment StoreEntitySet="tblTypeProduct">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="State" ColumnName="State" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
