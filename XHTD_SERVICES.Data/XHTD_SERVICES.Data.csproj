@@ -67,6 +67,9 @@
     <Compile Include="Entities\tblAccountGroupFunction.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblCallToTrough.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblCategoriesDevice.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -121,13 +124,16 @@
     <Compile Include="Entities\tblStoreOrderOperatingVoice.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\tblSystemParamete.cs">
+    <Compile Include="Entities\tblSystemParameter.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblTrough.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblTroughTypeProduct.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblTypeProduct.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblVehicle.cs">
