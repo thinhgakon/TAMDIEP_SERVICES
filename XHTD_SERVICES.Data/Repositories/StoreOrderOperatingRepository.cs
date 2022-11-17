@@ -30,6 +30,16 @@ namespace XHTD_SERVICES.Data.Repositories
             return false;
         }
 
+        public async Task<tblStoreOrderOperating> GetDetail(int orderId)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+
+                return order;
+            }
+        }
+
         public async Task<bool> CreateAsync(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
@@ -163,6 +173,36 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (order != null)
                     {
                         order.TroughLineCode = throughCode;
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateLineTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateLineTrough Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateLogProcess(string deliveryCode, string logProcess)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    if (order != null)
+                    {
+                        order.LogProcessOrder = order.LogProcessOrder + $@" {logProcess}";
 
                         await dbContext.SaveChangesAsync();
 

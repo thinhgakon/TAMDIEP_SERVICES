@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Data.Models.Values;
+using System.Threading;
+using WMPLib;
 
 namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 {
@@ -62,6 +64,83 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         public void CallInTroughProcess()
         {
             _callInTroughLogger.LogInfo("start process CallInTroughJob");
+
+            CallInTrough("M1");
+        }
+
+        public async void CallInTrough(string troughCode) 
+        {
+            _callInTroughLogger.LogInfo($"CallInTrough {troughCode}");
+
+            // Tìm đơn hàng sẽ được gọi
+            var itemToCall = _callToTroughRepository.GetItemToCall(troughCode);
+
+            if (itemToCall == null)
+            {
+                return;
+            }
+
+            // Lấy thông tin đơn hàng
+            var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.OrderId);
+
+            if(order == null)
+            {
+                return;
+            }
+
+            if(order.Step == (int)OrderStep.DANG_GOI_XE)
+            {
+                var vehiceCode = order.Vehicle;
+
+                // update don hang
+                var logProcess = $@"#Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                await _storeOrderOperatingRepository.UpdateLogProcess(order.DeliveryCode, logProcess);
+
+                // update hang doi: CountTry + 1
+                await _callToTroughRepository.UpdateWhenCall(itemToCall.Id, vehiceCode);
+
+                // Thuc hien goi xe
+                CallBySystem(vehiceCode);
+            }
+        }
+
+        public void CallBySystem(string vehicle)
+        {
+            var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+
+            string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
+            string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
+            
+            WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
+
+            wplayer.URL = VoiceFileInvite;
+            wplayer.settings.volume = 100;
+            wplayer.controls.play();
+            Thread.Sleep(1500);
+            var count = 0;
+            foreach (char c in vehicle)
+            {
+                count++;
+                wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                if (count < 3)
+                {
+                    Thread.Sleep(700);
+                }
+                else if (count == 3)
+                {
+                    Thread.Sleep(1200);
+                }
+                else
+                {
+                    Thread.Sleep(700);
+                }
+            }
+
+            wplayer.URL = VoiceFileInOut;
+            wplayer.settings.volume = 100;
+            wplayer.controls.play();
         }
     }
 }

@@ -76,5 +76,48 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public tblCallToTrough GetItemToCall(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                return dbContext.tblCallToTroughs
+                        .Where(x => x.Trough == troughCode && x.IsDone == false && x.CountTry < 3)
+                        .OrderBy(x => x.Id)
+                        .FirstOrDefault();
+            }
+        }
+
+        public async Task<bool> UpdateWhenCall(int calLId, string vehiceCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == calLId);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.CountTry = itemToCall.CountTry + 1;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenCall Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenCall Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
     }
 }
