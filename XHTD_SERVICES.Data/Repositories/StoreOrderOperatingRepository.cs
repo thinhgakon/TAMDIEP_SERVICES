@@ -151,6 +151,138 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateTroughLine(string deliveryCode, string throughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    if (order != null)
+                    {
+                        order.TroughLineCode = throughCode;
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateLineTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateLineTrough Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateStepDangGoiXe(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    if (order != null)
+                    {
+                        order.Step = (int)OrderStep.DANG_GOI_XE;
+                        order.Confirm4 = 1;
+                        order.TimeConfirm4 = DateTime.Now;
+                        order.LogProcessOrder = order.LogProcessOrder + $@" #Đưa vào hàng đợi mời xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateStepDangGoiXe Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateStepDangGoiXe Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateStepInTrough(string deliveryCode, int step)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    if (order == null)
+                    {
+                        return false;
+                    }
+
+                    if(step == (int)OrderStep.DA_LAY_HANG)
+                    {
+                        if(order.Step == (int)OrderStep.DA_LAY_HANG)
+                        {
+                            return true;
+                        }
+
+                        order.Confirm6 = 1;
+                        order.TimeConfirm6 = DateTime.Now;
+                        order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng xong lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+                    }
+                    else if (step == (int)OrderStep.DANG_LAY_HANG)
+                    {
+                        if (order.Step == (int)OrderStep.DANG_LAY_HANG)
+                        {
+                            return true;
+                        }
+
+                        order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+                    }
+
+                    order.IndexOrder = 0;
+                    order.Confirm1 = 1;
+                    order.Confirm2 = 1;
+                    order.Confirm3 = 1;
+                    order.Confirm4 = 1;
+                    order.Confirm5 = 1;
+
+                    order.Step = step;
+
+                    await dbContext.SaveChangesAsync();
+
+                    isUpdated = true;
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateStepInTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateStepInTrough Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public List<tblStoreOrderOperating> GetOrdersSortByIndex(int quantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = dbContext.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_CAN_VAO && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(quantity).ToList();
+                return orders;
+            }
+        }
+
         public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGatewayByCardNoReceiving(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
