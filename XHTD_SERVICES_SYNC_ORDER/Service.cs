@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using log4net;
-using XHTD_SERVICES_SYNC_ORDER.Jobs;
+using System.ServiceProcess;
 using XHTD_SERVICES_SYNC_ORDER.Schedules;
 
 namespace XHTD_SERVICES_SYNC_ORDER
