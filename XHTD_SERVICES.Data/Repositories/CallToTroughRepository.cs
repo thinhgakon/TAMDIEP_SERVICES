@@ -8,6 +8,7 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using log4net;
 using System.Data.Entity;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -117,6 +118,47 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     return isUpdated;
                 }
+            }
+        }
+
+        public async Task<bool> UpdateWhenOverCountTry(int id)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public async Task<List<tblCallToTrough>> GetItemsOverCountTry()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblCallToTroughs.Where(x => x.IsDone == false && x.CountTry >= 3).ToListAsync();
+                return orders;
             }
         }
     }

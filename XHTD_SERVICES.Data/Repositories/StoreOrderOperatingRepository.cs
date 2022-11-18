@@ -486,5 +486,45 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public async Task<bool> ReindexToTrough(int orderId)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+                    if (itemToCall != null)
+                    {
+                        var maxIndexOrder = dbContext.tblStoreOrderOperatings
+                                            .Where(x => (x.Step == (int)OrderStep.DA_CAN_RA || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                            .OrderBy(x => x.IndexOrder)?.Max(x => x.IndexOrder) ?? 0;
+
+                        var oldIndexOrder = itemToCall.IndexOrder;
+                        var newIndexOrder = maxIndexOrder + 1;
+
+                        itemToCall.CountReindex = itemToCall.CountReindex + 1;
+                        itemToCall.IndexOrder = newIndexOrder;
+                        itemToCall.Step = (int)OrderStep.DA_CAN_VAO;
+                        itemToCall.LogProcessOrder = $@"{itemToCall.LogProcessOrder} # Quá 5 phút sau lần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}, lốt cũ: {oldIndexOrder}, lốt mới: {newIndexOrder}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
     }
 }

@@ -61,9 +61,35 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
             });
         }
 
-        public void ReindexToTroughProcess()
+        public async void ReindexToTroughProcess()
         {
             _reindexToTroughLogger.LogInfo("start process ReindexToTroughJob");
+
+            var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry();
+
+            if (overCountTryItems != null && overCountTryItems.Count > 0)
+            {
+                foreach (var item in overCountTryItems)
+                {
+                    var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(5) > DateTime.Now;
+                    if (isOverTime)
+                    {
+                        continue;
+                    }
+
+                    // cập nhật trạng thái isDone trong hàng đợi
+                    await _callToTroughRepository.UpdateWhenOverCountTry(item.Id);
+
+                    // xếp lại lốt của đơn hàng
+                    var order = await _storeOrderOperatingRepository.GetDetail(item.OrderId);
+                    if(order == null)
+                    {
+                        continue;
+                    }
+
+                    await _storeOrderOperatingRepository.ReindexToTrough(item.OrderId);
+                }
+            }
         }
     }
 }
