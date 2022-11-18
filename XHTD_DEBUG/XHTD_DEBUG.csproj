@@ -246,6 +246,10 @@
       <Project>{1b4bb622-6c20-4f23-a6b1-32bd30bf886e}</Project>
       <Name>XHTD_SERVICES_QUEUE_TO_CALL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_REINDEX_TO_TROUGH\XHTD_SERVICES_REINDEX_TO_TROUGH.csproj">
+      <Project>{d76dbe62-9c85-4ff0-94b8-8f423a032664}</Project>
+      <Name>XHTD_SERVICES_REINDEX_TO_TROUGH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_SYNC_ORDER\XHTD_SERVICES_SYNC_ORDER.csproj">
       <Project>{65239e17-08cd-4427-85bd-ff7487654a74}</Project>
       <Name>XHTD_SERVICES_SYNC_ORDER</Name>
