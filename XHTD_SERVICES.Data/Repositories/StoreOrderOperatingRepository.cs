@@ -9,6 +9,7 @@ using XHTD_SERVICES.Data.Models.Response;
 using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
+using XHTD_SERVICES.Data.Models.Response;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -323,6 +324,33 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_CAN_VAO && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(quantity).ToListAsync();
                 return orders;
+            }
+        }
+
+        public async Task<List<OrderToCallInTroughResponse>> GetOrdersToCallInTrough(string troughCode, int quantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = from v in dbContext.tblStoreOrderOperatings 
+                            join r in dbContext.tblTroughTypeProducts 
+                            on v.TypeProduct equals r.TypeProduct
+                            where 
+                                v.Step == (int)OrderStep.DA_CAN_VAO 
+                                && (v.DriverUserName ?? "") != ""
+                                && r.TroughCode == troughCode
+                            orderby v.IndexOrder
+                            select new OrderToCallInTroughResponse
+                            {
+                                Id = v.Id,
+                                DeliveryCode = v.DeliveryCode,
+                            };
+
+                query = query.Take(quantity);
+
+                var data = await query.ToListAsync();
+
+                return data;
+
             }
         }
 

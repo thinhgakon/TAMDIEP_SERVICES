@@ -110,7 +110,8 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
         {
             _queueToCallLogger.LogInfo($"2. Đang còn {quantity} chỗ trống trong hàng chờ gọi của máng {troughcode}");
 
-            var orders = await _storeOrderOperatingRepository.GetOrdersSortByIndex(quantity);
+            var orders = await _storeOrderOperatingRepository.GetOrdersToCallInTrough(troughcode, quantity);
+
             if (orders == null || orders.Count == 0)
             {
                 _queueToCallLogger.LogInfo($"2.1. Không còn đơn vừa cân vào để thêm vào hàng chờ gọi");
