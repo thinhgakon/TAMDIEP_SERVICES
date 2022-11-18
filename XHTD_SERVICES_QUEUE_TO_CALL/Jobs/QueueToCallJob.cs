@@ -110,14 +110,20 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async void PushOrderToQueue(string troughcode, int quantity)
         {
+            _queueToCallLogger.LogInfo($"Còn {quantity} slot cho mang {troughcode}");
+
             var orders = await _storeOrderOperatingRepository.GetOrdersSortByIndex(quantity);
             if (orders == null || orders.Count == 0)
             {
+                _queueToCallLogger.LogInfo($"Không còn đơn vừa cân vào");
+
                 return;
             }
 
             foreach (var order in orders)
             {
+                _queueToCallLogger.LogInfo($"Tiến hành thêm {order.Id} với code {order.DeliveryCode}");
+
                 // Cap nhat trang thai don hang DANG_GOI_XE
                 await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
 

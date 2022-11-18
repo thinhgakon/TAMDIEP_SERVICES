@@ -16,6 +16,8 @@ namespace XHTD_SERVICES.Data.Repositories
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        const int MAX_COUNT_TRY = 3;
+
         public CallToTroughRepository(XHTD_Entities appDbContext) : base(appDbContext)
         {
         }
@@ -83,7 +85,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 return dbContext.tblCallToTroughs
-                        .Where(x => x.Trough == troughCode && x.IsDone == false && x.CountTry < 3)
+                        .Where(x => x.Trough == troughCode && x.IsDone == false && x.CountTry < MAX_COUNT_TRY)
                         .OrderBy(x => x.Id)
                         .FirstOrDefault();
             }
@@ -189,7 +191,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var orders = await dbContext.tblCallToTroughs.Where(x => x.IsDone == false && x.CountTry >= 3).ToListAsync();
+                var orders = await dbContext.tblCallToTroughs.Where(x => x.IsDone == false && x.CountTry >= MAX_COUNT_TRY).ToListAsync();
                 return orders;
             }
         }

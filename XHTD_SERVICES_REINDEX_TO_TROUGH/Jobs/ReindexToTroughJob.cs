@@ -29,7 +29,7 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
 
         protected readonly ReindexToTroughLogger _reindexToTroughLogger;
 
-        const int MAX_ORDER_IN_QUEUE_TO_CALL = 2;
+        const int OVER_TIME_TO_REINDEX = 5; // đơn vị phút
 
         public ReindexToTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -72,7 +72,7 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
             {
                 foreach (var item in overCountTryItems)
                 {
-                    var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(5) > DateTime.Now;
+                    var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(OVER_TIME_TO_REINDEX) > DateTime.Now;
                     if (isOverTime)
                     {
                         continue;
