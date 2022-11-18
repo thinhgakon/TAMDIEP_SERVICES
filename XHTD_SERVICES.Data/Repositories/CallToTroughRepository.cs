@@ -133,7 +133,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (itemToCall != null)
                     {
                         itemToCall.IsDone = true;
-                        itemToCall.UpdateDay = DateTime.Now;
+                        //itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();

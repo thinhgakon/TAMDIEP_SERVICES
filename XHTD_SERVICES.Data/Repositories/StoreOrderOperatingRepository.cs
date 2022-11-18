@@ -506,7 +506,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         var oldIndexOrder = itemToCall.IndexOrder;
                         var newIndexOrder = maxIndexOrder + 1;
 
-                        itemToCall.CountReindex = itemToCall.CountReindex + 1;
+                        itemToCall.CountReindex++;
                         itemToCall.IndexOrder = newIndexOrder;
                         itemToCall.Step = (int)OrderStep.DA_CAN_VAO;
                         itemToCall.LogProcessOrder = $@"{itemToCall.LogProcessOrder} # Quá 5 phút sau lần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}, lốt cũ: {oldIndexOrder}, lốt mới: {newIndexOrder}";
