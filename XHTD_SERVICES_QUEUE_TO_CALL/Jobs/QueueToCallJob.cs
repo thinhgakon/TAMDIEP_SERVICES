@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Quartz;
-using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
@@ -62,16 +55,17 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("start process QueueToCallJob");
+            _queueToCallLogger.LogInfo("------------------------------");
+            _queueToCallLogger.LogInfo("Start process QueueToCallJob");
+            _queueToCallLogger.LogInfo("------------------------------");
 
-            SyncTrough("M1");
+            ReadDataFromTrough("M1");
         }
 
-        public async void SyncTrough(string troughCode)
+        public async void ReadDataFromTrough(string troughCode)
         {
-            _queueToCallLogger.LogInfo($"SyncTrough {troughCode}");
+            _queueToCallLogger.LogInfo($"Read data from trough {troughCode}");
 
-            // lay thong tin máng
             var troughInfo = _troughRepository.GetDetail(troughCode);
             if (troughInfo == null)
             { 
@@ -80,13 +74,14 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
             var currentDeliveryCodeInTrough = troughInfo.DeliveryCodeCurrent;
 
-            // Nếu hiện tại đang có đơn trong máng
+            // Cập nhật đơn hàng đang ở trong máng
+            // troughLine
+            // step DANG va DA_LAY_HANG phụ thuộc tình trạng xuất tại máng
             if (!String.IsNullOrEmpty(currentDeliveryCodeInTrough)) 
             {
-                // update through line cho don hang
+                _queueToCallLogger.LogInfo($"1. Cập nhật đơn hàng đang ở trong máng {currentDeliveryCodeInTrough}");
                 await _storeOrderOperatingRepository.UpdateTroughLine(currentDeliveryCodeInTrough, troughCode);
 
-                // update step theo % xuat hang cua don hang tai mang
                 var isAlmostDone = (troughInfo.CountQuantityCurrent / troughInfo.PlanQuantityCurrent) > 0.8;
                 if (isAlmostDone)
                 {
@@ -97,32 +92,37 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                     await _storeOrderOperatingRepository.UpdateStepInTrough(currentDeliveryCodeInTrough, (int)OrderStep.DANG_LAY_HANG);
                 }
             }
+            else
+            {
+                _queueToCallLogger.LogInfo($"1. Không có đơn nào đang ở trong máng");
+            }
 
-            // Đếm số lượng đơn hàng đang chờ gọi của máng
+            // Đếm số lượng đơn trong hàng chờ gọi của máng
+            // Thêm đơn vào hàng chờ gọi
             var numberOrderFrontTrough = _callToTroughRepository.GetNumberOrderInQueue(troughCode);
-
             if(numberOrderFrontTrough < MAX_ORDER_IN_QUEUE_TO_CALL)
             {
-                // goi them xe vao hang doi
                 PushOrderToQueue(troughCode, MAX_ORDER_IN_QUEUE_TO_CALL - numberOrderFrontTrough);
             }
         }
 
         public async void PushOrderToQueue(string troughcode, int quantity)
         {
-            _queueToCallLogger.LogInfo($"Còn {quantity} slot cho mang {troughcode}");
+            _queueToCallLogger.LogInfo($"2. Đang còn {quantity} chỗ trống trong hàng chờ gọi của máng {troughcode}");
 
             var orders = await _storeOrderOperatingRepository.GetOrdersSortByIndex(quantity);
             if (orders == null || orders.Count == 0)
             {
-                _queueToCallLogger.LogInfo($"Không còn đơn vừa cân vào");
+                _queueToCallLogger.LogInfo($"2.1. Không còn đơn vừa cân vào để thêm vào hàng chờ gọi");
 
                 return;
             }
 
+            _queueToCallLogger.LogInfo($"2.1. Có {orders.Count} đơn sẽ được thêm vào hàng chờ");
+
             foreach (var order in orders)
             {
-                _queueToCallLogger.LogInfo($"Tiến hành thêm {order.Id} với code {order.DeliveryCode}");
+                _queueToCallLogger.LogInfo($"2.1.*. Tiến hành thêm {order.Id} với code {order.DeliveryCode}");
 
                 // Cap nhat trang thai don hang DANG_GOI_XE
                 await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
