@@ -65,6 +65,7 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
         {
             _reindexToTroughLogger.LogInfo("start process ReindexToTroughJob");
 
+            // Xử lý các order đã quá 3 lần gọi loa mà ko vào máng
             var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry();
 
             if (overCountTryItems != null && overCountTryItems.Count > 0)
@@ -82,12 +83,28 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
 
                     // xếp lại lốt của đơn hàng
                     var order = await _storeOrderOperatingRepository.GetDetail(item.OrderId);
-                    if(order == null)
+                    if (order == null)
                     {
                         continue;
                     }
 
                     await _storeOrderOperatingRepository.ReindexToTrough(item.OrderId);
+
+                }
+            }
+
+            // Xử lý các order quá 3 lần xoay vòng lốt mà ko vào máng
+            var overCountReindexOrders = await _storeOrderOperatingRepository.GetOrdersOverCountReindex();
+
+            if (overCountReindexOrders != null && overCountReindexOrders.Count > 0)
+            {
+                foreach (var detailOrder in overCountReindexOrders)
+                {
+                    // Cap nhat bang order
+                    await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+
+                    // Cap nhat hàng đợi
+                    await _callToTroughRepository.UpdateWhenOverCountReindex(detailOrder.Id);
                 }
             }
         }

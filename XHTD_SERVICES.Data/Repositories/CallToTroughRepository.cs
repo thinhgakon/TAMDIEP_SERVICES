@@ -153,6 +153,38 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateWhenOverCountReindex(int id)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
         public async Task<List<tblCallToTrough>> GetItemsOverCountTry()
         {
             using (var dbContext = new XHTD_Entities())
