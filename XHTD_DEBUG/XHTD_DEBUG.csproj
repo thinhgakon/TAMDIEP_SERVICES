@@ -238,6 +238,10 @@
       <Project>{e1ba9b59-31eb-4f3b-9261-bd843c9df463}</Project>
       <Name>XHTD_SERVICES_CALL_IN_TROUGH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_COMPLETE_ORDER\XHTD_SERVICES_COMPLETE_ORDER.csproj">
+      <Project>{1d761541-565d-4b52-abfc-8fc83c7810b7}</Project>
+      <Name>XHTD_SERVICES_COMPLETE_ORDER</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_GATEWAY\XHTD_SERVICES_GATEWAY.csproj">
       <Project>{a155e121-cc6a-4a34-8808-d142454bb3db}</Project>
       <Name>XHTD_SERVICES_GATEWAY</Name>
