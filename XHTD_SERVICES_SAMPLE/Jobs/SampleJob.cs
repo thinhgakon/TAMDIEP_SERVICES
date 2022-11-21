@@ -16,35 +16,23 @@ namespace XHTD_SERVICES_SAMPLE.Jobs
 {
     public class SampleJob : IJob
     {
-        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
-
-        protected readonly VehicleRepository _vehicleRepository;
-
-        protected readonly TroughRepository _troughRepository;
-
-        protected readonly CallToTroughRepository _callToTroughRepository;
+        protected readonly CategoriesDevicesRepository _categoriesDevicesRepository;
 
         protected readonly Notification _notification;
 
-        protected readonly SampleLogger _callInTroughLogger;
+        protected readonly SampleLogger _sampleLogger;
 
         const int MAX_ORDER_IN_QUEUE_TO_CALL = 2;
 
         public SampleJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
-            TroughRepository troughRepository,
-            CallToTroughRepository callToTroughRepository,
+            CategoriesDevicesRepository categoriesDevicesRepository,
             Notification notification,
             SampleLogger callInTroughLogger
             )
         {
-            _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
-            _troughRepository = troughRepository;
-            _callToTroughRepository = callToTroughRepository;
+            _categoriesDevicesRepository = categoriesDevicesRepository;
             _notification = notification;
-            _callInTroughLogger = callInTroughLogger;
+            _sampleLogger = callInTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -60,9 +48,13 @@ namespace XHTD_SERVICES_SAMPLE.Jobs
             });
         }
 
-        public void SampleProcess()
+        public async void SampleProcess()
         {
-            _callInTroughLogger.LogInfo("start process SampleJob");
+            var devices = await _categoriesDevicesRepository.GetDevices("BV");
+
+            _sampleLogger.LogInfo("start process SampleJob");
+
+            _notification.SendNotification("GETWAY", null, null, "123456", null, "Không xác định đơn hàng hợp lệ");
         }
     }
 }

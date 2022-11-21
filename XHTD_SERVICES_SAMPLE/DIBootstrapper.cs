@@ -16,10 +16,7 @@ namespace XHTD_SERVICES_SAMPLE
             var builder = new ContainerBuilder();
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
-            builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<VehicleRepository>().AsSelf();
-            builder.RegisterType<TroughRepository>().AsSelf();
-            builder.RegisterType<CallToTroughRepository>().AsSelf();
+            builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<SampleLogger>().AsSelf();
 
