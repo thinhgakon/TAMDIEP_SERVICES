@@ -176,7 +176,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                 var fakeRFIDResponse = JsonConvert.DeserializeObject<FakeRFIDResponse>(data);
                 if (fakeRFIDResponse != null && fakeRFIDResponse.RFIDData != null && fakeRFIDResponse.RFIDData != "")
                 {
-                    isJustReceivedScaleData = true;
+                    isJustReceivedRFIDData = true;
                     rFIDValue = fakeRFIDResponse.RFIDData;
                 }
 
