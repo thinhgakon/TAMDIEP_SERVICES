@@ -600,5 +600,56 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersByStep(int step)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == step)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<bool> CompleteOrder(int? orderId)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isCompleted = false;
+
+                try
+                {
+                    string completeTime = DateTime.Now.ToString();
+
+                    var order = dbContext.tblStoreOrderOperatings
+                                        .FirstOrDefault(x => x.Id == orderId && x.Step == (int)OrderStep.DA_CAN_RA);
+
+                    if (order != null)
+                    {
+                        order.Step = (int)OrderStep.DA_GIAO_HANG;
+                        order.Confirm9 = 1;
+                        order.TimeConfirm9 = DateTime.Now;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Tự động hoàn thành lúc {completeTime} ";
+
+                        await dbContext.SaveChangesAsync();
+
+                        Console.WriteLine($@"Auto Complete Order {orderId}");
+                        log.Info($@"Auto Complete Order {orderId}");
+
+                        isCompleted = true;
+                    }
+
+                    return isCompleted;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Auto Complete Order {orderId} Error: " + ex.Message);
+                    Console.WriteLine($@"Auto Complete Order {orderId} Error: " + ex.Message);
+
+                    return isCompleted;
+                }
+            }
+        }
     }
 }

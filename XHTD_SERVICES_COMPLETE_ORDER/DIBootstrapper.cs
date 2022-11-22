@@ -16,6 +16,7 @@ namespace XHTD_SERVICES_COMPLETE_ORDER
             var builder = new ContainerBuilder();
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
+            builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<CompleteOrderLogger>().AsSelf();

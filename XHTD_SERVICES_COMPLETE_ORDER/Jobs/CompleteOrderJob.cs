@@ -16,20 +16,24 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 {
     public class CompleteOrderJob : IJob
     {
+        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+        
         protected readonly CategoriesDevicesRepository _categoriesDevicesRepository;
 
         protected readonly Notification _notification;
 
         protected readonly CompleteOrderLogger _sampleLogger;
 
-        const int MAX_ORDER_IN_QUEUE_TO_CALL = 2;
+        const int OVER_TIME_TO_AUTO_COMPLETE = 5; // đơn vị phút
 
         public CompleteOrderJob(
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             Notification notification,
             CompleteOrderLogger callInTroughLogger
             )
         {
+            _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _notification = notification;
             _sampleLogger = callInTroughLogger;
@@ -44,17 +48,41 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 
             await Task.Run(() =>
             {
-                SampleProcess();
+                CompleteOrderProcess();
             });
         }
 
-        public async void SampleProcess()
+        public async void CompleteOrderProcess()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("BV");
+            _sampleLogger.LogInfo("start process CompleteOrderJob");
 
-            _sampleLogger.LogInfo("start process SampleJob");
+            var orders = await _storeOrderOperatingRepository.GetOrdersByStep((int)OrderStep.DA_CAN_RA);
 
-            _notification.SendNotification("GETWAY", null, null, "123456", null, "Không xác định đơn hàng hợp lệ");
+            if (orders == null || orders.Count == 0)
+            {
+                return;
+            }
+
+            bool isChanged = false;
+
+            foreach (var order in orders)
+            {
+                if (order.TimeConfirm7 == null)
+                { 
+                    continue; 
+                }
+
+                if (((DateTime)order.TimeConfirm7).AddHours(OVER_TIME_TO_AUTO_COMPLETE) < DateTime.Now) {
+                    var isCompleted = await _storeOrderOperatingRepository.CompleteOrder(order.Id);
+
+                    if (!isChanged) isChanged = isCompleted;
+                }
+            }
+
+            if (isChanged)
+            {
+                _notification.SendNotification("SYNC_ORDER", null, null, null, null, "Tự động hoàn thành thành công");
+            }
         }
     }
 }
