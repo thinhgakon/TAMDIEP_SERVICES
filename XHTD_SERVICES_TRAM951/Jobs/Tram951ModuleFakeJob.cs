@@ -428,7 +428,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             }
 
                            /*
-                            * 3.10. Xử lý sau khi da lay duoc gia tri can on dinh
+                            * 10. Xử lý sau khi da lay duoc gia tri can on dinh
                             * * Cân vào: 
                             * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
                             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
@@ -476,8 +476,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 _tram951Logger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
                             }
 
-                            // 3.11. Bật đèn xanh
-                            // 3.12. Mở barrier để xe rời bàn cân
+                            // 11. Bật đèn xanh
+                            // 12. Mở barrier để xe rời bàn cân
                             if (isLuongVao)
                             {
                                 TurnOnGreenTrafficLight("VAO");
