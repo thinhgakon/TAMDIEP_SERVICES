@@ -489,14 +489,12 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 OpenBarrier("RA");
                             }
 
-                           /*
-                            * 3.13. Xử lý sau cân
-                            * * Cân vào:
-                            * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
-                            * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
-                            * * Cân ra:
-                            * * * Gửi thông tin ra cổng bảo vệ (chỉ khi ko cân tự động được)
-                            */
+                            /*
+                             * 13. Xử lý sau cân
+                             * * Cân vào:
+                             * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+                             * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
+                             */
                         }
                     }
                 }

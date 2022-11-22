@@ -486,7 +486,6 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 {
                                     _tram951Logger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
                                 }
-
                                 // 11. Bật đèn xanh
                                 // 12. Mở barrier để xe rời bàn cân
                                 if (isLuongVao)
@@ -501,13 +500,11 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 }
 
                                 /*
-                                * 3.13. Xử lý sau cân
-                                * * Cân vào:
-                                * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
-                                * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
-                                * * Cân ra:
-                                * * * Gửi thông tin ra cổng bảo vệ (chỉ khi ko cân tự động được)
-                                */
+                                 * 13. Xử lý sau cân
+                                 * * Cân vào:
+                                 * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+                                 * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
+                                 */
                             }
                         }
                         else
