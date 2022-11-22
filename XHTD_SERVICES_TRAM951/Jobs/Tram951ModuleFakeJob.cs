@@ -230,35 +230,28 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         public void AuthenticateTram951Module()
         {
             /*
-             * == Dùng chung cho cả cân ra và cân vào ở mỗi bàn cân == 
-             * 1. Connect Device C3-400
-             * 2. Đọc dữ liệu từ thiết bị C3-400
-             * 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent. 
-             * *  Khi đọc được cardNoCurrent thì nghĩa là xe đã lên bàn cân
-             * * * 3.1. Xác định xe cân vào hay cân ra theo gia tri door từ C3-400
-             * * * 3.2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
-             * * * 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * * * 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * * * 3.5. Kiểm tra xe có vi phạm cảm biến
-             * * * 3.6. Kiểm tra trạng thái cân ổn định
-             * * * 3.7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
-             * * * 3.8. Bật đèn đỏ
-             * * * 3.9. Đóng barrier
-             * * * 3.10. Xử lý đơn hàng
-             * * * * Cân vào: 
-             * * * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
-             * * * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
-             * * * * * vào khối lượng không tải của phương tiện;
-             * * * * Cân ra: 
-             * * * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
-             * * * * * cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
-             * * * 3.11. Bật đèn xanh
-             * * * 3.12. Mở barrier để xe rời bàn cân
-             * * * 3.13. Xử lý sau cân
-             * * * * Cân vào:
-             * * * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
-             * * * * Cân ra:
-             * * * * * Đánh dấu trạng thái đơn hàng (step = 7) và gửi thông tin ra cổng bảo vệ;
+             * 1. Xác định xe cân vào hay cân ra theo gia tri door từ C3-400
+             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
+             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
+             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+             * 5. Kiểm tra xe có vi phạm cảm biến
+             * 6. Kiểm tra trạng thái cân ổn định
+             * 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
+             * 8. Bật đèn đỏ
+             * 9. Đóng barrier
+             * 10. Xử lý đơn hàng
+             * * Cân vào: 
+             * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
+             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
+             * * * Cập nhật khối lượng không tải của phương tiện;
+             * * Cân ra: 
+             * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
+             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
+             * 11. Bật đèn xanh
+             * 12. Mở barrier để xe rời bàn cân
+             * 13. Xử lý sau cân
+             * * Cân vào:
+             * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
              */
 
             // 1. Connect Device
