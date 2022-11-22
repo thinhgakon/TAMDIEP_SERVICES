@@ -383,11 +383,11 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             List<tblStoreOrderOperating> currentOrders = null;
                             if (isLuongVao)
                             {
-                                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGatewayByCardNoReceiving(cardNoCurrent);
+                                currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
                             }
                             else if (isLuongRa)
                             {
-                                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGatewayByCardNoReceiving(cardNoCurrent);
+                                currentOrders = await _storeOrderOperatingRepository.GetOrdersExitTram951ByCardNoReceiving(cardNoCurrent);
                             }
 
                             if (currentOrders == null || currentOrders.Count == 0)
