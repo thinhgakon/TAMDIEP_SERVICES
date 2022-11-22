@@ -332,21 +332,20 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                             if (isLuongVao)
                             {
-                                _tram951Logger.LogInfo($"1. Xe cân vào");
+                                _tram951Logger.LogInfo($"1. Xe can vao");
                             }
                             else
                             {
-                                _tram951Logger.LogInfo($"1. Xe cân ra");
+                                _tram951Logger.LogInfo($"1. Xe can ra");
                             }
 
-                            // 3.2.Loại bỏ các cardNoCurrent đã, đang xử lý(đã check trước đó)
+                            // 2. Loại bỏ các tag đã check trước đó
                             if (isLuongVao) {
                                 if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
                                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
-                                    _tram951Logger.LogInfo($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-
+                                    _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                     continue;
                                 }
                             }
@@ -356,11 +355,12 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
-                                    _tram951Logger.LogInfo($@"1. Tag {cardNoCurrent} da duoc xu ly => Ket thuc.");
-
+                                    _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                     continue;
                                 }
                             }
+
+                            _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                             // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
                             _tram951Logger.LogInfo($"1. Kiem tra tag {cardNoCurrent} hop le: ");
