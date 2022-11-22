@@ -49,13 +49,13 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         private string HubURL;
 
-        private List<int> ScaleValues = new List<int>();
+        private List<int> scaleValues = new List<int>();
 
-        private string RFIDValue;
+        private string rFIDValue;
 
-        private bool IsJustReceivedScaleData = false;
+        private bool isJustReceivedScaleData = false;
 
-        private bool IsJustReceivedRFIDData = false;
+        private bool isJustReceivedRFIDData = false;
 
         private HubConnection Connection { get; set; }
 
@@ -116,16 +116,16 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         {
             while (true)
             {
-                if (IsJustReceivedScaleData)
+                if (isJustReceivedScaleData)
                 {
                     Console.Write("Scale Values:");
 
-                    var scaleText = String.Join(",", ScaleValues);
+                    var scaleText = String.Join(",", scaleValues);
                     Console.WriteLine(scaleText);
 
                     KiemTraCanOnDinh();
 
-                    IsJustReceivedScaleData = false;
+                    isJustReceivedScaleData = false;
                 }
             }
         }
@@ -133,15 +133,15 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         public void KiemTraCanOnDinh()
         {
             while (true) {
-                var tbc = Calculator.TrungBinhCong(ScaleValues);
-                var isOnDinh = Calculator.CheckBalanceValues(ScaleValues, 1);
+                var tbc = Calculator.TrungBinhCong(scaleValues);
+                var isOnDinh = Calculator.CheckBalanceValues(scaleValues, 1);
 
                 Console.WriteLine("tbc: " + tbc);
 
                 if (isOnDinh)
                 {
                     Console.WriteLine("can on dinh");
-                    Console.WriteLine("Gia tri can hien tai: " + ScaleValues.LastOrDefault().ToString() );
+                    Console.WriteLine("Gia tri can hien tai: " + scaleValues.LastOrDefault().ToString() );
                     break;
                 }
                 else
@@ -176,22 +176,22 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                 var fakeRFIDResponse = JsonConvert.DeserializeObject<FakeRFIDResponse>(data);
                 if (fakeRFIDResponse != null && fakeRFIDResponse.RFIDData != null && fakeRFIDResponse.RFIDData != "")
                 {
-                    IsJustReceivedRFIDData = true;
-                    RFIDValue = fakeRFIDResponse.RFIDData;
+                    isJustReceivedScaleData = true;
+                    rFIDValue = fakeRFIDResponse.RFIDData;
                 }
 
                 // HUB SCALE
                 var fakeScaleResponse = JsonConvert.DeserializeObject<FakeScaleResponse>(data);
                 if (fakeScaleResponse != null && fakeScaleResponse.ScaleData != null && fakeScaleResponse.ScaleData != "")
                 {
-                    IsJustReceivedScaleData = true;
+                    isJustReceivedScaleData = true;
                     int result = Int32.Parse(fakeScaleResponse.ScaleData);
 
-                    ScaleValues.Add(result);
+                    scaleValues.Add(result);
 
-                    if (ScaleValues.Count > 5)
+                    if (scaleValues.Count > 5)
                     {
-                        ScaleValues.RemoveRange(0, 1);
+                        scaleValues.RemoveRange(0, 1);
                     }
                 }
             });
@@ -306,11 +306,11 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                     string str = "";
                     string[] tmp = null;
 
-                    if (IsJustReceivedRFIDData)
+                    if (isJustReceivedRFIDData)
                     {
-                        IsJustReceivedRFIDData = false;
+                        isJustReceivedRFIDData = false;
 
-                        str = RFIDValue;
+                        str = rFIDValue;
                         tmp = str.Split(',');
 
                         // Trường hợp bắt được tag RFID
@@ -400,7 +400,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                             _tram951Logger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                            // 3.5. Kiểm tra xe có vi phạm cảm biến
+                            // 5. Kiểm tra xe có vi phạm cảm biến
                             var isValidSensor = CheckValidSensor();
                             if (!isValidSensor)
                             {
@@ -408,14 +408,14 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 continue;
                             }
 
-                            // 3.6.Kiểm tra trạng thái cân ổn định
+                            // 6.Kiểm tra trạng thái cân ổn định
                             KiemTraCanOnDinh();
 
-                            // 3.7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
-                            var currentScaleValue = ScaleValues.LastOrDefault();
+                            // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
+                            var currentScaleValue = scaleValues.LastOrDefault();
 
-                            // 3.8. Bật đèn đỏ
-                            // 3.9. Đóng barrier
+                            // 8. Bật đèn đỏ
+                            // 9. Đóng barrier
                             if (isLuongVao)
                             {
                                 TurnOnRedTrafficLight("VAO");

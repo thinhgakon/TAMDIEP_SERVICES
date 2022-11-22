@@ -50,7 +50,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         private string ScaleHubURL;
 
-        private bool IsJustReceivedScaleData = false;
+        private bool isJustReceivedScaleData = false;
 
         private HubConnection Connection { get; set; }
 
@@ -111,7 +111,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
         {
             while (true)
             {
-                if (IsJustReceivedScaleData)
+                if (isJustReceivedScaleData)
                 {
                     Console.Write("Scale Values:");
 
@@ -120,7 +120,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                     KiemTraCanOnDinh();
 
-                    IsJustReceivedScaleData = false;
+                    isJustReceivedScaleData = false;
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
             Connection.On<string>("SendOffersToUser", data =>
             {
-                IsJustReceivedScaleData = true;
+                isJustReceivedScaleData = true;
                 int result = Int32.Parse(data);
 
                 //todo, adding updates tolist for example
@@ -410,7 +410,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 _tram951Logger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                                // 3.5. Kiểm tra xe có vi phạm cảm biến
+                                // 5. Kiểm tra xe có vi phạm cảm biến
                                 var isValidSensor = CheckValidSensor();
                                 if (!isValidSensor)
                                 {
@@ -418,14 +418,14 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     continue;
                                 }
 
-                                // 3.6.Kiểm tra trạng thái cân ổn định
+                                // 6.Kiểm tra trạng thái cân ổn định
                                 KiemTraCanOnDinh();
 
-                                // 3.7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
+                                // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
                                 var currentScaleValue = scaleValues.LastOrDefault();
 
-                                // 3.8. Bật đèn đỏ
-                                // 3.9. Đóng barrier
+                                // 8. Bật đèn đỏ
+                                // 9. Đóng barrier
                                 if (isLuongVao)
                                 {
                                     TurnOnRedTrafficLight("VAO");
