@@ -379,9 +379,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 continue;
                             }
 
-                            // 3.4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                            _tram951Logger.LogInfo($"2. Kiem tra tag {cardNoCurrent} co don hang hop le: ");
-
+                            // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                             List<tblStoreOrderOperating> currentOrders = null;
                             if (isLuongVao)
                             {
@@ -394,16 +392,13 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                             if (currentOrders == null || currentOrders.Count == 0)
                             {
-
-                                _tram951Logger.LogInfo($"KHONG => Ket thuc.");
-
+                                _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
                                 continue;
                             }
 
-                            var currentOrder = currentOrders.FirstOrDefault();
                             var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
-                            _tram951Logger.LogInfo($"CO. DeliveryCode = {deliveryCodes}");
+                            _tram951Logger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
                             // 3.5. Kiểm tra xe có vi phạm cảm biến
                             var isValidSensor = CheckValidSensor();
