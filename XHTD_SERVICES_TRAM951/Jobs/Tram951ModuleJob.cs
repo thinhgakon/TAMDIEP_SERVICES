@@ -372,18 +372,16 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
-                                // 3.3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                _tram951Logger.LogInfo($"1. Kiem tra tag {cardNoCurrent} hop le: ");
-
+                                // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
 
                                 if (isValid)
                                 {
-                                    _tram951Logger.LogInfo($"CO");
+                                    _tram951Logger.LogInfo($"3. Tag hop le");
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($"KHONG => Ket thuc.");
+                                    _tram951Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                                     // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                     // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
