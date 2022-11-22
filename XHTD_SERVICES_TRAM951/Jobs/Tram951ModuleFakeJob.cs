@@ -316,20 +316,28 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                         // Trường hợp bắt được tag RFID
                         if (tmp[2] != "0" && tmp[2] != "") {
 
-                            // 3. Lấy ra cardNo từ dữ liệu đọc được => cardNoCurrent
                             var cardNoCurrent = tmp[2]?.ToString();
                             var doorCurrent = tmp[3]?.ToString();
 
                             _tram951Logger.LogInfo("----------------------------");
-                            _tram951Logger.LogInfo($"Tag {cardNoCurrent} door {doorCurrent} ... ");
+                            _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}");
+                            _tram951Logger.LogInfo("-----");
 
-                            // 3.1.Xác định xe cân vào hay cân ra theo gia tri door từ C3 - 400
+                            // 1.Xác định xe cân vào / ra
                             var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
 
                             var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
+                            if (isLuongVao)
+                            {
+                                _tram951Logger.LogInfo($"1. Xe cân vào");
+                            }
+                            else
+                            {
+                                _tram951Logger.LogInfo($"1. Xe cân ra");
+                            }
 
                             // 3.2.Loại bỏ các cardNoCurrent đã, đang xử lý(đã check trước đó)
                             if (isLuongVao) {
