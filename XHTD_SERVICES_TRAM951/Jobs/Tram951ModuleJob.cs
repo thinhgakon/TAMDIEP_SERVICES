@@ -417,36 +417,62 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     // Vi phạm cảm biến
                                     continue;
                                 }
+                                else
+                                {
+                                    _tram951Logger.LogInfo($"5. Khong vi pham cam bien can");
+                                }
 
                                 // 6.Kiểm tra trạng thái cân ổn định
+                                _tram951Logger.LogInfo($"6. Kiem tra trang thai can on dinh");
                                 KiemTraCanOnDinh();
 
                                 // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
                                 var currentScaleValue = scaleValues.LastOrDefault();
+                                _tram951Logger.LogInfo($"7. Gia tri can: {currentScaleValue}");
 
                                 // 8. Bật đèn đỏ
                                 // 9. Đóng barrier
+                                bool isSuccessTurnOnRedTrafficLight = false;
+                                bool isSuccessCloseBarrier = false;
                                 if (isLuongVao)
                                 {
-                                    TurnOnRedTrafficLight("VAO");
-                                    CloseBarrier("VAO");
+                                    isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("IN");
+                                    isSuccessCloseBarrier = CloseBarrier("IN");
                                 }
                                 else if (isLuongRa)
                                 {
-                                    TurnOnRedTrafficLight("RA");
-                                    CloseBarrier("RA");
+                                    isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("OUT");
+                                    isSuccessCloseBarrier = CloseBarrier("OUT");
+                                }
+
+                                if (isSuccessTurnOnRedTrafficLight)
+                                {
+                                    _tram951Logger.LogInfo($"8. Bat den do thanh cong");
+                                }
+                                else
+                                {
+                                    _tram951Logger.LogInfo($"8. Bat den do KHONG thanh cong");
+                                }
+
+                                if (isSuccessCloseBarrier)
+                                {
+                                    _tram951Logger.LogInfo($"9. Dong barrier thanh cong");
+                                }
+                                else
+                                {
+                                    _tram951Logger.LogInfo($"9. Dong barrier KHONG thanh cong");
                                 }
 
                                 /*
-                                * 10. Xử lý sau khi da lay duoc gia tri can on dinh
-                                * * Cân vào: 
-                                * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
-                                * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                                * * * Cập nhật khối lượng không tải của phương tiện
-                                * * Cân ra: 
-                                * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
-                                * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                                */
+                                 * 10. Xử lý sau khi da lay duoc gia tri can on dinh
+                                 * * Cân vào: 
+                                 * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
+                                 * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                                 * * * Cập nhật khối lượng không tải của phương tiện
+                                 * * Cân ra: 
+                                 * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
+                                 * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                                 */
                                 var isUpdatedWeightInWebSale = false;
                                 var isUpdatedOrder = false;
 
@@ -489,15 +515,35 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 // 11. Bật đèn xanh
                                 // 12. Mở barrier để xe rời bàn cân
+                                bool isSuccessTurnOnGreenTrafficLight = false;
+                                bool isSuccessOpenBarrier = false;
                                 if (isLuongVao)
                                 {
-                                    TurnOnGreenTrafficLight("VAO");
-                                    OpenBarrier("VAO");
+                                    isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
+                                    isSuccessOpenBarrier = OpenBarrier("IN");
                                 }
                                 else if (isLuongRa)
                                 {
-                                    TurnOnGreenTrafficLight("RA");
-                                    OpenBarrier("RA");
+                                    isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
+                                    isSuccessOpenBarrier = OpenBarrier("OUT");
+                                }
+
+                                if (isSuccessTurnOnGreenTrafficLight)
+                                {
+                                    _tram951Logger.LogInfo($"11. Bat den xanh thanh cong");
+                                }
+                                else
+                                {
+                                    _tram951Logger.LogInfo($"11. Bat den xanh KHONG thanh cong");
+                                }
+
+                                if (isSuccessOpenBarrier)
+                                {
+                                    _tram951Logger.LogInfo($"12. Mo barrier thanh cong");
+                                }
+                                else
+                                {
+                                    _tram951Logger.LogInfo($"12. Mo barrier KHONG thanh cong");
                                 }
 
                                 /*
@@ -506,6 +552,17 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                  * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
                                  * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
                                  */
+
+                                foreach (var item in currentOrders)
+                                {
+                                    var typeProduct = item.TypeProduct;
+
+                                    var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByTypeProduct(typeProduct);
+
+                                    var newIndex = maxIndex + 1;
+
+                                    await _storeOrderOperatingRepository.UpdateIndex(item.Id, newIndex);
+                                }
                             }
                         }
                         else
@@ -521,44 +578,54 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             }
         }
 
-        public void OpenBarrier(string luong)
+        public bool OpenBarrier(string luong)
         {
-            int portNumberDeviceIn = luong == "VAO" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            int portNumberDeviceOut = luong == "VAO" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-            _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+            return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
-        public void CloseBarrier(string luong)
+        public bool CloseBarrier(string luong)
         {
-            int portNumberDeviceIn = luong == "VAO" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            int portNumberDeviceOut = luong == "VAO" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-            _barrier.TurnOff(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+            return _barrier.TurnOff(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
-        public void TurnOnGreenTrafficLight(string luong)
+        public bool TurnOnGreenTrafficLight(string luong)
         {
-            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+            if (trafficLightVao == null || trafficLightRa == null)
+            {
+                return false;
+            }
+
+            string ipAddress = luong == "IN" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
 
             _trafficLight.Connect($"{ipAddress}");
 
-            _trafficLight.TurnOnGreenOffRed();
+            return _trafficLight.TurnOnGreenOffRed();
         }
 
-        public void TurnOnRedTrafficLight(string luong)
+        public bool TurnOnRedTrafficLight(string luong)
         {
-            string ipAddress = luong == "VAO" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+            if (trafficLightVao == null || trafficLightRa == null)
+            {
+                return false;
+            }
+
+            string ipAddress = luong == "IN" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
 
             _trafficLight.Connect($"{ipAddress}");
 
-            _trafficLight.TurnOffGreenOnRed();
+            return _trafficLight.TurnOffGreenOnRed();
         }
 
         public bool CheckValidSensor()
         {
-            int portNumberDeviceIn1 = (int)sensor1.PortNumberDeviceIn;
-            int portNumberDeviceIn2 = (int)sensor2.PortNumberDeviceIn;
+            int portNumberDeviceIn1 = sensor1 != null ? (int)sensor1.PortNumberDeviceIn : -1;
+            int portNumberDeviceIn2 = sensor2 != null ? (int)sensor2?.PortNumberDeviceIn : -1;
 
             List<int> portNumberDeviceIns = new List<int>
             {

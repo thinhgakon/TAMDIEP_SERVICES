@@ -607,7 +607,6 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool CheckValidSensor()
         {
-            return true;
             int portNumberDeviceIn1 = sensor1 != null ? (int)sensor1.PortNumberDeviceIn : -1;
             int portNumberDeviceIn2 = sensor2 != null ? (int)sensor2?.PortNumberDeviceIn : -1;
 
