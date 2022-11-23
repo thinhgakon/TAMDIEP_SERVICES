@@ -318,6 +318,36 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateIndex(int orderId, int index)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.Id == orderId);
+                    if (order != null)
+                    {
+                        order.IndexOrder = index;
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateLineTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateLineTrough Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
         public async Task<List<tblStoreOrderOperating>> GetOrdersSortByIndex(int quantity)
         {
             using (var dbContext = new XHTD_Entities())
@@ -359,7 +389,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_NHAN_DON)
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
                                             .ToListAsync();
                 return orders;
             }
@@ -381,7 +411,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step < (int)OrderStep.DA_VAO_CONG)
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
                                             .ToListAsync();
                 return orders;
             }
@@ -675,6 +705,23 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     return isCompleted;
                 }
+            }
+        }
+
+        public int GetMaxIndexByTypeProduct(string typeProduct)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = dbContext.tblStoreOrderOperatings
+                                .Where(x => x.TypeProduct == typeProduct && x.Step == (int)OrderStep.DA_CAN_VAO)
+                                .OrderByDescending(x => x.IndexOrder)
+                                .FirstOrDefault();
+
+                if(order != null) { 
+                    return (int)order.IndexOrder;
+                }
+
+                return 0;
             }
         }
     }

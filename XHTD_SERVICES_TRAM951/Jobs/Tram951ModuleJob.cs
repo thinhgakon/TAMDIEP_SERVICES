@@ -469,7 +469,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 if (isUpdatedOrder)
                                 {
-                                    _tram951Logger.LogInfo($"4. Update don hang thanh cong.");
+                                    _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can thanh cong.");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -484,8 +484,9 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
+                                    _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can KHONG thanh cong => Ket thuc.");
                                 }
+
                                 // 11. Bật đèn xanh
                                 // 12. Mở barrier để xe rời bàn cân
                                 if (isLuongVao)

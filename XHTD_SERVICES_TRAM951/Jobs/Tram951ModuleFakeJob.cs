@@ -314,7 +314,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                         tmp = str.Split(',');
 
                         // Trường hợp bắt được tag RFID
-                        if (tmp[2] != "0" && tmp[2] != "") {
+                        if (tmp[2] != "0" && tmp[2] != "")
+                        {
 
                             var cardNoCurrent = tmp[2]?.ToString();
                             var doorCurrent = tmp[3]?.ToString();
@@ -340,7 +341,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             }
 
                             // 2. Loại bỏ các tag đã check trước đó
-                            if (isLuongVao) {
+                            if (isLuongVao)
+                            {
                                 if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
                                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
@@ -407,12 +409,18 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 // Vi phạm cảm biến
                                 continue;
                             }
+                            else
+                            {
+                                _tram951Logger.LogInfo($"5. Khong vi pham cam bien can");
+                            }
 
                             // 6.Kiểm tra trạng thái cân ổn định
+                            _tram951Logger.LogInfo($"6. Kiem tra trang thai can on dinh");
                             KiemTraCanOnDinh();
 
                             // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
                             var currentScaleValue = scaleValues.LastOrDefault();
+                            _tram951Logger.LogInfo($"7. Gia tri can: {currentScaleValue}");
 
                             // 8. Bật đèn đỏ
                             // 9. Đóng barrier
@@ -427,23 +435,24 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 CloseBarrier("RA");
                             }
 
-                           /*
-                            * 10. Xử lý sau khi da lay duoc gia tri can on dinh
-                            * * Cân vào: 
-                            * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
-                            * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                            * * * Cập nhật khối lượng không tải của phương tiện
-                            * * Cân ra: 
-                            * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
-                            * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                            */
+                            /*
+                             * 10. Xử lý sau khi da lay duoc gia tri can on dinh
+                             * * Cân vào: 
+                             * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
+                             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                             * * * Cập nhật khối lượng không tải của phương tiện
+                             * * Cân ra: 
+                             * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
+                             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
+                             */
                             var isUpdatedWeightInWebSale = false;
                             var isUpdatedOrder = false;
 
                             if (isLuongVao)
                             {
                                 isUpdatedWeightInWebSale = HttpRequest.UpdateWeightInWebSale();
-                                if (isUpdatedWeightInWebSale) { 
+                                if (isUpdatedWeightInWebSale)
+                                {
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceTram951(cardNoCurrent, currentScaleValue);
                                 }
                             }
@@ -458,7 +467,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                             if (isUpdatedOrder)
                             {
-                                _tram951Logger.LogInfo($"4. Update don hang thanh cong.");
+                                _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can thanh cong.");
 
                                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -473,7 +482,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             }
                             else
                             {
-                                _tram951Logger.LogInfo($"4. Update don hang KHONG thanh cong => Ket thuc.");
+                                _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can KHONG thanh cong => Ket thuc.");
                             }
 
                             // 11. Bật đèn xanh
@@ -495,6 +504,21 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                              * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
                              * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
                              */
+
+                            // duyet qua toan bo don hang hien tai
+                            // kiem tra type product
+                            // lay ra max index tuong ung voi type product nay
+                            // set index = maxIndex + 1
+                            foreach (var item in currentOrders)
+                            {
+                                var typeProduct = item.TypeProduct;
+
+                                var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByTypeProduct(typeProduct);
+
+                                var newIndex = maxIndex + 1;
+
+                                await _storeOrderOperatingRepository.UpdateIndex(item.Id, newIndex);
+                            }
                         }
                     }
                 }
@@ -537,8 +561,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool CheckValidSensor()
         {
-            int portNumberDeviceIn1 = (int)sensor1.PortNumberDeviceIn;
-            int portNumberDeviceIn2 = (int)sensor2.PortNumberDeviceIn;
+            int portNumberDeviceIn1 = sensor1 != null ? (int)sensor1.PortNumberDeviceIn : -1;
+            int portNumberDeviceIn2 = sensor2 != null ? (int)sensor2?.PortNumberDeviceIn : -1;
 
             List<int> portNumberDeviceIns = new List<int>
             {
