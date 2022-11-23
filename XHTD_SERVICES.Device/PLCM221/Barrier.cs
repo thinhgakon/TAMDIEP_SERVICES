@@ -22,8 +22,6 @@ namespace XHTD_SERVICES.Device.PLCM221
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine($"Connected to PLC ... {GetLastErrorString()}");
-
                 bool[] Ports = new bool[24];
                 PLC_Result = CheckInputPorts(Ports);
 
@@ -32,13 +30,8 @@ namespace XHTD_SERVICES.Device.PLCM221
                     if (!Ports[portNumberDeviceIn])
                     {
                         PLC_Result = ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
-                        if (PLC_Result == M221Result.SUCCESS)
+                        if (PLC_Result != M221Result.SUCCESS)
                         {
-                            Console.WriteLine("Open barrier: OK");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Open barrier: ERROR");
                             return false;
                         }
                     }
@@ -63,8 +56,6 @@ namespace XHTD_SERVICES.Device.PLCM221
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine($"Connected to PLC ... {GetLastErrorString()}");
-
                 bool[] Ports = new bool[24];
                 PLC_Result = CheckInputPorts(Ports);
 
@@ -73,13 +64,8 @@ namespace XHTD_SERVICES.Device.PLCM221
                     if (Ports[portNumberDeviceIn])
                     {
                         PLC_Result = ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
-                        if (PLC_Result == M221Result.SUCCESS)
+                        if (PLC_Result != M221Result.SUCCESS)
                         {
-                            Console.WriteLine("Open barrier: OK");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Open barrier: ERROR");
                             return false;
                         }
                     }

@@ -36,19 +36,14 @@ namespace XHTD_SERVICES.Device
                 client.Connect($"{this.IpAddress}", PORT_NUMBER);
                 Stream stream = client.GetStream();
 
-                //Console.WriteLine("Connected to VHB.");
-
-                //// 2. send 1
+                // 2. send 1
                 byte[] data1 = encoding.GetBytes($"{ONGREENOFFRED}");
 
                 stream.Write(data1, 0, data1.Length);
-                //Console.WriteLine(encoding.GetString(data1));
 
                 // 3. receive 1
                 data1 = new byte[BUFFER_SIZE];
                 stream.Read(data1, 0, BUFFER_SIZE);
-
-                //Console.WriteLine(encoding.GetString(data1));
 
                 // 5. Close
                 stream.Close();
@@ -56,7 +51,6 @@ namespace XHTD_SERVICES.Device
 
                 return true;
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
@@ -74,19 +68,14 @@ namespace XHTD_SERVICES.Device
                 client.Connect($"{this.IpAddress}", PORT_NUMBER);
                 Stream stream = client.GetStream();
 
-                Console.WriteLine("Connected to VHB.");
-
-                //// 2. send 1
+                // 2. send 1
                 byte[] data1 = encoding.GetBytes($"{OFFGREENONRED}");
 
                 stream.Write(data1, 0, data1.Length);
-                Console.WriteLine(encoding.GetString(data1));
 
                 // 3. receive 1
                 data1 = new byte[BUFFER_SIZE];
                 stream.Read(data1, 0, BUFFER_SIZE);
-
-                Console.WriteLine(encoding.GetString(data1));
 
                 // 5. Close
                 stream.Close();
@@ -94,7 +83,6 @@ namespace XHTD_SERVICES.Device
 
                 return true;
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
@@ -112,19 +100,14 @@ namespace XHTD_SERVICES.Device
                 client.Connect($"{this.IpAddress}", PORT_NUMBER);
                 Stream stream = client.GetStream();
 
-                Console.WriteLine("Connected to VHB.");
-
-                //// 2. send 1
+                // 2. send 1
                 byte[] data1 = encoding.GetBytes($"{OFFGREENOFFRED}");
 
                 stream.Write(data1, 0, data1.Length);
-                Console.WriteLine(encoding.GetString(data1));
 
                 // 3. receive 1
                 data1 = new byte[BUFFER_SIZE];
                 stream.Read(data1, 0, BUFFER_SIZE);
-
-                Console.WriteLine(encoding.GetString(data1));
 
                 // 5. Close
                 stream.Close();
@@ -132,7 +115,6 @@ namespace XHTD_SERVICES.Device
 
                 return true;
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);

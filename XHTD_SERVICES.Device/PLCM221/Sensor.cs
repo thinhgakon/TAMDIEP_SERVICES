@@ -22,8 +22,6 @@ namespace XHTD_SERVICES.Device.PLCM221
 
             if (PLC_Result == M221Result.SUCCESS)
             {
-                Console.WriteLine($"Connected to PLC ... {GetLastErrorString()}");
-
                 bool[] Ports = new bool[24];
                 PLC_Result = CheckInputPorts(Ports);
 
