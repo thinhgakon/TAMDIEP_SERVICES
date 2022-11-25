@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_GATEWAY.Models.Response
+namespace XHTD_SERVICES_TRAM951.Models.Response
 {
     public class HUBResponse
     {

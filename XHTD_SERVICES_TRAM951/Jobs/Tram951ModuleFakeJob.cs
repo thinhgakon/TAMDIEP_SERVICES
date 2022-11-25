@@ -170,22 +170,20 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                 //.WithAutomaticReconnect()
                 .Build();
 
-            Connection.On<string>("SendOffersToUser", data =>
+            Connection.On<HUBResponse>("SendMsgToUser", fakeHubResponse =>
             {
                 // HUB RFID
-                var fakeRFIDResponse = JsonConvert.DeserializeObject<FakeRFIDResponse>(data);
-                if (fakeRFIDResponse != null && fakeRFIDResponse.RFIDData != null && fakeRFIDResponse.RFIDData != "")
+                if (fakeHubResponse != null && fakeHubResponse.Data != null && fakeHubResponse.Data.Vehicle != "")
                 {
+                    rFIDValue = fakeHubResponse.Data.Vehicle;
                     isJustReceivedRFIDData = true;
-                    rFIDValue = fakeRFIDResponse.RFIDData;
                 }
 
                 // HUB SCALE
-                var fakeScaleResponse = JsonConvert.DeserializeObject<FakeScaleResponse>(data);
-                if (fakeScaleResponse != null && fakeScaleResponse.ScaleData != null && fakeScaleResponse.ScaleData != "")
+                if (fakeHubResponse != null && fakeHubResponse.Data != null && fakeHubResponse.Data.Rfid > 0)
                 {
                     isJustReceivedScaleData = true;
-                    int result = Int32.Parse(fakeScaleResponse.ScaleData);
+                    int result = fakeHubResponse.Data.Rfid;
 
                     scaleValues.Add(result);
 
