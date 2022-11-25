@@ -128,8 +128,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 if (fakeHubResponse != null && fakeHubResponse.Data != null && fakeHubResponse.Data.Vehicle != "")
                 {
-                    IsJustReceivedRFIDData = true;
                     RFIDValue = fakeHubResponse.Data.Vehicle;
+                    IsJustReceivedRFIDData = true;
                 }
             });
 
@@ -233,11 +233,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         IsJustReceivedRFIDData = false;
 
-                        str = RFIDValue;
+                        str = RFIDValue != null ? RFIDValue : "";
                         tmp = str.Split(',');
 
                         // Trường hợp bắt được tag RFID
-                        if (tmp[2] != "0" && tmp[2] != "") {
+                        if (tmp != null && tmp.Count() > 3 && tmp[2] != "0" && tmp[2] != "") {
 
                             var cardNoCurrent = tmp[2]?.ToString();
                             var doorCurrent = tmp[3]?.ToString();
@@ -298,7 +298,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             {
                                 _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
+                                _notification.SendNotification("CBV", null, 0, 0, null, 0, null, null, null);
 
                                 // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                 // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
@@ -320,7 +320,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 
                                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
+                                _notification.SendNotification("CBV", null, 0, 0, null, 0, null, null, null);
 
                                 continue; 
                             }
