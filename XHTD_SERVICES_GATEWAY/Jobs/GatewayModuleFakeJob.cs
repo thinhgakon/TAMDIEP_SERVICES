@@ -93,7 +93,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                _gatewayLogger.LogInfo("start gateway service");
+                _gatewayLogger.LogInfo("start gateway fake service");
                 _gatewayLogger.LogInfo("----------------------------");
 
                 HandleHubConnection();
@@ -124,12 +124,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 //.WithAutomaticReconnect()
                 .Build();
 
-            Connection.On<string>("SendOffersToUser", data =>
+            Connection.On<HUBResponse>("SendMsgToUser", fakeHubResponse =>
             {
-                var fakeHubResponse = JsonConvert.DeserializeObject<FakeRFIDResponse>(data);
-                if (fakeHubResponse != null && fakeHubResponse.RFIDData != null && fakeHubResponse.RFIDData != "") {
+                if (fakeHubResponse != null && fakeHubResponse.Data != null && fakeHubResponse.Data.Vehicle != "")
+                {
                     IsJustReceivedRFIDData = true;
-                    RFIDValue = fakeHubResponse.RFIDData;
+                    RFIDValue = fakeHubResponse.Data.Vehicle;
                 }
             });
 
