@@ -405,6 +405,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             if (!isValidSensor)
                             {
                                 // Vi phạm cảm biến
+                                _tram951Logger.LogInfo($"5. Co vi pham cam bien can => Ket thuc.");
                                 continue;
                             }
                             else
