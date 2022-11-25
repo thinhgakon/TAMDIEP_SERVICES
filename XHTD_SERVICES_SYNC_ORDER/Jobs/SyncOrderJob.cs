@@ -77,7 +77,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (isChanged)
             {
-                _notification.SendNotification("SYNC_ORDER", null, null, null, null, "Đồng bộ đơn hàng thành công");
+                _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
             }
         }
 

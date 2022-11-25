@@ -74,6 +74,7 @@
     <Compile Include="Calculator.cs" />
     <Compile Include="HttpRequest.cs" />
     <Compile Include="Models\Request\NotificationRequest.cs" />
+    <Compile Include="Models\Request\SendDataMsgRequest.cs" />
     <Compile Include="Models\Request\SendMsgRequest.cs" />
     <Compile Include="Models\Request\GetDMSTokenRequest.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />

@@ -15,7 +15,7 @@ namespace XHTD_SERVICES.Helper
 {
     public class Notification
     {
-        public void SendMsg(string messageContent)
+        public void SendMsg(SendMsgRequest notification)
         {
             IRestResponse response = HttpRequest.GetDMSToken();
 
@@ -26,32 +26,39 @@ namespace XHTD_SERVICES.Helper
 
             if(strToken != "")
             {
-                HttpRequest.SendDMSMsg(strToken, messageContent);
+                HttpRequest.SendDMSMsg(strToken, notification);
             }
         }
 
         public void SendNotification(
-            string fromService,
-            string fromDevice,
-            string vehicle,
-            string cardNo,
+            string type,
+            string source,
+            int status,
+            int orderId,
             string deliveryCode,
-            string content
+            int rfid,
+            string vehicle,
+            string driverName,
+            string driverUserName
             )
         {
-            NotificationRequest notification = new NotificationRequest
+            SendMsgRequest notification = new SendMsgRequest
             {
-                FromService = fromService,
-                FromDevice = fromDevice,
-                Vehicle = vehicle,
-                CardNo = cardNo,
-                DeliveryCode = deliveryCode,
-                Content = content,
+                Type = type,
+                Source = source,
+                Status = status,
+                Data = new SendDataMsgRequest
+                {
+                    Orderid = orderId,
+                    DeliveryCode = deliveryCode,
+                    Rfid = rfid,
+                    Vehicle = vehicle,
+                    DriverName = driverName,
+                    DriverUserName = driverUserName,
+                }
             };
 
-            var messageContent = JsonConvert.SerializeObject(notification);
-
-            SendMsg(messageContent);
+            SendMsg(notification);
         }
     }
 }

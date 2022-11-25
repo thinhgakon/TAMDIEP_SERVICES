@@ -81,7 +81,7 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 
             if (isChanged)
             {
-                _notification.SendNotification("SYNC_ORDER", null, null, null, null, "Tự động hoàn thành thành công");
+                _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
             }
         }
     }

@@ -54,7 +54,7 @@ namespace XHTD_SERVICES_SAMPLE.Jobs
 
             _sampleLogger.LogInfo("start process SampleJob");
 
-            _notification.SendNotification("GETWAY", null, null, "123456", null, "Không xác định đơn hàng hợp lệ");
+            _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
         }
     }
 }

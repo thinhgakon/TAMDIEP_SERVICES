@@ -8,6 +8,9 @@ namespace XHTD_SERVICES.Helper.Models.Request
 {
     public class SendMsgRequest
     {
-        public string messageContent { get; set; }
+        public string Type { get; set; }
+        public string Source { get; set; }
+        public int Status { get; set; }
+        public SendDataMsgRequest Data { get; set; }
     }
 }
