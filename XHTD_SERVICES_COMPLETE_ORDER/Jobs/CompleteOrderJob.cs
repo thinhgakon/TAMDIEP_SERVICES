@@ -81,7 +81,19 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 
             if (isChanged)
             {
-                _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
+                _notification.SendNotification(
+                    "",
+                    null,
+                    1,
+                    "RFID có đơn hàng hợp lệ",
+                    1,
+                    null,
+                    null,
+                    1,
+                    null,
+                    null,
+                    null
+                );
             }
         }
     }

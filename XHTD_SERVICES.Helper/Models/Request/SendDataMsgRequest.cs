@@ -8,7 +8,7 @@ namespace XHTD_SERVICES.Helper.Models.Request
 {
     public class SendDataMsgRequest
     {
-        public int Orderid { get; set; }
+        public string Orderid { get; set; }
         public string DeliveryCode { get; set; }
         public int Rfid { get; set; }
         public string Vehicle { get; set; }

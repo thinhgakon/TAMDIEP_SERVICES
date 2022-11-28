@@ -250,7 +250,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     _gatewayLogger.LogInfo($"KHONG => Ket thuc.");
 
-                                    _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
+                                    _notification.SendNotification(
+                                        "",
+                                        null,
+                                        1,
+                                        "RFID có đơn hàng hợp lệ",
+                                        1,
+                                        null,
+                                        null,
+                                        1,
+                                        null,
+                                        null,
+                                        null
+                                    );
 
                                     // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                     // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
@@ -274,7 +286,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     _gatewayLogger.LogInfo($"KHONG => Ket thuc.");
 
-                                    _notification.SendNotification("", null, 0, 0, null, 0, null, null, null);
+                                    _notification.SendNotification(
+                                        "",
+                                        null,
+                                        1,
+                                        "RFID có đơn hàng hợp lệ",
+                                        1,
+                                        null,
+                                        null,
+                                        1,
+                                        null,
+                                        null,
+                                        null
+                                    );
 
                                     continue; 
                                 }

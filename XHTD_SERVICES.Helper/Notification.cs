@@ -34,7 +34,9 @@ namespace XHTD_SERVICES.Helper
             string type,
             string source,
             int status,
-            int orderId,
+            string content,
+            int direction,
+            string orderId,
             string deliveryCode,
             int rfid,
             string vehicle,
@@ -47,6 +49,8 @@ namespace XHTD_SERVICES.Helper
                 Type = type,
                 Source = source,
                 Status = status,
+                Content = content,
+                Direction = direction,
                 Data = new SendDataMsgRequest
                 {
                     Orderid = orderId,

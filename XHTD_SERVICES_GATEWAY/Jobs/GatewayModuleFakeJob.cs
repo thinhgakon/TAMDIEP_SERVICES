@@ -253,12 +253,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
+                            var direction = 0;
+
                             if (isLuongVao)
                             {
+                                direction = 1;
                                 _gatewayLogger.LogInfo($"1. Xe can vao");
                             }
                             else
                             {
+                                direction = 2;
                                 _gatewayLogger.LogInfo($"1. Xe can ra");
                             }
 
@@ -298,7 +302,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             {
                                 _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                _notification.SendNotification("CBV", null, 0, 0, null, 0, null, null, null);
+                                _notification.SendNotification(
+                                    "CBV",
+                                    null,
+                                    0,
+                                    "RFID không thuộc hệ thống",
+                                    direction,
+                                    null,
+                                    null,
+                                    Convert.ToInt32(cardNoCurrent),
+                                    null,
+                                    null,
+                                    null
+                                );
 
                                 // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                 // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
@@ -320,15 +336,41 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 
                                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                _notification.SendNotification("CBV", null, 0, 0, null, 0, null, null, null);
+                                _notification.SendNotification(
+                                    "CBV",
+                                    null,
+                                    0,
+                                    "RFID không có đơn hàng hợp lệ",
+                                    direction,
+                                    null,
+                                    null,
+                                    Convert.ToInt32(cardNoCurrent),
+                                    null,
+                                    null,
+                                    null
+                                );
 
-                                continue; 
+                                continue;
                             }
 
                             var currentOrder = currentOrders.FirstOrDefault();
                             var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
                             _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
+
+                            _notification.SendNotification(
+                                    "CBV",
+                                    null,
+                                    1,
+                                    "RFID có đơn hàng hợp lệ",
+                                    direction,
+                                    null,
+                                    null,
+                                    Convert.ToInt32(cardNoCurrent),
+                                    null,
+                                    null,
+                                    null
+                                );
 
                             // 5. Cập nhật đơn hàng
                             var isUpdatedOrder = false;

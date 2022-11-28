@@ -11,6 +11,8 @@ namespace XHTD_SERVICES.Helper.Models.Request
         public string Type { get; set; }
         public string Source { get; set; }
         public int Status { get; set; }
+        public string Content { get; set; }
+        public int Direction { get; set; }
         public SendDataMsgRequest Data { get; set; }
     }
 }
