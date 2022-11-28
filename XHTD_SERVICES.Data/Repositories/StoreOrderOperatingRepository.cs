@@ -436,7 +436,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_VAO_CONG).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
+                                                .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {
@@ -473,7 +475,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_CAN_RA).ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
+                                                .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {

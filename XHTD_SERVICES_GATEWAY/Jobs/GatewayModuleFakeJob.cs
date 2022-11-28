@@ -178,7 +178,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
              * 7. Mở barrier
              * 8. Ghi log thiết bị
              * 9. Bắn tín hiệu thông báo
-             * 10. Hiển thị led
              */
 
             // 1. Connect Device
