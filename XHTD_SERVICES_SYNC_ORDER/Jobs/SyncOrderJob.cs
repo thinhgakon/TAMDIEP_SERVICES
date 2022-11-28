@@ -78,14 +78,14 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             if (isChanged)
             {
                 _notification.SendNotification(
-                    "",
+                    "SYNC_ORDER",
                     null,
                     1,
-                    "RFID có đơn hàng hợp lệ",
-                    1,
+                    "Đồng bộ đơn hàng thành công",
+                    0,
                     null,
                     null,
-                    1,
+                    0,
                     null,
                     null,
                     null

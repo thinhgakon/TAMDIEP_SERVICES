@@ -82,14 +82,14 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
             if (isChanged)
             {
                 _notification.SendNotification(
-                    "",
+                    "COMPLETE_ORDER",
                     null,
                     1,
-                    "RFID có đơn hàng hợp lệ",
-                    1,
+                    "Tự động hoàn thành đơn hàng thành công",
+                    0,
                     null,
                     null,
-                    1,
+                    0,
                     null,
                     null,
                     null
