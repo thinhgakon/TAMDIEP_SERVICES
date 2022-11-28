@@ -45,6 +45,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
+
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa, sensor1, sensor2;
 
         private string HubURL;
@@ -308,11 +310,11 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                     {
                         isJustReceivedRFIDData = false;
 
-                        str = rFIDValue;
+                        str = rFIDValue != null ? rFIDValue : "";
                         tmp = str.Split(',');
 
                         // Trường hợp bắt được tag RFID
-                        if (tmp[2] != "0" && tmp[2] != "")
+                        if (tmp != null && tmp.Count() > 3 && tmp[2] != "0" && tmp[2] != "")
                         {
 
                             var cardNoCurrent = tmp[2]?.ToString();
@@ -329,16 +331,29 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
+                            var direction = 0;
+
                             if (isLuongVao)
                             {
+                                direction = 1;
                                 _tram951Logger.LogInfo($"1. Xe can vao");
                             }
                             else
                             {
+                                direction = 2;
                                 _tram951Logger.LogInfo($"1. Xe can ra");
                             }
 
                             // 2. Loại bỏ các tag đã check trước đó
+                            if (tmpInvalidCardNoLst.Count > 5) tmpInvalidCardNoLst.RemoveRange(0, 3);
+
+                            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-2)))
+                            {
+                                _tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+
+                                continue;
+                            }
+
                             if (isLuongVao)
                             {
                                 if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
@@ -375,6 +390,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                 // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                 continue;
                             }
@@ -393,6 +410,12 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                             if (currentOrders == null || currentOrders.Count == 0)
                             {
                                 _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+
+                                // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
+                                // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                tmpInvalidCardNoLst.Add(newCardNoLog);
+
                                 continue;
                             }
 
