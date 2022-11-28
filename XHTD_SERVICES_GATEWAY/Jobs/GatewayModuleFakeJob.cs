@@ -44,6 +44,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
+
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
 
         private string HubURL;
@@ -267,8 +269,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             }
 
                             // 2. Loại bỏ các tag đã check trước đó
+                            if (tmpInvalidCardNoLst.Count > 5) tmpInvalidCardNoLst.RemoveRange(0, 3);
+
+                            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-2)))
+                            {
+                                _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+
+                                continue;
+                            }
+
                             if (isLuongVao) {
-                                if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
+                                if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
 
                                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
@@ -279,7 +290,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             }
                             else if (isLuongRa)
                             {
-                                if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
+                                if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
 
                                 if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                 {
@@ -318,6 +329,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                 // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                 continue;
                             }
@@ -350,6 +363,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     null
                                 );
 
+                                // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
+                                // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                tmpInvalidCardNoLst.Add(newCardNoLog);
+
                                 continue;
                             }
 
@@ -359,18 +377,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
                             _notification.SendNotification(
-                                    "CBV",
-                                    null,
-                                    1,
-                                    "RFID có đơn hàng hợp lệ",
-                                    direction,
-                                    null,
-                                    null,
-                                    Convert.ToInt32(cardNoCurrent),
-                                    null,
-                                    null,
-                                    null
-                                );
+                                "CBV",
+                                null,
+                                1,
+                                "RFID có đơn hàng hợp lệ",
+                                direction,
+                                null,
+                                null,
+                                Convert.ToInt32(cardNoCurrent),
+                                null,
+                                null,
+                                null
+                            );
 
                             // 5. Cập nhật đơn hàng
                             var isUpdatedOrder = false;
