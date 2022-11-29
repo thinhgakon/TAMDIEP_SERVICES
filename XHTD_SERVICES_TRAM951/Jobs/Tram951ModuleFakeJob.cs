@@ -496,6 +496,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                 if (isUpdatedWeightInWebSale)
                                 {
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceTram951(cardNoCurrent, currentScaleValue);
+
+                                    // Cập nhật lại khối lượng không tải của phương tiện
                                 }
                             }
                             else if (isLuongRa)

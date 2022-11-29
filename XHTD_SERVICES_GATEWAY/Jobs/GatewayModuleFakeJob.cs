@@ -463,6 +463,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     _gatewayLogger.LogInfo($"7. Mo barrier KHONG thanh cong");
                                 }
+
+                                _gatewayLogger.LogInfo($"Ket thuc.");
                             }
                             else
                             {
