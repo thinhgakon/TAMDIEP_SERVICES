@@ -566,16 +566,18 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                              * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
                              * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
                              */
+                            _tram951Logger.LogInfo($"13. Xep so thu tu vao mang xuat");
+                            if (isLuongVao) { 
+                                foreach (var item in currentOrders)
+                                {
+                                    var typeProduct = item.TypeProduct;
 
-                            foreach (var item in currentOrders)
-                            {
-                                var typeProduct = item.TypeProduct;
+                                    var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByTypeProduct(typeProduct);
 
-                                var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByTypeProduct(typeProduct);
+                                    var newIndex = maxIndex + 1;
 
-                                var newIndex = maxIndex + 1;
-
-                                await _storeOrderOperatingRepository.UpdateIndex(item.Id, newIndex);
+                                    await _storeOrderOperatingRepository.UpdateIndex(item.Id, newIndex);
+                                }
                             }
                         }
                     }
