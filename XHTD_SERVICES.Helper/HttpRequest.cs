@@ -131,6 +131,8 @@ namespace XHTD_SERVICES.Helper
                 Type = messenge.Type,
                 Source = messenge.Source,
                 Status = messenge.Status,
+                Direction = messenge.Direction,
+                Content = messenge.Content,
                 Data = messenge.Data
             };
 
