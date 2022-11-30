@@ -18,6 +18,7 @@ namespace XHTD_SERVICES_SYNC_ORDER
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<VehicleRepository>().AsSelf();
+            builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<SyncOrderLogger>().AsSelf();
 

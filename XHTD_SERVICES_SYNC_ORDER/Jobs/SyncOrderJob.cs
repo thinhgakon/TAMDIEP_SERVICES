@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using XHTD_SERVICES_SYNC_ORDER.Models.Values;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
+using System.Threading;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -21,21 +23,33 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected readonly VehicleRepository _vehicleRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly Notification _notification;
 
         protected readonly SyncOrderLogger _syncOrderLogger;
 
         private static string strToken;
 
+        protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
+
+        protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
+
+        private bool isActiveService = true;
+
+        private int numberHoursSearchOrder;
+
         public SyncOrderJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
+            SystemParameterRepository systemParameterRepository,
             Notification notification,
             SyncOrderLogger syncOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
+            _systemParameterRepository = systemParameterRepository;
             _notification = notification;
             _syncOrderLogger = syncOrderLogger;
         }
@@ -49,8 +63,29 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             await Task.Run(async () =>
             {
+                // Get devices info
+                await LoadDevicesInfo();
+
+                if (!isActiveService)
+                {
+                    _syncOrderLogger.LogInfo("SyncOrderJob inactive");
+                    return;
+                }
+
                 await SyncOrderProcess();
             });
+        }
+
+        public async Task LoadDevicesInfo()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
+
+            if(activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
         }
 
         public async Task SyncOrderProcess()
