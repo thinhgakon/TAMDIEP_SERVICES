@@ -104,6 +104,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         State = websaleOrder.status,
                         IndexOrder = 0,
                         IndexOrder2 = 0,
+                        CountReindex = 0,
                         Step = (int)OrderStep.CHUA_NHAN_DON,
                         IsVoiced = false,
                         LogJobAttach = $@"#Sync Order",
@@ -452,6 +453,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.TimeConfirm2 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_VAO_CONG;
                         order.IndexOrder = 0;
+                        order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
                     }
 
@@ -530,6 +532,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.WeightIn = weightIn;
+                        order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {calcelTime} ";
                     }
 
@@ -598,7 +601,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (itemToCall != null)
                     {
                         var maxIndexOrder = dbContext.tblStoreOrderOperatings
-                                            .Where(x => (x.Step == (int)OrderStep.DA_CAN_RA || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                            .Where(x => (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
                                             .OrderBy(x => x.IndexOrder)?.Max(x => x.IndexOrder) ?? 0;
 
                         var oldIndexOrder = itemToCall.IndexOrder;
