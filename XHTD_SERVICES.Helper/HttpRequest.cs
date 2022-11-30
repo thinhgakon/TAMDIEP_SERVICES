@@ -46,13 +46,13 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse GetWebsaleOrder(string token)
+        public static IRestResponse GetWebsaleOrder(string token, int numberHoursSearchOrder)
         {
             var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
 
             var requestData = new SearchOrderRequest
             {
-                from = DateTime.Now.AddHours(-48).ToString("dd/MM/yyyy"),
+                from = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy"),
                 to = DateTime.Now.ToString("dd/MM/yyyy"),
             };
 

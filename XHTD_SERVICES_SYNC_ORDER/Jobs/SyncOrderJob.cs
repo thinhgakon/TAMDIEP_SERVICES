@@ -35,9 +35,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
 
-        private bool isActiveService = true;
+        private static bool isActiveService = true;
 
-        private int numberHoursSearchOrder;
+        private static int numberHoursSearchOrder = 48;
 
         public SyncOrderJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -63,8 +63,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             await Task.Run(async () =>
             {
-                // Get devices info
-                await LoadDevicesInfo();
+                // Get System Parameters
+                await LoadSystemParameters();
 
                 if (!isActiveService)
                 {
@@ -76,15 +76,21 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             });
         }
 
-        public async Task LoadDevicesInfo()
+        public async Task LoadSystemParameters()
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
+            var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
 
             if(activeParameter == null || activeParameter.Value == "0")
             {
                 isActiveService = false;
+            }
+
+            if (numberHoursParameter != null)
+            {
+                numberHoursSearchOrder = Convert.ToInt32(numberHoursParameter.Value);
             }
         }
 
@@ -147,7 +153,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public List<OrderItemResponse> GetWebsaleOrder()
         {
-            IRestResponse response = HttpRequest.GetWebsaleOrder(strToken);
+            IRestResponse response = HttpRequest.GetWebsaleOrder(strToken, numberHoursSearchOrder);
             var content = response.Content;
 
             if (response.StatusDescription.Equals("Unauthorized"))
