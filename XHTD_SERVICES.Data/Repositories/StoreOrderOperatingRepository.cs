@@ -17,8 +17,6 @@ namespace XHTD_SERVICES.Data.Repositories
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        const int MAX_COUNT_REINDEX = 3;
-
         public StoreOrderOperatingRepository(XHTD_Entities appDbContext) : base(appDbContext)
         {
         }
@@ -661,12 +659,13 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersOverCountReindex()
+        public async Task<List<tblStoreOrderOperating>> GetOrdersOverCountReindex(int maxCountReindex = 3)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.CountReindex >= MAX_COUNT_REINDEX && (x.Step == (int)OrderStep.DA_CAN_RA || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                    .Where(x => x.CountReindex >= maxCountReindex 
+                                                && (x.Step == (int)OrderStep.DA_CAN_RA || x.Step == (int)OrderStep.DANG_GOI_XE))
                                     .ToListAsync();
                 return orders;
             }

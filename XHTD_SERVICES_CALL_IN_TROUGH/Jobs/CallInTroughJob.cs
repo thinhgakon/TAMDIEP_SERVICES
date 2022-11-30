@@ -25,17 +25,22 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly Notification _notification;
 
         protected readonly CallInTroughLogger _callInTroughLogger;
 
-        const int MAX_ORDER_IN_QUEUE_TO_CALL = 2;
+        protected const string MAX_COUNT_TRY_CALL = "MAX_COUNT_TRY_CALL";
+
+        private static int maxCountTryCall = 3;
 
         public CallInTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
+            SystemParameterRepository systemParameterRepository,
             Notification notification,
             CallInTroughLogger callInTroughLogger
             )
@@ -44,6 +49,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             _vehicleRepository = vehicleRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
+            _systemParameterRepository = systemParameterRepository;
             _notification = notification;
             _callInTroughLogger = callInTroughLogger;
         }
@@ -55,10 +61,25 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
+                // Get System Parameters
+                await LoadSystemParameters();
+
                 CallInTroughProcess();
             });
+        }
+
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var maxCountTryCallParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_TRY_CALL);
+
+            if (maxCountTryCallParameter != null)
+            {
+                maxCountTryCall = Convert.ToInt32(maxCountTryCallParameter.Value);
+            }
         }
 
         public void CallInTroughProcess()
@@ -73,7 +94,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             _callInTroughLogger.LogInfo($"CallInTrough {troughCode}");
 
             // Tìm đơn hàng sẽ được gọi
-            var itemToCall = _callToTroughRepository.GetItemToCall(troughCode);
+            var itemToCall = _callToTroughRepository.GetItemToCall(troughCode, maxCountTryCall);
 
             if (itemToCall == null)
             {

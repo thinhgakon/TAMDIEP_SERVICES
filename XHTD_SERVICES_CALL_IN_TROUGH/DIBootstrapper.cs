@@ -20,6 +20,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH
             builder.RegisterType<VehicleRepository>().AsSelf();
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
+            builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<CallInTroughLogger>().AsSelf();
 
