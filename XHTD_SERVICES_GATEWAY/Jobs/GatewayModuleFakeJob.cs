@@ -28,6 +28,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly CategoriesDevicesLogRepository _categoriesDevicesLogRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly Barrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
@@ -47,6 +49,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
+
+        protected const string CBV_ACTIVE = "CBV_ACTIVE";
+
+        private static bool isActiveService = true;
 
         private string HubURL;
 
@@ -70,6 +76,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
+            SystemParameterRepository systemParameterRepository,
             Barrier barrier,
             TCPTrafficLight trafficLight,
             Notification notification,
@@ -80,6 +87,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _rfidRepository = rfidRepository;
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
+            _systemParameterRepository = systemParameterRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
             _notification = notification;
@@ -95,6 +103,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
+                // Get System Parameters
+                await LoadSystemParameters();
+
+                if (!isActiveService)
+                {
+                    _gatewayLogger.LogInfo("Service cong bao ve dang TAT.");
+                    return;
+                }
+
                 _gatewayLogger.LogInfo("start gateway fake service");
                 _gatewayLogger.LogInfo("----------------------------");
 
@@ -105,6 +122,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 AuthenticateGatewayModule();
             });                                                                                                                     
+        }
+
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == CBV_ACTIVE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
         }
 
         public async void HandleHubConnection()

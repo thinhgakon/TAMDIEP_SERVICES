@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                 if (!isActiveService)
                 {
-                    _syncOrderLogger.LogInfo("SyncOrderJob inactive");
+                    _syncOrderLogger.LogInfo("Service dong bo don hang dang TAT.");
                     return;
                 }
 
