@@ -478,6 +478,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool OpenBarrier(string luong)
         {
+            return true;
             int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
             int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
@@ -486,6 +487,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool TurnOnGreenTrafficLight(string luong)
         {
+            return true;
             if (trafficLightVao == null || trafficLightRa == null)
             {
                 return false;

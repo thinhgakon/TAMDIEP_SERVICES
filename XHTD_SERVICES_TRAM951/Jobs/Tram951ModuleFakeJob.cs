@@ -589,6 +589,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool OpenBarrier(string luong)
         {
+            return true;
             int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
             int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
@@ -597,6 +598,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool CloseBarrier(string luong)
         {
+            return true;
             int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
             int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
@@ -605,6 +607,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool TurnOnGreenTrafficLight(string luong)
         {
+            return true;
             if (trafficLightVao == null || trafficLightRa == null)
             {
                 return false;
@@ -619,6 +622,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool TurnOnRedTrafficLight(string luong)
         {
+            return true;
             if (trafficLightVao == null || trafficLightRa == null)
             {
                 return false;
@@ -633,6 +637,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public bool CheckValidSensor()
         {
+            return true;
             int portNumberDeviceIn1 = sensor1 != null ? (int)sensor1.PortNumberDeviceIn : -1;
             int portNumberDeviceIn2 = sensor2 != null ? (int)sensor2?.PortNumberDeviceIn : -1;
 
