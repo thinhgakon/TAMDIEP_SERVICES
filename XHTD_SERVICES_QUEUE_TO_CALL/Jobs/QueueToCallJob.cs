@@ -21,7 +21,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         protected readonly QueueToCallLogger _queueToCallLogger;
 
-        const int MAX_ORDER_IN_QUEUE_TO_CALL = 2;
+        const int MAX_ORDER_IN_QUEUE_TO_CALL = 1;
 
         public QueueToCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
