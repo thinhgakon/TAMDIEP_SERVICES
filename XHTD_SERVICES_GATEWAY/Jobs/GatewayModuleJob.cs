@@ -126,6 +126,23 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
+        public async Task LoadDevicesInfo()
+        {
+            var devices = await _categoriesDevicesRepository.GetDevices("BV");
+
+            c3400 = devices.FirstOrDefault(x => x.Code == "BV.C3-400");
+            rfidRa1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-1");
+            rfidRa2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-2");
+            rfidVao1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-1");
+            rfidVao2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-2");
+
+            m221 = devices.FirstOrDefault(x => x.Code == "BV.M221");
+            barrierVao = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-1");
+            barrierRa = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-2");
+            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.DGT-1");
+            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.DGT-2");
+        }
+
         public void AuthenticateGatewayModule()
         {
             /*
@@ -149,23 +166,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
 
-        }
-
-        public async Task LoadDevicesInfo()
-        {
-            var devices = await _categoriesDevicesRepository.GetDevices("BV");
-
-            c3400 = devices.FirstOrDefault(x => x.Code == "BV.C3-400");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.RA-2");
-            rfidVao1 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-1");
-            rfidVao2 = devices.FirstOrDefault(x => x.Code == "BV.C3-400.RFID.VAO-2");
-
-            m221 = devices.FirstOrDefault(x => x.Code == "BV.M221");
-            barrierVao = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-1");
-            barrierRa = devices.FirstOrDefault(x => x.Code == "BV.M221.BRE-2");
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "BV.DGT-1");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "BV.DGT-2");
         }
 
         public bool ConnectGatewayModule()
