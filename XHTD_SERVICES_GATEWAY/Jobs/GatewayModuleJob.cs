@@ -104,7 +104,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     return;
                 }
 
-                _gatewayLogger.LogInfo("start gateway service");
+                _gatewayLogger.LogInfo("Start gateway service");
                 _gatewayLogger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -170,8 +170,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModule()
         {
-            _gatewayLogger.LogInfo("start connect to C3-400 ... ");
-
             try
             {
                 string str = $"protocol=TCP,ipaddress={c3400?.IpAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
@@ -181,13 +179,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _gatewayLogger.LogInfo("connected");
+                        _gatewayLogger.LogInfo("Connected to C3-400");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _gatewayLogger.LogInfo("connected failed");
+                        _gatewayLogger.LogInfo("Connect to C3-400 failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -197,7 +195,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo($@"ConnectGatewayModule : {ex.Message}");
+                _gatewayLogger.LogInfo($@"ConnectGateway Exception: {ex.Message}");
 
                 return false;
             }
@@ -205,7 +203,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _gatewayLogger.LogInfo("start read data from C3-400 ...");
+            _gatewayLogger.LogInfo("Read data from C3-400");
 
             if (DeviceConnected)
             {

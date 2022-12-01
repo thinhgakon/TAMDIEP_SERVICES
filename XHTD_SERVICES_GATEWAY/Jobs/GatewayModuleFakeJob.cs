@@ -112,7 +112,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     return;
                 }
 
-                _gatewayLogger.LogInfo("start gateway fake service");
+                _gatewayLogger.LogInfo("Start gateway fake service");
                 _gatewayLogger.LogInfo("----------------------------");
 
                 HandleHubConnection();
@@ -239,9 +239,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModule()
         {
-            _gatewayLogger.LogInfo("start connect to C3-400 ... ");
-
-            _gatewayLogger.LogInfo("connected");
+            _gatewayLogger.LogInfo("Connected to C3-400");
 
             DeviceConnected = true;
                     
@@ -250,7 +248,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _gatewayLogger.LogInfo("start read data from C3-400 ...");
+            _gatewayLogger.LogInfo("Read data from C3-400");
 
             if (DeviceConnected)
             {
