@@ -29,6 +29,8 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         protected readonly CategoriesDevicesLogRepository _categoriesDevicesLogRepository;
 
+        protected readonly VehicleRepository _vehicleRepository;
+
         protected readonly Barrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
@@ -75,6 +77,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
+            VehicleRepository vehicleRepository,
             Barrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
@@ -85,6 +88,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             _rfidRepository = rfidRepository;
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
+            _vehicleRepository = vehicleRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
             _sensor = sensor;
@@ -267,21 +271,21 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("951");
+            var devices = await _categoriesDevicesRepository.GetDevices("951-1");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.RA-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.RA-2");
-            rfidVao1 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.VAO-1");
-            rfidVao2 = devices.FirstOrDefault(x => x.Code == "951.C3-400-1.RFID.VAO-2");
+            c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
+            rfidRa1 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-1");
+            rfidRa2 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-2");
+            rfidVao1 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-1");
+            rfidVao2 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-2");
 
-            m221 = devices.FirstOrDefault(x => x.Code == "951.M221");
-            barrierVao = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-VAO");
-            barrierRa = devices.FirstOrDefault(x => x.Code == "951.M221.BRE-1-RA");
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "951.M221.DGT-1");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "951.M221.DGT-2");
-            sensor1 = devices.FirstOrDefault(x => x.Code == "951.M221.SENSOR-1");
-            sensor2 = devices.FirstOrDefault(x => x.Code == "951.M221.SENSOR-2");
+            m221 = devices.FirstOrDefault(x => x.Code == "951-1.M221");
+            barrierVao = devices.FirstOrDefault(x => x.Code == "951-1.M221.BRE-IN");
+            barrierRa = devices.FirstOrDefault(x => x.Code == "951-1.M221.BRE-OUT");
+            trafficLightVao = devices.FirstOrDefault(x => x.Code == "951-1.DGT-IN");
+            trafficLightRa = devices.FirstOrDefault(x => x.Code == "951-1.DGT-OUT");
+            sensor1 = devices.FirstOrDefault(x => x.Code == "951-1.M221.CB-1");
+            sensor2 = devices.FirstOrDefault(x => x.Code == "951-1.M221.CB-2");
         }
 
         public bool ConnectTram951Module()
@@ -498,6 +502,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                                     isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceTram951(cardNoCurrent, currentScaleValue);
 
                                     // Cập nhật lại khối lượng không tải của phương tiện
+                                    await _vehicleRepository.UpdateUnladenWeight(cardNoCurrent, currentScaleValue);
                                 }
                             }
                             else if (isLuongRa)

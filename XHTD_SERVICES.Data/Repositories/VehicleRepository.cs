@@ -57,5 +57,77 @@ namespace XHTD_SERVICES.Data.Repositories
                 Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
             }
         }
+
+        public async Task UpdateUnladenWeight(string rfid, int weight)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var rfidRecord = dbContext.tblRfids.FirstOrDefault(x => x.Code == rfid);
+                if (rfidRecord == null)
+                {
+                    return;
+                }
+
+                var vehicle = rfidRecord.Vehicle;
+
+                var vehicleRecord = dbContext.tblVehicles.FirstOrDefault(x => x.Vehicle == vehicle);
+                if(vehicleRecord == null)
+                {
+                    return;
+                }
+
+                var number = 1;
+
+                var lastUpdate1 = vehicleRecord.UnladenWeight1LastUpdate;
+                var lastUpdate2 = vehicleRecord.UnladenWeight2LastUpdate;
+                var lastUpdate3 = vehicleRecord.UnladenWeight3LastUpdate;
+
+                if (lastUpdate1 == null)
+                {
+                    number = 1;
+                } 
+                else if (lastUpdate2 == null)
+                {
+                    number = 2;
+                }
+                else if (lastUpdate3 == null)
+                {
+                    number = 3;
+                }
+                else
+                {
+                    var min = lastUpdate1;
+                    if (min > vehicleRecord.UnladenWeight2LastUpdate)
+                    {
+                        min = vehicleRecord.UnladenWeight2LastUpdate;
+                        number = 2;
+                    }
+
+                    if (min > vehicleRecord.UnladenWeight3LastUpdate)
+                    {
+                        number = 3;
+                    }
+                }
+                
+                if(number == 1)
+                {
+                    vehicleRecord.UnladenWeight1 = weight;
+                    vehicleRecord.UnladenWeight1LastUpdate = DateTime.Now;
+                    
+                }
+                else if (number == 2)
+                {
+                    vehicleRecord.UnladenWeight2 = weight;
+                    vehicleRecord.UnladenWeight2LastUpdate = DateTime.Now;
+                }
+                else if (number == 3)
+                {
+                    vehicleRecord.UnladenWeight3 = weight;
+                    vehicleRecord.UnladenWeight3LastUpdate = DateTime.Now;
+                }
+
+                await dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
