@@ -24,8 +24,11 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<double> WidthVehicle { get; set; }
         public Nullable<double> LongVehicle { get; set; }
         public Nullable<int> UnladenWeight1 { get; set; }
+        public Nullable<System.DateTime> UnladenWeight1LastUpdate { get; set; }
         public Nullable<int> UnladenWeight2 { get; set; }
+        public Nullable<System.DateTime> UnladenWeight2LastUpdate { get; set; }
         public Nullable<int> UnladenWeight3 { get; set; }
+        public Nullable<System.DateTime> UnladenWeight3LastUpdate { get; set; }
         public Nullable<bool> IsSetMediumUnladenWeight { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }

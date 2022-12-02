@@ -176,6 +176,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
             <PropertyRef Name="Code" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TypeId" Type="int" />
           <Property Name="Code" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="500" />
           <Property Name="IpAddress" Type="nvarchar" MaxLength="50" />
@@ -511,8 +512,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="WidthVehicle" Type="float" />
           <Property Name="LongVehicle" Type="float" />
           <Property Name="UnladenWeight1" Type="int" />
+          <Property Name="UnladenWeight1LastUpdate" Type="datetime" />
           <Property Name="UnladenWeight2" Type="int" />
+          <Property Name="UnladenWeight2LastUpdate" Type="datetime" />
           <Property Name="UnladenWeight3" Type="int" />
+          <Property Name="UnladenWeight3LastUpdate" Type="datetime" />
           <Property Name="IsSetMediumUnladenWeight" Type="bit" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
@@ -733,6 +737,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
             <PropertyRef Name="Code" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeId" Type="Int32" />
           <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IpAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1051,8 +1056,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="WidthVehicle" Type="Double" />
           <Property Name="LongVehicle" Type="Double" />
           <Property Name="UnladenWeight1" Type="Int32" />
+          <Property Name="UnladenWeight1LastUpdate" Type="DateTime" Precision="3" />
           <Property Name="UnladenWeight2" Type="Int32" />
+          <Property Name="UnladenWeight2LastUpdate" Type="DateTime" Precision="3" />
           <Property Name="UnladenWeight3" Type="Int32" />
+          <Property Name="UnladenWeight3LastUpdate" Type="DateTime" Precision="3" />
           <Property Name="IsSetMediumUnladenWeight" Type="Boolean" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1286,6 +1294,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblDeviceGroup">
               <MappingFragment StoreEntitySet="tblDeviceGroup">
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
@@ -1619,8 +1628,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="WidthVehicle" ColumnName="WidthVehicle" />
                 <ScalarProperty Name="LongVehicle" ColumnName="LongVehicle" />
                 <ScalarProperty Name="UnladenWeight1" ColumnName="UnladenWeight1" />
+                <ScalarProperty Name="UnladenWeight1LastUpdate" ColumnName="UnladenWeight1LastUpdate" />
                 <ScalarProperty Name="UnladenWeight2" ColumnName="UnladenWeight2" />
+                <ScalarProperty Name="UnladenWeight2LastUpdate" ColumnName="UnladenWeight2LastUpdate" />
                 <ScalarProperty Name="UnladenWeight3" ColumnName="UnladenWeight3" />
+                <ScalarProperty Name="UnladenWeight3LastUpdate" ColumnName="UnladenWeight3LastUpdate" />
                 <ScalarProperty Name="IsSetMediumUnladenWeight" ColumnName="IsSetMediumUnladenWeight" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />

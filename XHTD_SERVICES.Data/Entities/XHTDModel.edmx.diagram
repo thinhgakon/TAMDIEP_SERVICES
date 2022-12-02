@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="28f324ac01fd4adf8b344057d8c5e54e" Name="Diagram1">
+      <Diagram DiagramId="b9cea366f32a4edea6445724a01fec2c" Name="Diagram1">
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccount" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroup" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroupFunction" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
