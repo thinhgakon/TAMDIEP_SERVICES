@@ -64,12 +64,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         dbContext.tblCallToTroughs.Add(newItem);
                         await dbContext.SaveChangesAsync();
-
-                        Console.WriteLine("Them order vao hang doi: " + orderId);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Da ton tai order trong hang doi: " + orderId);
                     }
                 }
                 catch (Exception ex)

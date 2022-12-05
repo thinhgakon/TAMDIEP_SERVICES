@@ -7,6 +7,8 @@ using System.Globalization;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using log4net;
+using System.Data.Entity;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -18,11 +20,32 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
+        public async Task<List<string>> GetActiveXiBaoTroughs()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = from v in dbContext.tblTroughs
+                            join r in dbContext.tblTroughTypeProducts
+                            on v.Code equals r.TroughCode
+                            where
+                                v.State == true 
+                                &&  (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
+                            select v.Code;
+
+                var troughts = await query.Distinct().ToListAsync();
+
+                return troughts;
+            }
+        }
+
         public tblTrough GetDetail(string code)
         {
-            var trough = _appDbContext.tblTroughs.FirstOrDefault(x => x.Code == code);
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = dbContext.tblTroughs.FirstOrDefault(x => x.Code == code && x.State == true);
 
-            return trough;
+                return trough;
+            }
         }
     }
 }

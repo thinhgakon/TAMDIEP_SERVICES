@@ -53,24 +53,40 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             });
         }
 
-        public void QueueToCallProcess()
+        public async void QueueToCallProcess()
         {
             _queueToCallLogger.LogInfo("------------------------------");
             _queueToCallLogger.LogInfo("Start process QueueToCallJob");
             _queueToCallLogger.LogInfo("------------------------------");
 
-            ReadDataFromTrough("M1");
+            // Lay ra danh sach mang xuat xi mang bao dang hoat dong
+            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
+
+            if (troughts == null || troughts.Count == 0)
+            {
+                return;
+            }
+
+            // Doc lan luot thong tin tren cac mang
+            foreach (var trought in troughts)
+            {
+                await ReadDataFromTrough(trought);
+                _queueToCallLogger.LogInfo("------------------------------");
+            }
         }
 
-        public async void ReadDataFromTrough(string troughCode)
+        public async Task ReadDataFromTrough(string troughCode)
         {
             _queueToCallLogger.LogInfo($"Read data from trough {troughCode}");
 
             var troughInfo = _troughRepository.GetDetail(troughCode);
             if (troughInfo == null)
-            { 
+            {
+                _queueToCallLogger.LogInfo($"1. Khong ton tai mang {troughCode}. Ket thuc");
                 return; 
             }
+
+            _queueToCallLogger.LogInfo($"1. Mang {troughCode} dang hoat dong");
 
             var currentDeliveryCodeInTrough = troughInfo.DeliveryCodeCurrent;
 
@@ -79,7 +95,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             // step DANG va DA_LAY_HANG phụ thuộc tình trạng xuất tại máng
             if (!String.IsNullOrEmpty(currentDeliveryCodeInTrough)) 
             {
-                _queueToCallLogger.LogInfo($"1. Cập nhật đơn hàng đang ở trong máng {currentDeliveryCodeInTrough}");
+                _queueToCallLogger.LogInfo($"2. Co don hang trong mang: {currentDeliveryCodeInTrough}");
                 await _storeOrderOperatingRepository.UpdateTroughLine(currentDeliveryCodeInTrough, troughCode);
 
                 var isAlmostDone = (troughInfo.CountQuantityCurrent / troughInfo.PlanQuantityCurrent) > 0.8;
@@ -94,36 +110,39 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             }
             else
             {
-                _queueToCallLogger.LogInfo($"1. Không có đơn nào đang ở trong máng");
+                _queueToCallLogger.LogInfo($"2. Khong co don hang trong mang");
             }
 
             // Đếm số lượng đơn trong hàng chờ gọi của máng
             // Thêm đơn vào hàng chờ gọi
             var numberOrderFrontTrough = _callToTroughRepository.GetNumberOrderInQueue(troughCode);
-            if(numberOrderFrontTrough < MAX_ORDER_IN_QUEUE_TO_CALL)
+
+            _queueToCallLogger.LogInfo($"3. Co {numberOrderFrontTrough} don hang trong hang cho goi vao mang {troughCode}");
+
+            if (numberOrderFrontTrough < MAX_ORDER_IN_QUEUE_TO_CALL)
             {
-                PushOrderToQueue(troughCode, MAX_ORDER_IN_QUEUE_TO_CALL - numberOrderFrontTrough);
+                await PushOrderToQueue(troughCode, MAX_ORDER_IN_QUEUE_TO_CALL - numberOrderFrontTrough);
             }
         }
 
-        public async void PushOrderToQueue(string troughcode, int quantity)
+        public async Task PushOrderToQueue(string troughcode, int quantity)
         {
-            _queueToCallLogger.LogInfo($"2. Đang còn {quantity} chỗ trống trong hàng chờ gọi của máng {troughcode}");
+            _queueToCallLogger.LogInfo($"4. Them {quantity} don vao hang doi goi loa vao mang {troughcode}");
 
             var orders = await _storeOrderOperatingRepository.GetOrdersToCallInTrough(troughcode, quantity);
 
             if (orders == null || orders.Count == 0)
             {
-                _queueToCallLogger.LogInfo($"2.1. Không còn đơn vừa cân vào để thêm vào hàng chờ gọi");
+                _queueToCallLogger.LogInfo($"5. Ko con don vua can vao hop le de them vao hang cho goi. Ket thuc");
 
                 return;
             }
 
-            _queueToCallLogger.LogInfo($"2.1. Có {orders.Count} đơn sẽ được thêm vào hàng chờ");
+            _queueToCallLogger.LogInfo($"5. Co {orders.Count} don hang hop le de the vao hang doi");
 
             foreach (var order in orders)
             {
-                _queueToCallLogger.LogInfo($"2.1.*. Tiến hành thêm {order.Id} với code {order.DeliveryCode}");
+                _queueToCallLogger.LogInfo($"5.1. Tien hanh them {order.Id} voi code {order.DeliveryCode}");
 
                 // Cap nhat trang thai don hang DANG_GOI_XE
                 await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
