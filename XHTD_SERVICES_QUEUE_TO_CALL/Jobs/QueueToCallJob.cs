@@ -93,6 +93,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             // Cập nhật đơn hàng đang ở trong máng
             // troughLine
             // step DANG va DA_LAY_HANG phụ thuộc tình trạng xuất tại máng
+            // TODO: Neu don hang dang o trong mang thì update trong bang tblCallToTrough: isDone = true => xe da vao lay hang thì khong gọi nữa
             if (!String.IsNullOrEmpty(currentDeliveryCodeInTrough)) 
             {
                 _queueToCallLogger.LogInfo($"2. Co don hang trong mang: {currentDeliveryCodeInTrough}");
@@ -115,6 +116,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
             // Đếm số lượng đơn trong hàng chờ gọi của máng
             // Thêm đơn vào hàng chờ gọi
+            // TODO: Kiểm tra máng đang ko xuất hàng thì mới thêm đơn mới vào hàng đợi
             var numberOrderFrontTrough = _callToTroughRepository.GetNumberOrderInQueue(troughCode);
 
             _queueToCallLogger.LogInfo($"3. Co {numberOrderFrontTrough} don hang trong hang cho goi vao mang {troughCode}");

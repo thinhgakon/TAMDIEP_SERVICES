@@ -589,6 +589,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> ReindexToTrough(int orderId)
         {
+            // TODO: xếp lại lốt là giá trị lớn nhất cần xét theo type product
             using (var dbContext = new XHTD_Entities())
             {
                 bool isUpdated = false;

@@ -107,6 +107,7 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
             _reindexToTroughLogger.LogInfo("start process ReindexToTroughJob");
 
             // Xử lý các order đã quá 3 lần gọi loa mà ko vào máng
+            // TODO: Chỉ xử lý với các order đang không nằm trong máng
             var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry(maxCountTryCall);
 
             if (overCountTryItems != null && overCountTryItems.Count > 0)
