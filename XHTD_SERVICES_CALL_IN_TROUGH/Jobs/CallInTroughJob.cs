@@ -86,6 +86,8 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         {
             _callInTroughLogger.LogInfo("start process CallInTroughJob");
 
+            // TODO: Lay ra danh sach mang xuat xi mang bao dang hoat dong
+            // Goi xe vao tung mang: tham khao service QueueToCall
             CallInTrough("M1");
         }
 
