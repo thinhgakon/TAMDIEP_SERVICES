@@ -107,8 +107,8 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
             _reindexToTroughLogger.LogInfo("start process ReindexToTroughJob");
 
             // Xử lý các order đã quá 3 lần gọi loa mà ko vào máng
-            // TODO: Chỉ xử lý với các order đang không nằm trong máng
-            // TODO: Cần xếp lại lốt của các đơn hàng khác bị ảnh hưởng
+            // TODO: Chỉ xử lý với các order đang không nằm trong máng // done
+            // TODO: Cần xếp lại lốt của các đơn hàng khác bị ảnh hưởng // done
             var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry(maxCountTryCall);
 
             if (overCountTryItems != null && overCountTryItems.Count > 0)
@@ -144,8 +144,8 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
                 foreach (var detailOrder in overCountReindexOrders)
                 {
                     // Cap nhat bang order: Index = 0, Step = DA_VAO_CONG
-                    // TODO: Cần xếp lại lốt của các đơn hàng khác bị ảnh hưởng
-                    await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+                    // TODO: Cần xếp lại lốt của các đơn hàng khác bị ảnh hưởng //done
+                    await _storeOrderOperatingRepository.UpdateOrderWhenOverCountReindex(detailOrder.Id);
 
                     // Cap nhat hàng đợi: IsDone = true
                     await _callToTroughRepository.UpdateWhenOverCountReindex(detailOrder.Id);

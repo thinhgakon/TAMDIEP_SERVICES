@@ -192,5 +192,20 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+        public async Task<bool> UpdateWhenDelivery(string deliveryCode)
+        {
+            bool isUpdated = false;
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x=>x.DeliveryCode == deliveryCode);
+                if (order == null) return isUpdated;
+                var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.OrderId == order.Id);
+                if (callToTrough == null) return isUpdated;
+                callToTrough.IsDone = true;
+                await dbContext.SaveChangesAsync();
+                return !isUpdated;
+            }
+        }
+
     }
 }

@@ -589,18 +589,21 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> ReindexToTrough(int orderId)
         {
-            // TODO: xếp lại lốt là giá trị lớn nhất cần xét theo type product
+            // TODO: xếp lại lốt là giá trị lớn nhất cần xét theo type product //done
             using (var dbContext = new XHTD_Entities())
             {
                 bool isUpdated = false;
 
                 try
                 {
-                    var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+                    var orderInTrough = await dbContext.tblTroughs.Select(x => x.DeliveryCodeCurrent).ToListAsync();
+                    var itemToCall = await dbContext.tblStoreOrderOperatings.Where(x=> !orderInTrough.Contains(x.DeliveryCode)).FirstOrDefaultAsync(x => x.Id == orderId);
                     if (itemToCall != null)
                     {
                         var maxIndexOrder = dbContext.tblStoreOrderOperatings
                                             .Where(x => (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                            .Where(x => !orderInTrough.Contains(x.DeliveryCode))
+                                            .Where(x=> x.TypeProduct == itemToCall.TypeProduct)
                                             .OrderBy(x => x.IndexOrder)?.Max(x => x.IndexOrder) ?? 0;
 
                         var oldIndexOrder = itemToCall.IndexOrder;
@@ -612,7 +615,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.LogProcessOrder = $@"{itemToCall.LogProcessOrder} # Quá 5 phút sau lần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}, lốt cũ: {oldIndexOrder}, lốt mới: {newIndexOrder}";
 
                         await dbContext.SaveChangesAsync();
-
+                        await UpdateOtherOrderWhenOverCountReindex(orderId, orderInTrough);
                         isUpdated = true;
                     }
 
@@ -628,7 +631,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateWhenOverCountReindex(int orderId)
+        public async Task<bool> UpdateOrderWhenOverCountReindex(int orderId)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -636,7 +639,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 try
                 {
-                    var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+                    var orderInTrough = await dbContext.tblTroughs.Select(x => x.DeliveryCodeCurrent).ToListAsync();
+                    var itemToCall = await dbContext.tblStoreOrderOperatings.Where(x => !orderInTrough.Contains(x.DeliveryCode)).FirstOrDefaultAsync(x => x.Id == orderId);
                     if (itemToCall != null)
                     {
                         itemToCall.IndexOrder = 0;
@@ -644,7 +648,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.LogProcessOrder = $@"{itemToCall.LogProcessOrder} # Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
-
+                        await UpdateOtherOrderWhenOverCountReindex(orderId, orderInTrough);
                         isUpdated = true;
                     }
 
@@ -656,6 +660,35 @@ namespace XHTD_SERVICES.Data.Repositories
                     Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
 
                     return isUpdated;
+                }
+            }
+        }
+
+        public async Task UpdateOtherOrderWhenOverCountReindex(int currentOrderId,List<string> orderInTrough)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+
+                try
+                {
+                    var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == currentOrderId);
+                    var otherItem = await dbContext.tblStoreOrderOperatings
+                                                    .Where(x => x.Id != currentOrderId && x.TypeProduct ==itemToCall.TypeProduct && (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                                    .Where(x => !orderInTrough.Contains(x.DeliveryCode))
+                                                    .ToListAsync();
+                    if (otherItem != null && otherItem.Any())
+                    {
+                        otherItem.ForEach(x =>
+                        {
+                            x.IndexOrder = x.IndexOrder + 1;
+                        });
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
                 }
             }
         }

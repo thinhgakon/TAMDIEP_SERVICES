@@ -47,5 +47,24 @@ namespace XHTD_SERVICES.Data.Repositories
                 return trough;
             }
         }
+        public async Task<List<string>> GetAllTroughCode()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs.Select(x=>x.Code).ToListAsync();
+
+                return trough;
+            }
+        }
+        public async Task<bool> IsDelivering(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x=>x.Code == troughCode);
+                return trough?.DeliveryCodeCurrent == null ? false : true;
+            }
+
+        }
+
     }
 }
