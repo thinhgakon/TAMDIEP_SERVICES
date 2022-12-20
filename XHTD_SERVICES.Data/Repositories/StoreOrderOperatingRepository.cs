@@ -600,14 +600,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblStoreOrderOperatings.Where(x=> !orderInTrough.Contains(x.DeliveryCode)).FirstOrDefaultAsync(x => x.Id == orderId);
                     if (itemToCall != null)
                     {
-                        var maxIndexOrder = dbContext.tblStoreOrderOperatings
+                        var newIndexOrder = dbContext.tblStoreOrderOperatings
                                             .Where(x => (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
                                             .Where(x => !orderInTrough.Contains(x.DeliveryCode))
                                             .Where(x=> x.TypeProduct == itemToCall.TypeProduct)
-                                            .OrderBy(x => x.IndexOrder)?.Max(x => x.IndexOrder) ?? 0;
+                                            .OrderBy(x => x.IndexOrder)?.Count() ?? 0;
 
                         var oldIndexOrder = itemToCall.IndexOrder;
-                        var newIndexOrder = maxIndexOrder + 1;
 
                         itemToCall.CountReindex++;
                         itemToCall.IndexOrder = newIndexOrder;
@@ -675,12 +674,15 @@ namespace XHTD_SERVICES.Data.Repositories
                     var otherItem = await dbContext.tblStoreOrderOperatings
                                                     .Where(x => x.Id != currentOrderId && x.TypeProduct ==itemToCall.TypeProduct && (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
                                                     .Where(x => !orderInTrough.Contains(x.DeliveryCode))
+                                                    .OrderBy(x=>x.IndexOrder)
                                                     .ToListAsync();
                     if (otherItem != null && otherItem.Any())
                     {
+                        int i = 1;
                         otherItem.ForEach(x =>
                         {
-                            x.IndexOrder = x.IndexOrder + 1;
+                            x.IndexOrder = i;
+                            i++;
                         });
                         await dbContext.SaveChangesAsync();
                     }
