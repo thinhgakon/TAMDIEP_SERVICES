@@ -10,10 +10,11 @@ using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Models.Response;
+using System.Data.Entity.SqlServer;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
-    public class StoreOrderOperatingRepository : BaseRepository <tblStoreOrderOperating>
+    public class StoreOrderOperatingRepository : BaseRepository<tblStoreOrderOperating>
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -45,7 +46,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
-            try {
+            try
+            {
                 string typeProduct = "";
                 string productNameUpper = websaleOrder.productName.ToUpper();
 
@@ -74,7 +76,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 DateTime orderDate = DateTime.ParseExact(orderDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
-                if (!CheckExist(websaleOrder.id)) {
+                if (!CheckExist(websaleOrder.id))
+                {
                     var newOrderOperating = new tblStoreOrderOperating
                     {
                         Vehicle = vehicleCode,
@@ -120,7 +123,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 return isSynced;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 log.Error("CreateAsync OrderItemResponse Error: " + ex.Message); ;
                 Console.WriteLine("CreateAsync OrderItemResponse Error: " + ex.Message);
@@ -271,9 +274,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    if(step == (int)OrderStep.DA_LAY_HANG)
+                    if (step == (int)OrderStep.DA_LAY_HANG)
                     {
-                        if(order.Step == (int)OrderStep.DA_LAY_HANG)
+                        if (order.Step == (int)OrderStep.DA_LAY_HANG)
                         {
                             return true;
                         }
@@ -360,20 +363,21 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var query = from v in dbContext.tblStoreOrderOperatings 
-                            join r in dbContext.tblTroughTypeProducts 
+                var query = from v in dbContext.tblStoreOrderOperatings
+                            join r in dbContext.tblTroughTypeProducts
                             on v.TypeProduct equals r.TypeProduct
-                            where 
-                                v.Step == (int)OrderStep.DA_CAN_VAO 
+                            where
+                                v.Step == (int)OrderStep.DA_CAN_VAO
                                 && (v.DriverUserName ?? "") != ""
                                 && r.TroughCode == troughCode
+                                && SqlFunctions.DateDiff("minute", v.TimeConfirm2 ?? DateTime.Now, DateTime.Now) >= 3
                             orderby v.IndexOrder
                             select new OrderToCallInTroughResponse
                             {
                                 Id = v.Id,
                                 DeliveryCode = v.DeliveryCode,
                             };
-
+                Console.WriteLine(query.ToString());
                 query = query.Take(quantity);
 
                 var data = await query.ToListAsync();
@@ -597,13 +601,13 @@ namespace XHTD_SERVICES.Data.Repositories
                 try
                 {
                     var orderInTrough = await dbContext.tblTroughs.Select(x => x.DeliveryCodeCurrent).ToListAsync();
-                    var itemToCall = await dbContext.tblStoreOrderOperatings.Where(x=> !orderInTrough.Contains(x.DeliveryCode)).FirstOrDefaultAsync(x => x.Id == orderId);
+                    var itemToCall = await dbContext.tblStoreOrderOperatings.Where(x => !orderInTrough.Contains(x.DeliveryCode)).FirstOrDefaultAsync(x => x.Id == orderId);
                     if (itemToCall != null)
                     {
                         var newIndexOrder = dbContext.tblStoreOrderOperatings
                                             .Where(x => (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
                                             .Where(x => !orderInTrough.Contains(x.DeliveryCode))
-                                            .Where(x=> x.TypeProduct == itemToCall.TypeProduct)
+                                            .Where(x => x.TypeProduct == itemToCall.TypeProduct)
                                             .OrderBy(x => x.IndexOrder)?.Count() ?? 0;
 
                         var oldIndexOrder = itemToCall.IndexOrder;
@@ -663,7 +667,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateOtherOrderWhenOverCountReindex(int currentOrderId,List<string> orderInTrough)
+        public async Task UpdateOtherOrderWhenOverCountReindex(int currentOrderId, List<string> orderInTrough)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -672,9 +676,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == currentOrderId);
                     var otherItem = await dbContext.tblStoreOrderOperatings
-                                                    .Where(x => x.Id != currentOrderId && x.TypeProduct ==itemToCall.TypeProduct && (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
+                                                    .Where(x => x.Id != currentOrderId && x.TypeProduct == itemToCall.TypeProduct && (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
                                                     .Where(x => !orderInTrough.Contains(x.DeliveryCode))
-                                                    .OrderBy(x=>x.IndexOrder)
+                                                    .OrderBy(x => x.IndexOrder)
                                                     .ToListAsync();
                     if (otherItem != null && otherItem.Any())
                     {
@@ -700,7 +704,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.CountReindex >= maxCountReindex 
+                                    .Where(x => x.CountReindex >= maxCountReindex
                                                 && (x.Step == (int)OrderStep.DA_CAN_RA || x.Step == (int)OrderStep.DANG_GOI_XE))
                                     .ToListAsync();
                 return orders;
@@ -767,7 +771,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                 .OrderByDescending(x => x.IndexOrder)
                                 .FirstOrDefault();
 
-                if(order != null) { 
+                if (order != null)
+                {
                     return (int)order.IndexOrder;
                 }
 
