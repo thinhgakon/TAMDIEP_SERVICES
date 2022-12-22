@@ -331,9 +331,10 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
+                                var timeCurrent = tmp[0]?.ToString();
 
                                 _tram951Logger.LogInfo("----------------------------");
-                                _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}");
+                                _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                 _tram951Logger.LogInfo("-----");
 
                                 // 1.Xác định xe cân vào / ra
