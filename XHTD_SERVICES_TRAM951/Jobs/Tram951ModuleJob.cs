@@ -574,7 +574,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
                         }
                         else
                         {
-                            _tram951Logger.LogWarn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
+                            _tram951Logger.LogWarn("No data. Reconnect ...");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
