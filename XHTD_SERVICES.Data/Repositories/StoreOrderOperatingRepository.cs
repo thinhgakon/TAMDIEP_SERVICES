@@ -405,6 +405,18 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceTram951ByCardNo(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                                            .OrderByDescending(x => x.Id)
+                                            .FirstOrDefaultAsync();
+                return order;
+            }
+        }
+
         public async Task<List<tblStoreOrderOperating>> GetOrdersEntraceTram951ByCardNoReceiving(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())

@@ -23,6 +23,7 @@ namespace XHTD_SERVICES_TRAM951_IN
             builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
             builder.RegisterType<CategoriesDevicesLogRepository>().AsSelf();
             builder.RegisterType<VehicleRepository>().AsSelf();
+            builder.RegisterType<ScaleOperatingRepository>().AsSelf();
             builder.RegisterType<PLCBarrier>().AsSelf();
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Sensor>().AsSelf();

@@ -30,6 +30,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         protected readonly VehicleRepository _vehicleRepository;
 
+        protected readonly ScaleOperatingRepository _scaleOperatingRepository;
+
         protected readonly PLCBarrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
@@ -89,6 +91,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
+            ScaleOperatingRepository scaleOperatingRepository,
             PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
@@ -100,6 +103,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _vehicleRepository = vehicleRepository;
+            _scaleOperatingRepository = scaleOperatingRepository;
             _barrier = barrier;
             _trafficLight = trafficLight;
             _sensor = sensor;
@@ -341,8 +345,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 }
 
                                 // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                var currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
-                                if (currentOrders == null || currentOrders.Count == 0)
+                                var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceTram951ByCardNo(cardNoCurrent);
+                                if (currentOrder == null)
                                 {
                                     _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
@@ -352,13 +356,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     continue;
                                 }
 
-                                var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
-
-                                _tram951Logger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
+                                _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                 // Xác thực vào cổng
                                 if(await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
+                                    await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle);
                                     Program.IsScalling1 = true;
                                     tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                 }
