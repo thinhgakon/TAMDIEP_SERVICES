@@ -361,9 +361,17 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // Xác thực vào cổng
                                 if(await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
-                                    await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle);
-                                    Program.IsScalling1 = true;
-                                    tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                    if (isRfidFromScale1) { 
+                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle);
+                                        Program.IsScalling1 = true;
+                                        tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                    }
+                                    else if (isRfidFromScale2)
+                                    {
+                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle);
+                                        Program.IsScalling2 = true;
+                                        tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                    }
                                 }
                                 else
                                 {
