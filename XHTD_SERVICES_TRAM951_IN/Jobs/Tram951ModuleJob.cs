@@ -341,19 +341,14 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 }
 
                                 // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                List<tblStoreOrderOperating> currentOrders = null;
-                                if (isRfidFromScale1)
-                                {
-                                    currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
-                                }
-                                else if (isRfidFromScale2)
-                                {
-                                    currentOrders = await _storeOrderOperatingRepository.GetOrdersExitTram951ByCardNoReceiving(cardNoCurrent);
-                                }
-
+                                var currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
                                 if (currentOrders == null || currentOrders.Count == 0)
                                 {
                                     _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+
+                                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                    tmpInvalidCardNoLst.Add(newCardNoLog);
+
                                     continue;
                                 }
 
@@ -361,161 +356,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 _tram951Logger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                                // 5. Kiểm tra xe có vi phạm cảm biến
-                                var isValidSensor = CheckValidSensor();
-                                if (!isValidSensor)
+                                // Xác thực vào cổng
+                                if(await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
-                                    // Vi phạm cảm biến
-                                    continue;
+                                    Program.IsScalling1 = true;
+                                    tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($"5. Khong vi pham cam bien can");
-                                }
-
-                                // 6.Kiểm tra trạng thái cân ổn định
-                                _tram951Logger.LogInfo($"6. Kiem tra trang thai can on dinh");
-                                //KiemTraCanOnDinh();
-
-                                // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
-                                var currentScaleValue = scaleValues.LastOrDefault();
-                                _tram951Logger.LogInfo($"7. Gia tri can: {currentScaleValue}");
-
-                                // 8. Bật đèn đỏ
-                                // 9. Đóng barrier
-                                bool isSuccessTurnOnRedTrafficLight = false;
-                                bool isSuccessCloseBarrier = false;
-                                if (isRfidFromScale1)
-                                {
-                                    isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("IN");
-                                    isSuccessCloseBarrier = CloseBarrier("IN");
-                                }
-                                else if (isRfidFromScale2)
-                                {
-                                    isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("OUT");
-                                    isSuccessCloseBarrier = CloseBarrier("OUT");
-                                }
-
-                                if (isSuccessTurnOnRedTrafficLight)
-                                {
-                                    _tram951Logger.LogInfo($"8. Bat den do thanh cong");
-                                }
-                                else
-                                {
-                                    _tram951Logger.LogInfo($"8. Bat den do KHONG thanh cong");
-                                }
-
-                                if (isSuccessCloseBarrier)
-                                {
-                                    _tram951Logger.LogInfo($"9. Dong barrier thanh cong");
-                                }
-                                else
-                                {
-                                    _tram951Logger.LogInfo($"9. Dong barrier KHONG thanh cong");
-                                }
-
-                                /*
-                                 * 10. Xử lý sau khi da lay duoc gia tri can on dinh
-                                 * * Cân vào: 
-                                 * * * Gọi api cân để tiến hành cân vào đối với đơn đặt hàng đang xử lý 
-                                 * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                                 * * * Cập nhật khối lượng không tải của phương tiện
-                                 * * Cân ra: 
-                                 * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý 
-                                 * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL
-                                 */
-                                var isUpdatedWeightInWebSale = false;
-                                var isUpdatedOrder = false;
-
-                                if (isRfidFromScale1)
-                                {
-                                    isUpdatedWeightInWebSale = HttpRequest.UpdateWeightInWebSale();
-                                    if (isUpdatedWeightInWebSale)
-                                    {
-                                        isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceTram951(cardNoCurrent, currentScaleValue);
-
-                                        // Cập nhật lại khối lượng không tải của phương tiện
-                                        await _vehicleRepository.UpdateUnladenWeight(cardNoCurrent, currentScaleValue);
-                                    }
-                                }
-                                else if (isRfidFromScale2)
-                                {
-                                    isUpdatedWeightInWebSale = HttpRequest.UpdateWeightOutWebSale();
-                                    if (isUpdatedWeightInWebSale)
-                                    {
-                                        isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitTram951(cardNoCurrent, currentScaleValue);
-                                    }
-                                }
-
-                                if (isUpdatedOrder)
-                                {
-                                    _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can thanh cong.");
-
-                                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                                    if (isRfidFromScale1)
-                                    {
-                                        tmpCardNoLst_1.Add(newCardNoLog);
-                                    }
-                                    else if (isRfidFromScale2)
-                                    {
-                                        tmpCardNoLst_2.Add(newCardNoLog);
-                                    }
-                                }
-                                else
-                                {
-                                    _tram951Logger.LogInfo($"10. Xu ly don hang sau khi lay duoc gia tri can KHONG thanh cong => Ket thuc.");
-                                }
-
-                                // 11. Bật đèn xanh
-                                // 12. Mở barrier để xe rời bàn cân
-                                bool isSuccessTurnOnGreenTrafficLight = false;
-                                bool isSuccessOpenBarrier = false;
-                                if (isRfidFromScale1)
-                                {
-                                    isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
-                                    isSuccessOpenBarrier = OpenBarrier("IN");
-                                }
-                                else if (isRfidFromScale2)
-                                {
-                                    isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
-                                    isSuccessOpenBarrier = OpenBarrier("OUT");
-                                }
-
-                                if (isSuccessTurnOnGreenTrafficLight)
-                                {
-                                    _tram951Logger.LogInfo($"11. Bat den xanh thanh cong");
-                                }
-                                else
-                                {
-                                    _tram951Logger.LogInfo($"11. Bat den xanh KHONG thanh cong");
-                                }
-
-                                if (isSuccessOpenBarrier)
-                                {
-                                    _tram951Logger.LogInfo($"12. Mo barrier thanh cong");
-                                }
-                                else
-                                {
-                                    _tram951Logger.LogInfo($"12. Mo barrier KHONG thanh cong");
-                                }
-
-                                /*
-                                 * 13. Xử lý sau cân
-                                 * * Cân vào:
-                                 * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
-                                 * * * Gủi thông tin số thứ tự cho lái xe thông qua tin nhắn notification
-                                 */
-
-                                foreach (var item in currentOrders)
-                                {
-                                    var typeProduct = item.TypeProduct;
-
-                                    var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByTypeProduct(typeProduct);
-
-                                    var newIndex = maxIndex + 1;
-
-                                    await _storeOrderOperatingRepository.UpdateIndex(item.Id, newIndex);
+                                    _tram951Logger.LogInfo($@"Confirm 3 failed: {cardNoCurrent}");
                                 }
                             }
                         }
