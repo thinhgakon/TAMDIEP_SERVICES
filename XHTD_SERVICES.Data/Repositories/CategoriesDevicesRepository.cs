@@ -24,7 +24,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var devices = await dbContext.tblCategoriesDevices.Where(x => x.CatCode == catCode).ToListAsync();
+                var devices = await dbContext.tblCategoriesDevices.Where(x => x.CatCode.Contains(catCode)).ToListAsync();
                 return devices;
             }
         }

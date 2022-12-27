@@ -46,7 +46,23 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa, sensor1, sensor2;
+        private tblCategoriesDevice 
+            c3400, 
+            rfidIn11, 
+            rfidIn12,
+            rfidIn21, 
+            rfidIn22, 
+            m221,
+            barrierIn1, 
+            barrierIn2,
+            barrierOut1,
+            barrierOut2,
+            trafficLightIn1, 
+            trafficLightIn2,
+            sensorIn1, 
+            sensorIn2,
+            sensorOut1, 
+            sensorOut2;
 
         private List<int> scaleValues = new List<int>();
 
@@ -97,11 +113,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
             await Task.Run(async () =>
             {
-                _tram951Logger.LogInfo("start tram951 service");
+                _tram951Logger.LogInfo("Start tram951 IN service");
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info
-                //await LoadDevicesInfo();
+                await LoadDevicesInfo();
 
                 //AuthenticateTram951Module();
 
@@ -253,21 +269,29 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("951-1");
+            var devices = await _categoriesDevicesRepository.GetDevices("951");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-2");
-            rfidVao1 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-1");
-            rfidVao2 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-2");
+            c3400 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400");
 
-            m221 = devices.FirstOrDefault(x => x.Code == "951-1.M221");
-            barrierVao = devices.FirstOrDefault(x => x.Code == "951-1.M221.BRE-IN");
-            barrierRa = devices.FirstOrDefault(x => x.Code == "951-1.M221.BRE-OUT");
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "951-1.DGT-IN");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "951-1.DGT-OUT");
-            sensor1 = devices.FirstOrDefault(x => x.Code == "951-1.M221.CB-1");
-            sensor2 = devices.FirstOrDefault(x => x.Code == "951-1.M221.CB-2");
+            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-1-1");
+            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-1-2");
+            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-2-1");
+            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-2-2");
+
+            m221 = devices.FirstOrDefault(x => x.Code == "951-IN.M221");
+
+            barrierIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-1");
+            barrierIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-2");
+            barrierOut1 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-1");
+            barrierOut2 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-2");
+
+            trafficLightIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.DGT-1");
+            trafficLightIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.DGT-2");
+
+            sensorIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
+            sensorIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
+            sensorOut1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
+            sensorOut2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
         }
 
         public bool ConnectTram951Module()
@@ -337,24 +361,24 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                 _tram951Logger.LogInfo("-----");
 
-                                // 1.Xác định xe cân vào / ra
-                                var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
+                                // 1. Xác định xe ở cân 1 hay cân 2
+                                var isCan1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
 
-                                var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
-                                                || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+                                var isCan2 = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
+                                                || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
-                                    _tram951Logger.LogInfo($"1. Xe can vao");
+                                    _tram951Logger.LogInfo($"1. Xe can 1");
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($"1. Xe can ra");
+                                    _tram951Logger.LogInfo($"1. Xe can 2");
                                 }
 
                                 // 2. Loại bỏ các tag đã check trước đó
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
                                     if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
 
@@ -364,7 +388,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         continue;
                                     }
                                 }
-                                else if (isLuongRa)
+                                else if (isCan2)
                                 {
                                     if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
 
@@ -396,11 +420,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                 List<tblStoreOrderOperating> currentOrders = null;
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
                                     currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
                                 }
-                                else if (isLuongRa)
+                                else if (isCan2)
                                 {
                                     currentOrders = await _storeOrderOperatingRepository.GetOrdersExitTram951ByCardNoReceiving(cardNoCurrent);
                                 }
@@ -439,12 +463,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // 9. Đóng barrier
                                 bool isSuccessTurnOnRedTrafficLight = false;
                                 bool isSuccessCloseBarrier = false;
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
                                     isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("IN");
                                     isSuccessCloseBarrier = CloseBarrier("IN");
                                 }
-                                else if (isLuongRa)
+                                else if (isCan2)
                                 {
                                     isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("OUT");
                                     isSuccessCloseBarrier = CloseBarrier("OUT");
@@ -481,7 +505,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 var isUpdatedWeightInWebSale = false;
                                 var isUpdatedOrder = false;
 
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
                                     isUpdatedWeightInWebSale = HttpRequest.UpdateWeightInWebSale();
                                     if (isUpdatedWeightInWebSale)
@@ -492,7 +516,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         await _vehicleRepository.UpdateUnladenWeight(cardNoCurrent, currentScaleValue);
                                     }
                                 }
-                                else if (isLuongRa)
+                                else if (isCan2)
                                 {
                                     isUpdatedWeightInWebSale = HttpRequest.UpdateWeightOutWebSale();
                                     if (isUpdatedWeightInWebSale)
@@ -507,11 +531,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                    if (isLuongVao)
+                                    if (isCan1)
                                     {
                                         tmpCardNoLst_In.Add(newCardNoLog);
                                     }
-                                    else if (isLuongRa)
+                                    else if (isCan2)
                                     {
                                         tmpCardNoLst_Out.Add(newCardNoLog);
                                     }
@@ -525,12 +549,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // 12. Mở barrier để xe rời bàn cân
                                 bool isSuccessTurnOnGreenTrafficLight = false;
                                 bool isSuccessOpenBarrier = false;
-                                if (isLuongVao)
+                                if (isCan1)
                                 {
                                     isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
                                     isSuccessOpenBarrier = OpenBarrier("IN");
                                 }
-                                else if (isLuongRa)
+                                else if (isCan2)
                                 {
                                     isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
                                     isSuccessOpenBarrier = OpenBarrier("OUT");
@@ -588,28 +612,28 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public bool OpenBarrier(string luong)
         {
-            int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            int portNumberDeviceIn = luong == "IN" ? (int)barrierIn1.PortNumberDeviceIn : (int)barrierIn2.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "IN" ? (int)barrierIn1.PortNumberDeviceOut : (int)barrierIn2.PortNumberDeviceOut;
 
             return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
         public bool CloseBarrier(string luong)
         {
-            int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            int portNumberDeviceIn = luong == "IN" ? (int)barrierIn1.PortNumberDeviceIn : (int)barrierIn2.PortNumberDeviceIn;
+            int portNumberDeviceOut = luong == "IN" ? (int)barrierIn1.PortNumberDeviceOut : (int)barrierIn2.PortNumberDeviceOut;
 
             return _barrier.TurnOff(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
         public bool TurnOnGreenTrafficLight(string luong)
         {
-            if (trafficLightVao == null || trafficLightRa == null)
+            if (trafficLightIn1 == null || trafficLightIn2 == null)
             {
                 return false;
             }
 
-            string ipAddress = luong == "IN" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+            string ipAddress = luong == "IN" ? trafficLightIn1.IpAddress : trafficLightIn2.IpAddress;
 
             _trafficLight.Connect($"{ipAddress}");
 
@@ -618,12 +642,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public bool TurnOnRedTrafficLight(string luong)
         {
-            if (trafficLightVao == null || trafficLightRa == null)
+            if (trafficLightIn1 == null || trafficLightIn2 == null)
             {
                 return false;
             }
 
-            string ipAddress = luong == "IN" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
+            string ipAddress = luong == "IN" ? trafficLightIn1.IpAddress : trafficLightIn2.IpAddress;
 
             _trafficLight.Connect($"{ipAddress}");
 
@@ -632,8 +656,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public bool CheckValidSensor()
         {
-            int portNumberDeviceIn1 = sensor1 != null ? (int)sensor1.PortNumberDeviceIn : -1;
-            int portNumberDeviceIn2 = sensor2 != null ? (int)sensor2?.PortNumberDeviceIn : -1;
+            int portNumberDeviceIn1 = sensorIn1 != null ? (int)sensorIn1.PortNumberDeviceIn : -1;
+            int portNumberDeviceIn2 = sensorIn2 != null ? (int)sensorIn2?.PortNumberDeviceIn : -1;
 
             List<int> portNumberDeviceIns = new List<int>
             {
