@@ -51,6 +51,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblTypeProduct> tblTypeProducts { get; set; }
         public virtual DbSet<tblVehicle> tblVehicles { get; set; }
         public virtual DbSet<tblCompany> tblCompanies { get; set; }
+        public virtual DbSet<tblScaleOperating> tblScaleOperatings { get; set; }
         public virtual DbSet<tblStoreOrderOperatingVoice> tblStoreOrderOperatingVoices { get; set; }
     }
 }

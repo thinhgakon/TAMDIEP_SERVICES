@@ -241,7 +241,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="GroupName" Type="nvarchar" MaxLength="250" />
           <Property Name="GroupCode" Type="nvarchar" MaxLength="50" />
           <Property Name="GroupIndex" Type="int" />
@@ -297,6 +297,25 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'XHTD.dbo.tblScaleOperating' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="tblScaleOperating">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="ScaleCode" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScaleCode" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ScaleName" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsScaling" Type="bit" />
+          <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
+          <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="ScaleIn" Type="bit" />
+          <Property Name="ScaleOut" Type="bit" />
+          <Property Name="TimeIn" Type="datetime" />
+          <Property Name="CreateDay" Type="datetime" />
+          <Property Name="UpdateDay" Type="datetime" />
         </EntityType>
         <EntityType Name="tblStoreOrderLocation">
           <Key>
@@ -566,6 +585,21 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
     [tblCompany].[UpdateBy] AS [UpdateBy]
     FROM [dbo].[tblCompany] AS [tblCompany]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="tblScaleOperating" EntityType="Self.tblScaleOperating" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [tblScaleOperating].[Id] AS [Id], 
+    [tblScaleOperating].[ScaleCode] AS [ScaleCode], 
+    [tblScaleOperating].[ScaleName] AS [ScaleName], 
+    [tblScaleOperating].[IsScaling] AS [IsScaling], 
+    [tblScaleOperating].[Vehicle] AS [Vehicle], 
+    [tblScaleOperating].[DeliveryCode] AS [DeliveryCode], 
+    [tblScaleOperating].[ScaleIn] AS [ScaleIn], 
+    [tblScaleOperating].[ScaleOut] AS [ScaleOut], 
+    [tblScaleOperating].[TimeIn] AS [TimeIn], 
+    [tblScaleOperating].[CreateDay] AS [CreateDay], 
+    [tblScaleOperating].[UpdateDay] AS [UpdateDay]
+    FROM [dbo].[tblScaleOperating] AS [tblScaleOperating]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="tblStoreOrderOperatingVoice" EntityType="Self.tblStoreOrderOperatingVoice" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [tblStoreOrderOperatingVoice].[Id] AS [Id], 
@@ -802,7 +836,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="GroupName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="GroupCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="GroupIndex" Type="Int32" />
@@ -1085,6 +1119,23 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="tblScaleOperating">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="ScaleCode" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScaleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ScaleName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsScaling" Type="Boolean" />
+          <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ScaleIn" Type="Boolean" />
+          <Property Name="ScaleOut" Type="Boolean" />
+          <Property Name="TimeIn" Type="DateTime" Precision="3" />
+          <Property Name="CreateDay" Type="DateTime" Precision="3" />
+          <Property Name="UpdateDay" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="tblStoreOrderOperatingVoice">
           <Key>
             <PropertyRef Name="Id" />
@@ -1100,7 +1151,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityContainer Name="XHTD_Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="XHTD_Entities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tblAccounts" EntityType="Self.tblAccount" />
           <EntitySet Name="tblAccountGroups" EntityType="Self.tblAccountGroup" />
           <EntitySet Name="tblAccountGroupFunctions" EntityType="Self.tblAccountGroupFunction" />
@@ -1127,6 +1178,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblTypeProducts" EntityType="Self.tblTypeProduct" />
           <EntitySet Name="tblVehicles" EntityType="Self.tblVehicle" />
           <EntitySet Name="tblCompanies" EntityType="Self.tblCompany" />
+          <EntitySet Name="tblScaleOperatings" EntityType="Self.tblScaleOperating" />
           <EntitySet Name="tblStoreOrderOperatingVoices" EntityType="Self.tblStoreOrderOperatingVoice" />
         </EntityContainer>
       </Schema>
@@ -1134,7 +1186,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="XHTD_SERVICESDataEntitiesStoreContainer" CdmEntityContainer="XHTD_Entities">
+        <EntityContainerMapping StorageEntityContainer="XHTD_SERVICESDataEntitiesStoreContainer" CdmEntityContainer="XHTD_Entities1">
           <EntitySetMapping Name="tblAccounts">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblAccount">
               <MappingFragment StoreEntitySet="tblAccount">
@@ -1657,6 +1709,23 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblScaleOperatings">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblScaleOperating">
+              <MappingFragment StoreEntitySet="tblScaleOperating">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ScaleCode" ColumnName="ScaleCode" />
+                <ScalarProperty Name="ScaleName" ColumnName="ScaleName" />
+                <ScalarProperty Name="IsScaling" ColumnName="IsScaling" />
+                <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
+                <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
+                <ScalarProperty Name="ScaleIn" ColumnName="ScaleIn" />
+                <ScalarProperty Name="ScaleOut" ColumnName="ScaleOut" />
+                <ScalarProperty Name="TimeIn" ColumnName="TimeIn" />
+                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
+                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
