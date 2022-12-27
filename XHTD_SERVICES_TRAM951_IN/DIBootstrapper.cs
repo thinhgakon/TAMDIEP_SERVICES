@@ -8,6 +8,7 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using NDTan;
+using XHTD_SERVICES_TRAM951_IN.Devices;
 
 namespace XHTD_SERVICES_TRAM951_IN
 {
@@ -29,6 +30,9 @@ namespace XHTD_SERVICES_TRAM951_IN
             builder.RegisterType<Sensor>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<Tram951Logger>().AsSelf();
+
+            builder.RegisterType<TrafficLightControl>().AsSelf();
+            builder.RegisterType<BarrierControl>().AsSelf();
 
             RegisterScheduler(builder);
 

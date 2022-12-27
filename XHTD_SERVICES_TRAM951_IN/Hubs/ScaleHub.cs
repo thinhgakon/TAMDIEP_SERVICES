@@ -7,6 +7,8 @@ using log4net;
 using XHTD_SERVICES.Helper;
 using System.Linq;
 using XHTD_SERVICES.Data.Entities;
+using Autofac;
+using XHTD_SERVICES_TRAM951_IN.Devices;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -89,11 +91,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // Bật đèn đỏ
                                 // Đóng barrier
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrier("IN");
 
                                 // Gọi iERP API lưu giá trị cân
 
                                 // Bật đèn xanh
                                 // Mở barrier
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrier("IN");
 
                                 // Update giá trị cân của đơn hàng
 
