@@ -30,7 +30,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
 
         protected readonly VehicleRepository _vehicleRepository;
 
-        protected readonly Barrier _barrier;
+        protected readonly PLCBarrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
 
@@ -71,7 +71,7 @@ namespace XHTD_SERVICES_TRAM951.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
-            Barrier barrier,
+            PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
             Tram951Logger tram951Logger

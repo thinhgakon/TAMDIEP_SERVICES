@@ -30,7 +30,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly Barrier _barrier;
+        protected readonly PLCBarrier _barrier;
 
         protected readonly TCPTrafficLight _trafficLight;
 
@@ -77,7 +77,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
-            Barrier barrier,
+            PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Notification notification,
             GatewayLogger gatewayLogger

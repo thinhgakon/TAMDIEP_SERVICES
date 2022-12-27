@@ -24,7 +24,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
             builder.RegisterType<CategoriesDevicesLogRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
-            builder.RegisterType<Barrier>().AsSelf();
+            builder.RegisterType<PLCBarrier>().AsSelf();
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
