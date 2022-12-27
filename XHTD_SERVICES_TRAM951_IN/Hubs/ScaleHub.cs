@@ -55,24 +55,27 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 Program.IsScalling1 = true;
             }
 
-            if (Program.IsScalling1) {
+            if (Program.IsScalling1)
+            {
 
                 Program.scaleValues1.Add(currentScaleValue);
-
-                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
 
                 if (Program.scaleValues1.Count > 10)
                 {
                     Program.scaleValues1.RemoveRange(0, 1);
                 }
 
-                var scaleText = String.Join(",", Program.scaleValues1);
-                logger.Info("Gia tri can: " + scaleText);
+                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
+
+                // var scaleText = String.Join(",", Program.scaleValues1);
+                // logger.Info("Gia tri can: " + scaleText);
 
                 if (isOnDinh)
                 {
                     Program.IsScalling1 = false;
-                    logger.Info($"Can on dinh: " + Program.scaleValues1.LastOrDefault().ToString());
+                    logger.Info($"Can on dinh: " + currentScaleValue);
+
+                    // Thuc hien khi da lay duoc gia tri can on dinh
                 }
             }
         }
