@@ -8,11 +8,11 @@ using NDTan;
 
 namespace XHTD_SERVICES.Device.PLCM221
 {
-    public class Barrier : M221
+    public class PLCBarrier : M221
     {
         private M221Result PLC_Result;
 
-        public Barrier(PLC plc) : base(plc)
+        public PLCBarrier(PLC plc) : base(plc)
         {
         }
 
