@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
+using Topshelf;
+using XHTD_SERVICES_TRAM951_IN.Hubs;
 using XHTD_SERVICES_TRAM951_IN.Schedules;
 
 namespace XHTD_SERVICES_TRAM951_IN
@@ -19,6 +21,8 @@ namespace XHTD_SERVICES_TRAM951_IN
             log.Info("OnStart service TRAM951");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
+
+            new SignalRService().OnStart(null);
         }
 
         protected override void OnStop()
