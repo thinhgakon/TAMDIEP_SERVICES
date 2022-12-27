@@ -46,6 +46,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private List<CardNoLog> tmpCardNoLst_2 = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
+
         private tblCategoriesDevice 
             c3400, 
             rfidIn11, 
@@ -190,7 +192,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public bool ConnectTram951Module()
         {
-            _tram951Logger.LogInfo("start connect to C3-400 ... ");
+            _tram951Logger.LogInfo("Start connect to C3-400 ... ");
 
             try
             {
@@ -201,13 +203,13 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _tram951Logger.LogInfo("connected");
+                        _tram951Logger.LogInfo("Connected");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _tram951Logger.LogInfo("connected failed");
+                        _tram951Logger.LogInfo("Connect failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -225,7 +227,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _tram951Logger.LogInfo("start read data from C3-400 ...");
+            _tram951Logger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -256,37 +258,61 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 _tram951Logger.LogInfo("-----");
 
                                 // 1. Xác định xe ở cân 1 hay cân 2
-                                var isCan1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
+                                var isRfidFromScale1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                 || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
 
-                                var isCan2 = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
+                                var isRfidFromScale2 = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
                                                 || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
-                                if (isCan1)
+                                if (isRfidFromScale1)
                                 {
-                                    _tram951Logger.LogInfo($"1. Xe can 1");
+                                    _tram951Logger.LogInfo($"1. RFID tai can 1");
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($"1. Xe can 2");
+                                    _tram951Logger.LogInfo($"1. RFID tai can 2");
+                                }
+
+                                // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+                                if (isRfidFromScale1) { 
+                                    if (Program.IsScalling1)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else if (isRfidFromScale2)
+                                {
+                                    if (Program.IsScalling2)
+                                    {
+                                        continue;
+                                    }
                                 }
 
                                 // 2. Loại bỏ các tag đã check trước đó
-                                if (isCan1)
+                                if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
+
+                                if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                                {
+                                    _tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+
+                                    continue;
+                                }
+
+                                if (isRfidFromScale1)
                                 {
                                     if (tmpCardNoLst_1.Count > 5) tmpCardNoLst_1.RemoveRange(0, 4);
 
-                                    if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
                                     }
                                 }
-                                else if (isCan2)
+                                else if (isRfidFromScale2)
                                 {
                                     if (tmpCardNoLst_2.Count > 5) tmpCardNoLst_2.RemoveRange(0, 4);
 
-                                    if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
@@ -308,17 +334,19 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                     // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
                                     // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
+                                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                    tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                     continue;
                                 }
 
                                 // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                 List<tblStoreOrderOperating> currentOrders = null;
-                                if (isCan1)
+                                if (isRfidFromScale1)
                                 {
                                     currentOrders = await _storeOrderOperatingRepository.GetOrdersEntraceTram951ByCardNoReceiving(cardNoCurrent);
                                 }
-                                else if (isCan2)
+                                else if (isRfidFromScale2)
                                 {
                                     currentOrders = await _storeOrderOperatingRepository.GetOrdersExitTram951ByCardNoReceiving(cardNoCurrent);
                                 }
@@ -357,12 +385,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // 9. Đóng barrier
                                 bool isSuccessTurnOnRedTrafficLight = false;
                                 bool isSuccessCloseBarrier = false;
-                                if (isCan1)
+                                if (isRfidFromScale1)
                                 {
                                     isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("IN");
                                     isSuccessCloseBarrier = CloseBarrier("IN");
                                 }
-                                else if (isCan2)
+                                else if (isRfidFromScale2)
                                 {
                                     isSuccessTurnOnRedTrafficLight = TurnOnRedTrafficLight("OUT");
                                     isSuccessCloseBarrier = CloseBarrier("OUT");
@@ -399,7 +427,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 var isUpdatedWeightInWebSale = false;
                                 var isUpdatedOrder = false;
 
-                                if (isCan1)
+                                if (isRfidFromScale1)
                                 {
                                     isUpdatedWeightInWebSale = HttpRequest.UpdateWeightInWebSale();
                                     if (isUpdatedWeightInWebSale)
@@ -410,7 +438,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         await _vehicleRepository.UpdateUnladenWeight(cardNoCurrent, currentScaleValue);
                                     }
                                 }
-                                else if (isCan2)
+                                else if (isRfidFromScale2)
                                 {
                                     isUpdatedWeightInWebSale = HttpRequest.UpdateWeightOutWebSale();
                                     if (isUpdatedWeightInWebSale)
@@ -425,11 +453,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                    if (isCan1)
+                                    if (isRfidFromScale1)
                                     {
                                         tmpCardNoLst_1.Add(newCardNoLog);
                                     }
-                                    else if (isCan2)
+                                    else if (isRfidFromScale2)
                                     {
                                         tmpCardNoLst_2.Add(newCardNoLog);
                                     }
@@ -443,12 +471,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // 12. Mở barrier để xe rời bàn cân
                                 bool isSuccessTurnOnGreenTrafficLight = false;
                                 bool isSuccessOpenBarrier = false;
-                                if (isCan1)
+                                if (isRfidFromScale1)
                                 {
                                     isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
                                     isSuccessOpenBarrier = OpenBarrier("IN");
                                 }
-                                else if (isCan2)
+                                else if (isRfidFromScale2)
                                 {
                                     isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
                                     isSuccessOpenBarrier = OpenBarrier("OUT");
