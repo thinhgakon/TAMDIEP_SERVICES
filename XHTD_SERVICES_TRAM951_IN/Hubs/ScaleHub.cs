@@ -6,6 +6,7 @@ using Microsoft.Owin.Cors;
 using log4net;
 using XHTD_SERVICES.Helper;
 using System.Linq;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -76,6 +77,48 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                     logger.Info($"Can on dinh: " + currentScaleValue);
 
                     // Thuc hien khi da lay duoc gia tri can on dinh
+                    using (var dbContext = new XHTD_Entities())
+                    {
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == "SCALE-1");
+                        if ((bool)scaleInfo.IsScaling)
+                        {
+                            // Đang cân vào
+                            if ((bool)scaleInfo.ScaleIn)
+                            {
+                                // Update giá trị cân không tải của phương tiện
+
+                                // Bật đèn đỏ
+                                // Đóng barrier
+
+                                // Gọi iERP API lưu giá trị cân
+
+                                // Bật đèn xanh
+                                // Mở barrier
+
+                                // Update giá trị cân của đơn hàng
+
+                                // Giải phóng cân
+                                Program.IsScalling1 = false;
+                            }
+
+                            // Đang cân ra
+                            if ((bool)scaleInfo.ScaleOut)
+                            {
+                                // Bật đèn đỏ
+                                // Đóng barrier
+
+                                // Gọi iERP API lưu giá trị cân
+
+                                // Bật đèn xanh
+                                // Mở barrier
+
+                                // Update giá trị cân của đơn hàng
+
+                                // Giải phóng cân
+                                Program.IsScalling1 = false;
+                            }
+                        }
+                    }
                 }
             }
         }
