@@ -10,7 +10,7 @@ namespace XHTD_SERVICES.Helper
     {
         public static bool CheckBalanceValues(List<int> numbers, int saiso)
         {
-            if (numbers.Count < 5)
+            if (numbers.Count < 10)
             {
                 return false;
             }
