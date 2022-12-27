@@ -42,9 +42,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private static bool DeviceConnected = false;
 
-        private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst_1 = new List<CardNoLog>();
 
-        private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst_2 = new List<CardNoLog>();
 
         private tblCategoriesDevice 
             c3400, 
@@ -274,9 +274,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 // 2. Loại bỏ các tag đã check trước đó
                                 if (isCan1)
                                 {
-                                    if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
+                                    if (tmpCardNoLst_1.Count > 5) tmpCardNoLst_1.RemoveRange(0, 4);
 
-                                    if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
                                         _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
@@ -284,9 +284,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 }
                                 else if (isCan2)
                                 {
-                                    if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
+                                    if (tmpCardNoLst_2.Count > 5) tmpCardNoLst_2.RemoveRange(0, 4);
 
-                                    if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
                                         _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
@@ -427,11 +427,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                     if (isCan1)
                                     {
-                                        tmpCardNoLst_In.Add(newCardNoLog);
+                                        tmpCardNoLst_1.Add(newCardNoLog);
                                     }
                                     else if (isCan2)
                                     {
-                                        tmpCardNoLst_Out.Add(newCardNoLog);
+                                        tmpCardNoLst_2.Add(newCardNoLog);
                                     }
                                 }
                                 else
