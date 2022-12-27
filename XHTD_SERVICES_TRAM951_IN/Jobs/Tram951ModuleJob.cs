@@ -120,113 +120,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                 await LoadDevicesInfo();
 
                 //AuthenticateTram951Module();
-
-                //HandleHubConnection();
-
-                //ReadDataFromScale();
             });
-        }
-
-        public void ReadDataFromScale()
-        {
-            while (true)
-            {
-                if (isJustReceivedScaleData)
-                {
-                    Console.Write("Scale Values:");
-
-                    var scaleText = String.Join(",", scaleValues);
-                    Console.WriteLine(scaleText);
-
-                    KiemTraCanOnDinh();
-
-                    isJustReceivedScaleData = false;
-                }
-            }
-        }
-
-        public void KiemTraCanOnDinh()
-        {
-            while (true) {
-                var tbc = Calculator.TrungBinhCong(scaleValues);
-                var isOnDinh = Calculator.CheckBalanceValues(scaleValues, 1);
-
-                Console.WriteLine("tbc: " + tbc);
-
-                if (isOnDinh)
-                {
-                    Console.WriteLine("can on dinh");
-                    Console.WriteLine("Gia tri can hien tai: " + scaleValues.LastOrDefault().ToString() );
-                    break;
-                }
-                else
-                {
-                    Console.WriteLine("can chua on dinh ...");
-                }
-            }
-        }
-
-        public async void HandleHubConnection()
-        {
-            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
-            ScaleHubURL = apiUrl["ScaleHub"];
-
-            var reconnectSeconds = new List<TimeSpan> { TimeSpan.Zero, TimeSpan.Zero, TimeSpan.FromSeconds(5) };
-
-            var i = 5;
-            while (i <= 7200)
-            {
-                reconnectSeconds.Add(TimeSpan.FromSeconds(i));
-                i++;
-            }
-
-            Connection = new HubConnectionBuilder()
-                .WithUrl($"{ScaleHubURL}")
-                //.WithAutomaticReconnect()
-                .Build();
-
-            Connection.On<string>("SendOffersToUser", data =>
-            {
-                isJustReceivedScaleData = true;
-                int result = Int32.Parse(data);
-
-                //todo, adding updates tolist for example
-                scaleValues.Add(result);
-
-                if (scaleValues.Count > 5) { 
-                    scaleValues.RemoveRange(0, 1); 
-                }
-            });
-
-            try
-            {
-                await Connection.StartAsync();
-                Console.WriteLine("Connected!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Disconnect!");
-            }
-
-            Connection.Reconnecting += connectionId =>
-            {
-                Console.WriteLine("Reconnecting....");
-                return Task.CompletedTask;
-            };
-
-            Connection.Reconnected += connectionId =>
-            {
-                Console.WriteLine("Connected!");
-                return Task.CompletedTask;
-            };
-
-            Connection.Closed += async (error) =>
-            {
-                Console.WriteLine("Closed!");
-
-                await Task.Delay(new Random().Next(0, 5) * 1000);
-                await Connection.StartAsync();
-            };
         }
 
         public void AuthenticateTram951Module()
@@ -453,7 +347,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 // 6.Kiểm tra trạng thái cân ổn định
                                 _tram951Logger.LogInfo($"6. Kiem tra trang thai can on dinh");
-                                KiemTraCanOnDinh();
+                                //KiemTraCanOnDinh();
 
                                 // 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
                                 var currentScaleValue = scaleValues.LastOrDefault();
