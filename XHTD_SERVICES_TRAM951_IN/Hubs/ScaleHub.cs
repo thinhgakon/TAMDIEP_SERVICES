@@ -81,7 +81,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 if (isOnDinh)
                 {
-                    Program.IsScalling1 = false;
+                    //Program.IsScalling1 = false;
                     logger.Info($"Can 1 on dinh: " + currentScaleValue);
 
                     // Thuc hien khi da lay duoc gia tri can on dinh
