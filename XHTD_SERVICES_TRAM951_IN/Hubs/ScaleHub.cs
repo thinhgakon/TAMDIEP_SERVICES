@@ -9,6 +9,7 @@ using System.Linq;
 using XHTD_SERVICES.Data.Entities;
 using Autofac;
 using XHTD_SERVICES_TRAM951_IN.Devices;
+using XHTD_SERVICES_TRAM951_IN.Business;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -42,7 +43,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             Clients.All.SendClinkerScaleInfo(time, value);
         }
 
-        public void ReadDataScale9511(DateTime time, string value)
+        public async void ReadDataScale9511(DateTime time, string value)
         {
             logger.Info($"Received 951-1 data: time={time}, value={value}");
 
@@ -99,6 +100,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // Giải phóng cân
                                 Program.IsScalling1 = false;
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
 
                             // Đang cân ra
@@ -116,6 +118,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // Giải phóng cân
                                 Program.IsScalling1 = false;
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
                         }
                     }

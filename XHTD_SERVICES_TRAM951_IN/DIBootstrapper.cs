@@ -9,6 +9,7 @@ using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES_TRAM951_IN.Devices;
+using XHTD_SERVICES_TRAM951_IN.Business;
 
 namespace XHTD_SERVICES_TRAM951_IN
 {
@@ -33,6 +34,8 @@ namespace XHTD_SERVICES_TRAM951_IN
 
             builder.RegisterType<TrafficLightControl>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
+
+            builder.RegisterType<ScaleBusiness>().AsSelf();
 
             RegisterScheduler(builder);
 
