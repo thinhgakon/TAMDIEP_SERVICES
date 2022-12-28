@@ -42,6 +42,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblNotification> tblNotifications { get; set; }
         public virtual DbSet<tblRfid> tblRfids { get; set; }
         public virtual DbSet<tblRfidSign> tblRfidSigns { get; set; }
+        public virtual DbSet<tblScaleOperating> tblScaleOperatings { get; set; }
         public virtual DbSet<tblStoreOrderLocation> tblStoreOrderLocations { get; set; }
         public virtual DbSet<tblStoreOrderOperating> tblStoreOrderOperatings { get; set; }
         public virtual DbSet<tblStoreOrderOperatingPriority> tblStoreOrderOperatingPriorities { get; set; }
@@ -51,7 +52,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblTypeProduct> tblTypeProducts { get; set; }
         public virtual DbSet<tblVehicle> tblVehicles { get; set; }
         public virtual DbSet<tblCompany> tblCompanies { get; set; }
-        public virtual DbSet<tblScaleOperating> tblScaleOperatings { get; set; }
         public virtual DbSet<tblStoreOrderOperatingVoice> tblStoreOrderOperatingVoices { get; set; }
     }
 }
