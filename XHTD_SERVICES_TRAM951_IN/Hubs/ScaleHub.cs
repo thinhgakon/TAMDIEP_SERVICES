@@ -49,18 +49,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             int currentScaleValue = Int32.Parse(value);
             if (currentScaleValue < 1000)
             {
-                Program.IsScalling1 = false;
                 Program.scaleValues1.Clear();
                 return;
-            }
-            else
-            {
-                Program.IsScalling1 = true;
             }
 
             if (Program.IsScalling1)
             {
-
                 Program.scaleValues1.Add(currentScaleValue);
 
                 if (Program.scaleValues1.Count > 10)
@@ -76,7 +70,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isOnDinh)
                 {
                     Program.IsScalling1 = false;
-                    logger.Info($"Can on dinh: " + currentScaleValue);
+                    logger.Info($"Can 1 on dinh: " + currentScaleValue);
 
                     // Thuc hien khi da lay duoc gia tri can on dinh
                     using (var dbContext = new XHTD_Entities())
@@ -125,6 +119,13 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             }
                         }
                     }
+                }
+            }
+            else
+            {
+                if (Program.scaleValues1.Count > 5)
+                {
+                    Program.scaleValues1.Clear();
                 }
             }
         }
