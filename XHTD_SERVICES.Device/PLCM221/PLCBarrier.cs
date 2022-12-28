@@ -16,6 +16,65 @@ namespace XHTD_SERVICES.Device.PLCM221
         {
         }
 
+        public M221Result ConnectPLC(string ipAddress)
+        {
+            return Connect($"{ipAddress}", 502);
+        }
+
+        public bool ReadInputPort(int portIn)
+        {
+            bool[] Ports = new bool[24];
+            PLC_Result = CheckInputPorts(Ports);
+
+            if (PLC_Result == M221Result.SUCCESS)
+            {
+                if (Ports[portIn])
+                {
+                   return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public bool ResetOutPort(int port)
+        {
+            if (ReadInputPort(port))
+            {
+                var result = ShuttleOutputPort((byte.Parse(port.ToString())));
+                if (result == M221Result.SUCCESS)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool TurnOnOutPort(int port)
+        {
+            if (!ReadInputPort(port))
+            {
+                var result = ShuttleOutputPort((byte.Parse(port.ToString())));
+                if (result == M221Result.SUCCESS)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public bool TurnOn(string ipAddress, int portNumber, int portNumberDeviceIn, int portNumberDeviceOut) {
 
             PLC_Result = Connect($"{ipAddress}", portNumber);
