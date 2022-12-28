@@ -31,5 +31,24 @@ namespace XHTD_SERVICES.Data.Repositories
             
             return isValid;
         }
+
+        public string GetRfidbyVehicle(string vehicle)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var rfidRecord = dbContext.tblRfids.FirstOrDefault(x => x.Vehicle == vehicle);
+                if (rfidRecord == null)
+                {
+                    return null;
+                }
+
+                if (String.IsNullOrEmpty(rfidRecord.Code))
+                {
+                    return null;
+                }
+
+                return rfidRecord.Code;
+            }
+        }
     }
 }
