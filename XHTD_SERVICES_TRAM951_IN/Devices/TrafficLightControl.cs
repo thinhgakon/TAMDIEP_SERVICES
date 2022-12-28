@@ -19,16 +19,36 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             _trafficLight = trafficLight;
         }
 
-        public bool TurnOnGreenTrafficLight(string luong)
+        public string GetIpAddress(string scaleCode)
         {
-            _trafficLight.Connect($"ipAddress");
+            var ipAddress = "10.0.9.7";
+
+            if (scaleCode == "SCALE-1")
+            {
+                ipAddress = "10.0.9.7";
+            }
+            else if (scaleCode == "SCALE-2")
+            {
+                ipAddress = "10.0.9.11";
+            }
+
+            return ipAddress;
+        }
+
+        public bool TurnOnGreenTrafficLight(string scaleCode)
+        {
+            var ipAddress = GetIpAddress(scaleCode);
+
+            _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
         }
 
-        public bool TurnOnRedTrafficLight(string luong)
+        public bool TurnOnRedTrafficLight(string scaleCode)
         {
-            _trafficLight.Connect($"ipAddress");
+            var ipAddress = GetIpAddress(scaleCode);
+
+            _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOffGreenOnRed();
         }

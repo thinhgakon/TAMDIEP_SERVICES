@@ -126,15 +126,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrier("IN");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrier("IN");
 
                                 // 6. Gọi iERP API lưu giá trị cân
 
                                 // 7. Bật đèn xanh
                                 // 8. Mở barrier
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrier("IN");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrier("IN");
 
                                 // 9. Update giá trị cân của đơn hàng
 
@@ -143,23 +143,23 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
 
-                            // Đang cân ra
-                            if ((bool)scaleInfo.ScaleOut)
-                            {
-                                // 3. Đóng barrier
-                                // 4. Bật đèn đỏ
+                            //// Đang cân ra
+                            //if ((bool)scaleInfo.ScaleOut)
+                            //{
+                            //    // 3. Đóng barrier
+                            //    // 4. Bật đèn đỏ
 
-                                // 5. Gọi iERP API lưu giá trị cân
+                            //    // 5. Gọi iERP API lưu giá trị cân
 
-                                // 6. Mở barrier
-                                // 7. Bật đèn xanh
+                            //    // 6. Mở barrier
+                            //    // 7. Bật đèn xanh
 
-                                // 8. Update giá trị cân của đơn hàng
+                            //    // 8. Update giá trị cân của đơn hàng
 
-                                // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                Program.IsScalling1 = false;
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
-                            }
+                            //    // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                            //    Program.IsScalling1 = false;
+                            //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
+                            //}
                         }
                     }
                 }
