@@ -132,28 +132,13 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
         public void AuthenticateTram951Module()
         {
             /*
-             * 1. Xác định xe cân vào hay cân ra theo gia tri door từ C3-400
-             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
+             * 1. Xác định xe vao can 1 hay can 2 theo gia tri door từ C3-400
+             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
              * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
              * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Kiểm tra xe có vi phạm cảm biến
-             * 6. Kiểm tra trạng thái cân ổn định
-             * 7. Lấy giá trị cân (giá trị cuối trong mảng cân ổn định)
-             * 8. Bật đèn đỏ
-             * 9. Đóng barrier
-             * 10. Xử lý đơn hàng
-             * * Cân vào: 
-             * * * Gọi api cân để tiến hàng cân vào đối với đơn đặt hàng đang xử lý, 
-             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL,
-             * * * Cập nhật khối lượng không tải của phương tiện;
-             * * Cân ra: 
-             * * * Gọi api cân để tiến hàng cân ra đối với đơn đặt hàng đang xử lý, 
-             * * * Cập nhật khối lượng cân, bước xử lý của đơn hàng trong CSDL;
-             * 11. Bật đèn xanh
-             * 12. Mở barrier để xe rời bàn cân
-             * 13. Xử lý sau cân
-             * * Cân vào:
-             * * * Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong;
+             * 5. Xác thực cân vào: update step, confirm
+             * 6. Lưu vào bảng tblScale xe đang cân vào
+             * 7. Program.IsScalling = true;
              */
 
             // 1. Connect Device
@@ -358,18 +343,26 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                // Xác thực vào cổng
-                                if(await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
+                                // 5. Xác thực vào cổng
+                                if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
-                                    if (isRfidFromScale1) { 
+                                    if (isRfidFromScale1) {
+                                        // 6. Lưu vào bảng tblScale xe đang cân vào
                                         await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle);
+
+                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling1 = true;
+
                                         tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                     else if (isRfidFromScale2)
                                     {
+                                        // 6. Lưu vào bảng tblScale xe đang cân vào
                                         await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle);
+
+                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling2 = true;
+
                                         tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                 }
