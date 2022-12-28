@@ -48,6 +48,17 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             logger.Info($"Received 951-1 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
+            if(currentScaleValue == 111)
+            {
+                Program.IsScalling1 = true;
+                logger.Info("IsScalling1 true");
+            }
+            else if(currentScaleValue == 999)
+            {
+                Program.IsScalling1 = false;
+                logger.Info("IsScalling1 false");
+            }
+
             if (currentScaleValue < 1000)
             {
                 Program.scaleValues1.Clear();
@@ -65,8 +76,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
 
-                // var scaleText = String.Join(",", Program.scaleValues1);
-                // logger.Info("Gia tri can: " + scaleText);
+                var scaleText = String.Join(",", Program.scaleValues1);
+                logger.Info("Gia tri can: " + scaleText);
 
                 if (isOnDinh)
                 {
@@ -77,6 +88,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                     using (var dbContext = new XHTD_Entities())
                     {
                         var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == "SCALE-1");
+                        if(scaleInfo == null)
+                        {
+                            logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-1");
+                            return;
+                        }
+
                         if ((bool)scaleInfo.IsScaling)
                         {
                             // Đang cân vào
