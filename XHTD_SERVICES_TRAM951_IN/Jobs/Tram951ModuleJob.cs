@@ -348,7 +348,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 {
                                     if (isRfidFromScale1) {
                                         // 6. Lưu vào bảng tblScale xe đang cân vào
-                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle);
+                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
 
                                         // 7. Đánh dấu đang cân
                                         Program.IsScalling1 = true;
@@ -358,7 +358,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     else if (isRfidFromScale2)
                                     {
                                         // 6. Lưu vào bảng tblScale xe đang cân vào
-                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle);
+                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
 
                                         // 7. Đánh dấu đang cân
                                         Program.IsScalling2 = true;

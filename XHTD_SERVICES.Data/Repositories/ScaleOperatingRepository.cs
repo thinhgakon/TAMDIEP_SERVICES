@@ -20,7 +20,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
-        public async Task<bool> UpdateWhenConfirmEntrace(string scaleCode, string deliveryCode, string vehicle)
+        public async Task<bool> UpdateWhenConfirmEntrace(string scaleCode, string deliveryCode, string vehicle, string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -32,6 +32,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 scaleInfo.DeliveryCode = deliveryCode;
                 scaleInfo.Vehicle = vehicle;
+                scaleInfo.CardNo = cardNo;
                 scaleInfo.ScaleIn = true;
                 scaleInfo.ScaleOut = false;
                 scaleInfo.IsScaling = true;

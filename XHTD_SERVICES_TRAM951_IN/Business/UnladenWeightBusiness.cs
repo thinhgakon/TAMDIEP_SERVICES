@@ -21,13 +21,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Business
             _rfidRepository = rfidRepository;
         }
 
-        public async Task UpdateUnladenWeight(string vehicle, int weight)
+        public async Task UpdateUnladenWeight(string cardNo, int weight)
         {
-            var rfid = _rfidRepository.GetRfidbyVehicle(vehicle);
-
-            if (rfid != null) { 
-                await _vehicleRepository.UpdateUnladenWeight(rfid, weight);
-            }
+            await _vehicleRepository.UpdateUnladenWeight(cardNo, weight);
         }
     }
 }

@@ -122,21 +122,22 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             if ((bool)scaleInfo.ScaleIn)
                             {
                                 // 3. Cập nhật khối lượng không tải của phương tiện
-                                await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.Vehicle, currentScaleValue);
+                                await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrier("IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
 
                                 // 6. Gọi iERP API lưu giá trị cân
 
                                 // 7. Bật đèn xanh
                                 // 8. Mở barrier
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrier("IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
                                 // 9. Update giá trị cân của đơn hàng
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 Program.IsScalling1 = false;
