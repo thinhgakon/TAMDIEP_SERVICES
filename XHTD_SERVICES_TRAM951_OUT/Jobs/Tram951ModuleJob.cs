@@ -68,14 +68,6 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
             sensorOut1, 
             sensorOut2;
 
-        private List<int> scaleValues = new List<int>();
-
-        private string ScaleHubURL;
-
-        private bool isJustReceivedScaleData = false;
-
-        private HubConnection Connection { get; set; }
-
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -136,9 +128,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
              * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
              * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
              * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Xác thực cân vào: update step, confirm
-             * 6. Lưu vào bảng tblScale xe đang cân vào
-             * 7. Program.IsScalling = true;
+             * 5. Xác thực cân ra: update step, confirm
+             * 6. Đánh dấu đang cân
+             * * *  Lưu vào bảng tblScale xe đang cân vào
+             * * *  Program.IsScalling = true;
              */
 
             // 1. Connect Device
@@ -262,10 +255,13 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     _tram951Logger.LogInfo($"1. RFID tai can 2");
                                 }
 
-                                // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                if (isRfidFromScale1) { 
+                                // 2. Loại bỏ các tag đã check trước đó
+                                // // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+                                if (isRfidFromScale1)
+                                {
                                     if (Program.IsScalling1)
                                     {
+                                        _tram951Logger.LogInfo($"2. Can 1 dang hoat dong => Ket thuc.");
                                         continue;
                                     }
                                 }
@@ -273,17 +269,16 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                 {
                                     if (Program.IsScalling2)
                                     {
+                                        _tram951Logger.LogInfo($"2. Can 2 dang hoat dong => Ket thuc.");
                                         continue;
                                     }
                                 }
 
-                                // 2. Loại bỏ các tag đã check trước đó
                                 if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
 
                                 if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                 {
                                     _tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-
                                     continue;
                                 }
 
@@ -321,8 +316,6 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                 {
                                     _tram951Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                    // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
-                                    // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -330,7 +323,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                 }
 
                                 // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceTram951ByCardNo(cardNoCurrent);
+                                var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitTram951ByCardNo(cardNoCurrent);
                                 if (currentOrder == null)
                                 {
                                     _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
@@ -346,29 +339,30 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                 // 5. Xác thực cân ra
                                 if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
                                 {
+                                    _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
                                     if (isRfidFromScale1) {
-                                        // 6. Lưu vào bảng tblScale xe đang cân vào
+                                        // 6. Đánh dấu đang cân
                                         await _scaleOperatingRepository.UpdateWhenConfirmExit("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-
-                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling1 = true;
+
+                                        _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                         tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                     else if (isRfidFromScale2)
                                     {
-                                        // 6. Lưu vào bảng tblScale xe đang cân vào
+                                        // 6. Đánh dấu đang cân
                                         await _scaleOperatingRepository.UpdateWhenConfirmExit("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-
-                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling2 = true;
+
+                                        _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                         tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($@"Confirm 3 failed: {cardNoCurrent}");
+                                    _tram951Logger.LogInfo($@"5. Confirm 3 failed");
                                 }
                             }
                         }

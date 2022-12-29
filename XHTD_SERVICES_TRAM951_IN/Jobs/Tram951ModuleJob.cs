@@ -68,14 +68,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             sensorOut1, 
             sensorOut2;
 
-        private List<int> scaleValues = new List<int>();
-
-        private string ScaleHubURL;
-
-        private bool isJustReceivedScaleData = false;
-
-        private HubConnection Connection { get; set; }
-
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
