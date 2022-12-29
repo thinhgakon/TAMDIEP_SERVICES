@@ -10,6 +10,7 @@ using XHTD_SERVICES.Data.Entities;
 using Autofac;
 using XHTD_SERVICES_TRAM951_IN.Devices;
 using XHTD_SERVICES_TRAM951_IN.Business;
+using System.Threading;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -126,13 +127,17 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ
+                                logger.Info($"5. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
 
                                 // 6. Gọi iERP API lưu giá trị cân
+                                logger.Info($"6. Goi iERP API luu gia tri can");
+                                Thread.Sleep(10000);
 
                                 // 7. Bật đèn xanh
                                 // 8. Mở barrier
+                                logger.Info($"7. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
