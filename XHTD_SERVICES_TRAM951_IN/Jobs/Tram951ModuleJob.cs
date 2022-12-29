@@ -76,13 +76,14 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private HubConnection Connection { get; set; }
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "PullLastError")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "PullLastError")]
         public static extern int PullLastError();
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "GetRTLog")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
+
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
         public Tram951ModuleJob(
@@ -123,9 +124,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info
-                //await LoadDevicesInfo();
+                await LoadDevicesInfo();
 
-                //AuthenticateTram951Module();
+                AuthenticateTram951Module();
             });
         }
 
@@ -181,7 +182,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         public bool ConnectTram951Module()
         {
-            _tram951Logger.LogInfo("Start connect to C3-400 ... ");
+            _tram951Logger.LogInfo($"Start connect to C3-400 {c3400?.IpAddress} ... ");
 
             try
             {
@@ -266,6 +267,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 if (isRfidFromScale1) { 
                                     if (Program.IsScalling1)
                                     {
+                                        _tram951Logger.LogInfo($"Can 1 dang hoat dong. Ket thuc");
                                         continue;
                                     }
                                 }
@@ -273,6 +275,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 {
                                     if (Program.IsScalling2)
                                     {
+                                        _tram951Logger.LogInfo($"Can 2 dang hoat dong. Ket thuc");
                                         continue;
                                     }
                                 }
