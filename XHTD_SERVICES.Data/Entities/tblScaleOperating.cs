@@ -19,6 +19,7 @@ namespace XHTD_SERVICES.Data.Entities
         public string ScaleName { get; set; }
         public Nullable<bool> IsScaling { get; set; }
         public string Vehicle { get; set; }
+        public string CardNo { get; set; }
         public string DeliveryCode { get; set; }
         public Nullable<bool> ScaleIn { get; set; }
         public Nullable<bool> ScaleOut { get; set; }

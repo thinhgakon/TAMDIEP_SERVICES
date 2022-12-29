@@ -307,6 +307,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="ScaleName" Type="nvarchar" MaxLength="50" />
           <Property Name="IsScaling" Type="bit" />
           <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
+          <Property Name="CardNo" Type="nvarchar" MaxLength="50" />
           <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
           <Property Name="ScaleIn" Type="bit" />
           <Property Name="ScaleOut" Type="bit" />
@@ -885,6 +886,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="ScaleName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="IsScaling" Type="Boolean" />
           <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CardNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ScaleIn" Type="Boolean" />
           <Property Name="ScaleOut" Type="Boolean" />
@@ -1467,6 +1469,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="ScaleName" ColumnName="ScaleName" />
                 <ScalarProperty Name="IsScaling" ColumnName="IsScaling" />
                 <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
+                <ScalarProperty Name="CardNo" ColumnName="CardNo" />
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="ScaleIn" ColumnName="ScaleIn" />
                 <ScalarProperty Name="ScaleOut" ColumnName="ScaleOut" />

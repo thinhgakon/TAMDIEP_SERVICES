@@ -37,6 +37,7 @@ namespace XHTD_SERVICES_TRAM951_IN
 
             builder.RegisterType<ScaleBusiness>().AsSelf();
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
+            builder.RegisterType<WeightBusiness>().AsSelf();
 
             RegisterScheduler(builder);
 
