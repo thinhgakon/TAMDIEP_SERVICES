@@ -343,12 +343,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
                                 _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                // 5. Xác thực vào cổng
-                                if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
+                                // 5. Xác thực cân ra
+                                if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
                                 {
                                     if (isRfidFromScale1) {
                                         // 6. Lưu vào bảng tblScale xe đang cân vào
-                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                        await _scaleOperatingRepository.UpdateWhenConfirmExit("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
 
                                         // 7. Đánh dấu đang cân
                                         Program.IsScalling1 = true;
@@ -358,7 +358,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     else if (isRfidFromScale2)
                                     {
                                         // 6. Lưu vào bảng tblScale xe đang cân vào
-                                        await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                        await _scaleOperatingRepository.UpdateWhenConfirmExit("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
 
                                         // 7. Đánh dấu đang cân
                                         Program.IsScalling2 = true;

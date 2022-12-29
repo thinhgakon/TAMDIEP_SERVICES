@@ -143,24 +143,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 Program.IsScalling1 = false;
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
-
-                            //// Đang cân ra
-                            //if ((bool)scaleInfo.ScaleOut)
-                            //{
-                            //    // 3. Đóng barrier
-                            //    // 4. Bật đèn đỏ
-
-                            //    // 5. Gọi iERP API lưu giá trị cân
-
-                            //    // 6. Mở barrier
-                            //    // 7. Bật đèn xanh
-
-                            //    // 8. Update giá trị cân của đơn hàng
-
-                            //    // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                            //    Program.IsScalling1 = false;
-                            //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
-                            //}
                         }
                     }
                 }

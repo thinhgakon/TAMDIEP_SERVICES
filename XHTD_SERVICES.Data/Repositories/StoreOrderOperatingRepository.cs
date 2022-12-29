@@ -561,6 +561,45 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateOrderConfirm7(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string calcelTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
+                                                .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm7 = 1;
+                        order.TimeConfirm7 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_CAN_RA;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {calcelTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cân vào {cardNo} Error: " + ex.Message);
+                    Console.WriteLine($@"Cân vào {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderEntraceTram951(string cardNo, int weightIn)
         {
             using (var dbContext = new XHTD_Entities())
