@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "HPTram951INService";
+            this.serviceInstaller1.ServiceName = "HPTram951OUTService";
             // 
             // ProjectInstaller
             // 
