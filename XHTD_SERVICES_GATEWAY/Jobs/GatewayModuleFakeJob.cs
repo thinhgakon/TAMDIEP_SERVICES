@@ -62,13 +62,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private HubConnection Connection { get; set; }
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "Connect")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "PullLastError")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "PullLastError")]
         public static extern int PullLastError();
 
-        [DllImport(@"C:\Windows\System32\plcommpro.dll", EntryPoint = "GetRTLog")]
+        [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
         public GatewayModuleFakeJob(
