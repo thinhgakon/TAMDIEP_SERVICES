@@ -123,7 +123,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info
-                await LoadDevicesInfo();
+                //await LoadDevicesInfo();
 
                 //AuthenticateTram951Module();
             });

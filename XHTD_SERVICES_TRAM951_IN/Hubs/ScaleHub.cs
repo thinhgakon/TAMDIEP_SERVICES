@@ -100,7 +100,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
 
                 var scaleText = String.Join(",", Program.scaleValues1);
-                logger.Info("Gia tri can: " + scaleText);
+                logger.Info("Gia tri can 1: " + scaleText);
 
                 if (isOnDinh)
                 {
@@ -129,20 +129,20 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 // 5. Bật đèn đỏ
                                 logger.Info($"5. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
-                                Thread.Sleep(10000);
+                                Thread.Sleep(20000);
 
                                 // 7. Bật đèn xanh
                                 // 8. Mở barrier
                                 logger.Info($"7. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
                                 // 9. Update giá trị cân của đơn hàng
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 Program.IsScalling1 = false;
@@ -195,7 +195,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, 20);
 
                 var scaleText = String.Join(",", Program.scaleValues2);
-                logger.Info("Gia tri can: " + scaleText);
+                logger.Info("Gia tri can 2: " + scaleText);
 
                 if (isOnDinh)
                 {
@@ -222,21 +222,25 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ
+                                logger.Info($"5. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale2();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale2();
 
                                 // 6. Gọi iERP API lưu giá trị cân
+                                logger.Info($"6. Goi iERP API luu gia tri can");
+                                Thread.Sleep(20000);
 
                                 // 7. Bật đèn xanh
                                 // 8. Mở barrier
+                                logger.Info($"7. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-2");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
 
                                 // 9. Update giá trị cân của đơn hàng
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                Program.IsScalling1 = false;
+                                Program.IsScalling2 = false;
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
                             }
                         }
