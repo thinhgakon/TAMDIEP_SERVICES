@@ -317,7 +317,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                         str = rFIDValue != null ? rFIDValue : "";
                         tmp = str.Split(',');
 
-                        // Trường hợp bắt được tag RFID
+                        // Bắt đầu xử lý khi nhận diện được RFID
                         if (tmp != null && tmp.Count() > 3 && tmp[2] != "0" && tmp[2] != "")
                         {
 

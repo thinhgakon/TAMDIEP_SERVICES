@@ -235,7 +235,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                             str = Encoding.Default.GetString(buffer);
                             tmp = str.Split(',');
 
-                            // Trường hợp bắt được tag RFID
+                            // Bắt đầu xử lý khi nhận diện được RFID
                             if (tmp[2] != "0" && tmp[2] != "") {
 
                                 var cardNoCurrent = tmp[2]?.ToString();

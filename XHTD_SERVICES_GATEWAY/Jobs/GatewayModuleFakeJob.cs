@@ -264,7 +264,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         str = RFIDValue != null ? RFIDValue : "";
                         tmp = str.Split(',');
 
-                        // Trường hợp bắt được tag RFID
+                        // Bắt đầu xử lý khi nhận diện được RFID
                         if (tmp != null && tmp.Count() > 3 && tmp[2] != "0" && tmp[2] != "") {
 
                             var cardNoCurrent = tmp[2]?.ToString();
