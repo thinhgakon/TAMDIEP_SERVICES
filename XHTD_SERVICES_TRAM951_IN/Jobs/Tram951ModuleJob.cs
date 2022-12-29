@@ -138,8 +138,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
              * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
              * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
              * 5. Xác thực cân vào: update step, confirm
-             * 6. Lưu vào bảng tblScale xe đang cân vào
-             * 7. Program.IsScalling = true;
+             * 6. Đánh dấu đang cân
+             * * *  Lưu vào bảng tblScale xe đang cân vào
+             * * *  Program.IsScalling = true;
              */
 
             // 1. Connect Device
@@ -263,11 +264,13 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     _tram951Logger.LogInfo($"1. RFID tai can 2");
                                 }
 
-                                // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                if (isRfidFromScale1) { 
+                                // 2. Loại bỏ các tag đã check trước đó
+                                // // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+                                if (isRfidFromScale1)
+                                {
                                     if (Program.IsScalling1)
                                     {
-                                        _tram951Logger.LogInfo($"Can 1 dang hoat dong. Ket thuc");
+                                        _tram951Logger.LogInfo($"2. Can 1 dang hoat dong => Ket thuc.");
                                         continue;
                                     }
                                 }
@@ -275,18 +278,16 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 {
                                     if (Program.IsScalling2)
                                     {
-                                        _tram951Logger.LogInfo($"Can 2 dang hoat dong. Ket thuc");
+                                        _tram951Logger.LogInfo($"2. Can 2 dang hoat dong => Ket thuc.");
                                         continue;
                                     }
                                 }
 
-                                // 2. Loại bỏ các tag đã check trước đó
                                 if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
 
                                 if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                 {
                                     _tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-
                                     continue;
                                 }
 
@@ -315,7 +316,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
-
                                 if (isValid)
                                 {
                                     _tram951Logger.LogInfo($"3. Tag hop le");
@@ -324,8 +324,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 {
                                     _tram951Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                    // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
-                                    // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -346,32 +344,33 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                 _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                // 5. Xác thực vào cổng
+                                // 5. Xác thực cân vào
                                 if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
+                                    _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
                                     if (isRfidFromScale1) {
-                                        // 6. Lưu vào bảng tblScale xe đang cân vào
+                                        // 6. Đánh dấu đang cân
                                         await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-
-                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling1 = true;
+
+                                        _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                         tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                     else if (isRfidFromScale2)
                                     {
-                                        // 6. Lưu vào bảng tblScale xe đang cân vào
+                                        // 6. Đánh dấu đang cân
                                         await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-
-                                        // 7. Đánh dấu đang cân
                                         Program.IsScalling2 = true;
+
+                                        _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                         tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                     }
                                 }
                                 else
                                 {
-                                    _tram951Logger.LogInfo($@"Confirm 3 failed: {cardNoCurrent}");
+                                    _tram951Logger.LogInfo($@"5. Confirm 3 failed");
                                 }
                             }
                         }
