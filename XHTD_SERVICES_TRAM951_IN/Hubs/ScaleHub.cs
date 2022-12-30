@@ -123,7 +123,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             if ((bool)scaleInfo.ScaleIn)
                             {
                                 // 3. Cập nhật khối lượng không tải của phương tiện
-                                await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ

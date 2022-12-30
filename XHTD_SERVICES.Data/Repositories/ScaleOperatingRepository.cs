@@ -89,6 +89,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 scaleInfo.DeliveryCode = "";
                 scaleInfo.Vehicle = "";
+                scaleInfo.CardNo = "";
                 scaleInfo.ScaleIn = false;
                 scaleInfo.ScaleOut = false;
                 scaleInfo.IsScaling = false;
