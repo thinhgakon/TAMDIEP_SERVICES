@@ -369,50 +369,59 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     null
                                 );
 
-                                // 5. Cập nhật đơn hàng
+                                // 5. Xác thực vào / ra cổng
+                                // 6. Bật đèn xanh giao thông, 
+                                // 7. Mở barrier
+                                // 8. Ghi log thiết bị
+                                // 9. Bắn tín hiệu thông báo
+
                                 var isUpdatedOrder = false;
+                                bool isSuccessTurnOnGreenTrafficLight = false;
+                                bool isSuccessOpenBarrier = false;
 
                                 if (isLuongVao)
                                 {
-                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderEntraceGateway(cardNoCurrent);
-                                }
-                                else if (isLuongRa)
-                                {
-                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderExitGateway(cardNoCurrent);
-                                }
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
 
-                                if (isUpdatedOrder)
-                                {
-                                    _gatewayLogger.LogInfo($"5. Update don hang thanh cong.");
-
-                                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                                    /*
-                                     * 6. Bật đèn xanh giao thông, 
-                                     * 7. Mở barrier
-                                     * 8. Ghi log thiết bị
-                                     * 9. Bắn tín hiệu thông báo
-                                     */
-                                    bool isSuccessTurnOnGreenTrafficLight = false;
-                                    bool isSuccessOpenBarrier = false;
-
-                                    if (isLuongVao)
+                                    if (isUpdatedOrder)
                                     {
+                                        _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
+
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
                                         isSuccessOpenBarrier = OpenBarrier("IN");
 
                                         isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
                                     }
-                                    else if (isLuongRa)
+                                    else
                                     {
-                                        tmpCardNoLst_Out.Add(newCardNoLog);
+                                        _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
+                                    }
+                                }
+                                else if (isLuongRa)
+                                {
+                                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+
+                                    if (isUpdatedOrder)
+                                    {
+                                        _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
+
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                        tmpCardNoLst_In.Add(newCardNoLog);
 
                                         isSuccessOpenBarrier = OpenBarrier("OUT");
 
                                         isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
                                     }
+                                    else
+                                    {
+                                        _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
+                                    }
+                                }
 
+                                if (isUpdatedOrder)
+                                {
                                     if (isSuccessTurnOnGreenTrafficLight)
                                     {
                                         _gatewayLogger.LogInfo($"6. Bat den xanh thanh cong");
@@ -443,14 +452,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"7. Mo barrier KHONG thanh cong");
                                     }
-
-                                    _gatewayLogger.LogInfo($"Ket thuc.");
                                 }
-                                else
-                                {
-                                    _gatewayLogger.LogInfo($"5. Update don hang KHONG thanh cong => Ket thuc.");
-                                }
-                            }
                         }
                         else
                         {

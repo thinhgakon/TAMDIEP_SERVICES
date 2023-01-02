@@ -531,6 +531,89 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        // Cổng bảo vệ
+        // Xác thực vào cổng
+        public async Task<bool> UpdateOrderConfirm2(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
+                                                .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        // Xác thực ra cổng
+        public async Task<bool> UpdateOrderConfirm8(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
+                                                .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm1 = 1;
+                        order.TimeConfirm1 = order.TimeConfirm1 ?? DateTime.Now;
+                        order.Confirm2 = 1;
+                        order.TimeConfirm2 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_VAO_CONG;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         // Trạm 951
         public async Task<bool> UpdateOrderConfirm3(string cardNo)
         {
