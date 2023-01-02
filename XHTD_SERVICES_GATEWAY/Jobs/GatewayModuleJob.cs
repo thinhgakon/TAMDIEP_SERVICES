@@ -254,7 +254,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             // Bắt đầu xử lý khi nhận diện được RFID
                             if (tmp[2] != "0" && tmp[2] != "")
                             {
-
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
                                 var timeCurrent = tmp[0]?.ToString();

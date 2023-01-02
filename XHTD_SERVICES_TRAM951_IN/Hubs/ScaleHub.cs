@@ -29,6 +29,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             Clients.All.SendNotificationCBV(status, inout, cardNo, message);
         }
 
+        public void SendFakeRFID(string value)
+        {
+            Clients.All.SendFakeRFID(value);
+        }
+
         public void Send9511ScaleInfo(DateTime time, string value)
         {
             // Call the broadcastMessage method to update clients.
