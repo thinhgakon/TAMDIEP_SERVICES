@@ -125,7 +125,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                 // Connect Scale Hub
                 ConnectScaleHubAsync();
 
-                _tram951Logger.LogInfo("start tram951 fake service");
+                _tram951Logger.LogInfo("Start tram951 IN fake service");
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info

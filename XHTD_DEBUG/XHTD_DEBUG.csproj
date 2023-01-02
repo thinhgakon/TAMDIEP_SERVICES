@@ -270,6 +270,10 @@
       <Project>{13e42194-55cf-4fb7-a218-d879353da89e}</Project>
       <Name>XHTD_SERVICES_TRAM951_IN</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_TRAM951_OUT\XHTD_SERVICES_TRAM951_OUT.csproj">
+      <Project>{272b4836-1ad4-40e0-abe2-6e9521c2791f}</Project>
+      <Name>XHTD_SERVICES_TRAM951_OUT</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
