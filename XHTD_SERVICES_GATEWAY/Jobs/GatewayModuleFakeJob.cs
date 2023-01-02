@@ -207,7 +207,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
-
         }
 
         public bool ConnectGatewayModule()
