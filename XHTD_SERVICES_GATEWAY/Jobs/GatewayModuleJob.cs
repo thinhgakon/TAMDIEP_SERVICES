@@ -172,7 +172,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var ipAddress = c3400?.IpAddress;
             try
             {
-                string str = $"protocol=TCP,ipaddress=ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
+                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
                 int ret = 0;
                 if (IntPtr.Zero == h21)
                 {
@@ -222,7 +222,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             tmp = str.Split(',');
 
                             // Bắt đầu xử lý khi nhận diện được RFID
-                            if (tmp[2] != "0" && tmp[2] != "") {
+                            if (tmp[2] != "0" && tmp[2] != "")
+                            {
 
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
@@ -453,14 +454,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         _gatewayLogger.LogInfo($"7. Mo barrier KHONG thanh cong");
                                     }
                                 }
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogWarn("No data. Reconnect ...");
-                            DeviceConnected = false;
-                            h21 = IntPtr.Zero;
+                            }
+                            else
+                            {
+                                _gatewayLogger.LogWarn("No data. Reconnect ...");
+                                DeviceConnected = false;
+                                h21 = IntPtr.Zero;
 
-                            AuthenticateGatewayModule();
+                                AuthenticateGatewayModule();
+                            }
                         }
                     }
                 }
