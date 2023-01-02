@@ -135,17 +135,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             HubProxy.On<string>("SendFakeRFID", (value) => {
                 Console.WriteLine($"Received fake RFID data: value={value}");
-               }
+                RFIDValue = value;
+                IsJustReceivedRFIDData = true;
+                }
             );
-
-            //Connection.On<HUBResponse>("SendMsgToUser", fakeHubResponse =>
-            //{
-            //    if (fakeHubResponse != null && fakeHubResponse.Data != null && fakeHubResponse.Data.Vehicle != "")
-            //    {
-            //        RFIDValue = fakeHubResponse.Data.Vehicle;
-            //        IsJustReceivedRFIDData = true;
-            //    }
-            //});
 
             try
             {
