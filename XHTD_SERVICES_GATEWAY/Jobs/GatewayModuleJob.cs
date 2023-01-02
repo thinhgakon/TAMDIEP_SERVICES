@@ -15,6 +15,7 @@ using XHTD_SERVICES.Data.Entities;
 using Newtonsoft.Json;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
+using Microsoft.AspNet.SignalR.Client;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -53,6 +54,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         protected const string CBV_ACTIVE = "CBV_ACTIVE";
 
         private static bool isActiveService = true;
+
+        private IHubProxy HubProxy { get; set; }
+
+        const string ServerURI = "http://localhost:8083/signalr";
+
+        private HubConnection Connection { get; set; }
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -95,6 +102,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
+                // Connect Scale Hub
+                ConnectScaleHubAsync();
+
                 // Get System Parameters
                 await LoadSystemParameters();
 
@@ -112,6 +122,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 AuthenticateGatewayModule();
             });                                                                                                                     
+        }
+
+        private async void ConnectScaleHubAsync()
+        {
+            Connection = new HubConnection(ServerURI);
+            Connection.Closed += Connection_Closed;
+            HubProxy = Connection.CreateHubProxy("ScaleHub");
+            try
+            {
+                await Connection.Start();
+                _gatewayLogger.LogInfo("Connected scale hub");
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                _gatewayLogger.LogInfo("Connect failed scale hub");
+            }
+        }
+
+        private void Connection_Closed()
+        {
         }
 
         public async Task LoadSystemParameters()
@@ -241,15 +271,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
                                 var direction = 0;
+                                var inout = "";
 
                                 if (isLuongVao)
                                 {
                                     direction = 1;
+                                    inout = "IN";
                                     _gatewayLogger.LogInfo($"1. Xe can vao");
                                 }
                                 else
                                 {
                                     direction = 2;
+                                    inout = "OUT";
                                     _gatewayLogger.LogInfo($"1. Xe can ra");
                                 }
 
@@ -295,19 +328,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                    _notification.SendNotification(
-                                        "CBV",
-                                        null,
-                                        0,
-                                        "RFID không thuộc hệ thống",
-                                        direction,
-                                        null,
-                                        null,
-                                        Convert.ToInt32(cardNoCurrent),
-                                        null,
-                                        null,
-                                        null
-                                    );
+                                    //_notification.SendNotification(
+                                    //    "CBV",
+                                    //    null,
+                                    //    0,
+                                    //    "RFID không thuộc hệ thống",
+                                    //    direction,
+                                    //    null,
+                                    //    null,
+                                    //    Convert.ToInt32(cardNoCurrent),
+                                    //    null,
+                                    //    null,
+                                    //    null
+                                    //);
+
+                                    SendNotificationCBV(0, inout, cardNoCurrent, "RFID không thuộc hệ thống");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -331,19 +366,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                    _notification.SendNotification(
-                                        "CBV",
-                                        null,
-                                        0,
-                                        "RFID không có đơn hàng hợp lệ",
-                                        direction,
-                                        null,
-                                        null,
-                                        Convert.ToInt32(cardNoCurrent),
-                                        null,
-                                        null,
-                                        null
-                                    );
+                                    //_notification.SendNotification(
+                                    //    "CBV",
+                                    //    null,
+                                    //    0,
+                                    //    "RFID không có đơn hàng hợp lệ",
+                                    //    direction,
+                                    //    null,
+                                    //    null,
+                                    //    Convert.ToInt32(cardNoCurrent),
+                                    //    null,
+                                    //    null,
+                                    //    null
+                                    //);
+
+                                    SendNotificationCBV(0, inout, cardNoCurrent, "RFID không có đơn hàng hợp lệ");
 
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -356,19 +393,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                                _notification.SendNotification(
-                                    "CBV",
-                                    null,
-                                    1,
-                                    "RFID có đơn hàng hợp lệ",
-                                    direction,
-                                    null,
-                                    null,
-                                    Convert.ToInt32(cardNoCurrent),
-                                    null,
-                                    null,
-                                    null
-                                );
+                                //_notification.SendNotification(
+                                //    "CBV",
+                                //    null,
+                                //    1,
+                                //    "RFID có đơn hàng hợp lệ",
+                                //    direction,
+                                //    null,
+                                //    null,
+                                //    Convert.ToInt32(cardNoCurrent),
+                                //    null,
+                                //    null,
+                                //    null
+                                //);
+
+                                SendNotificationCBV(1, inout, cardNoCurrent, "RFID có đơn hàng hợp lệ");
 
                                 // 5. Xác thực vào / ra cổng
                                 // 6. Bật đèn xanh giao thông, 
@@ -489,6 +528,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _trafficLight.Connect($"{ipAddress}");
 
             return _trafficLight.TurnOnGreenOffRed();
+        }
+
+        private void SendNotificationCBV(int status, string inout, string cardNo, string message)
+        {
+            try
+            {
+                HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message).Wait();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

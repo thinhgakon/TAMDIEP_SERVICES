@@ -24,6 +24,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             Console.WriteLine("send send");
         }
 
+        public void SendNotificationCBV(int status, string inout, string cardNo, string message)
+        {
+            Clients.All.SendNotificationCBV(status, inout, cardNo, message);
+        }
+
         public void Send9511ScaleInfo(DateTime time, string value)
         {
             // Call the broadcastMessage method to update clients.

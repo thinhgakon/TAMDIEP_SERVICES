@@ -25,7 +25,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             // See http://msdn.microsoft.com/library/system.net.httplistener.aspx 
             // for more information.
             //string url = "http://10.0.1.41:8083";
-            string url = "http://localhost:8080";
+            string url = "http://localhost:8083";
 
             WebApp.Start(url);
 
