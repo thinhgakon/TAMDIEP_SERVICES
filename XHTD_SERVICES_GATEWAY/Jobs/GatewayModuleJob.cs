@@ -165,27 +165,27 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
-
         }
 
         public bool ConnectGatewayModule()
         {
+            var ipAddress = c3400?.IpAddress;
             try
             {
-                string str = $"protocol=TCP,ipaddress={c3400?.IpAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
+                string str = $"protocol=TCP,ipaddress=ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
                 int ret = 0;
                 if (IntPtr.Zero == h21)
                 {
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _gatewayLogger.LogInfo("Connected to C3-400");
+                        _gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _gatewayLogger.LogInfo("Connect to C3-400 failed");
+                        _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -195,15 +195,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo($@"ConnectGateway Exception: {ex.Message}");
-
+                _gatewayLogger.LogInfo($@"ConnectGateway {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
 
         public async void ReadDataFromC3400()
         {
-            _gatewayLogger.LogInfo("Read data from C3-400");
+            _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -227,9 +226,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
+                                var timeCurrent = tmp[0]?.ToString();
 
                                 _gatewayLogger.LogInfo("----------------------------");
-                                _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}");
+                                _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                 _gatewayLogger.LogInfo("-----");
 
                                 // 1.Xác định xe cân vào / ra
@@ -253,12 +253,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 }
 
                                 // 2. Loại bỏ các tag đã check trước đó
-                                if (tmpInvalidCardNoLst.Count > 5) tmpInvalidCardNoLst.RemoveRange(0, 3);
+                                if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
 
-                                if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-2)))
+                                if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                 {
                                     _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-
                                     continue;
                                 }
 
@@ -266,10 +265,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
 
-                                    if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-
                                         continue;
                                     }
                                 }
@@ -277,10 +275,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
 
-                                    if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-
                                         continue;
                                     }
                                 }
@@ -289,7 +286,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                 bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
-
                                 if (isValid)
                                 {
                                     _gatewayLogger.LogInfo($"3. Tag hop le");
@@ -312,8 +308,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         null
                                     );
 
-                                    // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
-                                    // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -350,8 +344,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         null
                                     );
 
-                                    // Cần add các thẻ invalid vào 1 mảng để tránh phải check lại
-                                    // Chỉ check lại các invalid tag sau 1 khoảng thời gian: 3 phút
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -462,7 +454,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         }
                         else
                         {
-                            _gatewayLogger.LogWarn("Lỗi không đọc được dữ liệu, có thể do mất kết nối");
+                            _gatewayLogger.LogWarn("No data. Reconnect ...");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 

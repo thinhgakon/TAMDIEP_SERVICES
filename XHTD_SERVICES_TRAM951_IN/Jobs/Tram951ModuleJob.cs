@@ -122,30 +122,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             });
         }
 
-        public void AuthenticateTram951Module()
-        {
-            /*
-             * 1. Xác định xe vao can 1 hay can 2 theo gia tri door từ C3-400
-             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
-             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Xác thực cân vào: update step, confirm
-             * 6. Đánh dấu đang cân
-             * * *  Lưu vào bảng tblScale xe đang cân vào
-             * * *  Program.IsScalling = true;
-             */
-
-            // 1. Connect Device
-            while (!DeviceConnected)
-            {
-                ConnectTram951Module();
-            }
-
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromC3400();
-
-        }
-
         public async Task LoadDevicesInfo()
         {
             var devices = await _categoriesDevicesRepository.GetDevices("951");
@@ -173,26 +149,48 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             sensorOut2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
         }
 
+        public void AuthenticateTram951Module()
+        {
+            /*
+             * 1. Xác định xe vao can 1 hay can 2 theo gia tri door từ C3-400
+             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
+             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
+             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+             * 5. Xác thực cân vào: update step, confirm
+             * 6. Đánh dấu đang cân
+             * * *  Lưu vào bảng tblScale xe đang cân vào
+             * * *  Program.IsScalling = true;
+             */
+
+            // 1. Connect Device
+            while (!DeviceConnected)
+            {
+                ConnectTram951Module();
+            }
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromC3400();
+        }
+
         public bool ConnectTram951Module()
         {
-            _tram951Logger.LogInfo($"Start connect to C3-400 {c3400?.IpAddress} ... ");
-
+            var ipAddress = c3400?.IpAddress;
             try
             {
-                string str = $"protocol=TCP,ipaddress={c3400?.IpAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
+                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
                 int ret = 0;
                 if (IntPtr.Zero == h21)
                 {
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _tram951Logger.LogInfo("Connected");
+                        _tram951Logger.LogInfo($"Connected to C3-400 {ipAddress}");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _tram951Logger.LogInfo("Connect failed");
+                        _tram951Logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -202,8 +200,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             }
             catch (Exception ex)
             {
-                _tram951Logger.LogInfo($@"ConnectTram951Module : {ex.Message}");
-
+                _tram951Logger.LogInfo($@"ConnectTram951Module {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
