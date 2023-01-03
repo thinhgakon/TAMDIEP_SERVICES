@@ -134,8 +134,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             HubProxy = Connection.CreateHubProxy("ScaleHub");
 
             HubProxy.On<string>("SendFakeRFID", (value) => {
-                _gatewayLogger.LogInfo("----------------------------");
-                _gatewayLogger.LogInfo($"Received fake RFID data: value={value}");
+                //_gatewayLogger.LogInfo("----------------------------");
+                //_gatewayLogger.LogInfo($"Received fake RFID data: value={value}");
                 RFIDValue = value;
                 IsJustReceivedRFIDData = true;
                 }

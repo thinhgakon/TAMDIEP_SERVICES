@@ -239,7 +239,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _tram951Logger.LogInfo("start read data from C3-400 ...");
+            _tram951Logger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
