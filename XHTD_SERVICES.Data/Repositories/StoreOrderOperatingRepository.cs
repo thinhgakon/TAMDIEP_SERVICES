@@ -532,8 +532,8 @@ namespace XHTD_SERVICES.Data.Repositories
         }
 
         // Cổng bảo vệ
-        // Xác thực vào cổng
-        public async Task<bool> UpdateOrderConfirm2(string cardNo)
+        // Xác thực ra cổng
+        public async Task<bool> UpdateOrderConfirm8(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -572,8 +572,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        // Xác thực ra cổng
-        public async Task<bool> UpdateOrderConfirm8(string cardNo)
+        // Xác thực vào cổng
+        public async Task<bool> UpdateOrderConfirm2(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {

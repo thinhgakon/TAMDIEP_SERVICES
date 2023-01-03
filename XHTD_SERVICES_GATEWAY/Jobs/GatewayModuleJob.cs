@@ -279,13 +279,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     direction = 1;
                                     inout = "IN";
-                                    _gatewayLogger.LogInfo($"1. Xe can vao");
+                                    _gatewayLogger.LogInfo($"1. Xe vao cong");
                                 }
                                 else
                                 {
                                     direction = 2;
                                     inout = "OUT";
-                                    _gatewayLogger.LogInfo($"1. Xe can ra");
+                                    _gatewayLogger.LogInfo($"1. Xe ra cong");
                                 }
 
                                 // 2. Loại bỏ các tag đã check trước đó
@@ -432,9 +432,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
-                                        isSuccessOpenBarrier = OpenBarrier("IN");
-
+                                        _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                         isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
+
+                                        _gatewayLogger.LogInfo($"7. Mở barrier");
+                                        isSuccessOpenBarrier = OpenBarrier("IN");
                                     }
                                     else
                                     {
@@ -452,9 +454,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
-                                        isSuccessOpenBarrier = OpenBarrier("OUT");
-
+                                        _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                         isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
+
+                                        _gatewayLogger.LogInfo($"7. Mở barrier");
+                                        isSuccessOpenBarrier = OpenBarrier("OUT");
                                     }
                                     else
                                     {
@@ -464,18 +468,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 if (isUpdatedOrder)
                                 {
-                                    if (isSuccessTurnOnGreenTrafficLight)
-                                    {
-                                        _gatewayLogger.LogInfo($"6. Bat den xanh thanh cong");
-                                    }
-                                    else
-                                    {
-                                        _gatewayLogger.LogInfo($"6. Bat den xanh KHONG thanh cong");
-                                    }
-
                                     if (isSuccessOpenBarrier)
                                     {
-                                        _gatewayLogger.LogInfo($"7. Mo barrier thanh cong");
                                         _gatewayLogger.LogInfo($"8. Ghi log thiet bi mo barrier");
 
                                         string luongText = isLuongVao ? "vào" : "ra";
@@ -492,7 +486,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else
                                     {
-                                        _gatewayLogger.LogInfo($"7. Mo barrier KHONG thanh cong");
+                                        _gatewayLogger.LogInfo($"8. Mo barrier KHONG thanh cong");
                                     }
                                 }
                             }
