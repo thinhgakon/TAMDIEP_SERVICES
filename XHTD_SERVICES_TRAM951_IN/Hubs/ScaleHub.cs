@@ -78,7 +78,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
         */
         public async void ReadDataScale9511(DateTime time, string value)
         {
-            logger.Info($"Received 951-1 data: time={time}, value={value}");
+            //logger.Info($"Received 951-1 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
             if(currentScaleValue == 111)
@@ -109,8 +109,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
 
-                var scaleText = String.Join(",", Program.scaleValues1);
-                logger.Info("Gia tri can 1: " + scaleText);
+                //var scaleText = String.Join(",", Program.scaleValues1);
+                //logger.Info("Gia tri can 1: " + scaleText);
 
                 if (isOnDinh)
                 {
@@ -177,7 +177,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
         public async void ReadDataScale9512(DateTime time, string value)
         {
-            logger.Info($"Received 951-2 data: time={time}, value={value}");
+            //logger.Info($"Received 951-2 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
             if (currentScaleValue == 111)
@@ -208,8 +208,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, 20);
 
-                var scaleText = String.Join(",", Program.scaleValues2);
-                logger.Info("Gia tri can 2: " + scaleText);
+                //var scaleText = String.Join(",", Program.scaleValues2);
+                //logger.Info("Gia tri can 2: " + scaleText);
 
                 if (isOnDinh)
                 {
