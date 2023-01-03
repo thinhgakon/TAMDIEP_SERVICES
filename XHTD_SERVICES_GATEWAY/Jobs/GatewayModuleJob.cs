@@ -161,14 +161,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var devices = await _categoriesDevicesRepository.GetDevices("CBV");
 
             c3400 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
+
             rfidVao1 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-IN-1");
             rfidVao2 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-IN-2");
+            rfidRa1 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
+            rfidRa2 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
 
             m221 = devices.FirstOrDefault(x => x.Code == "CBV.M221");
+
             barrierVao = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-IN");
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
+
             trafficLightVao = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
             trafficLightRa = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
         }
