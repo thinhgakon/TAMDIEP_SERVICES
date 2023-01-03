@@ -142,8 +142,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
             HubProxy = Connection.CreateHubProxy("ScaleHub");
 
             HubProxy.On<string>("SendFakeRFID", (value) => {
-                _tram951Logger.LogInfo("----------------------------");
-                _tram951Logger.LogInfo($"Received fake RFID data: value={value}");
+                //_tram951Logger.LogInfo("----------------------------");
+                //_tram951Logger.LogInfo($"Received fake RFID data: value={value}");
                 RFIDValue = value;
                 IsJustReceivedRFIDData = true;
             }
