@@ -256,5 +256,4 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             }
         }
     }
-    }
 }
