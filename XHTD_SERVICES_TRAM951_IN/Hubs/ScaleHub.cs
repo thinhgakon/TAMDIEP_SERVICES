@@ -115,7 +115,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isOnDinh)
                 {
                     // 1. Xác định giá trị cân ổn định
-                    logger.Info($"Can 1 on dinh: " + currentScaleValue);
+                    logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -126,6 +126,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-1");
                             return;
                         }
+                        logger.Info($"2. Phuong tien dang can: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         if ((bool)scaleInfo.IsScaling)
                         {
@@ -152,10 +153,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
                                 // 9. Update giá trị cân của đơn hàng
-                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                logger.Info($"9. Update gia tri can vao");
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 Program.IsScalling1 = false;
+                                Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
                         }
