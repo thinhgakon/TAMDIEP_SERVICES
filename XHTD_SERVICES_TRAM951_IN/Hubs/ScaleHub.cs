@@ -231,7 +231,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             if ((bool)scaleInfo.ScaleIn)
                             {
                                 // 3. Cập nhật khối lượng không tải của phương tiện
-                                await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Đóng barrier
                                 // 5. Bật đèn đỏ
@@ -250,10 +250,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
 
                                 // 9. Update giá trị cân của đơn hàng
-                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                logger.Info($"9. Update gia tri can vao");
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 Program.IsScalling2 = false;
+                                Program.scaleValues2.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
                             }
                         }
