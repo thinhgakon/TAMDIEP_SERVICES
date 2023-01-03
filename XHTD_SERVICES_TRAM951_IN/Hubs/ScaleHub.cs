@@ -156,8 +156,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 logger.Info($"9. Update gia tri can vao");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
-                                // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                logger.Info($"10. Giai phong can 1");
+                                // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
+                                logger.Info($"10. Xep so thu tu vao mang xuat");
+
+                                // 11. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"11. Giai phong can 1");
                                 Program.IsScalling1 = false;
                                 Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
@@ -255,8 +258,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 logger.Info($"9. Update gia tri can vao");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
-                                // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                logger.Info($"10. Giai phong can 2");
+                                // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
+                                logger.Info($"10. Xep so thu tu vao mang xuat");
+
+                                // 11. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"11. Giai phong can 2");
                                 Program.IsScalling2 = false;
                                 Program.scaleValues2.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
