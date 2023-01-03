@@ -126,7 +126,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-1");
                             return;
                         }
-                        logger.Info($"2. Phuong tien dang can: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
+                        logger.Info($"2. Phuong tien dang can 1: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         if ((bool)scaleInfo.IsScaling)
                         {
@@ -157,6 +157,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"10. Giai phong can 1");
                                 Program.IsScalling1 = false;
                                 Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
@@ -213,7 +214,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isOnDinh)
                 {
                     // 1. Xác định giá trị cân ổn định
-                    logger.Info($"Can 2 on dinh: " + currentScaleValue);
+                    logger.Info($"1. Can 2 on dinh: " + currentScaleValue);
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -224,6 +225,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                             logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-2");
                             return;
                         }
+                        logger.Info($"2. Phuong tien dang can 2: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         if ((bool)scaleInfo.IsScaling)
                         {
@@ -254,6 +256,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"10. Giai phong can 2");
                                 Program.IsScalling2 = false;
                                 Program.scaleValues2.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
