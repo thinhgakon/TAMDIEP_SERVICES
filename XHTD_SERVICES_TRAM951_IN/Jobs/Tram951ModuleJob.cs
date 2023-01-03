@@ -227,8 +227,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                             tmp = str.Split(',');
 
                             // Bắt đầu xử lý khi nhận diện được RFID
-                            if (tmp[2] != "0" && tmp[2] != "") {
-
+                            if (tmp[2] != "0" && tmp[2] != "") 
+                            {
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
                                 var timeCurrent = tmp[0]?.ToString();
@@ -337,7 +337,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
                                     _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
-                                    if (isRfidFromScale1) {
+                                    if (isRfidFromScale1) 
+                                    {
                                         // 6. Đánh dấu đang cân
                                         await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                         Program.IsScalling1 = true;

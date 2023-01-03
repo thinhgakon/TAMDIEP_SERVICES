@@ -258,7 +258,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                         // Bắt đầu xử lý khi nhận diện được RFID
                         if (tmp != null && tmp.Count() > 3 && tmp[2] != "0" && tmp[2] != "")
                         {
-
                             var cardNoCurrent = tmp[2]?.ToString();
                             var doorCurrent = tmp[3]?.ToString();
                             var timeCurrent = tmp[0]?.ToString();
