@@ -10,6 +10,7 @@ using XHTD_SERVICES.Data.Entities;
 using Autofac;
 using XHTD_SERVICES_TRAM951_OUT.Devices;
 using XHTD_SERVICES_TRAM951_OUT.Business;
+using System.Threading;
 
 namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 {
@@ -67,7 +68,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
         */
         public async void ReadDataScale9511(DateTime time, string value)
         {
-            logger.Info($"Received 951-1 data: time={time}, value={value}");
+            //logger.Info($"Received 951-1 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
             if(currentScaleValue == 111)
@@ -98,13 +99,13 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
 
-                var scaleText = String.Join(",", Program.scaleValues1);
-                logger.Info("Gia tri can: " + scaleText);
+                //var scaleText = String.Join(",", Program.scaleValues1);
+                //logger.Info("Gia tri can: " + scaleText);
 
                 if (isOnDinh)
                 {
                     // 1. Xác định giá trị cân ổn định
-                    logger.Info($"Can 1 on dinh: " + currentScaleValue);
+                    logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -115,6 +116,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                             logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-1");
                             return;
                         }
+                        logger.Info($"2. Phuong tien dang can 1: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         if ((bool)scaleInfo.IsScaling)
                         {
@@ -123,21 +125,27 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                             {
                                 // 3. Đóng barrier
                                 // 4. Bật đèn đỏ
+                                logger.Info($"4. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
 
                                 // 5. Gọi iERP API lưu giá trị cân
+                                logger.Info($"5. Goi iERP API luu gia tri can");
+                                Thread.Sleep(20000);
 
                                 // 6. Bật đèn xanh
                                 // 7. Mở barrier
+                                logger.Info($"6. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
                                 // 8. Update giá trị cân của đơn hàng
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"9. Giai phong can 1");
                                 Program.IsScalling1 = false;
+                                Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
                         }
@@ -153,43 +161,100 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             }
         }
 
-        public void ReadDataScale9512(DateTime time, string value)
+        public async void ReadDataScale9512(DateTime time, string value)
         {
-            logger.Info($"Received 951-2 data: time={time}, value={value}");
+            //logger.Info($"Received 951-2 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
-            if (currentScaleValue < 1000)
-            {
-                Program.IsScalling2 = false;
-                Program.scaleValues2.Clear();
-                return;
-            }
-            else
+            if (currentScaleValue == 111)
             {
                 Program.IsScalling2 = true;
+                logger.Info("IsScalling2 true");
+            }
+            else if (currentScaleValue == 999)
+            {
+                Program.IsScalling2 = false;
+                logger.Info("IsScalling2 false");
+            }
+
+            if (currentScaleValue < 1000)
+            {
+                Program.scaleValues2.Clear();
+                return;
             }
 
             if (Program.IsScalling2)
             {
-
                 Program.scaleValues2.Add(currentScaleValue);
-
-                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, 20);
 
                 if (Program.scaleValues2.Count > 10)
                 {
                     Program.scaleValues2.RemoveRange(0, 1);
                 }
 
-                var scaleText = String.Join(",", Program.scaleValues2);
-                logger.Info("Gia tri can: " + scaleText);
+                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, 20);
+
+                //var scaleText = String.Join(",", Program.scaleValues2);
+                //logger.Info("Gia tri can: " + scaleText);
 
                 if (isOnDinh)
                 {
-                    Program.IsScalling1 = false;
-                    logger.Info($"Can on dinh: " + Program.scaleValues2.LastOrDefault().ToString());
+                    // 1. Xác định giá trị cân ổn định
+                    logger.Info($"1. Can 2 on dinh: " + currentScaleValue);
+
+                    using (var dbContext = new XHTD_Entities())
+                    {
+                        // 2. Lấy thông tin xe, đơn hàng đang cân
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == "SCALE-2");
+                        if (scaleInfo == null)
+                        {
+                            logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-2");
+                            return;
+                        }
+                        logger.Info($"2. Phuong tien dang can 2: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
+
+                        if ((bool)scaleInfo.IsScaling)
+                        {
+                            // Đang cân ra
+                            if ((bool)scaleInfo.ScaleOut)
+                            {
+                                // 3. Đóng barrier
+                                // 4. Bật đèn đỏ
+                                logger.Info($"4. Bat den do");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale2();
+
+                                // 5. Gọi iERP API lưu giá trị cân
+                                logger.Info($"5. Goi iERP API luu gia tri can");
+                                Thread.Sleep(20000);
+
+                                // 6. Bật đèn xanh
+                                // 7. Mở barrier
+                                logger.Info($"6. Bat den xanh");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-2");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
+
+                                // 8. Update giá trị cân của đơn hàng
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+
+                                // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                logger.Info($"9. Giai phong can 2");
+                                Program.IsScalling2 = false;
+                                Program.scaleValues2.Clear();
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Program.scaleValues1.Count > 5)
+                {
+                    Program.scaleValues1.Clear();
                 }
             }
         }
+    }
     }
 }
