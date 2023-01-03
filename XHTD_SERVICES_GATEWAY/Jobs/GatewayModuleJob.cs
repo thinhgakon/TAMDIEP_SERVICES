@@ -49,7 +49,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightVao, trafficLightRa;
+        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
 
         protected const string CBV_ACTIVE = "CBV_ACTIVE";
 
@@ -172,8 +172,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             barrierVao = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-IN");
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
 
-            trafficLightVao = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
-            trafficLightRa = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
+            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
+            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
         }
 
         public void AuthenticateGatewayModule()
@@ -418,7 +418,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 // 9. Bắn tín hiệu thông báo
 
                                 var isUpdatedOrder = false;
-                                bool isSuccessTurnOnGreenTrafficLight = false;
                                 bool isSuccessOpenBarrier = false;
 
                                 if (isLuongVao)
@@ -433,7 +432,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
                                         _gatewayLogger.LogInfo($"6. Bật đèn xanh");
-                                        isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("IN");
+                                        TurnOnGreenTrafficLight("IN");
 
                                         _gatewayLogger.LogInfo($"7. Mở barrier");
                                         isSuccessOpenBarrier = OpenBarrier("IN");
@@ -455,7 +454,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpCardNoLst_In.Add(newCardNoLog);
 
                                         _gatewayLogger.LogInfo($"6. Bật đèn xanh");
-                                        isSuccessTurnOnGreenTrafficLight = TurnOnGreenTrafficLight("OUT");
+                                        TurnOnGreenTrafficLight("OUT");
 
                                         _gatewayLogger.LogInfo($"7. Mở barrier");
                                         isSuccessOpenBarrier = OpenBarrier("OUT");
@@ -512,16 +511,32 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
-        public bool TurnOnGreenTrafficLight(string luong)
+        public string GetTrafficLightIpAddress(string code)
         {
-            if (trafficLightVao == null || trafficLightRa == null)
+            var ipAddress = "";
+
+            if (code == "IN")
+            {
+                ipAddress = trafficLightIn?.IpAddress;
+            }
+            else if (code == "OUT")
+            {
+                ipAddress = trafficLightOut?.IpAddress;
+            }
+
+            return ipAddress;
+        }
+
+        public bool TurnOnGreenTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
             {
                 return false;
             }
 
-            string ipAddress = luong == "IN" ? trafficLightVao.IpAddress : trafficLightRa.IpAddress;
-
-            _trafficLight.Connect($"{ipAddress}");
+            _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
         }
