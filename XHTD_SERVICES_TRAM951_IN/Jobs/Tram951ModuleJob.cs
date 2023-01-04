@@ -223,12 +223,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
-                            try { 
-                            str = Encoding.Default.GetString(buffer);
-                            tmp = str.Split(',');
+                            try {
+                                str = Encoding.Default.GetString(buffer);
+                                tmp = str.Split(',');
 
-                            // Bắt đầu xử lý khi nhận diện được RFID
-                            if (tmp[2] != "0" && tmp[2] != "") 
+                                // Bắt đầu xử lý khi nhận diện được RFID
+                                if (tmp[2] != "0" && tmp[2] != "") 
                             {
                                 var cardNoCurrent = tmp[2]?.ToString();
                                 var doorCurrent = tmp[3]?.ToString();
