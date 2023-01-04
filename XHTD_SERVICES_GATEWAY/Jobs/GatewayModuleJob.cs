@@ -489,14 +489,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                 }
                             }
-                            else
-                            {
-                                _gatewayLogger.LogWarn("No data. Reconnect ...");
-                                DeviceConnected = false;
-                                h21 = IntPtr.Zero;
+                            //else
+                            //{
+                            //    _gatewayLogger.LogWarn("No data. Reconnect ...");
+                            //    DeviceConnected = false;
+                            //    h21 = IntPtr.Zero;
 
-                                AuthenticateGatewayModule();
-                            }
+                            //    AuthenticateGatewayModule();
+                            //}
                         }
                     }
                 }
@@ -505,10 +505,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool OpenBarrier(string luong)
         {
-            int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            return true;
+            //int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+            //int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-            return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
+            //return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
 
         public string GetTrafficLightIpAddress(string code)
