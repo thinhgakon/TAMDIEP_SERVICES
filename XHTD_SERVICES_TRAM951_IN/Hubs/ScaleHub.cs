@@ -158,7 +158,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                                 // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
                                 logger.Info($"10. Xep so thu tu vao mang xuat");
-                                await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.CardNo);
+                                await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
                                 // 11. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 1");

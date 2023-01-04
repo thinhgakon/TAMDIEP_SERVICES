@@ -962,19 +962,19 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task SetIndexOrder(string cardNo)
+        public async Task SetIndexOrder(string deliveryCode)
         {
-            var currentOrders = await GetOrdersEntraceTram951ByCardNoReceiving(cardNo);
+            var orderExist = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
 
-            foreach (var item in currentOrders)
+            if (orderExist != null)
             {
-                var typeProduct = item.TypeProduct;
+                var typeProduct = orderExist.TypeProduct;
 
                 var maxIndex = GetMaxIndexByTypeProduct(typeProduct);
 
                 var newIndex = maxIndex + 1;
 
-                await UpdateIndex(item.Id, newIndex);
+                await UpdateIndex(orderExist.Id, newIndex);
             }
         }
     }
