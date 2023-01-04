@@ -407,7 +407,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
 
                                             var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                            tmpCardNoLst_In.Add(newCardNoLog);
+                                            tmpCardNoLst_Out.Add(newCardNoLog);
 
                                             _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("OUT");
