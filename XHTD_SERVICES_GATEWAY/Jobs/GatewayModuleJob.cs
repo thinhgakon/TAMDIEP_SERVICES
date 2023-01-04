@@ -489,17 +489,25 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                 }
                             }
-                            else
-                            {
-                                _gatewayLogger.LogWarn("No data. Reconnect ...");
-                                DeviceConnected = false;
-                                h21 = IntPtr.Zero;
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogWarn("No data. Reconnect ...");
+                            DeviceConnected = false;
+                            h21 = IntPtr.Zero;
 
-                                AuthenticateGatewayModule();
-                            }
+                            AuthenticateGatewayModule();
                         }
                     }
                 }
+            }
+            else
+            {
+                _gatewayLogger.LogWarn("No data. Reconnect ...");
+                DeviceConnected = false;
+                h21 = IntPtr.Zero;
+
+                AuthenticateGatewayModule();
             }
         }
 

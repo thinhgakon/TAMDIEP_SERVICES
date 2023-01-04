@@ -374,6 +374,14 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                     }
                 }
             }
+            else
+            {
+                _tram951Logger.LogWarn("No data. Reconnect ...");
+                DeviceConnected = false;
+                h21 = IntPtr.Zero;
+
+                AuthenticateTram951Module();
+            }
         }
     }
 }
