@@ -329,7 +329,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                        SendNotificationCBV(0, inout, cardNoCurrent, "RFID không thuộc hệ thống");
+                                        SendNotificationCBV(0, inout, cardNoCurrent, "Không thuộc hệ thống");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -353,7 +353,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        SendNotificationCBV(0, inout, cardNoCurrent, "RFID không có đơn hàng hợp lệ");
+                                        SendNotificationCBV(0, inout, cardNoCurrent, "Không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -366,7 +366,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                                    SendNotificationCBV(1, inout, cardNoCurrent, "RFID có đơn hàng hợp lệ");
+                                    SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
 
                                     // 5. Xác thực vào / ra cổng
                                     // 6. Bật đèn xanh giao thông, 
