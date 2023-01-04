@@ -423,7 +423,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             {
                                 if (isSuccessOpenBarrier)
                                 {
-                                    _gatewayLogger.LogInfo($"8. Ghi log thiet bi mo barrier");
+                                    _gatewayLogger.LogInfo($"9. Ghi log thiet bi mo barrier");
 
                                     string luongText = isLuongVao ? "vào" : "ra";
                                     string deviceCode = isLuongVao ? "BV.M221.BRE-1" : "BV.M221.BRE-2";
@@ -450,9 +450,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool OpenBarrier(string luong)
         {
-            return true;
-            //int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-            //int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+            //return true;
+            try
+            {
+                int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
+                int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
+
+                _barrier.ConnectPLC(m221.IpAddress);
+
+                _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+
+                Thread.Sleep(1000);
+
+                _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
 
             //return _barrier.TurnOn(m221.IpAddress, (int)m221.PortNumber, portNumberDeviceIn, portNumberDeviceOut);
         }
