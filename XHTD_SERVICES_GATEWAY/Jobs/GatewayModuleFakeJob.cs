@@ -15,6 +15,7 @@ using XHTD_SERVICES.Helper;
 using Microsoft.AspNet.SignalR.Client;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Threading;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -374,11 +375,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpCardNoLst_In.Add(newCardNoLog);
 
-                                    _gatewayLogger.LogInfo($"6. Bật đèn xanh");
+                                    _gatewayLogger.LogInfo($"6. Mở barrier");
+                                    isSuccessOpenBarrier = OpenBarrier("IN");
+
+                                    _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                     TurnOnGreenTrafficLight("IN");
 
-                                    _gatewayLogger.LogInfo($"7. Mở barrier");
-                                    isSuccessOpenBarrier = OpenBarrier("IN");
+                                    Thread.Sleep(10000);
+
+                                    _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
+                                    TurnOnRedTrafficLight("IN");
                                 }
                                 else
                                 {
@@ -396,11 +402,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpCardNoLst_Out.Add(newCardNoLog);
 
-                                    _gatewayLogger.LogInfo($"6. Bật đèn xanh");
+                                    _gatewayLogger.LogInfo($"6. Mở barrier");
+                                    isSuccessOpenBarrier = OpenBarrier("OUT");
+
+                                    _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                     TurnOnGreenTrafficLight("OUT");
 
-                                    _gatewayLogger.LogInfo($"7. Mở barrier");
-                                    isSuccessOpenBarrier = OpenBarrier("OUT");
+                                    Thread.Sleep(10000);
+
+                                    _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
+                                    TurnOnRedTrafficLight("IN");
                                 }
                                 else
                                 {
@@ -474,6 +485,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
+        }
+
+        public bool TurnOnRedTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
+            {
+                return false;
+            }
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOffGreenOnRed();
         }
 
         private void SendNotificationCBV(int status, string inout, string cardNo, string message)
