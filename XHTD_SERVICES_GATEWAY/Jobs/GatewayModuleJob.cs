@@ -212,7 +212,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
+                        //_gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
 
                         DeviceConnected = true;
                     }
@@ -235,7 +235,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
+            //_gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -262,9 +262,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    _gatewayLogger.LogInfo("----------------------------");
-                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _gatewayLogger.LogInfo("-----");
+                                    //_gatewayLogger.LogInfo("----------------------------");
+                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_gatewayLogger.LogInfo("-----");
 
                                     // 1.Xác định xe cân vào / ra
                                     var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
@@ -272,6 +272,58 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+
+                                    //var direction = 0;
+                                    //var inout = "";
+
+                                    //if (isLuongVao)
+                                    //{
+                                    //    direction = 1;
+                                    //    inout = "IN";
+                                    //    _gatewayLogger.LogInfo($"1. Xe vao cong");
+                                    //}
+                                    //else
+                                    //{
+                                    //    direction = 2;
+                                    //    inout = "OUT";
+                                    //    _gatewayLogger.LogInfo($"1. Xe ra cong");
+                                    //}
+
+                                    // 2. Loại bỏ các tag đã check trước đó
+                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
+
+                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                                    {
+                                        //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                        continue;
+                                    }
+
+                                    if (isLuongVao)
+                                    {
+                                        if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
+
+                                        if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                        {
+                                            //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                            continue;
+                                        }
+                                    }
+                                    else if (isLuongRa)
+                                    {
+                                        if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
+
+                                        if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                        {
+                                            //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                            continue;
+                                        }
+                                    }
+
+                                    //_gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+
+                                    _gatewayLogger.LogInfo("----------------------------");
+                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _gatewayLogger.LogInfo("-----");
 
                                     var direction = 0;
                                     var inout = "";
@@ -288,38 +340,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         inout = "OUT";
                                         _gatewayLogger.LogInfo($"1. Xe ra cong");
                                     }
-
-                                    // 2. Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
-
-                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                    {
-                                        _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                        continue;
-                                    }
-
-                                    if (isLuongVao)
-                                    {
-                                        if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
-
-                                        if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
-                                        {
-                                            _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
-
-                                        if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
-                                        {
-                                            _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-
-                                    _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                                     // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
@@ -499,7 +519,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         }
                         else
                         {
-                            _gatewayLogger.LogWarn("No data. Reconnect ...");
+                            //_gatewayLogger.LogWarn("No data. Reconnect ...");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
@@ -510,7 +530,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             else
             {
-                _gatewayLogger.LogWarn("No data. Reconnect ...");
+                //_gatewayLogger.LogWarn("No data. Reconnect ...");
                 DeviceConnected = false;
                 h21 = IntPtr.Zero;
 
