@@ -273,18 +273,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
-                                    var direction = 0;
                                     var inout = "";
 
                                     if (isLuongVao)
                                     {
-                                        direction = 1;
                                         inout = "IN";
                                         _gatewayLogger.LogInfo($"1. Xe vao cong");
                                     }
                                     else
                                     {
-                                        direction = 2;
                                         inout = "OUT";
                                         _gatewayLogger.LogInfo($"1. Xe ra cong");
                                     }
@@ -321,26 +318,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
 
-                                    //_gatewayLogger.LogInfo("----------------------------");
-                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    //_gatewayLogger.LogInfo("-----");
-
-                                    //var direction = 0;
-                                    //var inout = "";
-
-                                    //if (isLuongVao)
-                                    //{
-                                    //    direction = 1;
-                                    //    inout = "IN";
-                                    //    _gatewayLogger.LogInfo($"1. Xe vao cong");
-                                    //}
-                                    //else
-                                    //{
-                                    //    direction = 2;
-                                    //    inout = "OUT";
-                                    //    _gatewayLogger.LogInfo($"1. Xe ra cong");
-                                    //}
-
                                     // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                                     if (isValid)
@@ -350,20 +327,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     else
                                     {
                                         _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
-
-                                        //_notification.SendNotification(
-                                        //    "CBV",
-                                        //    null,
-                                        //    0,
-                                        //    "RFID không thuộc hệ thống",
-                                        //    direction,
-                                        //    null,
-                                        //    null,
-                                        //    Convert.ToInt32(cardNoCurrent),
-                                        //    null,
-                                        //    null,
-                                        //    null
-                                        //);
 
                                         SendNotificationCBV(0, inout, cardNoCurrent, "RFID không thuộc hệ thống");
 
@@ -389,20 +352,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        //_notification.SendNotification(
-                                        //    "CBV",
-                                        //    null,
-                                        //    0,
-                                        //    "RFID không có đơn hàng hợp lệ",
-                                        //    direction,
-                                        //    null,
-                                        //    null,
-                                        //    Convert.ToInt32(cardNoCurrent),
-                                        //    null,
-                                        //    null,
-                                        //    null
-                                        //);
-
                                         SendNotificationCBV(0, inout, cardNoCurrent, "RFID không có đơn hàng hợp lệ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -415,20 +364,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
                                     _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
-
-                                    //_notification.SendNotification(
-                                    //    "CBV",
-                                    //    null,
-                                    //    1,
-                                    //    "RFID có đơn hàng hợp lệ",
-                                    //    direction,
-                                    //    null,
-                                    //    null,
-                                    //    Convert.ToInt32(cardNoCurrent),
-                                    //    null,
-                                    //    null,
-                                    //    null
-                                    //);
 
                                     SendNotificationCBV(1, inout, cardNoCurrent, "RFID có đơn hàng hợp lệ");
 
