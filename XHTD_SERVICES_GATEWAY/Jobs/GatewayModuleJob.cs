@@ -251,6 +251,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
+                            try { 
                             str = Encoding.Default.GetString(buffer);
                             tmp = str.Split(',');
 
@@ -488,6 +489,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         _gatewayLogger.LogInfo($"8. Mo barrier KHONG thanh cong");
                                     }
                                 }
+                            }
+                            }
+                            catch (Exception ex)
+                            {
+                                _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                continue;
                             }
                         }
                         else

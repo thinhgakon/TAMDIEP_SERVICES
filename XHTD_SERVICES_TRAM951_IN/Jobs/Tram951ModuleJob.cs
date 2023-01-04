@@ -223,6 +223,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
+                            try { 
                             str = Encoding.Default.GetString(buffer);
                             tmp = str.Split(',');
 
@@ -362,6 +363,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 {
                                     _tram951Logger.LogInfo($@"5. Confirm 3 failed");
                                 }
+                            }
+                            }
+                            catch (Exception ex)
+                            {
+                                _tram951Logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                continue;
                             }
                         }
                         else
