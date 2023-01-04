@@ -257,6 +257,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\IndexOrderBusiness.cs" />
     <Compile Include="Business\ScaleBusiness.cs" />
     <Compile Include="Business\UnladenWeightBusiness.cs" />
     <Compile Include="Business\WeightBusiness.cs" />
