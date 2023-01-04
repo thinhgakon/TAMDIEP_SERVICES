@@ -961,5 +961,21 @@ namespace XHTD_SERVICES.Data.Repositories
                 return 0;
             }
         }
+
+        public async Task SetIndexOrder(string cardNo)
+        {
+            var currentOrders = await GetOrdersEntraceTram951ByCardNoReceiving(cardNo);
+
+            foreach (var item in currentOrders)
+            {
+                var typeProduct = item.TypeProduct;
+
+                var maxIndex = GetMaxIndexByTypeProduct(typeProduct);
+
+                var newIndex = maxIndex + 1;
+
+                await UpdateIndex(item.Id, newIndex);
+            }
+        }
     }
 }

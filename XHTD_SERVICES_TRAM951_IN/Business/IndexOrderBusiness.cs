@@ -20,7 +20,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Business
 
         public async Task SetIndexOrder(string cardNo)
         {
-            
+            await _storeOrderOperatingRepository.SetIndexOrder(cardNo);
         }
     }
 }
