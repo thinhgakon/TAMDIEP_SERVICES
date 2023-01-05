@@ -551,10 +551,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             try
             {
                 HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message).Wait();
+
+                _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
             }
             catch (Exception ex)
             {
-
+                _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
             }
         }
     }
