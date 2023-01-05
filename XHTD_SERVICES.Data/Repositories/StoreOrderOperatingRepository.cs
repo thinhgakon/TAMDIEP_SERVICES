@@ -430,10 +430,23 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
+                //var order = await dbContext.tblStoreOrderOperatings
+                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                //                            .OrderByDescending(x => x.Id)
+                //                            .FirstOrDefaultAsync();
+
+                // TODO: for test
+                List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON,
+                                                        (int)OrderStep.DA_NHAN_DON,
+                                                        (int)OrderStep.DA_VAO_CONG
+                                                    };
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                                            .Where(x => x.CardNo == cardNo
+                                                    && listStep.Contains((int)x.Step)
+                                                   )
                                             .OrderByDescending(x => x.Id)
                                             .FirstOrDefaultAsync();
+
                 return order;
             }
         }
@@ -666,8 +679,19 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string calcelTime = DateTime.Now.ToString();
 
+                    //var orders = await dbContext.tblStoreOrderOperatings
+                    //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                    //                            .ToListAsync();
+
+                    // TODO: for test
+                    List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON,
+                                                        (int)OrderStep.DA_NHAN_DON,
+                                                        (int)OrderStep.DA_VAO_CONG
+                                                    };
                     var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                                                .Where(x => x.CardNo == cardNo
+                                                        && listStep.Contains((int)x.Step)
+                                                       )
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
@@ -744,10 +768,16 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
+                    //var orders = await dbContext.tblStoreOrderOperatings
+                    //                            .Where(x => x.CardNo == cardNo 
+                    //                                    && (x.DriverUserName ?? "") != "" 
+                    //                                    && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
+                    //                            .ToListAsync();
+
+                    // TODO: for test service
                     var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo 
-                                                        && (x.DriverUserName ?? "") != "" 
-                                                        && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
+                                                .Where(x => x.CardNo == cardNo
+                                                        && x.Step >= (int)OrderStep.CHUA_NHAN_DON && x.Step < (int)OrderStep.DA_HOAN_THANH)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
