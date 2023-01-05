@@ -439,7 +439,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"9. Ghi log thiet bi mo barrier");
 
                                             string luongText = isLuongVao ? "vào" : "ra";
-                                            string deviceCode = isLuongVao ? "BV.M221.BRE-1" : "BV.M221.BRE-2";
+                                            string deviceCode = isLuongVao ? "CBV.M221.BRE-IN" : "CBV.M221.BRE-OUT";
                                             var newLog = new CategoriesDevicesLogItemResponse
                                             {
                                                 Code = deviceCode,
