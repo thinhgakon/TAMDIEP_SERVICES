@@ -100,7 +100,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 return;
             }
 
-            if (Program.IsScalling1)
+            if (Program.IsScalling1 && !Program.IsLockingScale1)
             {
                 Program.scaleValues1.Add(currentScaleValue);
 
@@ -116,6 +116,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                 if (isOnDinh)
                 {
+                    Program.IsLockingScale1 = true;
+
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
 
@@ -172,6 +174,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 logger.Info($"11. Giai phong can 1");
                                 Program.IsScalling1 = false;
                                 Program.scaleValues1.Clear();
+                                Program.IsLockingScale1 = false;
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
                         }
@@ -209,7 +212,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 return;
             }
 
-            if (Program.IsScalling2)
+            if (Program.IsScalling2 && !Program.IsLockingScale2)
             {
                 Program.scaleValues2.Add(currentScaleValue);
 
@@ -225,6 +228,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                 if (isOnDinh)
                 {
+                    Program.IsLockingScale2 = true;
+
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 2 on dinh: " + currentScaleValue);
 
@@ -281,6 +286,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 logger.Info($"11. Giai phong can 2");
                                 Program.IsScalling2 = false;
                                 Program.scaleValues2.Clear();
+                                Program.IsLockingScale2 = false;
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
                             }
                         }

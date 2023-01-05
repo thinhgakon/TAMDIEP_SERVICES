@@ -18,6 +18,9 @@ namespace XHTD_SERVICES_TRAM951_IN
         public static bool IsScalling1 = false;
         public static bool IsScalling2 = false;
 
+        public static bool IsLockingScale1 = false;
+        public static bool IsLockingScale2 = false;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
