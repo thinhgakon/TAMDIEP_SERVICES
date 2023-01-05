@@ -57,7 +57,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private IHubProxy HubProxy { get; set; }
 
-        const string ServerURI = "http://localhost:8083/signalr";
+        const string ServerURI = "http://10.0.1.41:8083/signalr";
 
         private HubConnection Connection { get; set; }
 
