@@ -138,24 +138,30 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 3. Cập nhật khối lượng không tải của phương tiện
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
-                                // 3. Đóng barrier
                                 // 4. Bật đèn đỏ
                                 logger.Info($"4. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale1();
 
-                                // 5. Gọi iERP API lưu giá trị cân
-                                logger.Info($"5. Goi iERP API luu gia tri can");
-                                Thread.Sleep(20000);
+                                // 5. Đóng barrier
+                                logger.Info($"5. Dong barrier");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn1();
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut1();
 
-                                // 6. Bật đèn xanh
-                                // 7. Mở barrier
-                                logger.Info($"6. Bat den xanh");
+                                // 6. Gọi iERP API lưu giá trị cân
+                                logger.Info($"6. Goi iERP API luu gia tri can");
+                                Thread.Sleep(10000);
+
+                                // 7. Bật đèn xanh
+                                logger.Info($"7. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
-                                // 8. Update giá trị cân của đơn hàng
-                                logger.Info($"8. Update gia tri can ra");
+                                // 8. Mở barrier
+                                logger.Info($"8. Mo barrier");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn1();
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
+
+                                // 9. Update giá trị cân của đơn hàng
+                                logger.Info($"9. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
@@ -163,7 +169,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                logger.Info($"9. Giai phong can 1");
+                                logger.Info($"11. Giai phong can 1");
                                 Program.IsScalling1 = false;
                                 Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
@@ -241,28 +247,38 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 3. Cập nhật khối lượng không tải của phương tiện
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
-                                // 3. Đóng barrier
                                 // 4. Bật đèn đỏ
                                 logger.Info($"4. Bat den do");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScale2();
 
-                                // 5. Gọi iERP API lưu giá trị cân
-                                logger.Info($"5. Goi iERP API luu gia tri can");
-                                Thread.Sleep(20000);
+                                // 5. Đóng barrier
+                                logger.Info($"5. Dong barrier");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn2();
+                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut2();
 
-                                // 6. Bật đèn xanh
-                                // 7. Mở barrier
-                                logger.Info($"6. Bat den xanh");
+                                // 6. Gọi iERP API lưu giá trị cân
+                                logger.Info($"6. Goi iERP API luu gia tri can");
+                                Thread.Sleep(10000);
+
+                                // 7. Bật đèn xanh
+                                logger.Info($"7. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-2");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
 
-                                // 8. Update giá trị cân của đơn hàng
+                                // 8. Mở barrier
+                                logger.Info($"8. Mo barrier");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn2();
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut2();
+
+                                // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
+                                // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
+                                //logger.Info($"10. Xep so thu tu vao mang xuat");
+                                //await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
+
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                logger.Info($"9. Giai phong can 2");
+                                logger.Info($"11. Giai phong can 2");
                                 Program.IsScalling2 = false;
                                 Program.scaleValues2.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");

@@ -40,7 +40,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
         }
 
         // Barrier chiều vào cân 1
-        public void OpenBarrierScale1In1()
+        public void OpenBarrierScaleIn1()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
