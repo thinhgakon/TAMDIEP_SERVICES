@@ -258,18 +258,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
-                            var direction = 0;
                             var inout = "";
 
                             if (isLuongVao)
                             {
-                                direction = 1;
                                 inout = "IN";
                                 _gatewayLogger.LogInfo($"1. Xe vao cong");
                             }
                             else
                             {
-                                direction = 2;
                                 inout = "OUT";
                                 _gatewayLogger.LogInfo($"1. Xe ra cong");
                             }
@@ -402,16 +399,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                     tmpCardNoLst_Out.Add(newCardNoLog);
 
-                                    _gatewayLogger.LogInfo($"6. Mở barrier");
+                                    _gatewayLogger.LogInfo($"7. Mở barrier");
                                     isSuccessOpenBarrier = OpenBarrier("OUT");
 
-                                    _gatewayLogger.LogInfo($"7. Bật đèn xanh");
+                                    _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                     TurnOnGreenTrafficLight("OUT");
 
                                     Thread.Sleep(10000);
 
                                     _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                                    TurnOnRedTrafficLight("IN");
+                                    TurnOnRedTrafficLight("OUT");
                                 }
                                 else
                                 {
