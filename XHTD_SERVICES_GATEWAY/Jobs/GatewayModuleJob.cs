@@ -275,7 +275,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
                                     var inout = "";
-
                                     if (isLuongVao)
                                     {
                                         inout = "IN";
@@ -289,7 +288,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
-
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
                                         _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
@@ -299,7 +297,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     if (isLuongVao)
                                     {
                                         if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
-
                                         if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
                                             _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
@@ -309,7 +306,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     else if (isLuongRa)
                                     {
                                         if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
-
                                         if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
                                             _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
@@ -350,7 +346,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (currentOrders == null || currentOrders.Count == 0)
                                     {
-
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
                                         SendNotificationCBV(0, inout, cardNoCurrent, "Không có đơn hàng");
@@ -380,7 +375,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     if (isLuongVao)
                                     {
                                         isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
-
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
@@ -407,7 +401,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     else if (isLuongRa)
                                     {
                                         isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
-
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
