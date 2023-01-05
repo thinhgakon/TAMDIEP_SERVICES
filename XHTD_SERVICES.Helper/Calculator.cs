@@ -8,9 +8,11 @@ namespace XHTD_SERVICES.Helper
 {
     public static class Calculator
     {
+        private const int MAX_LENGTH_SCALE_VALUE = 50;
+
         public static bool CheckBalanceValues(List<int> numbers, int saiso)
         {
-            if (numbers.Count < 10)
+            if (numbers.Count < MAX_LENGTH_SCALE_VALUE)
             {
                 return false;
             }
