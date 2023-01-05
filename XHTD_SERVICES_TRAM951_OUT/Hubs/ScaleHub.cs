@@ -18,10 +18,22 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        private const int MAX_LENGTH_SCALE_VALUE = 50;
+
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
             Console.WriteLine("send send");
+        }
+
+        public void SendNotificationCBV(int status, string inout, string cardNo, string message)
+        {
+            Clients.All.SendNotificationCBV(status, inout, cardNo, message);
+        }
+
+        public void SendFakeRFID(string value)
+        {
+            Clients.All.SendFakeRFID(value);
         }
 
         public void Send9511ScaleInfo(DateTime time, string value)
@@ -92,7 +104,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             {
                 Program.scaleValues1.Add(currentScaleValue);
 
-                if (Program.scaleValues1.Count > 10)
+                if (Program.scaleValues1.Count > MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues1.RemoveRange(0, 1);
                 }
@@ -123,6 +135,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                             // Đang cân ra
                             if ((bool)scaleInfo.ScaleOut)
                             {
+                                // 3. Cập nhật khối lượng không tải của phương tiện
+                                //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+
                                 // 3. Đóng barrier
                                 // 4. Bật đèn đỏ
                                 logger.Info($"4. Bat den do");
@@ -140,7 +155,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale1();
 
                                 // 8. Update giá trị cân của đơn hàng
+                                logger.Info($"8. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+
+                                // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
+                                //logger.Info($"10. Xep so thu tu vao mang xuat");
+                                //await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"9. Giai phong can 1");
@@ -187,7 +207,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             {
                 Program.scaleValues2.Add(currentScaleValue);
 
-                if (Program.scaleValues2.Count > 10)
+                if (Program.scaleValues2.Count > MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues2.RemoveRange(0, 1);
                 }
@@ -218,6 +238,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                             // Đang cân ra
                             if ((bool)scaleInfo.ScaleOut)
                             {
+                                // 3. Cập nhật khối lượng không tải của phương tiện
+                                //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+
                                 // 3. Đóng barrier
                                 // 4. Bật đèn đỏ
                                 logger.Info($"4. Bat den do");
@@ -235,6 +258,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScale2();
 
                                 // 8. Update giá trị cân của đơn hàng
+                                logger.Info($"9. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale

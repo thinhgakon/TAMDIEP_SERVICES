@@ -18,6 +18,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        private const int MAX_LENGTH_SCALE_VALUE = 50;
+
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
@@ -102,7 +104,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             {
                 Program.scaleValues1.Add(currentScaleValue);
 
-                if (Program.scaleValues1.Count > 10)
+                if (Program.scaleValues1.Count > MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues1.RemoveRange(0, 1);
                 }
@@ -205,7 +207,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             {
                 Program.scaleValues2.Add(currentScaleValue);
 
-                if (Program.scaleValues2.Count > 10)
+                if (Program.scaleValues2.Count > MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues2.RemoveRange(0, 1);
                 }
