@@ -20,6 +20,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
         private const int MAX_LENGTH_SCALE_VALUE = 20;
 
+        private const int MIN_WEIGHT_VEHICLE = 30;
+
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
@@ -94,7 +96,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 logger.Info("IsScalling1 false");
             }
 
-            if (currentScaleValue < 30)
+            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
                 Program.scaleValues1.Clear();
                 return;
@@ -119,6 +121,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isOnDinh)
                 {
                     Program.IsLockingScale1 = true;
+
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
 
@@ -209,7 +212,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 logger.Info("IsScalling2 false");
             }
 
-            if (currentScaleValue < 1000)
+            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
                 Program.scaleValues2.Clear();
                 return;
@@ -228,6 +231,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 //var scaleText = String.Join(",", Program.scaleValues2);
                 //logger.Info("Gia tri can 2: " + scaleText);
+
+                logger.Info($"Received 951-2 data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {
@@ -256,12 +261,13 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Bật đèn đỏ
-                                logger.Info($"4. Bat den do");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
+                                //logger.Info($"4. Bat den do");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
 
                                 // 5. Đóng barrier
-                                logger.Info($"5. Dong barrier");
+                                logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn2();
+                                logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut2();
 
                                 // 6. Gọi iERP API lưu giá trị cân
@@ -273,8 +279,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-2");
 
                                 // 8. Mở barrier
-                                logger.Info($"8. MO barrier");
+                                logger.Info($"8. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn2();
+                                logger.Info($"8. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut2();
 
                                 // 9. Update giá trị cân của đơn hàng
@@ -298,9 +305,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             }
             else
             {
-                if (Program.scaleValues1.Count > 5)
+                if (Program.scaleValues2.Count > 5)
                 {
-                    Program.scaleValues1.Clear();
+                    Program.scaleValues2.Clear();
                 }
             }
         }
