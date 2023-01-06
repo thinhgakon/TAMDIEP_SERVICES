@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        private const int MAX_LENGTH_SCALE_VALUE = 50;
+        private const int MAX_LENGTH_SCALE_VALUE = 20;
 
         public void Send(string name, string message)
         {
@@ -113,6 +113,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can: " + scaleText);
+
+                logger.Info($"Received 951-1 data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {

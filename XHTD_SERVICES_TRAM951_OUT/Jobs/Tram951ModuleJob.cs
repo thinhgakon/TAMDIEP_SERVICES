@@ -233,9 +233,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    _tram951Logger.LogInfo("----------------------------");
-                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _tram951Logger.LogInfo("-----");
+                                    //_tram951Logger.LogInfo("----------------------------");
+                                    //_tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_tram951Logger.LogInfo("-----");
 
                                     // 1. Xác định xe ở cân 1 hay cân 2
                                     var isRfidFromScale1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
@@ -244,14 +244,14 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     var isRfidFromScale2 = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
-                                    if (isRfidFromScale1)
-                                    {
-                                        _tram951Logger.LogInfo($"1. RFID tai can 1");
-                                    }
-                                    else
-                                    {
-                                        _tram951Logger.LogInfo($"1. RFID tai can 2");
-                                    }
+                                    //if (isRfidFromScale1)
+                                    //{
+                                    //    _tram951Logger.LogInfo($"1. RFID tai can 1");
+                                    //}
+                                    //else
+                                    //{
+                                    //    _tram951Logger.LogInfo($"1. RFID tai can 2");
+                                    //}
 
                                     // 2. Loại bỏ các tag đã check trước đó
                                     // // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
@@ -276,7 +276,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
-                                        _tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                        //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
                                     }
 
@@ -286,7 +286,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
                                         if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
-                                            _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                            //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                             continue;
                                         }
                                     }
@@ -296,9 +296,22 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
                                         if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
-                                            _tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                            //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                             continue;
                                         }
+                                    }
+
+                                    _tram951Logger.LogInfo("----------------------------");
+                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _tram951Logger.LogInfo("-----");
+
+                                    if (isRfidFromScale1)
+                                    {
+                                        _tram951Logger.LogInfo($"1. RFID tai can 1");
+                                    }
+                                    else
+                                    {
+                                        _tram951Logger.LogInfo($"1. RFID tai can 2");
                                     }
 
                                     _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
@@ -346,6 +359,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                             tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                            // Bat den do
+                                            _tram951Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight("SCALE-1");
                                         }
                                         else if (isRfidFromScale2)
                                         {
@@ -356,6 +373,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                             tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                            // Bat den do
+                                            _tram951Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight("SCALE-2");
                                         }
                                     }
                                     else
@@ -389,6 +410,50 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
 
                 AuthenticateTram951Module();
             }
+        }
+
+        public string GetTrafficLightIpAddress(string code)
+        {
+            var ipAddress = "";
+
+            if (code == "SCALE-1")
+            {
+                ipAddress = trafficLightIn1?.IpAddress;
+            }
+            else if (code == "SCALE-2")
+            {
+                ipAddress = trafficLightIn2?.IpAddress;
+            }
+
+            return ipAddress;
+        }
+
+        public bool TurnOnGreenTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
+            {
+                return false;
+            }
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOnGreenOffRed();
+        }
+
+        public bool TurnOnRedTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
+            {
+                return false;
+            }
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOffGreenOnRed();
         }
     }
 }
