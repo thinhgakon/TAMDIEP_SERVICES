@@ -94,7 +94,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 logger.Info("IsScalling1 false");
             }
 
-            if (currentScaleValue < 1000)
+            if (currentScaleValue < 30)
             {
                 Program.scaleValues1.Clear();
                 return;
@@ -141,8 +141,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Bật đèn đỏ
-                                logger.Info($"4. Bat den do");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
+                                //logger.Info($"4. Bat den do");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
 
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier");
@@ -253,8 +253,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Bật đèn đỏ
-                                logger.Info($"4. Bat den do");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
+                                //logger.Info($"4. Bat den do");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
 
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier");

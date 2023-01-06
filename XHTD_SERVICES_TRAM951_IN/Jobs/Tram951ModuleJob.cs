@@ -347,6 +347,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                             tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                            // Bat den do
+                                            _tram951Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight("SCALE-1");
                                         }
                                         else if (isRfidFromScale2)
                                         {
@@ -357,6 +361,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                             tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                            // Bat den do
+                                            _tram951Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight("SCALE-2");
                                         }
                                     }
                                     else
@@ -390,6 +398,50 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                 AuthenticateTram951Module();
             }
+        }
+
+        public string GetTrafficLightIpAddress(string code)
+        {
+            var ipAddress = "";
+
+            if (code == "SCALE-1")
+            {
+                ipAddress = trafficLightIn1?.IpAddress;
+            }
+            else if (code == "SCALE-2")
+            {
+                ipAddress = trafficLightIn2?.IpAddress;
+            }
+
+            return ipAddress;
+        }
+
+        public bool TurnOnGreenTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
+            {
+                return false;
+            }
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOnGreenOffRed();
+        }
+
+        public bool TurnOnRedTrafficLight(string code)
+        {
+            var ipAddress = GetTrafficLightIpAddress(code);
+
+            if (String.IsNullOrEmpty(ipAddress))
+            {
+                return false;
+            }
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOffGreenOnRed();
         }
     }
 }
