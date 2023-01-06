@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        private const int MAX_LENGTH_SCALE_VALUE = 50;
+        private const int MAX_LENGTH_SCALE_VALUE = 20;
 
         public void Send(string name, string message)
         {
@@ -142,8 +142,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 4. Bật đèn đỏ
-                                logger.Info($"4. Bat den do");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
+                                //logger.Info($"4. Bat den do");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
 
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
