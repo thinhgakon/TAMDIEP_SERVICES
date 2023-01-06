@@ -94,7 +94,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 logger.Info("IsScalling1 false");
             }
 
-            if (currentScaleValue < 1000)
+            if (currentScaleValue < 30)
             {
                 Program.scaleValues1.Clear();
                 return;
@@ -113,6 +113,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can 1: " + scaleText);
+
+                logger.Info($"Received 951-1 data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {
@@ -144,8 +146,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
 
                                 // 5. Đóng barrier
-                                logger.Info($"5. Dong barrier");
+                                logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn1();
+                                logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut1();
 
                                 // 6. Gọi iERP API lưu giá trị cân
@@ -157,8 +160,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
 
                                 // 8. Mở barrier
-                                logger.Info($"8. Mo barrier");
+                                logger.Info($"8. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn1();
+                                logger.Info($"8. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
 
                                 // 9. Update giá trị cân của đơn hàng

@@ -24,8 +24,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             // use http://*:8080 to bind to all addresses. 
             // See http://msdn.microsoft.com/library/system.net.httplistener.aspx 
             // for more information.
-            //string url = "http://10.0.1.41:8083";
-            string url = "http://localhost:8083";
+            string url = "http://10.0.1.41:8083";
+            //string url = "http://localhost:8083";
 
             WebApp.Start(url);
 
