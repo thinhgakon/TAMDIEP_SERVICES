@@ -20,6 +20,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
         private const int MAX_LENGTH_SCALE_VALUE = 20;
 
+        private const int MIN_WEIGHT_VEHICLE = 30;
+
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
@@ -94,8 +96,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 logger.Info("IsScalling1 false");
             }
 
-            if (currentScaleValue < 30)
+            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
+                // TODO: giải phóng cân tại đây
                 Program.scaleValues1.Clear();
                 return;
             }
@@ -208,7 +211,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 logger.Info("IsScalling2 false");
             }
 
-            if (currentScaleValue < 1000)
+            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
                 Program.scaleValues2.Clear();
                 return;

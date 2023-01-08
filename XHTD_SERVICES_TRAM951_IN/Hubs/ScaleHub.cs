@@ -98,6 +98,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
+                // TODO: giải phóng cân tại đây
                 Program.scaleValues1.Clear();
                 return;
             }
