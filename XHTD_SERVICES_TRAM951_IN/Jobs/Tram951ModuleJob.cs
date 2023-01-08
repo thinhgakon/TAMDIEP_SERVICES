@@ -15,6 +15,7 @@ using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Entities;
 using Microsoft.AspNetCore.SignalR.Client;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_TRAM951_IN.Jobs
 {
@@ -303,7 +304,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     {
                                         if (Program.IsScalling1)
                                         {
-                                            var scaleInfo = _scaleOperatingRepository.GetDetail("SCALE-1");
+                                            var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_1);
                                             if (scaleInfo != null
                                                 && (bool)scaleInfo.IsScaling
                                                 && (bool)scaleInfo.ScaleIn
@@ -319,7 +320,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     {
                                         if (Program.IsScalling2)
                                         {
-                                            var scaleInfo = _scaleOperatingRepository.GetDetail("SCALE-2");
+                                            var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_2);
                                             if (scaleInfo != null
                                                 && (bool)scaleInfo.IsScaling
                                                 && (bool)scaleInfo.ScaleIn
@@ -353,7 +354,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         if (isRfidFromScale1)
                                         {
                                             // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling1 = true;
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -362,12 +363,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight("SCALE-1");
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
                                         }
                                         else if (isRfidFromScale2)
                                         {
                                             // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-2", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling2 = true;
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -376,7 +377,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight("SCALE-2");
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2);
                                         }
                                     }
                                     else
@@ -416,11 +417,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
         {
             var ipAddress = "";
 
-            if (code == "SCALE-1")
+            if (code == ScaleCode.CODE_SCALE_1)
             {
                 ipAddress = trafficLightIn1?.IpAddress;
             }
-            else if (code == "SCALE-2")
+            else if (code == ScaleCode.CODE_SCALE_2)
             {
                 ipAddress = trafficLightIn2?.IpAddress;
             }

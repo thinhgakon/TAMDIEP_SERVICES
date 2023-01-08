@@ -7,6 +7,7 @@ using log4net;
 using XHTD_SERVICES.Helper;
 using System.Linq;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Common;
 using Autofac;
 using XHTD_SERVICES_TRAM951_OUT.Devices;
 using XHTD_SERVICES_TRAM951_OUT.Business;
@@ -123,10 +124,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                     using (var dbContext = new XHTD_Entities())
                     {
                         // 2. Lấy thông tin xe, đơn hàng đang cân
-                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == "SCALE-1");
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == ScaleCode.CODE_SCALE_1);
                         if(scaleInfo == null)
                         {
-                            logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-1");
+                            logger.Info($"Khong co ban ghi trong table Scale voi code = {ScaleCode.CODE_SCALE_1}");
                             return;
                         }
                         logger.Info($"2. Phuong tien dang can 1: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
@@ -142,7 +143,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 4. Bật đèn đỏ
                                 //logger.Info($"4. Bat den do");
-                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-1");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
 
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
@@ -156,7 +157,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 7. Bật đèn xanh
                                 logger.Info($"7. Bat den xanh");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-1");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_1);
 
                                 // 8. Mở barrier
                                 logger.Info($"8. Mo barrier IN");
@@ -177,7 +178,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 Program.IsScalling1 = false;
                                 Program.IsLockingScale1 = false;
                                 Program.scaleValues1.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_1);
                             }
                         }
                     }
@@ -243,10 +244,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                     using (var dbContext = new XHTD_Entities())
                     {
                         // 2. Lấy thông tin xe, đơn hàng đang cân
-                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == "SCALE-2");
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == ScaleCode.CODE_SCALE_2);
                         if (scaleInfo == null)
                         {
-                            logger.Info($"Khong co ban ghi trong table Scale voi code = SCALE-2");
+                            logger.Info($"Khong co ban ghi trong table Scale voi code = {ScaleCode.CODE_SCALE_2}");
                             return;
                         }
                         logger.Info($"2. Phuong tien dang can 2: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
@@ -261,7 +262,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 4. Bật đèn đỏ
                                 //logger.Info($"4. Bat den do");
-                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight("SCALE-2");
+                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2);
 
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
@@ -275,7 +276,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 7. Bật đèn xanh
                                 logger.Info($"7. Bat den xanh");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight("SCALE-2");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2);
 
                                 // 8. Mở barrier
                                 logger.Info($"8. Mo barrier IN");
@@ -296,7 +297,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 Program.IsScalling2 = false;
                                 Program.IsLockingScale2 = false;
                                 Program.scaleValues2.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_2);
                             }
                         }
                     }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_TRAM951_IN.Devices
 {
@@ -23,11 +24,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
         {
             var ipAddress = "10.0.9.7";
 
-            if (scaleCode == "SCALE-1")
+            if (scaleCode == ScaleCode.CODE_SCALE_1)
             {
                 ipAddress = "10.0.9.7";
             }
-            else if (scaleCode == "SCALE-2")
+            else if (scaleCode == ScaleCode.CODE_SCALE_2)
             {
                 ipAddress = "10.0.9.11";
             }
