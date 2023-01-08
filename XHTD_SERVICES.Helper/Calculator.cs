@@ -8,7 +8,7 @@ namespace XHTD_SERVICES.Helper
 {
     public static class Calculator
     {
-        private const int MAX_LENGTH_SCALE_VALUE = 20;
+        private const int MAX_LENGTH_SCALE_VALUE = 10;
 
         public static bool CheckBalanceValues(List<int> numbers, int saiso)
         {

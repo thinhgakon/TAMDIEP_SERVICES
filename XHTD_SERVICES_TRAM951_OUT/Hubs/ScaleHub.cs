@@ -18,9 +18,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        private const int MAX_LENGTH_SCALE_VALUE = 20;
+        private const int MAX_LENGTH_SCALE_VALUE = 10;
 
-        private const int MIN_WEIGHT_VEHICLE = 30;
+        private const int MIN_WEIGHT_VEHICLE = 50;
 
         public void Send(string name, string message)
         {
@@ -152,7 +152,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
-                                Thread.Sleep(10000);
+                                Thread.Sleep(5000);
 
                                 // 7. Bật đèn xanh
                                 logger.Info($"7. Bat den xanh");
