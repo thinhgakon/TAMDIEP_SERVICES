@@ -17,6 +17,7 @@ using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
 using Microsoft.AspNet.SignalR.Client;
 using System.Threading;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -58,7 +59,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private IHubProxy HubProxy { get; set; }
 
-        const string ServerURI = "http://10.0.1.41:8083/signalr";
+        private string ServerURI = URIConfig.SIGNALR_GATEWAY_SERVICE_URL;
 
         private HubConnection Connection { get; set; }
 

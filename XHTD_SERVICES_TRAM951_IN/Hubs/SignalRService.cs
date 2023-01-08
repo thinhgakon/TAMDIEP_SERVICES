@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -24,12 +25,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             // use http://*:8080 to bind to all addresses. 
             // See http://msdn.microsoft.com/library/system.net.httplistener.aspx 
             // for more information.
-            string url = "http://10.0.1.41:8083";
-            //string url = "http://localhost:8083";
 
-            WebApp.Start(url);
+            WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM951_IN_SERVICE_URL);
 
-            logger.Info($"Server running on {url}");
+            logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM951_IN_SERVICE_URL}");
         }
 
         public void OnStop()
