@@ -59,26 +59,16 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
         }
 
         /*
+        * Cân ra
         * 1. Xác định giá trị cân ổn định
         * 2. Lấy thông tin xe, đơn hàng đang cân
-        * Xử lý sau khi thoả mãn 1,2
-        * * Cân vào
-        * * * 3. Cập nhật khối lượng không tải của phương tiện
-        * * * 4. Đóng barrier
-        * * * 5. Bật đèn đỏ
-        * * * 6. Gọi iERP API lưu giá trị cân
-        * * * 7. Mở barrier
-        * * * 8. Bật đèn xanh
-        * * * 9. Update giá trị cân của đơn hàng
-        * * * 10. Giải phóng cân: Program.IsScalling = false, update table tblScale
-        * * Cân ra
-        * * * 3. Đóng barrier
-        * * * 4. Bật đèn đỏ
-        * * * 5. Gọi iERP API lưu giá trị cân
-        * * * 6. Mở barrier
-        * * * 7. Bật đèn xanh
-        * * * 8. Update giá trị cân của đơn hàng
-        * * * 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+        * 3. Bật đèn đỏ
+        * 4. Đóng barrier 2 chiều
+        * 5. Gọi iERP API lưu giá trị cân
+        * 6. Bật đèn xanh
+        * 7. Mở barrier 2 chiều
+        * 8. Update giá trị cân ra của đơn hàng
+        * 9. Giải phóng cân
         */
         public async void ReadDataScale9511(DateTime time, string value)
         {
