@@ -429,20 +429,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             return ipAddress;
         }
 
-        public bool TurnOnGreenTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOnGreenOffRed();
-        }
-
         public bool TurnOnRedTrafficLight(string code)
         {
             var ipAddress = GetTrafficLightIpAddress(code);
