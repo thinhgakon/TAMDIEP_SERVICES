@@ -88,8 +88,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
             if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
-                // TODO: giải phóng cân tại đây
+                // TODO: giải phóng cân khi xe ra khỏi bàn cân
+                // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
+                Program.IsScalling1 = false;
+                Program.IsLockingScale1 = false;
                 Program.scaleValues1.Clear();
+
                 return;
             }
 
@@ -171,8 +175,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 1");
                                 Program.IsScalling1 = false;
-                                Program.scaleValues1.Clear();
                                 Program.IsLockingScale1 = false;
+                                Program.scaleValues1.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-1");
                             }
                         }
@@ -206,8 +210,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
             if (currentScaleValue < MIN_WEIGHT_VEHICLE)
             {
-                // TODO: giải phóng cân tại đây
+                // TODO: giải phóng cân khi xe ra khỏi bàn cân
+                // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling2
+                Program.IsScalling2 = false;
+                Program.IsLockingScale2 = false;
                 Program.scaleValues2.Clear();
+
                 return;
             }
 
@@ -286,8 +294,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 2");
                                 Program.IsScalling2 = false;
-                                Program.scaleValues2.Clear();
                                 Program.IsLockingScale2 = false;
+                                Program.scaleValues2.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale("SCALE-2");
                             }
                         }
