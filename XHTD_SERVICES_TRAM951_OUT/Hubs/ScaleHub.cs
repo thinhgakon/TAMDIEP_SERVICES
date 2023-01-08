@@ -19,10 +19,6 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        private const int MAX_LENGTH_SCALE_VALUE = 10;
-
-        private const int MIN_WEIGHT_VEHICLE = 50;
-
         public void Send(string name, string message)
         {
             Clients.All.addMessage(name, message);
@@ -87,7 +83,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 logger.Info("IsScalling1 false");
             }
 
-            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
+            if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
@@ -102,12 +98,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             {
                 Program.scaleValues1.Add(currentScaleValue);
 
-                if (Program.scaleValues1.Count > MAX_LENGTH_SCALE_VALUE)
+                if (Program.scaleValues1.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues1.RemoveRange(0, 1);
                 }
 
-                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, 20);
+                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues1, ScaleConfig.WEIGHT_SAISO);
 
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can: " + scaleText);
@@ -209,7 +205,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 logger.Info("IsScalling2 false");
             }
 
-            if (currentScaleValue < MIN_WEIGHT_VEHICLE)
+            if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling2
@@ -224,12 +220,12 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             {
                 Program.scaleValues2.Add(currentScaleValue);
 
-                if (Program.scaleValues2.Count > MAX_LENGTH_SCALE_VALUE)
+                if (Program.scaleValues2.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
                 {
                     Program.scaleValues2.RemoveRange(0, 1);
                 }
 
-                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, 20);
+                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues2, ScaleConfig.WEIGHT_SAISO);
 
                 //var scaleText = String.Join(",", Program.scaleValues2);
                 //logger.Info("Gia tri can: " + scaleText);
