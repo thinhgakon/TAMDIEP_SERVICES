@@ -242,7 +242,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
                                     // 2. Loại bỏ các tag đã check trước đó
-
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
