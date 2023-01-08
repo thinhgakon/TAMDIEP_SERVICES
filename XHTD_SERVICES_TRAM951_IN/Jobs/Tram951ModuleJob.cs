@@ -75,7 +75,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
         public static extern int PullLastError();
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
-
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
         public Tram951ModuleJob(
