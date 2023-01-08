@@ -72,7 +72,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private IHubProxy HubProxy { get; set; }
 
-        const string ServerURI = "http://localhost:8083/signalr";
+        private string ServerURI = URIConfig.SIGNALR_GATEWAY_SERVICE_URL;
 
         private HubConnection Connection { get; set; }
 
