@@ -227,7 +227,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                 tmp = str.Split(',');
 
                                 // Bắt đầu xử lý khi nhận diện được RFID
-                                if (tmp[2] != "0" && tmp[2] != "") 
+                                if (tmp[2] != "0" && tmp[2] != "")
                                 {
                                     var cardNoCurrent = tmp[2]?.ToString();
                                     var doorCurrent = tmp[3]?.ToString();
@@ -280,24 +280,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         _tram951Logger.LogInfo($"1. RFID tai can 2");
                                     }
 
-                                    // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                    if (isRfidFromScale1)
-                                    {
-                                        if (Program.IsScalling1)
-                                        {
-                                            _tram951Logger.LogInfo($"2. Can 1 dang hoat dong => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-                                    else if (isRfidFromScale2)
-                                    {
-                                        if (Program.IsScalling2)
-                                        {
-                                            _tram951Logger.LogInfo($"2. Can 2 dang hoat dong => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-
                                     _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                                     // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
@@ -314,6 +296,40 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
+                                    }
+
+                                    // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+                                    if (isRfidFromScale1)
+                                    {
+                                        if (Program.IsScalling1)
+                                        {
+                                            var scaleInfo = _scaleOperatingRepository.GetDetail("SCALE-1");
+                                            if (scaleInfo != null
+                                                && (bool)scaleInfo.IsScaling
+                                                && (bool)scaleInfo.ScaleIn
+                                                && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
+                                            {
+                                                // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
+                                                _tram951Logger.LogInfo($"== Can 1 dang hoat dong => Ket thuc ==");
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    else if (isRfidFromScale2)
+                                    {
+                                        if (Program.IsScalling2)
+                                        {
+                                            var scaleInfo = _scaleOperatingRepository.GetDetail("SCALE-2");
+                                            if (scaleInfo != null
+                                                && (bool)scaleInfo.IsScaling
+                                                && (bool)scaleInfo.ScaleIn
+                                                && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
+                                            {
+                                                // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
+                                                _tram951Logger.LogInfo($"== Can 2 dang hoat dong => Ket thuc ==");
+                                                continue;
+                                            }
+                                        }
                                     }
 
                                     // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
@@ -334,7 +350,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                     {
                                         _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
-                                        if (isRfidFromScale1) 
+                                        if (isRfidFromScale1)
                                         {
                                             // 6. Đánh dấu đang cân
                                             await _scaleOperatingRepository.UpdateWhenConfirmEntrace("SCALE-1", currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
