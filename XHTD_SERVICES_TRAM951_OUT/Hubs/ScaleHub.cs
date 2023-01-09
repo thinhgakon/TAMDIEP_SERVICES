@@ -94,6 +94,17 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 return;
             }
 
+            if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
+            {
+                // TODO: giải phóng cân khi xe ra khỏi bàn cân
+                // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
+                //Program.IsScalling1 = false;
+                //Program.IsLockingScale1 = false;
+                Program.scaleValues1.Clear();
+
+                return;
+            }
+
             if (Program.IsScalling1 && !Program.IsLockingScale1)
             {
                 Program.scaleValues1.Add(currentScaleValue);
@@ -214,6 +225,16 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 //Program.IsScalling2 = false;
                 //Program.IsLockingScale2 = false;
                 Program.scaleValues2.Clear();
+
+                return;
+            }
+
+            // TODO: kiểm tra vi phạm cảm biến cân
+            var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
+            if (isValidSensor1 == false)
+            {
+                // Send notification signalr
+                Program.scaleValues1.Clear();
 
                 return;
             }
