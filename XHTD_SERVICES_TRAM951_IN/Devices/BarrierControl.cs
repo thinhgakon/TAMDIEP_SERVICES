@@ -16,21 +16,21 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
         private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_1_IN_I1 = 9;
-        private const int SCALE_1_IN_Q1 = 8;
-        private const int SCALE_1_IN_Q2 = 9;
+        private const int SCALE_1_IN_I1 = 0;
+        private const int SCALE_1_IN_Q1 = 0;
+        private const int SCALE_1_IN_Q2 = 1;
 
-        private const int SCALE_1_OUT_I1 = 11;
-        private const int SCALE_1_OUT_Q1 = 10;
-        private const int SCALE_1_OUT_Q2 = 11;
+        private const int SCALE_1_OUT_I1 = 1;
+        private const int SCALE_1_OUT_Q1 = 2;
+        private const int SCALE_1_OUT_Q2 = 3;
 
-        private const int SCALE_2_IN_I1 = 13;
-        private const int SCALE_2_IN_Q1 = 12;
-        private const int SCALE_2_IN_Q2 = 13;
+        private const int SCALE_2_IN_I1 = 2;
+        private const int SCALE_2_IN_Q1 = 4;
+        private const int SCALE_2_IN_Q2 = 5;
 
-        private const int SCALE_2_OUT_I1 = 15;
-        private const int SCALE_2_OUT_Q1 = 14;
-        private const int SCALE_2_OUT_Q2 = 15;
+        private const int SCALE_2_OUT_I1 = 3;
+        private const int SCALE_2_OUT_Q1 = 6;
+        private const int SCALE_2_OUT_Q2 = 7;
 
         public BarrierControl(
             PLCBarrier barrier
