@@ -89,8 +89,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
-                Program.IsScalling1 = false;
-                Program.IsLockingScale1 = false;
+                //Program.IsScalling1 = false;
+                //Program.IsLockingScale1 = false;
                 Program.scaleValues1.Clear();
 
                 return;
@@ -211,8 +211,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling2
-                Program.IsScalling2 = false;
-                Program.IsLockingScale2 = false;
+                //Program.IsScalling2 = false;
+                //Program.IsLockingScale2 = false;
                 Program.scaleValues2.Clear();
 
                 return;
