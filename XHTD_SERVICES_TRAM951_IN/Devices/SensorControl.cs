@@ -25,7 +25,6 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
         private const int SCALE_2_I3 = 10;
         private const int SCALE_2_I4 = 11;
 
-
         public SensorControl(
             Sensor sensor
             )
@@ -33,48 +32,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             _sensor = sensor;
         }
 
-        public bool CheckValidSensorScale1()
+        public bool CheckValidSensor()
         {
-            var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
+            List<int> portNumberDeviceIns = new List<int>
             {
-                return false;
-            }
+                1,
+                2
+            };
 
-            var checkInScale1 = _sensor.ReadInputPort(SCALE_1_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_1_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_1_I3);
-            var checkRightScale1 = _sensor.ReadInputPort(SCALE_1_I4);
-
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool CheckValidSensorScale2()
-        {
-            var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return false;
-            }
-
-            var checkInScale1 = _sensor.ReadInputPort(SCALE_2_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_2_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_2_I3);
-            var checkRightScale1 = _sensor.ReadInputPort(SCALE_2_I4);
-
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
-            {
-                return false;
-            }
-
-            return true;
+            return _sensor.CheckValid("IpAddress", 1, portNumberDeviceIns);
         }
     }
 }
