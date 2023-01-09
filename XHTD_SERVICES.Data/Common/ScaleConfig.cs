@@ -10,7 +10,7 @@ namespace XHTD_SERVICES.Data.Common
     {
         public static readonly int MAX_LENGTH_SCALE_VALUE = 10;
 
-        public static readonly int MIN_WEIGHT_VEHICLE = 50;
+        public static readonly int MIN_WEIGHT_VEHICLE = 30;
 
         public static readonly int WEIGHT_SAISO = 20;
     }
