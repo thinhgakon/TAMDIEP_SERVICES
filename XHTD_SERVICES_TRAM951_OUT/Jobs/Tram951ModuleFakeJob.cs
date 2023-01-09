@@ -411,7 +411,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                             }
                             else
                             {
-                                _tram951Logger.LogInfo($@"5. Confirm 3 failed");
+                                _tram951Logger.LogInfo($@"5. Confirm 7 failed");
                             }
                         }
                     }
