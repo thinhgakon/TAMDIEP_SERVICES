@@ -15,6 +15,31 @@ namespace XHTD_SERVICES.Device.PLCM221
         {
         }
 
+        public M221Result ConnectPLC(string ipAddress)
+        {
+            return Connect($"{ipAddress}", 502);
+        }
+
+        public bool ReadInputPort(int portIn)
+        {
+            bool[] Ports = new bool[24];
+            PLC_Result = CheckInputPorts(Ports);
+
+            if (PLC_Result == M221Result.SUCCESS)
+            {
+                if (Ports[portIn])
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
+
         public bool CheckValid(string ipAddress, int portNumber, List<int> portNumberDeviceIns)
         {
 
