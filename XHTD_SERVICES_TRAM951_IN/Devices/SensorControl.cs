@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
-using System.Threading;
 
 namespace XHTD_SERVICES_TRAM951_IN.Devices
 {
@@ -30,6 +29,50 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             )
         {
             _sensor = sensor;
+        }
+
+        public bool CheckValidSensorScale1()
+        {
+            var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
+
+            if (connectStatus != M221Result.SUCCESS)
+            {
+                return false;
+            }
+
+            var checkInScale1 = _sensor.ReadInputPort(SCALE_1_I1);
+            var checkOutScale1 = _sensor.ReadInputPort(SCALE_1_I2);
+            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_1_I3);
+            var checkRightScale1 = _sensor.ReadInputPort(SCALE_1_I4);
+
+            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool CheckValidSensorScale2()
+        {
+            var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
+
+            if (connectStatus != M221Result.SUCCESS)
+            {
+                return false;
+            }
+
+            var checkInScale1 = _sensor.ReadInputPort(SCALE_2_I1);
+            var checkOutScale1 = _sensor.ReadInputPort(SCALE_2_I2);
+            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_2_I3);
+            var checkRightScale1 = _sensor.ReadInputPort(SCALE_2_I4);
+
+            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool CheckValidSensor()
