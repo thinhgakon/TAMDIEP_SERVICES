@@ -248,28 +248,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             var doorCurrent = tmp[3]?.ToString();
                             var timeCurrent = tmp[0]?.ToString();
 
-                            _gatewayLogger.LogInfo("----------------------------");
-                            _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                            _gatewayLogger.LogInfo("-----");
-
                             // 1.Xác định xe cân vào / ra
                             var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
 
                             var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                             || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
-
-                            var inout = "";
-                            if (isLuongVao)
-                            {
-                                inout = "IN";
-                                _gatewayLogger.LogInfo($"1. Xe vao cong");
-                            }
-                            else
-                            {
-                                inout = "OUT";
-                                _gatewayLogger.LogInfo($"1. Xe ra cong");
-                            }
 
                             // 2. Loại bỏ các tag đã check trước đó
                             if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
@@ -296,6 +280,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
                                     continue;
                                 }
+                            }
+
+                            _gatewayLogger.LogInfo("----------------------------");
+                            _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                            _gatewayLogger.LogInfo("-----");
+
+                            var inout = "";
+                            if (isLuongVao)
+                            {
+                                inout = "IN";
+                                _gatewayLogger.LogInfo($"1. Xe vao cong");
+                            }
+                            else
+                            {
+                                inout = "OUT";
+                                _gatewayLogger.LogInfo($"1. Xe ra cong");
                             }
 
                             _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
@@ -368,7 +368,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     tmpCardNoLst_In.Add(newCardNoLog);
 
                                     _gatewayLogger.LogInfo($"6. Mở barrier");
-                                    isSuccessOpenBarrier = OpenBarrier("IN");
+                                    //isSuccessOpenBarrier = OpenBarrier("IN");
 
                                     _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                     TurnOnGreenTrafficLight("IN");
@@ -394,7 +394,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     tmpCardNoLst_Out.Add(newCardNoLog);
 
                                     _gatewayLogger.LogInfo($"7. Mở barrier");
-                                    isSuccessOpenBarrier = OpenBarrier("OUT");
+                                    //isSuccessOpenBarrier = OpenBarrier("OUT");
 
                                     _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                     TurnOnGreenTrafficLight("OUT");
