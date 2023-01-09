@@ -472,9 +472,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 //                            .FirstOrDefaultAsync();
 
                 // TODO: for test
-                List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON,
-                                                        (int)OrderStep.DA_NHAN_DON,
-                                                        (int)OrderStep.DA_VAO_CONG
+                List<int> listStep = new List<int>() { (int)OrderStep.DA_CAN_VAO
                                                     };
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
