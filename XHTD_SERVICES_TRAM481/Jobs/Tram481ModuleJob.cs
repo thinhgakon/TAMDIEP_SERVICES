@@ -124,24 +124,24 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("951");
+            var devices = await _categoriesDevicesRepository.GetDevices("CLK");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400");
+            c3400 = devices.FirstOrDefault(x => x.Code == "CLK-IN.C3-400");
 
-            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-1-1");
-            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-1-2");
-            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-2-1");
-            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-IN.C3-400.RFID-2-2");
+            rfidIn11 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-1");
+            rfidIn12 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-2");
+            rfidIn21 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-1");
+            rfidIn22 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-2");
 
-            m221 = devices.FirstOrDefault(x => x.Code == "951-IN.M221");
+            m221 = devices.FirstOrDefault(x => x.Code == "CLK.M221");
 
             //barrierIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-1");
             //barrierIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-2");
             //barrierOut1 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-1");
             //barrierOut2 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-2");
 
-            trafficLightIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.DGT-1");
-            trafficLightIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.DGT-2");
+            trafficLightIn1 = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
+            trafficLightIn2 = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
 
             //sensorIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
             //sensorIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
