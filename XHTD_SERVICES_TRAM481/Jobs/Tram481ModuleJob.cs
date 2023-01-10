@@ -378,7 +378,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                             _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
-                                            tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
                                             _tram481Logger.LogInfo($@"7. Bat den do");

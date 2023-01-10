@@ -22,15 +22,15 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
         public string GetIpAddress(string scaleCode)
         {
-            var ipAddress = "10.0.9.7";
+            var ipAddress = "10.0.20.3";
 
-            if (scaleCode == ScaleCode.CODE_SCALE_1)
+            if (scaleCode == ScaleCode.CODE_SCALE_481_DGT_IN)
             {
-                ipAddress = "10.0.9.7";
+                ipAddress = "10.0.20.3";
             }
-            else if (scaleCode == ScaleCode.CODE_SCALE_2)
+            else if (scaleCode == ScaleCode.CODE_SCALE_481_DGT_OUT)
             {
-                ipAddress = "10.0.9.11";
+                ipAddress = "10.0.20.4";
             }
 
             return ipAddress;
