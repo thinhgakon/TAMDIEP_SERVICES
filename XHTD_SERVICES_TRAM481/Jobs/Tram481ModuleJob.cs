@@ -16,6 +16,7 @@ using XHTD_SERVICES.Data.Entities;
 using Microsoft.AspNetCore.SignalR.Client;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Data.Common;
+using System.Threading;
 
 namespace XHTD_SERVICES_TRAM481.Jobs
 {
@@ -344,17 +345,19 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         {
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
                                         
-                                                // 6. Đánh dấu đang cân
-                                                await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                                Program.IsScalling481 = true;
+                                            // 6. Đánh dấu đang cân
+                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            Program.IsScalling481 = true;
 
-                                                _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                            _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
-                                                tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
-                                                // Bat den do
-                                                _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                                            // Bat den do
+                                            _tram481Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                                            Thread.Sleep(500);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                         }
                                         else
                                         {
@@ -369,17 +372,19 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         {
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
                                         
-                                                // 6. Đánh dấu đang cân
-                                                await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                                Program.IsScalling481 = true;
+                                            // 6. Đánh dấu đang cân
+                                            await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            Program.IsScalling481 = true;
 
-                                                _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                            _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
-                                                tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
-                                                // Bat den do
-                                                _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                                            // Bat den do
+                                            _tram481Logger.LogInfo($@"7. Bat den do");
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                                            Thread.Sleep(500);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                         }
                                         else
                                         {
