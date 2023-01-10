@@ -99,6 +99,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             if (isValidSensor1 == false)
             {
                 // Send notification signalr
+                logger.Info("Vi pham cam bien");
+
                 Program.scaleValues1.Clear();
 
                 return;
@@ -233,6 +235,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             if (isValidSensor2 == false)
             {
                 // Send notification signalr
+                logger.Info("Vi pham cam bien");
+
                 Program.scaleValues1.Clear();
 
                 return;
