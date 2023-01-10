@@ -166,7 +166,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 7. Bật đèn xanh
                                 logger.Info($"7. Bat den xanh");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                                Thread.Sleep(500);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
 
                                 // 8. Mở barrier
                                 logger.Info($"8. Mo barrier IN");
@@ -230,7 +232,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 Program.IsScalling481 = false;
                                 Program.IsLockingScale481 = false;
                                 Program.scaleValues481.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481);
                             }
                         }
                     }
