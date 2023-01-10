@@ -126,7 +126,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
         {
             var devices = await _categoriesDevicesRepository.GetDevices("CLK");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "CLK-IN.C3-400");
+            c3400 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400");
 
             rfidIn11 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-1");
             rfidIn12 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-2");
@@ -236,10 +236,10 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     var timeCurrent = tmp[0]?.ToString();
 
                                     // 1. Xác định xe ở cân 1 hay cân 2
-                                    var isRfidFromScale1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
+                                    var isLuongVao = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
 
-                                    var isRfidFromScale2 = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
+                                    var isLuongRa = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
                                     // 2. Loại bỏ các tag đã check trước đó
@@ -250,7 +250,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         continue;
                                     }
 
-                                    if (isRfidFromScale1)
+                                    if (isLuongVao)
                                     {
                                         if (tmpCardNoLst_1.Count > 5) tmpCardNoLst_1.RemoveRange(0, 4);
                                         if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
@@ -259,7 +259,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             continue;
                                         }
                                     }
-                                    else if (isRfidFromScale2)
+                                    else if (isLuongRa)
                                     {
                                         if (tmpCardNoLst_2.Count > 5) tmpCardNoLst_2.RemoveRange(0, 4);
                                         if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
@@ -273,7 +273,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     _tram481Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram481Logger.LogInfo("-----");
 
-                                    if (isRfidFromScale1)
+                                    if (isLuongVao)
                                     {
                                         _tram481Logger.LogInfo($"1. RFID tai can 1");
                                     }
@@ -301,7 +301,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     }
 
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                    if (isRfidFromScale1)
+                                    if (isLuongVao)
                                     {
                                         if (Program.IsScalling1)
                                         {
@@ -317,7 +317,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             }
                                         }
                                     }
-                                    else if (isRfidFromScale2)
+                                    else if (isLuongRa)
                                     {
                                         if (Program.IsScalling2)
                                         {
@@ -352,7 +352,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                     {
                                         _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
-                                        if (isRfidFromScale1)
+                                        if (isLuongVao)
                                         {
                                             // 6. Đánh dấu đang cân
                                             await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
@@ -366,7 +366,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             _tram481Logger.LogInfo($@"7. Bat den do");
                                             TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
                                         }
-                                        else if (isRfidFromScale2)
+                                        else if (isLuongRa)
                                         {
                                             // 6. Đánh dấu đang cân
                                             await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
