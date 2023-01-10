@@ -12,17 +12,12 @@ namespace XHTD_SERVICES_TRAM481.Devices
     {
         protected readonly Sensor _sensor;
 
-        private const string IP_ADDRESS = "10.0.9.6";
+        private const string IP_ADDRESS = "10.0.20.2";
 
-        private const int SCALE_1_I1 = 4;
-        private const int SCALE_1_I2 = 5;
-        private const int SCALE_1_I3 = 6;
-        private const int SCALE_1_I4 = 7;
-
-        private const int SCALE_2_I1 = 8;
-        private const int SCALE_2_I2 = 9;
-        private const int SCALE_2_I3 = 10;
-        private const int SCALE_2_I4 = 11;
+        private const int SCALE_481_I1 = 4;
+        private const int SCALE_481_I2 = 5;
+        private const int SCALE_481_I3 = 6;
+        private const int SCALE_481_I4 = 7;
 
         public SensorControl(
             Sensor sensor
@@ -31,7 +26,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
             _sensor = sensor;
         }
 
-        public bool CheckValidSensorScale1()
+        public bool IsInValidSensorScale481()
         {
             var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
 
@@ -40,32 +35,10 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return false;
             }
 
-            var checkInScale1 = _sensor.ReadInputPort(SCALE_1_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_1_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_1_I3);
-            var checkRightScale1 = _sensor.ReadInputPort(SCALE_1_I4);
-
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool CheckValidSensorScale2()
-        {
-            var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return false;
-            }
-
-            var checkInScale1 = _sensor.ReadInputPort(SCALE_2_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_2_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_2_I3);
-            var checkRightScale1 = _sensor.ReadInputPort(SCALE_2_I4);
+            var checkInScale1 = _sensor.ReadInputPort(SCALE_481_I1);
+            var checkOutScale1 = _sensor.ReadInputPort(SCALE_481_I2);
+            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_481_I3);
+            var checkRightScale1 = _sensor.ReadInputPort(SCALE_481_I4);
 
             if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
             {
