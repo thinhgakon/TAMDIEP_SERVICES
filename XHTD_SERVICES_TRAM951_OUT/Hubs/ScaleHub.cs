@@ -95,8 +95,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
-            if (isValidSensor1 == false)
+            var isInValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale1();
+            if (isInValidSensor1)
             {
                 // Send notification signalr
                 logger.Info("Vi pham cam bien");
@@ -231,8 +231,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isValidSensor2 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale2();
-            if (isValidSensor2 == false)
+            var isInValidSensor2 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale2();
+            if (isInValidSensor2)
             {
                 // Send notification signalr
                 logger.Info("Vi pham cam bien");

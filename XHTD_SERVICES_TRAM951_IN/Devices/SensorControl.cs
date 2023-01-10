@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             _sensor = sensor;
         }
 
-        public bool CheckValidSensorScale1()
+        public bool IsInValidSensorScale1()
         {
             var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
 
@@ -53,7 +53,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             return true;
         }
 
-        public bool CheckValidSensorScale2()
+        public bool IsInValidSensorScale2()
         {
             var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
 
