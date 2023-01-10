@@ -25,10 +25,15 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             // use http://*:8080 to bind to all addresses. 
             // See http://msdn.microsoft.com/library/system.net.httplistener.aspx 
             // for more information.
+            try { 
+                WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL);
 
-            WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL);
-
-            logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL}");
+                logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL}");
+            }
+            catch(Exception ex)
+            {
+                logger.Info($"Server running error {ex.StackTrace} ------------ {ex.Message}");
+            }
         }
 
         public void OnStop()
