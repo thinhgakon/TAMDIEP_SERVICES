@@ -303,7 +303,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
                                     if (isLuongVao)
                                     {
-                                        if (Program.IsScalling1)
+                                        if (Program.IsScalling481)
                                         {
                                             var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_1);
                                             if (scaleInfo != null
@@ -319,7 +319,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        if (Program.IsScalling2)
+                                        if (Program.IsScalling481)
                                         {
                                             var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_2);
                                             if (scaleInfo != null
@@ -366,7 +366,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         
                                                 // 6. Đánh dấu đang cân
                                                 await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                                Program.IsScalling1 = true;
+                                                Program.IsScalling481 = true;
 
                                                 _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
@@ -391,7 +391,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         
                                                 // 6. Đánh dấu đang cân
                                                 await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                                Program.IsScalling1 = true;
+                                                Program.IsScalling481 = true;
 
                                                 _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
