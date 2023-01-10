@@ -262,6 +262,10 @@
       <Project>{65239e17-08cd-4427-85bd-ff7487654a74}</Project>
       <Name>XHTD_SERVICES_SYNC_ORDER</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_TRAM481\XHTD_SERVICES_TRAM481.csproj">
+      <Project>{b0a53aa9-0377-42f1-a820-da7d2a4dab9d}</Project>
+      <Name>XHTD_SERVICES_TRAM481</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_TRAM951\XHTD_SERVICES_TRAM951.csproj">
       <Project>{d666c53b-f604-4979-9eb4-a122f530028f}</Project>
       <Name>XHTD_SERVICES_TRAM951</Name>
