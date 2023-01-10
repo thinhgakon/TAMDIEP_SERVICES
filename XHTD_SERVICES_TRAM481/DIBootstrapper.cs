@@ -1,17 +1,17 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
 using System.Collections.Specialized;
-using XHTD_SERVICES_TRAM951_IN.Schedules;
+using XHTD_SERVICES_TRAM481.Schedules;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_IN.Jobs;
+using XHTD_SERVICES_TRAM481.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using NDTan;
-using XHTD_SERVICES_TRAM951_IN.Devices;
-using XHTD_SERVICES_TRAM951_IN.Business;
+using XHTD_SERVICES_TRAM481.Devices;
+using XHTD_SERVICES_TRAM481.Business;
 
-namespace XHTD_SERVICES_TRAM951_IN
+namespace XHTD_SERVICES_TRAM481
 {
     public static class DIBootstrapper
     {

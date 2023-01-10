@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Device;
 
-namespace XHTD_SERVICES_TRAM951_IN.Business
+namespace XHTD_SERVICES_TRAM481.Business
 {
     public class ScaleBusiness
     {

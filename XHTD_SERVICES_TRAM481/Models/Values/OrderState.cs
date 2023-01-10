@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace XHTD_SERVICES_TRAM951_IN.Models.Values
+namespace XHTD_SERVICES_TRAM481.Models.Values
 {
-    public enum  OrderState
+    public enum OrderState
     {
         [Display(Name = "Đã xác nhận")]
         DA_XAC_NHAN = 1,

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_IN.Models.Response
+namespace XHTD_SERVICES_TRAM481.Models.Response
 {
     public class FakeRFIDResponse
     {

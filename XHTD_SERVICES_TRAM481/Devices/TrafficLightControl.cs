@@ -7,7 +7,7 @@ using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Common;
 
-namespace XHTD_SERVICES_TRAM951_IN.Devices
+namespace XHTD_SERVICES_TRAM481.Devices
 {
     public class TrafficLightControl
     {

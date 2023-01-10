@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_IN.Models.Response;
+using XHTD_SERVICES_TRAM481.Models.Response;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Data.Common;
 
-namespace XHTD_SERVICES_TRAM951_IN.Jobs
+namespace XHTD_SERVICES_TRAM481.Jobs
 {
     public class Tram951ModuleJob : IJob
     {
@@ -51,22 +51,22 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice 
-            c3400, 
-            rfidIn11, 
+        private tblCategoriesDevice
+            c3400,
+            rfidIn11,
             rfidIn12,
-            rfidIn21, 
-            rfidIn22, 
+            rfidIn21,
+            rfidIn22,
             m221,
-            barrierIn1, 
+            barrierIn1,
             barrierIn2,
             barrierOut1,
             barrierOut2,
-            trafficLightIn1, 
+            trafficLightIn1,
             trafficLightIn2,
-            sensorIn1, 
+            sensorIn1,
             sensorIn2,
-            sensorOut1, 
+            sensorOut1,
             sensorOut2;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
@@ -79,7 +79,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
         public Tram951ModuleJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository, 
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
@@ -223,7 +223,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
-                            try {
+                            try
+                            {
                                 str = Encoding.Default.GetString(buffer);
                                 tmp = str.Split(',');
 

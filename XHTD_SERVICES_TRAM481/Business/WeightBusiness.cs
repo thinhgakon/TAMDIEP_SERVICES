@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_TRAM951_IN.Business
+namespace XHTD_SERVICES_TRAM481.Business
 {
     public class WeightBusiness
     {

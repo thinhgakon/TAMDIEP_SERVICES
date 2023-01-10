@@ -9,11 +9,11 @@ using System.Linq;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Common;
 using Autofac;
-using XHTD_SERVICES_TRAM951_IN.Devices;
-using XHTD_SERVICES_TRAM951_IN.Business;
+using XHTD_SERVICES_TRAM481.Devices;
+using XHTD_SERVICES_TRAM481.Business;
 using System.Threading;
 
-namespace XHTD_SERVICES_TRAM951_IN.Hubs
+namespace XHTD_SERVICES_TRAM481.Hubs
 {
     public class ScaleHub : Hub
     {
@@ -74,12 +74,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             //logger.Info($"Received 951-1 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
-            if(currentScaleValue == 111)
+            if (currentScaleValue == 111)
             {
                 Program.IsScalling1 = true;
                 logger.Info("IsScalling1 true");
             }
-            else if(currentScaleValue == 999)
+            else if (currentScaleValue == 999)
             {
                 Program.IsScalling1 = false;
                 logger.Info("IsScalling1 false");
@@ -98,7 +98,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             // TODO: kiểm tra vi phạm cảm biến cân
             var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
-            if(isValidSensor1 == false)
+            if (isValidSensor1 == false)
             {
                 // Send notification signalr
                 Program.scaleValues1.Clear();
@@ -133,7 +133,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                     {
                         // 2. Lấy thông tin xe, đơn hàng đang cân
                         var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == ScaleCode.CODE_SCALE_1);
-                        if(scaleInfo == null)
+                        if (scaleInfo == null)
                         {
                             logger.Info($"Khong co ban ghi trong table Scale voi code = {ScaleCode.CODE_SCALE_1}");
                             return;

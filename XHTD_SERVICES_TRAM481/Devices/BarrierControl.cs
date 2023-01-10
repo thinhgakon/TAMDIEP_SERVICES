@@ -8,7 +8,7 @@ using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
 
-namespace XHTD_SERVICES_TRAM951_IN.Devices
+namespace XHTD_SERVICES_TRAM481.Devices
 {
     public class BarrierControl
     {
@@ -44,7 +44,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
-            if(connectStatus != M221Result.SUCCESS)
+            if (connectStatus != M221Result.SUCCESS)
             {
                 return;
             }

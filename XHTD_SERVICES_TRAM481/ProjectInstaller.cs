@@ -6,7 +6,7 @@ using System.Configuration.Install;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_IN
+namespace XHTD_SERVICES_TRAM481
 {
     [RunInstaller(true)]
     public partial class ProjectInstaller : System.Configuration.Install.Installer

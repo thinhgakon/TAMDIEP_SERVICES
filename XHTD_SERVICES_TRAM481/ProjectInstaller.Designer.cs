@@ -1,4 +1,4 @@
-﻿namespace XHTD_SERVICES_TRAM951_IN
+﻿namespace XHTD_SERVICES_TRAM481
 {
     partial class ProjectInstaller
     {

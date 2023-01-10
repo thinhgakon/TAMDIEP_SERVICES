@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_IN.Models.Response;
+using XHTD_SERVICES_TRAM481.Models.Response;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
@@ -18,7 +18,7 @@ using XHTD_SERVICES.Helper;
 using Newtonsoft.Json;
 using XHTD_SERVICES.Data.Common;
 
-namespace XHTD_SERVICES_TRAM951_IN.Jobs
+namespace XHTD_SERVICES_TRAM481.Jobs
 {
     public class Tram951ModuleFakeJob : IJob
     {
@@ -90,7 +90,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
         public Tram951ModuleFakeJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository, 
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
@@ -142,7 +142,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             Connection.Closed += Connection_Closed;
             HubProxy = Connection.CreateHubProxy("ScaleHub");
 
-            HubProxy.On<string>("SendFakeRFID", (value) => {
+            HubProxy.On<string>("SendFakeRFID", (value) =>
+            {
                 //_tram951Logger.LogInfo("----------------------------");
                 //_tram951Logger.LogInfo($"Received fake RFID data: value={value}");
                 RFIDValue = value;
@@ -234,7 +235,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
             _tram951Logger.LogInfo("Connected to C3-400");
 
             DeviceConnected = true;
-                    
+
             return DeviceConnected;
         }
 

@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
-using XHTD_SERVICES_TRAM951_IN.Jobs;
+using XHTD_SERVICES_TRAM481.Jobs;
 using System.Configuration;
 
-namespace XHTD_SERVICES_TRAM951_IN.Schedules
+namespace XHTD_SERVICES_TRAM481.Schedules
 {
     public class JobScheduler
     {

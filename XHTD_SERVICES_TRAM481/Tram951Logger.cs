@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_TRAM951_IN
+namespace XHTD_SERVICES_TRAM481
 {
     public class Tram951Logger : BaseLogger<Jobs.Tram951ModuleJob>
     {

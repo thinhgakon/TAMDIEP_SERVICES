@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 
-namespace XHTD_SERVICES_TRAM951_IN.Devices
+namespace XHTD_SERVICES_TRAM481.Devices
 {
     public class SensorControl
     {
