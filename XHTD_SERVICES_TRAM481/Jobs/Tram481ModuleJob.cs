@@ -335,7 +335,16 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     }
 
                                     // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceTram951ByCardNo(cardNoCurrent);
+                                    tblStoreOrderOperating currentOrder = null;
+                                    if (isLuongVao)
+                                    {
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceTram951ByCardNo(cardNoCurrent);
+                                    }
+                                    else if (isLuongRa)
+                                    {
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitTram951ByCardNo(cardNoCurrent);
+                                    }
+                                    
                                     if (currentOrder == null)
                                     {
                                         _tram481Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
