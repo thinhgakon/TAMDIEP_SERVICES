@@ -26,9 +26,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             // See http://msdn.microsoft.com/library/system.net.httplistener.aspx 
             // for more information.
 
-            WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM951_IN_SERVICE_URL);
+            WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL);
 
-            logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM951_IN_SERVICE_URL}");
+            logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL}");
         }
 
         public void OnStop()
