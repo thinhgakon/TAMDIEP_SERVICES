@@ -301,36 +301,16 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     }
 
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                    if (isLuongVao)
+                                    if (Program.IsScalling481)
                                     {
-                                        if (Program.IsScalling481)
+                                        var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_481);
+                                        if (scaleInfo != null
+                                            && (bool)scaleInfo.IsScaling
+                                            && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
                                         {
-                                            var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_1);
-                                            if (scaleInfo != null
-                                                && (bool)scaleInfo.IsScaling
-                                                && (bool)scaleInfo.ScaleIn
-                                                && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
-                                            {
-                                                // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                                                _tram481Logger.LogInfo($"== Can 1 dang hoat dong => Ket thuc ==");
-                                                continue;
-                                            }
-                                        }
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        if (Program.IsScalling481)
-                                        {
-                                            var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_2);
-                                            if (scaleInfo != null
-                                                && (bool)scaleInfo.IsScaling
-                                                && (bool)scaleInfo.ScaleIn
-                                                && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
-                                            {
-                                                // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                                                _tram481Logger.LogInfo($"== Can 2 dang hoat dong => Ket thuc ==");
-                                                continue;
-                                            }
+                                            // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
+                                            _tram481Logger.LogInfo($"== Can 481 dang hoat dong => Ket thuc ==");
+                                            continue;
                                         }
                                     }
 
