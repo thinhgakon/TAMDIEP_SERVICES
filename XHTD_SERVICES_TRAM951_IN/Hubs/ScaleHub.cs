@@ -97,15 +97,21 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isInValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale1();
-            if (isInValidSensor1)
-            {
-                // Send notification signalr
-                logger.Info("Vi pham cam bien");
+            if (!Program.IsLockingScale1) { 
+                var isInValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale1();
+                if (isInValidSensor1)
+                {
+                    // Send notification signalr
+                    logger.Info("Vi pham cam bien");
 
-                Program.scaleValues1.Clear();
+                    Program.scaleValues1.Clear();
 
-                return;
+                    return;
+                }
+                else
+                {
+                    logger.Info($"Received 951-1 data: time={time}, value={value}");
+                }
             }
 
             if (Program.IsScalling1 && !Program.IsLockingScale1)
