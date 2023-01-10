@@ -34,6 +34,7 @@ namespace XHTD_SERVICES_TRAM951_OUT
 
             builder.RegisterType<TrafficLightControl>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
+            builder.RegisterType<SensorControl>().AsSelf();
 
             builder.RegisterType<ScaleBusiness>().AsSelf();
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
