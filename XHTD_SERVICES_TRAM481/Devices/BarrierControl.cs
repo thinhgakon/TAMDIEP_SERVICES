@@ -16,21 +16,13 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
         private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_1_IN_I1 = 0;
-        private const int SCALE_1_IN_Q1 = 0;
-        private const int SCALE_1_IN_Q2 = 1;
+        private const int SCALE_481_IN_I1 = 0;
+        private const int SCALE_481_IN_Q1 = 0;
+        private const int SCALE_481_IN_Q2 = 1;
 
-        private const int SCALE_1_OUT_I1 = 1;
-        private const int SCALE_1_OUT_Q1 = 2;
-        private const int SCALE_1_OUT_Q2 = 3;
-
-        private const int SCALE_2_IN_I1 = 2;
-        private const int SCALE_2_IN_Q1 = 4;
-        private const int SCALE_2_IN_Q2 = 5;
-
-        private const int SCALE_2_OUT_I1 = 3;
-        private const int SCALE_2_OUT_Q1 = 6;
-        private const int SCALE_2_OUT_Q2 = 7;
+        private const int SCALE_481_OUT_I1 = 1;
+        private const int SCALE_481_OUT_Q1 = 2;
+        private const int SCALE_481_OUT_Q2 = 3;
 
         public BarrierControl(
             PLCBarrier barrier
@@ -39,8 +31,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
             _barrier = barrier;
         }
 
-        // Barrier chiều vào cân 1
-        public void OpenBarrierScaleIn1()
+        // Barrier chiều vào cân 481
+        public void OpenBarrierScaleIn()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
@@ -49,15 +41,15 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_1_IN_I1))
+            if (_barrier.ReadInputPort(SCALE_481_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
                 Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
             }
         }
 
-        public void CloseBarrierScaleIn1()
+        public void CloseBarrierScaleIn()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
@@ -66,16 +58,16 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_1_IN_I1))
+            if (!_barrier.ReadInputPort(SCALE_481_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
                 Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
             }
         }
 
-        // Barrier chiều ra cân 1
-        public void OpenBarrierScaleOut1()
+        // Barrier chiều ra cân 481
+        public void OpenBarrierScaleOut()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
@@ -84,15 +76,15 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_1_OUT_I1))
+            if (_barrier.ReadInputPort(SCALE_481_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
                 Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
             }
         }
 
-        public void CloseBarrierScaleOut1()
+        public void CloseBarrierScaleOut()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
 
@@ -101,81 +93,11 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_1_OUT_I1))
+            if (!_barrier.ReadInputPort(SCALE_481_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
                 Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q2.ToString())));
-            }
-        }
-
-        // Barrier chiều vào cân 2
-        public void OpenBarrierScaleIn2()
-        {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return;
-            }
-
-            if (_barrier.ReadInputPort(SCALE_2_IN_I1))
-            {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q1.ToString())));
-                Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q1.ToString())));
-            }
-        }
-
-        public void CloseBarrierScaleIn2()
-        {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return;
-            }
-
-            if (!_barrier.ReadInputPort(SCALE_2_IN_I1))
-            {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q2.ToString())));
-                Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q2.ToString())));
-            }
-        }
-
-        // Barrier chiều ra cân 2
-        public void OpenBarrierScaleOut2()
-        {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return;
-            }
-
-            if (_barrier.ReadInputPort(SCALE_2_OUT_I1))
-            {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q1.ToString())));
-                Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q1.ToString())));
-            }
-        }
-
-        public void CloseBarrierScaleOut2()
-        {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
-
-            if (connectStatus != M221Result.SUCCESS)
-            {
-                return;
-            }
-
-            if (!_barrier.ReadInputPort(SCALE_2_OUT_I1))
-            {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q2.ToString())));
-                Thread.Sleep(1000);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
             }
         }
     }
