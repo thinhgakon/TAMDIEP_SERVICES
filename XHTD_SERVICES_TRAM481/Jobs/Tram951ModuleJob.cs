@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly Sensor _sensor;
 
-        protected readonly Tram951Logger _tram951Logger;
+        protected readonly Tram481Logger _tram951Logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -88,7 +88,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
-            Tram951Logger tram951Logger
+            Tram481Logger tram951Logger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
