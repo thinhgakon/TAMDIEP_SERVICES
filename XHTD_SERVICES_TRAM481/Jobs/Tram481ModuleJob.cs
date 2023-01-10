@@ -358,42 +358,55 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     _tram481Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                     // 5. Xác thực cân vào
-                                    if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
+                                    if (isLuongVao)
                                     {
-                                        _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
-                                        if (isLuongVao)
+                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                         {
-                                            // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                            Program.IsScalling1 = true;
+                                            _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
+                                        
+                                                // 6. Đánh dấu đang cân
+                                                await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                                Program.IsScalling1 = true;
 
-                                            _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                                _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
-                                            tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                                tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
-                                            // Bat den do
-                                            _tram481Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
+                                                // Bat den do
+                                                _tram481Logger.LogInfo($@"7. Bat den do");
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
                                         }
-                                        else if (isLuongRa)
+                                        else
                                         {
-                                            // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                            Program.IsScalling2 = true;
-
-                                            _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
-
-                                            tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
-
-                                            // Bat den do
-                                            _tram481Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2);
+                                            _tram481Logger.LogInfo($@"5. Confirm 3 failed");
                                         }
                                     }
-                                    else
+
+                                    // 5. Xác thực cân ra
+                                    else if (isLuongRa)
                                     {
-                                        _tram481Logger.LogInfo($@"5. Confirm 3 failed");
+                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
+                                        {
+                                            _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
+                                        
+                                                // 6. Đánh dấu đang cân
+                                                await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                                Program.IsScalling1 = true;
+
+                                                _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+
+                                                tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+
+                                                // Bat den do
+                                                _tram481Logger.LogInfo($@"7. Bat den do");
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
+                                        }
+                                        else
+                                        {
+                                            _tram481Logger.LogInfo($@"5. Confirm 7 failed");
+                                        }
                                     }
+
                                 }
                             }
                             catch (Exception ex)
