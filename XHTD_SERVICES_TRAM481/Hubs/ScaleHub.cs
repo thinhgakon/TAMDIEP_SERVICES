@@ -99,14 +99,14 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
-            if (isValidSensor1 == false)
-            {
-                // Send notification signalr
-                Program.scaleValues1.Clear();
+            //var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
+            //if (isValidSensor1 == false)
+            //{
+            //    // Send notification signalr
+            //    Program.scaleValues1.Clear();
 
-                return;
-            }
+            //    return;
+            //}
 
             if (Program.IsScalling1 && !Program.IsLockingScale1)
             {
@@ -233,14 +233,14 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
-            if (isValidSensor1 == false)
-            {
-                // Send notification signalr
-                Program.scaleValues1.Clear();
+            //var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale1();
+            //if (isValidSensor1 == false)
+            //{
+            //    // Send notification signalr
+            //    Program.scaleValues1.Clear();
 
-                return;
-            }
+            //    return;
+            //}
 
             if (Program.IsScalling1 && !Program.IsLockingScale1)
             {
@@ -367,14 +367,14 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale2();
-            if (isValidSensor1 == false)
-            {
-                // Send notification signalr
-                Program.scaleValues2.Clear();
+            //var isValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().CheckValidSensorScale2();
+            //if (isValidSensor1 == false)
+            //{
+            //    // Send notification signalr
+            //    Program.scaleValues2.Clear();
 
-                return;
-            }
+            //    return;
+            //}
 
             if (Program.IsScalling2 && !Program.IsLockingScale2)
             {
