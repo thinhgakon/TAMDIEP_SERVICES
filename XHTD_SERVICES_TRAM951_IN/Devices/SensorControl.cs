@@ -47,10 +47,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
             {
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool IsInValidSensorScale2()
@@ -69,7 +69,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
             {
-                return false;
+                return true;
             }
 
             return true;
