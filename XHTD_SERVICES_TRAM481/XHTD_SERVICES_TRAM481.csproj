@@ -267,8 +267,8 @@
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Hubs\ScaleHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
-    <Compile Include="Jobs\Tram951ModuleFakeJob.cs" />
-    <Compile Include="Jobs\Tram951ModuleJob.cs" />
+    <Compile Include="Jobs\Tram481ModuleFakeJob.cs" />
+    <Compile Include="Jobs\Tram481ModuleJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
     <Compile Include="Models\Response\FakeRFIDResponse.cs" />
@@ -293,7 +293,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Tram951Logger.cs" />
+    <Compile Include="Tram481Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

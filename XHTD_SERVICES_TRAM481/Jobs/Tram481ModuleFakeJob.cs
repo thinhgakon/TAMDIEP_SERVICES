@@ -126,13 +126,13 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                 // Connect Scale Hub
                 ConnectScaleHubAsync();
 
-                _tram481Logger.LogInfo("Start tram951 IN fake service");
+                _tram481Logger.LogInfo("Start tram481 IN fake service");
                 _tram481Logger.LogInfo("----------------------------");
 
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateTram951Module();
+                AuthenticateTram481Module();
             });
         }
 
@@ -193,7 +193,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             //sensorOut2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
         }
 
-        public void AuthenticateTram951Module()
+        public void AuthenticateTram481Module()
         {
             /*
              * 1. Xác định xe cân vào hay cân ra theo gia tri door từ C3-400
@@ -223,14 +223,14 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             // 1. Connect Device
             while (!DeviceConnected)
             {
-                ConnectTram951Module();
+                ConnectTram481Module();
             }
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
         }
 
-        public bool ConnectTram951Module()
+        public bool ConnectTram481Module()
         {
             _tram481Logger.LogInfo("Connected to C3-400");
 
