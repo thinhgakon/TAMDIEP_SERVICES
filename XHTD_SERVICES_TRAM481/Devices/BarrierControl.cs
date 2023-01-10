@@ -14,7 +14,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
     {
         protected readonly PLCBarrier _barrier;
 
-        private const string IP_ADDRESS = "10.0.9.6";
+        private const string IP_ADDRESS = "10.0.20.2";
 
         private const int SCALE_481_IN_I1 = 0;
         private const int SCALE_481_IN_Q1 = 0;
