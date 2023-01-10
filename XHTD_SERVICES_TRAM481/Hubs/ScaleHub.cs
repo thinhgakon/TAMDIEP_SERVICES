@@ -71,18 +71,18 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
         public async void ReadDataScale481(DateTime time, string value)
         {
-            //logger.Info($"Received 951-1 data: time={time}, value={value}");
+            //logger.Info($"Received 481 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
             if (currentScaleValue == 111)
             {
                 Program.IsScalling481 = true;
-                logger.Info("IsScalling1 true");
+                logger.Info("IsScalling481 true");
             }
             else if (currentScaleValue == 999)
             {
                 Program.IsScalling481 = false;
-                logger.Info("IsScalling1 false");
+                logger.Info("IsScalling481 false");
             }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
@@ -120,14 +120,14 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can 1: " + scaleText);
 
-                logger.Info($"Received 951-1 data: time={time}, value={value}");
+                logger.Info($"Received 481 data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {
                     Program.IsLockingScale481 = true;
 
                     // 1. Xác định giá trị cân ổn định
-                    logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
+                    logger.Info($"1. Can 481 on dinh: " + currentScaleValue);
 
                     using (var dbContext = new XHTD_Entities())
                     {
