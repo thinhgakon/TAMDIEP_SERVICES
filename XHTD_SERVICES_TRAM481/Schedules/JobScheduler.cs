@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_TRAM481.Schedules
         {
             await _scheduler.Start();
 
-            // Trạm cân 951
+            // Trạm cân 481
             IJobDetail syncOrderJob = JobBuilder.Create<Tram481ModuleJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
