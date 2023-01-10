@@ -112,7 +112,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
             await Task.Run(async () =>
             {
-                _tram481Logger.LogInfo("Start tram481 IN service");
+                _tram481Logger.LogInfo("Start tram481 service");
                 _tram481Logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -275,11 +275,11 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        _tram481Logger.LogInfo($"1. RFID tai can 1");
+                                        _tram481Logger.LogInfo($"1. Xe can vao");
                                     }
                                     else
                                     {
-                                        _tram481Logger.LogInfo($"1. RFID tai can 2");
+                                        _tram481Logger.LogInfo($"1. Xe can ra");
                                     }
 
                                     _tram481Logger.LogInfo($"2. Kiem tra tag da check truoc do");
@@ -345,7 +345,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
                                         
                                                 // 6. Đánh dấu đang cân
-                                                await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                                await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                                 Program.IsScalling481 = true;
 
                                                 _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -354,7 +354,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                                 // Bat den do
                                                 _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481);
                                         }
                                         else
                                         {
@@ -370,7 +370,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
                                         
                                                 // 6. Đánh dấu đang cân
-                                                await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_1, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                                await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                                 Program.IsScalling481 = true;
 
                                                 _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -379,7 +379,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                                 // Bat den do
                                                 _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481);
                                         }
                                         else
                                         {
