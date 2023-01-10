@@ -89,8 +89,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
-                //Program.IsScalling1 = false;
-                //Program.IsLockingScale1 = false;
+                //Program.IsScalling481 = false;
+                //Program.IsLockingScale481 = false;
                 Program.scaleValues481.Clear();
 
                 return;
@@ -138,7 +138,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             logger.Info($"Khong co ban ghi trong table Scale voi code = {ScaleCode.CODE_SCALE_481}");
                             return;
                         }
-                        logger.Info($"2. Phuong tien dang can 1: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
+                        logger.Info($"2. Phuong tien dang can 481: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         if ((bool)scaleInfo.IsScaling)
                         {
