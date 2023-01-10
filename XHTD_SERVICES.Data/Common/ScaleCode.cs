@@ -13,5 +13,9 @@ namespace XHTD_SERVICES.Data.Common
         public static readonly string CODE_SCALE_2 = "SCALE-2";
 
         public static readonly string CODE_SCALE_481 = "SCALE-481";
+
+        public static readonly string CODE_SCALE_481_DGT_IN = "SCALE_481_DGT_IN";
+
+        public static readonly string CODE_SCALE_481_DGT_OUT = "SCALE_481_DGT_OUT";
     }
 }

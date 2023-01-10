@@ -62,8 +62,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             barrierIn2,
             barrierOut1,
             barrierOut2,
-            trafficLightIn1,
-            trafficLightIn2,
+            trafficLightIn,
+            trafficLightOut,
             sensorIn1,
             sensorIn2,
             sensorOut1,
@@ -140,8 +140,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             //barrierOut1 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-1");
             //barrierOut2 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-2");
 
-            trafficLightIn1 = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
-            trafficLightIn2 = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
+            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
+            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
 
             //sensorIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
             //sensorIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
@@ -354,7 +354,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                                 // Bat den do
                                                 _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481);
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
                                         }
                                         else
                                         {
@@ -379,7 +379,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                                 // Bat den do
                                                 _tram481Logger.LogInfo($@"7. Bat den do");
-                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481);
+                                                TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                         }
                                         else
                                         {
@@ -420,13 +420,13 @@ namespace XHTD_SERVICES_TRAM481.Jobs
         {
             var ipAddress = "";
 
-            if (code == ScaleCode.CODE_SCALE_1)
+            if (code == ScaleCode.CODE_SCALE_481_DGT_IN)
             {
-                ipAddress = trafficLightIn1?.IpAddress;
+                ipAddress = trafficLightIn?.IpAddress;
             }
-            else if (code == ScaleCode.CODE_SCALE_2)
+            else if (code == ScaleCode.CODE_SCALE_481_DGT_OUT)
             {
-                ipAddress = trafficLightIn2?.IpAddress;
+                ipAddress = trafficLightOut?.IpAddress;
             }
 
             return ipAddress;
