@@ -57,7 +57,7 @@ namespace XHTD_SERVICES_TRAM481
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(Tram951ModuleJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(Tram481ModuleJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

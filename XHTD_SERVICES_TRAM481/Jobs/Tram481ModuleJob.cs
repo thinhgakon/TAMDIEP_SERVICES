@@ -19,7 +19,7 @@ using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_TRAM481.Jobs
 {
-    public class Tram951ModuleJob : IJob
+    public class Tram481ModuleJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -78,7 +78,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
-        public Tram951ModuleJob(
+        public Tram481ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
