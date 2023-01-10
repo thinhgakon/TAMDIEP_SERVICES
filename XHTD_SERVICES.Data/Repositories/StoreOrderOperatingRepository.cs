@@ -827,7 +827,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateWeightOut(string cardNo, int weightIn)
+        public async Task<bool> UpdateWeightOut(string cardNo, int weightOut)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -852,7 +852,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.WeightIn = weightIn;
+                        order.WeightOut = weightOut;
                     }
 
                     await dbContext.SaveChangesAsync();
