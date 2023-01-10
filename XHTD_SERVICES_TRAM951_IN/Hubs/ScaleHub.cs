@@ -97,7 +97,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            if (!Program.IsLockingScale1) { 
+            if (!Program.IsLockingScale1) {
                 var isInValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale1();
                 if (isInValidSensor1)
                 {
@@ -239,15 +239,22 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            var isInValidSensor2 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale2();
-            if (isInValidSensor2)
+            if (!Program.IsLockingScale2)
             {
-                // Send notification signalr
-                logger.Info("Vi pham cam bien");
+                var isInValidSensor2 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale2();
+                if (isInValidSensor2)
+                {
+                    // Send notification signalr
+                    logger.Info("Vi pham cam bien");
 
-                Program.scaleValues2.Clear();
+                    Program.scaleValues2.Clear();
 
-                return;
+                    return;
+                }
+                else
+                {
+                    logger.Info($"Received 951-2 data: time={time}, value={value}");
+                }
             }
 
             if (Program.IsScalling2 && !Program.IsLockingScale2)
