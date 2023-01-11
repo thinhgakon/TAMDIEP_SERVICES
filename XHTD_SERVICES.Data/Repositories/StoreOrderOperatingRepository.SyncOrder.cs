@@ -114,6 +114,88 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateReceivingOrder(int? orderId)
+        {
+            bool isSynced = false;
+
+            try
+            {
+                string cancelTime = DateTime.Now.ToString();
+
+                var order = _appDbContext.tblStoreOrderOperatings
+                            .FirstOrDefault(x => x.OrderId == orderId
+                                                && x.Step < (int)OrderStep.DA_CAN_VAO);
+                if (order != null)
+                {
+                    order.Confirm2 = 1;
+                    order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
+                    order.Confirm3 = 1;
+                    order.TimeConfirm3 = DateTime.Now;
+                    order.Step = (int)OrderStep.DA_CAN_VAO;
+                    order.IndexOrder = 0;
+                    order.CountReindex = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime}; ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Đã cân vào lúc {cancelTime}; ";
+
+                    await _appDbContext.SaveChangesAsync();
+
+                    Console.WriteLine($@"Update Receiving Order {orderId}");
+                    log.Info($@"Update Receiving Order {orderId}");
+
+                    isSynced = true;
+                }
+
+                return isSynced;
+            }
+            catch (Exception ex)
+            {
+                log.Error($@"Update Receiving Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Update Receiving Order {orderId} Error: " + ex.Message);
+
+                return isSynced;
+            }
+        }
+
+        public async Task<bool> UpdateReceivedOrder(int? orderId)
+        {
+            bool isSynced = false;
+
+            try
+            {
+                string cancelTime = DateTime.Now.ToString();
+
+                var order = _appDbContext.tblStoreOrderOperatings
+                            .FirstOrDefault(x => x.OrderId == orderId
+                                                && x.Step < (int)OrderStep.DA_CAN_RA);
+                if (order != null)
+                {
+                    order.Confirm7 = 1;
+                    order.TimeConfirm7 = DateTime.Now;
+                    order.Step = (int)OrderStep.DA_CAN_RA;
+                    order.IndexOrder = 0;
+                    order.CountReindex = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {cancelTime} ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {cancelTime}; ";
+
+                    await _appDbContext.SaveChangesAsync();
+
+                    Console.WriteLine($@"Update Received Order {orderId}");
+                    log.Info($@"Update Received Order {orderId}");
+
+                    isSynced = true;
+                }
+
+                return isSynced;
+            }
+            catch (Exception ex)
+            {
+                log.Error($@"Update Received Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
+
+                return isSynced;
+            }
+        }
+
         public async Task<bool> CancelOrder(int? orderId)
         {
             bool isSynced = false;

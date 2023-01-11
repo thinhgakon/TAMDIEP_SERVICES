@@ -189,20 +189,23 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     break;
             }
 
-            if (stateId != (int)OrderState.DA_HUY_DON && stateId != (int)OrderState.DA_XUAT_HANG)
+            if (stateId == (int)OrderState.DA_DAT_HANG && stateId != (int)OrderState.DA_XUAT_HANG)
             {
                 isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
 
-                /*
-                 * Đơn hàng mới
-                 * Kiểm tra biển số xe trong đơn hàng đã có trong bảng phương tiện (tblVehicle), 
-                 * nếu chưa có thì thêm biển số xe vào bảng phương tiện
-                 */ 
                 if (isSynced)
                 {
                     var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
                     await _vehicleRepository.CreateAsync(vehicleCode);
                 }
+            }
+            else if (stateId == (int)OrderState.DANG_LAY_HANG)
+            {
+                isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id);
+            }
+            else if (stateId == (int)OrderState.DA_XUAT_HANG)
+            {
+                isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id);
             }
             else if (stateId == (int)OrderState.DA_HUY_DON){
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
