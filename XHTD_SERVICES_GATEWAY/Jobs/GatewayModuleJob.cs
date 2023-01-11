@@ -134,11 +134,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             try
             {
                 await Connection.Start();
-                _gatewayLogger.LogInfo("Connected scale hub");
+                _gatewayLogger.LogInfo($"Connected scale hub {ServerURI}");
             }
             catch (System.Net.Http.HttpRequestException ex)
             {
-                _gatewayLogger.LogInfo("Connect failed scale hub");
+                _gatewayLogger.LogInfo($"Connect failed scale hub {ServerURI}");
             }
         }
 
@@ -326,7 +326,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                        SendNotificationCBV(0, inout, cardNoCurrent, "Không thuộc hệ thống");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Không thuộc hệ thống");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -349,7 +349,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        SendNotificationCBV(0, inout, cardNoCurrent, "Không có đơn hàng");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -362,7 +362,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
 
-                                    SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
+                                    await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
 
                                     // 5. Xác thực vào / ra cổng
                                     // 6. Bật đèn xanh giao thông, 
@@ -544,15 +544,21 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             return _trafficLight.TurnOffGreenOnRed();
         }
 
-        private void SendNotificationCBV(int status, string inout, string cardNo, string message)
+        public async Task StartIfNeededAsync()
+        {
+            if (Connection.State == ConnectionState.Disconnected)
+            {
+                await Connection.Start();
+
+                _gatewayLogger.LogInfo($"Reconnect Connection: {Connection.State}");
+            }
+        }
+
+        private async Task SendNotificationCBV(int status, string inout, string cardNo, string message)
         {
             try
             {
-                if (Connection.State != ConnectionState.Connected)
-                {
-                    // TODO: Reconnect
-                    _gatewayLogger.LogInfo($"Connection State: {Connection.State.ToString()}");
-                }
+                await StartIfNeededAsync();
 
                 HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message).Wait();
 
