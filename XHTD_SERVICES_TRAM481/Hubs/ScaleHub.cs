@@ -182,7 +182,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
-                                Thread.Sleep(10000);
+                                Thread.Sleep(7000);
 
                                 // 7. Mở barrier
                                 logger.Info($"7. Mo barrier IN");
@@ -191,7 +191,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                Thread.Sleep(5000);
+                                Thread.Sleep(2000);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
@@ -230,20 +230,22 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
-                                Thread.Sleep(5000);
+                                Thread.Sleep(7000);
 
-                                // 7. Bật đèn xanh
-                                logger.Info($"7. Bat den xanh");
+                                // 7. Mở barrier
+                                logger.Info($"7. Mo barrier IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                Thread.Sleep(500);
+                                logger.Info($"7. Mo barrier OUT");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+                                Thread.Sleep(2000);
+
+                                // 8. Bật đèn xanh
+                                logger.Info($"8. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                 Thread.Sleep(500);
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
-
-                                // 8. Mở barrier
-                                logger.Info($"8. Mo barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(500);
-                                logger.Info($"8. Mo barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
