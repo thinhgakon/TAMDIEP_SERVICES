@@ -176,23 +176,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             switch (websaleOrder.status.ToUpper())
             {
                 case "BOOKED":
-                    switch (websaleOrder.orderPrintStatus.ToUpper())
-                    {
-                        case "BOOKED":
-                        case "APPROVED":
-                        case "PENDING":
-                            stateId = (int)OrderState.DA_XAC_NHAN;
-                            break;
-                        case "PRINTED":
-                            stateId = (int)OrderState.DA_IN_PHIEU;
-                            break;
-                    }
-                    break;
-                case "PRINTED":
-                    stateId = (int)OrderState.DA_IN_PHIEU;
+                    stateId = (int)OrderState.DA_DAT_HANG;
                     break;
                 case "VOIDED":
-                    stateId = (int)OrderState.DA_HUY;
+                    stateId = (int)OrderState.DA_HUY_DON;
                     break;
                 case "RECEIVING":
                     stateId = (int)OrderState.DANG_LAY_HANG;
@@ -202,7 +189,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     break;
             }
 
-            if (stateId != (int)OrderState.DA_HUY && stateId != (int)OrderState.DA_XUAT_HANG)
+            if (stateId != (int)OrderState.DA_HUY_DON && stateId != (int)OrderState.DA_XUAT_HANG)
             {
                 isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
 
@@ -217,7 +204,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     await _vehicleRepository.CreateAsync(vehicleCode);
                 }
             }
-            else if (stateId == (int)OrderState.DA_HUY){
+            else if (stateId == (int)OrderState.DA_HUY_DON){
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
             }
 

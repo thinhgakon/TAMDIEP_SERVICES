@@ -10,20 +10,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Models.Values
 {
     public enum  OrderState
     {
-        [Display(Name = "Đã xác nhận")]
-        DA_XAC_NHAN = 1,
+        [Display(Name = "Đã đặt hàng")]
+        DA_DAT_HANG = 1,
 
-        [Display(Name = "Đã hủy")]
-        DA_HUY = 2,
-
-        [Display(Name = "Đã in phiếu")]
-        DA_IN_PHIEU = 4,
+        [Display(Name = "Đã hủy đơn")]
+        DA_HUY_DON = 2,
 
         [Display(Name = "Đang lấy hàng")]
-        DANG_LAY_HANG = 5,
+        DANG_LAY_HANG = 3,
 
         [Display(Name = "Đã xuất hàng")]
-        DA_XUAT_HANG = 6,
+        DA_XUAT_HANG = 4,
 
     }
 }
