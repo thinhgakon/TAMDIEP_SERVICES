@@ -367,6 +367,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                 v.Step == (int)OrderStep.DA_CAN_VAO 
                                 && (v.DriverUserName ?? "") != ""
                                 && r.TroughCode == troughCode
+                                && v.TimeConfirm3 > DateTime.Now.AddMinutes(-3)
                             orderby v.IndexOrder
                             select new OrderToCallInTroughResponse
                             {
