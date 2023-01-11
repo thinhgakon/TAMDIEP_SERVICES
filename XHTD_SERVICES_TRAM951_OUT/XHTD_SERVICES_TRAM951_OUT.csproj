@@ -275,7 +275,6 @@
     <Compile Include="Models\Response\GetTokenResponse.cs" />
     <Compile Include="Models\Response\HUBDataResponse.cs" />
     <Compile Include="Models\Response\HUBResponse.cs" />
-    <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
