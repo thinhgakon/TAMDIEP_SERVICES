@@ -88,10 +88,21 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
-                // Case này cũng xảy ra khi xe vừa vào bàn cân, lúc này chưa nhận diện dc RFID nên chưa xét IsScalling1
-                //Program.IsScalling481 = false;
-                //Program.IsLockingScale481 = false;
-                Program.scaleValues481.Clear();
+                if (Program.IsScalling481) {
+                    logger.Info($"==== Giai phong can 481 khi can khong thanh cong ===");
+
+                    Program.IsScalling481 = false;
+                    Program.IsLockingScale481 = false;
+                    Program.scaleValues481.Clear();
+
+                    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481);
+
+                    // 8. Bật đèn xanh
+                    logger.Info($"=== Bat den xanh khi can khong thanh cong ===");
+                    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                    Thread.Sleep(500);
+                    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                }
 
                 return;
             }
@@ -180,7 +191,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                Thread.Sleep(2000);
+                                Thread.Sleep(5000);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
