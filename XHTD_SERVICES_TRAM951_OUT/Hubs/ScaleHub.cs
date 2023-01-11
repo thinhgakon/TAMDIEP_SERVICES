@@ -169,18 +169,20 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
-                                Thread.Sleep(5000);
+                                Thread.Sleep(7000);
 
-                                // 7. Bật đèn xanh
-                                logger.Info($"7. Bat den xanh");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_1);
-
-                                // 8. Mở barrier
-                                logger.Info($"8. Mo barrier IN");
+                                // 7. Mở barrier
+                                logger.Info($"7.1. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn1();
                                 Thread.Sleep(500);
-                                logger.Info($"8. Mo barrier OUT");
+                                logger.Info($"7.2. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
+
+                                Thread.Sleep(2000);
+
+                                // 8. Bật đèn xanh
+                                logger.Info($"8. Bat den xanh");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_1);
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
@@ -190,7 +192,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //logger.Info($"10. Xep so thu tu vao mang xuat");
                                 //await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
-                                // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                // 9. Giải phóng cân
                                 logger.Info($"11. Giai phong can 1");
                                 Program.IsScalling1 = false;
                                 Program.IsLockingScale1 = false;
@@ -312,15 +314,17 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 logger.Info($"6. Goi iERP API luu gia tri can");
                                 Thread.Sleep(10000);
 
-                                // 7. Bật đèn xanh
-                                logger.Info($"7. Bat den xanh");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2);
-
-                                // 8. Mở barrier
-                                logger.Info($"8. Mo barrier IN");
+                                // 7. Mở barrier
+                                logger.Info($"7.1. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn2();
-                                logger.Info($"8. Mo barrier OUT");
+                                logger.Info($"7.2. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut2();
+
+                                Thread.Sleep(2000);
+
+                                // 8. Bật đèn xanh
+                                logger.Info($"8. Bat den xanh");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2);
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
@@ -330,7 +334,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 //logger.Info($"10. Xep so thu tu vao mang xuat");
                                 //await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
-                                // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                // 9. Giải phóng cân
                                 logger.Info($"11. Giai phong can 2");
                                 Program.IsScalling2 = false;
                                 Program.IsLockingScale2 = false;

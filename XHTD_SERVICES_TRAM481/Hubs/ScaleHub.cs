@@ -209,7 +209,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"10. Xep so thu tu vao mang xuat");
                                 await DIBootstrapper.Init().Resolve<IndexOrderBusiness>().SetIndexOrder(scaleInfo.DeliveryCode);
 
-                                // 11. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                                // 11. Giải phóng cân
                                 logger.Info($"11. Giai phong can 481");
                                 Program.IsScalling481 = false;
                                 Program.IsLockingScale481 = false;
