@@ -48,23 +48,52 @@ namespace XHTD_SERVICES.Data.Repositories
             try {
                 string typeProduct = "";
                 string productNameUpper = websaleOrder.productName.ToUpper();
+                string itemCategory = websaleOrder.itemCategory;
 
-                if (productNameUpper.Contains("RỜI"))
+                if(itemCategory == "XI_MANG_XA")
                 {
                     typeProduct = "ROI";
                 }
-                else if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
-                {
-                    typeProduct = "PCB30";
-                }
-                else if (productNameUpper.Contains("PCB40"))
-                {
-                    typeProduct = "PCB40";
-                }
-                else if (productNameUpper.Contains("CLINKER"))
+                else if (itemCategory == "CLINKER")
                 {
                     typeProduct = "CLINKER";
                 }
+                else
+                {
+                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
+                    {
+                        typeProduct = "PCB30";
+                    }
+                    else if (productNameUpper.Contains("PC30"))
+                    {
+                        typeProduct = "PC30";
+                    }
+                    else if (productNameUpper.Contains("PCB40"))
+                    {
+                        typeProduct = "PCB40";
+                    }
+                    else if (productNameUpper.Contains("PC40"))
+                    {
+                        typeProduct = "PC40";
+                    }
+                }
+
+                //if (productNameUpper.Contains("RỜI"))
+                //{
+                //    typeProduct = "ROI";
+                //}
+                //else if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
+                //{
+                //    typeProduct = "PCB30";
+                //}
+                //else if (productNameUpper.Contains("PCB40"))
+                //{
+                //    typeProduct = "PCB40";
+                //}
+                //else if (productNameUpper.Contains("CLINKER"))
+                //{
+                //    typeProduct = "CLINKER";
+                //}
 
                 var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
                 var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
