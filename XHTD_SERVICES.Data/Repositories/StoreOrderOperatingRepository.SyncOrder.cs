@@ -114,13 +114,13 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId)
+        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn)
         {
             bool isSynced = false;
 
             try
             {
-                string cancelTime = DateTime.Now.ToString();
+                DateTime timeInDate = DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
@@ -130,12 +130,12 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
-                    order.TimeConfirm3 = DateTime.Now;
+                    order.TimeConfirm3 = timeInDate;
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime}; ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Đã cân vào lúc {cancelTime}; ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {timeIn}; ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Đã cân vào lúc {timeIn}; ";
 
                     await _appDbContext.SaveChangesAsync();
 
@@ -156,13 +156,13 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut)
         {
             bool isSynced = false;
 
             try
             {
-                string cancelTime = DateTime.Now.ToString();
+                DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
@@ -170,12 +170,12 @@ namespace XHTD_SERVICES.Data.Repositories
                 if (order != null)
                 {
                     order.Confirm7 = 1;
-                    order.TimeConfirm7 = DateTime.Now;
+                    order.TimeConfirm7 = timeOutDate;
                     order.Step = (int)OrderStep.DA_CAN_RA;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {cancelTime} ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {cancelTime}; ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {timeOut} ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {timeOut}; ";
 
                     await _appDbContext.SaveChangesAsync();
 

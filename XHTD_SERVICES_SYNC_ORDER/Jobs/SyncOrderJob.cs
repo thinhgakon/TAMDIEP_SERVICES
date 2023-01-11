@@ -201,11 +201,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             else if (stateId == (int)OrderState.DANG_LAY_HANG)
             {
-                isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id);
+                isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn);
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
-                isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id);
+                isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut);
             }
             else if (stateId == (int)OrderState.DA_HUY_DON){
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
