@@ -164,14 +164,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
             try
             {
-                string calcelTime = DateTime.Now.ToString();
+                string cancelTime = DateTime.Now.ToString();
 
                 var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && (x.Step != (int)OrderStep.DA_HOAN_THANH && x.Step != (int)OrderStep.DA_GIAO_HANG));
                 if (order != null)
                 {
                     order.IsVoiced = true;
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Hủy đơn lúc {calcelTime} ";
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Hủy đơn lúc {calcelTime} ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Hủy đơn lúc {cancelTime} ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Hủy đơn lúc {cancelTime} ";
 
                     await _appDbContext.SaveChangesAsync();
 
@@ -533,7 +533,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
@@ -552,7 +552,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_VAO_CONG;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {cancelTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -573,7 +573,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
@@ -589,7 +589,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Confirm8 = 1;
                         order.TimeConfirm8 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {cancelTime} ";
 
                         Console.WriteLine($@"Xác thực ra cổng {cardNo}");
                         log.Info($@"Xác thực ra cổng {cardNo}");
@@ -719,7 +719,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     //var orders = await dbContext.tblStoreOrderOperatings
                     //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
@@ -750,7 +750,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -771,7 +771,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     //var orders = await dbContext.tblStoreOrderOperatings
                     //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
@@ -802,7 +802,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {cancelTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -903,7 +903,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
@@ -921,7 +921,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.WeightIn = weightIn;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -942,7 +942,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string calcelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString();
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
@@ -959,7 +959,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.TimeConfirm7 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.WeightOut = weightOut;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {calcelTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {cancelTime} ";
 
                         Console.WriteLine($@"Cân ra {cardNo}");
                         log.Info($@"Cân ra {cardNo}");
