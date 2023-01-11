@@ -97,23 +97,23 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            if (!Program.IsLockingScale481)
-            {
-                var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
-                if (isInValidSensor481)
-                {
-                    // Send notification signalr
-                    logger.Info("Vi pham cam bien");
+            //if (!Program.IsLockingScale481)
+            //{
+            //    var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
+            //    if (isInValidSensor481)
+            //    {
+            //        // Send notification signalr
+            //        logger.Info("Vi pham cam bien");
 
-                    Program.scaleValues481.Clear();
+            //        Program.scaleValues481.Clear();
 
-                    return;
-                }
-                else
-                {
-                    logger.Info($"Received 951-1 data: time={time}, value={value}");
-                }
-            }
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        logger.Info($"Received 951-1 data: time={time}, value={value}");
+            //    }
+            //}
 
             if (Program.IsScalling481 && !Program.IsLockingScale481)
             {
@@ -173,18 +173,20 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"6. Goi iERP API luu gia tri can");
                                 Thread.Sleep(10000);
 
-                                // 7. Bật đèn xanh
-                                logger.Info($"7. Bat den xanh");
+                                // 7. Mở barrier
+                                logger.Info($"7. Mo barrier IN");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                Thread.Sleep(500);
+                                logger.Info($"7. Mo barrier OUT");
+                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+                                Thread.Sleep(2000);
+
+                                // 8. Bật đèn xanh
+                                logger.Info($"8. Bat den xanh");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                 Thread.Sleep(500);
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
-
-                                // 8. Mở barrier
-                                logger.Info($"8. Mo barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(500);
-                                logger.Info($"8. Mo barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can vao");
