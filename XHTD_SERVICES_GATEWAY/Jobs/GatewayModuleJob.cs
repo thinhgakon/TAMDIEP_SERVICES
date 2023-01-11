@@ -548,6 +548,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             try
             {
+                if (Connection.State != ConnectionState.Connected)
+                {
+                    // TODO: Reconnect
+                    _gatewayLogger.LogInfo($"Connection State: {Connection.State.ToString()}");
+                }
+
                 HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message).Wait();
 
                 _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
