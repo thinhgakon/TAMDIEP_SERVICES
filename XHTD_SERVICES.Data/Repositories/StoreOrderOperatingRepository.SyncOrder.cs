@@ -164,6 +164,8 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
+                // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
+
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
                                                 && x.Step < (int)OrderStep.DA_CAN_RA);
