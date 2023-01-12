@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_AUTO_REINDEX
 {
-    public class SyncOrderLogger : BaseLogger<Jobs.SyncOrderJob>
+    public class AutoReindexLogger : BaseLogger<Jobs.AutoReindexJob>
     {
     }
 }

@@ -17,7 +17,7 @@ using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 {
-    public class SyncOrderJob : IJob
+    public class AutoReindexJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly SyncOrderLogger _syncOrderLogger;
+        protected readonly AutoReindexLogger _syncOrderLogger;
 
         private static string strToken;
 
@@ -39,12 +39,12 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
         private static int numberHoursSearchOrder = 48;
 
-        public SyncOrderJob(
+        public AutoReindexJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            SyncOrderLogger syncOrderLogger
+            AutoReindexLogger syncOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;

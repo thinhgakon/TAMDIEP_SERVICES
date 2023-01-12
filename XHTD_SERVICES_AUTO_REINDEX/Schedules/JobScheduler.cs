@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Schedules
             await _scheduler.Start();
 
             // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<SyncOrderJob>().Build();
+            IJobDetail syncOrderJob = JobBuilder.Create<AutoReindexJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -36,19 +36,6 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
-            // Đồng bộ trạng thái đơn hàng
-            /*
-            IJobDetail smsJob = JobBuilder.Create<SyncOrderStatusJob>().Build();
-            ITrigger smsTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(smsJob, smsTrigger);
-            */
         }
     }
 }

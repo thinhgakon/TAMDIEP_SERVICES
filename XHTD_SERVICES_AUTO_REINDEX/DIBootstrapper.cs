@@ -20,7 +20,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX
             builder.RegisterType<VehicleRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
-            builder.RegisterType<SyncOrderLogger>().AsSelf();
+            builder.RegisterType<AutoReindexLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(SyncOrderJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(AutoReindexJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }
