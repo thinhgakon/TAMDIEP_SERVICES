@@ -27,9 +27,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly AutoReindexLogger _syncOrderLogger;
-
-        private static string strToken;
+        protected readonly AutoReindexLogger _autoReindexLogger;
 
         protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
 
@@ -44,14 +42,14 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             VehicleRepository vehicleRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            AutoReindexLogger syncOrderLogger
+            AutoReindexLogger autoReindexLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
-            _syncOrderLogger = syncOrderLogger;
+            _autoReindexLogger = autoReindexLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -68,11 +66,11 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
                 if (!isActiveService)
                 {
-                    _syncOrderLogger.LogInfo("Service dong bo don hang dang TAT.");
+                    _autoReindexLogger.LogInfo("Service dong bo don hang dang TAT.");
                     return;
                 }
 
-                await SyncOrderProcess();
+                await AutoReindexProcess();
             });
         }
 
@@ -94,124 +92,9 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             }
         }
 
-        public async Task SyncOrderProcess()
+        public async Task AutoReindexProcess()
         {
-            _syncOrderLogger.LogInfo("start process SyncOrderJob");
-
-            GetToken();
-
-            List<OrderItemResponse> websaleOrders = GetWebsaleOrder();
-
-            if (websaleOrders == null || websaleOrders.Count == 0)
-            {
-                return;
-            }
-
-            bool isChanged = false;
-
-            foreach (var websaleOrder in websaleOrders)
-            {
-                bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
-
-                if (!isChanged) isChanged = isSynced;
-            }
-
-            if (isChanged)
-            {
-                _notification.SendNotification(
-                    "SYNC_ORDER",
-                    null,
-                    1,
-                    "Đồng bộ đơn hàng thành công",
-                    0,
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null
-                );
-            }
-        }
-
-        public void GetToken()
-        {
-            try
-            {
-                IRestResponse response = HttpRequest.GetWebsaleToken();
-
-                var content = response.Content;
-
-                var responseData = JsonConvert.DeserializeObject<GetTokenResponse>(content);
-                strToken = responseData.access_token;
-            }
-            catch (Exception ex)
-            {
-                _syncOrderLogger.LogInfo("getToken error: " + ex.Message);
-            }
-        }
-
-        public List<OrderItemResponse> GetWebsaleOrder()
-        {
-            IRestResponse response = HttpRequest.GetWebsaleOrder(strToken, numberHoursSearchOrder);
-            var content = response.Content;
-
-            if (response.StatusDescription.Equals("Unauthorized"))
-            {
-                _syncOrderLogger.LogInfo("Unauthorized GetWebsaleOrder");
-
-                return null;
-            }
-
-            var responseData = JsonConvert.DeserializeObject<SearchOrderResponse>(content);
-
-            return responseData.collection.OrderBy(x => x.id).ToList();
-        }
-
-        public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
-        {
-            bool isSynced = false;
-
-            var stateId = 0;
-            switch (websaleOrder.status.ToUpper())
-            {
-                case "BOOKED":
-                    stateId = (int)OrderState.DA_DAT_HANG;
-                    break;
-                case "VOIDED":
-                    stateId = (int)OrderState.DA_HUY_DON;
-                    break;
-                case "RECEIVING":
-                    stateId = (int)OrderState.DANG_LAY_HANG;
-                    break;
-                case "RECEIVED":
-                    stateId = (int)OrderState.DA_XUAT_HANG;
-                    break;
-            }
-
-            if (stateId == (int)OrderState.DA_DAT_HANG && stateId != (int)OrderState.DA_XUAT_HANG)
-            {
-                isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
-
-                if (isSynced)
-                {
-                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                    await _vehicleRepository.CreateAsync(vehicleCode);
-                }
-            }
-            else if (stateId == (int)OrderState.DANG_LAY_HANG)
-            {
-                isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn);
-            }
-            else if (stateId == (int)OrderState.DA_XUAT_HANG)
-            {
-                isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut);
-            }
-            else if (stateId == (int)OrderState.DA_HUY_DON){
-                isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
-            }
-
-            return isSynced;
+            _autoReindexLogger.LogInfo("start process AutoReindexProcess");
         }
     }
 }

@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4935FD0D-1FE6-4114-AEB1-5068A928C059}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_SYNC_ORDER</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_SYNC_ORDER</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_AUTO_REINDEX</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_AUTO_REINDEX</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
