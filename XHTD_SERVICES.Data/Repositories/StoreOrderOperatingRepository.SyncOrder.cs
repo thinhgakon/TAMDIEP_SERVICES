@@ -165,26 +165,50 @@ namespace XHTD_SERVICES.Data.Repositories
                 DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
+                if(timeOutDate > DateTime.Now.AddMinutes(-120)) { 
+                    var order = _appDbContext.tblStoreOrderOperatings
+                                .FirstOrDefault(x => x.OrderId == orderId
+                                                    && x.Step < (int)OrderStep.DA_CAN_RA);
+                    if (order != null)
+                    {
+                        order.Confirm7 = 1;
+                        order.TimeConfirm7 = timeOutDate;
+                        order.Step = (int)OrderStep.DA_CAN_RA;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {timeOut} ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {timeOut}; ";
 
-                var order = _appDbContext.tblStoreOrderOperatings
-                            .FirstOrDefault(x => x.OrderId == orderId
-                                                && x.Step < (int)OrderStep.DA_CAN_RA);
-                if (order != null)
+                        await _appDbContext.SaveChangesAsync();
+
+                        Console.WriteLine($@"Update Received => DA_CAN_RA Order {orderId}");
+                        log.Info($@"Update Received => DA_CAN_RA Order {orderId}");
+
+                        isSynced = true;
+                    }
+                }
+                else
                 {
-                    order.Confirm7 = 1;
-                    order.TimeConfirm7 = timeOutDate;
-                    order.Step = (int)OrderStep.DA_CAN_RA;
-                    order.IndexOrder = 0;
-                    order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {timeOut} ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {timeOut}; ";
+                    var order = _appDbContext.tblStoreOrderOperatings
+                                .FirstOrDefault(x => x.OrderId == orderId
+                                                    && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                    if (order != null)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {timeOut} ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {timeOut}; ";
 
-                    await _appDbContext.SaveChangesAsync();
+                        await _appDbContext.SaveChangesAsync();
 
-                    Console.WriteLine($@"Update Received Order {orderId}");
-                    log.Info($@"Update Received Order {orderId}");
+                        Console.WriteLine($@"Update Received => DA_HOAN_THANH Order {orderId}");
+                        log.Info($@"Update Received => DA_HOAN_THANH Order {orderId}");
 
-                    isSynced = true;
+                        isSynced = true;
+                    }
                 }
 
                 return isSynced;
