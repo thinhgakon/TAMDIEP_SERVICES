@@ -22,7 +22,7 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly CompleteOrderLogger _sampleLogger;
+        protected readonly CompleteOrderLogger _completeOrderLogger;
 
         const int OVER_TIME_TO_AUTO_COMPLETE = 5; // đơn vị phút
 
@@ -30,13 +30,13 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             Notification notification,
-            CompleteOrderLogger callInTroughLogger
+            CompleteOrderLogger completeOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _notification = notification;
-            _sampleLogger = callInTroughLogger;
+            _completeOrderLogger = completeOrderLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -54,7 +54,7 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Jobs
 
         public async void CompleteOrderProcess()
         {
-            _sampleLogger.LogInfo("start process CompleteOrderJob");
+            _completeOrderLogger.LogInfo("start process CompleteOrderJob");
 
             var orders = await _storeOrderOperatingRepository.GetOrdersByStep((int)OrderStep.DA_CAN_RA);
 
