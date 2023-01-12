@@ -210,6 +210,9 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
+                        log.Error($"Update Index:  orderId={orderId}, index={index}");
+                        Console.WriteLine($"Update Index: orderId={orderId}, index={index}");
+
                         isUpdated = true;
                     }
 
@@ -979,6 +982,24 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public int GetMaxIndexByCatId(string catId)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = dbContext.tblStoreOrderOperatings
+                                .Where(x => x.CatId == catId && x.Step == (int)OrderStep.DA_CAN_VAO && x.IsVoiced == false)
+                                .OrderByDescending(x => x.IndexOrder)
+                                .FirstOrDefault();
+
+                if (order != null)
+                {
+                    return (int)order.IndexOrder;
+                }
+
+                return 0;
+            }
+        }
+
         public async Task SetIndexOrder(string deliveryCode)
         {
             var orderExist = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
@@ -992,6 +1013,70 @@ namespace XHTD_SERVICES.Data.Repositories
                 var newIndex = maxIndex + 1;
 
                 await UpdateIndex(orderExist.Id, newIndex);
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangRoiIndexd()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.CatId == "XI_MANG_XA"
+                                                && x.IsVoiced == false
+                                                && x.IndexOrder > 0
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangRoiNoIndex()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.CatId == "XI_MANG_XA"
+                                                && x.IsVoiced == false
+                                                && (x.IndexOrder == null || x.IndexOrder == 0)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangBaoIndexd()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.IsVoiced == false
+                                                && x.IndexOrder > 0
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangBaoNoIndex()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.IsVoiced == false
+                                                && (x.IndexOrder == null || x.IndexOrder == 0)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
             }
         }
     }
