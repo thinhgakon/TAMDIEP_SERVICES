@@ -58,6 +58,8 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
           <Property Name="Trough" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CountTry" Type="int" Nullable="false" />
           <Property Name="CallLog" Type="nvarchar(max)" />
@@ -657,6 +659,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Trough" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
           <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1226,6 +1230,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
               <MappingFragment StoreEntitySet="tblCallToTrough">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
+                <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
                 <ScalarProperty Name="Trough" ColumnName="Trough" />
                 <ScalarProperty Name="CountTry" ColumnName="CountTry" />
                 <ScalarProperty Name="CallLog" ColumnName="CallLog" />

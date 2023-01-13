@@ -16,6 +16,8 @@ namespace XHTD_SERVICES.Data.Entities
     {
         public int Id { get; set; }
         public int OrderId { get; set; }
+        public string DeliveryCode { get; set; }
+        public string Vehicle { get; set; }
         public string Trough { get; set; }
         public int CountTry { get; set; }
         public string CallLog { get; set; }
