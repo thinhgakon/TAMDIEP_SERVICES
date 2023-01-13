@@ -111,9 +111,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             foreach (var websaleOrder in websaleOrders)
             {
-                bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
+                // Không đồng bộ các đơn tại sông Thao
+                if (websaleOrder.shippointId != "13") { 
+                    bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
 
-                if (!isChanged) isChanged = isSynced;
+                    if (!isChanged) isChanged = isSynced;
+                }
             }
 
             if (isChanged)
