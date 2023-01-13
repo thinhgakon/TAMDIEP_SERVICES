@@ -234,6 +234,10 @@
       <Project>{ee357022-f104-42f0-bfbc-a5c4e9791300}</Project>
       <Name>XHTD_SERVICES.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_AUTO_REINDEX\XHTD_SERVICES_AUTO_REINDEX.csproj">
+      <Project>{4935fd0d-1fe6-4114-aeb1-5068a928c059}</Project>
+      <Name>XHTD_SERVICES_AUTO_REINDEX</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_CALL_IN_TROUGH\XHTD_SERVICES_CALL_IN_TROUGH.csproj">
       <Project>{e1ba9b59-31eb-4f3b-9261-bd843c9df463}</Project>
       <Name>XHTD_SERVICES_CALL_IN_TROUGH</Name>

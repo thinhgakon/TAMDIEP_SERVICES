@@ -131,12 +131,12 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
                 }
             }
 
-            var orderXBaoNoIndexs = await _storeOrderOperatingRepository.GetOrdersXiMangRoiNoIndex();
+            var orderXBaoNoIndexs = await _storeOrderOperatingRepository.GetOrdersXiMangBaoNoIndex();
             if (orderXBaoNoIndexs != null && orderXBaoNoIndexs.Count > 0)
             {
                 foreach (var orderXBaoNoIndex in orderXBaoNoIndexs)
                 {
-                    var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByCatId("XI_MANG_XA");
+                    var maxIndex = _storeOrderOperatingRepository.GetMaxIndexByCatId("XI_MANG_BAO");
                     await _storeOrderOperatingRepository.UpdateIndex(orderXBaoNoIndex.Id, maxIndex + 1);
                 }
             }
