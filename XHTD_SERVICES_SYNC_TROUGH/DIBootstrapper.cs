@@ -1,13 +1,13 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
 using System.Collections.Specialized;
-using XHTD_SERVICES_AUTO_REINDEX.Schedules;
+using XHTD_SERVICES_SYNC_TROUGH.Schedules;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_AUTO_REINDEX.Jobs;
+using XHTD_SERVICES_SYNC_TROUGH.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_AUTO_REINDEX
+namespace XHTD_SERVICES_SYNC_TROUGH
 {
     public static class DIBootstrapper
     {

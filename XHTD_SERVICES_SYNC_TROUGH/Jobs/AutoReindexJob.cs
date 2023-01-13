@@ -6,16 +6,16 @@ using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
 using RestSharp;
-using XHTD_SERVICES_AUTO_REINDEX.Models.Response;
+using XHTD_SERVICES_SYNC_TROUGH.Models.Response;
 using XHTD_SERVICES.Data.Models.Response;
 using Newtonsoft.Json;
-using XHTD_SERVICES_AUTO_REINDEX.Models.Values;
+using XHTD_SERVICES_SYNC_TROUGH.Models.Values;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
 using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
+namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
     public class AutoReindexJob : IJob
     {
@@ -81,7 +81,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
             var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
 
-            if(activeParameter == null || activeParameter.Value == "0")
+            if (activeParameter == null || activeParameter.Value == "0")
             {
                 isActiveService = false;
             }

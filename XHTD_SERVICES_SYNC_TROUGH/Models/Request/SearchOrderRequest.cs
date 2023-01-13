@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Models.Request
+namespace XHTD_SERVICES_SYNC_TROUGH.Models.Request
 {
     public class SearchOrderRequest
     {

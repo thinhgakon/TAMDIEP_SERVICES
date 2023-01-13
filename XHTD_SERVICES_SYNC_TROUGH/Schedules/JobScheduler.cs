@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
-using XHTD_SERVICES_AUTO_REINDEX.Jobs;
+using XHTD_SERVICES_SYNC_TROUGH.Jobs;
 using System.Configuration;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Schedules
+namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
 {
     public class JobScheduler
     {

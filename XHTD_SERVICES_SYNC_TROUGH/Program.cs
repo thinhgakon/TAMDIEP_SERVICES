@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_AUTO_REINDEX
+namespace XHTD_SERVICES_SYNC_TROUGH
 {
     internal static class Program
     {
