@@ -43,6 +43,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private static int numberHoursSearchOrder = 48;
 
+        private const string IP_ADDRESS = "10.0.7.40";
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 1007;
 
@@ -112,7 +113,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             TcpClient client = new TcpClient();
 
             // 1. connect
-            client.Connect("10.0.7.40", PORT_NUMBER);
+            client.Connect(IP_ADDRESS, PORT_NUMBER);
             Stream stream = client.GetStream();
 
             _syncTroughLogger.LogInfo("Connected to MANG XUAT.");

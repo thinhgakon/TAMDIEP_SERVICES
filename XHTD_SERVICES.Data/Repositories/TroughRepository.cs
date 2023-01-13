@@ -71,6 +71,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
                     if (itemToCall != null)
                     {
+                        itemToCall.Working = true;
                         itemToCall.DeliveryCodeCurrent = deliveryCode;
                         itemToCall.CountQuantityCurrent = countQuantity;
                         itemToCall.PlanQuantityCurrent = planQuantity;
