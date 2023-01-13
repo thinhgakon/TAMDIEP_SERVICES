@@ -32,7 +32,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly SyncTroughLogger _autoReindexLogger;
+        protected readonly SyncTroughLogger _syncTroughLogger;
 
         protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
 
@@ -53,7 +53,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             TroughRepository troughRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            SyncTroughLogger autoReindexLogger
+            SyncTroughLogger syncTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -61,7 +61,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             _troughRepository = troughRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
-            _autoReindexLogger = autoReindexLogger;
+            _syncTroughLogger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -78,11 +78,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (!isActiveService)
                 {
-                    _autoReindexLogger.LogInfo("Service dong bo don hang dang TAT.");
+                    _syncTroughLogger.LogInfo("Service dong bo don hang dang TAT.");
                     return;
                 }
 
-                await AutoReindexProcess();
+                await SyncTroughProcess();
             });
         }
 
@@ -104,17 +104,17 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public async Task AutoReindexProcess()
+        public async Task SyncTroughProcess()
         {
-            _autoReindexLogger.LogInfo("Start process SyncTroughProcess");
-            
+            _syncTroughLogger.LogInfo("Start process SyncTroughProcess");
+
             TcpClient client = new TcpClient();
 
             // 1. connect
             client.Connect("10.0.7.40", PORT_NUMBER);
             Stream stream = client.GetStream();
 
-            _autoReindexLogger.LogInfo("Connected to MANG XUAT.");
+            _syncTroughLogger.LogInfo("Connected to MANG XUAT.");
 
             var troughCodes = await _troughRepository.GetAllTroughCodes();
 
@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task ReadDataFromTrough(string troughCode, Stream stream)
         {
-            _autoReindexLogger.LogInfo($"ReadDataFromTrough: {troughCode}");
+            _syncTroughLogger.LogInfo($"ReadDataFromTrough: {troughCode}");
             // 2. send 1
             byte[] data1 = encoding.GetBytes($"SendTroughInfo_{troughCode}");
             stream.Write(data1, 0, data1.Length);

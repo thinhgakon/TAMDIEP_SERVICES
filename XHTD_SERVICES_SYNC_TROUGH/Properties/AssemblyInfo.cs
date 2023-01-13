@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("XHTD_SERVICES_AUTO_REINDEX")]
+[assembly: AssemblyTitle("XHTD_SERVICES_SYNC_TROUGH")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("XHTD_SERVICES_AUTO_REINDEX")]
+[assembly: AssemblyProduct("XHTD_SERVICES_SYNC_TROUGH")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
