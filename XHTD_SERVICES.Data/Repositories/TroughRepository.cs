@@ -38,6 +38,20 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<string>> GetAllTroughCodes()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs
+                                    .Where(x => x.State == true)
+                                    .OrderBy(x => x.Id)
+                                    .Select(x => x.Code)
+                                    .ToListAsync();
+
+                return trough;
+            }
+        }
+
         public tblTrough GetDetail(string code)
         {
             using (var dbContext = new XHTD_Entities())
@@ -45,6 +59,61 @@ namespace XHTD_SERVICES.Data.Repositories
                 var trough = dbContext.tblTroughs.FirstOrDefault(x => x.Code == code && x.State == true);
 
                 return trough;
+            }
+        }
+
+        public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.DeliveryCodeCurrent = deliveryCode;
+                        itemToCall.CountQuantityCurrent = countQuantity;
+                        itemToCall.PlanQuantityCurrent = planQuantity;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"UpdateTrough Success");
+                        Console.WriteLine($@"UpdateTrough Success");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateTrough Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task ResetTrough(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.Working = false;
+                        itemToCall.DeliveryCodeCurrent = null;
+                        itemToCall.CountQuantityCurrent = null;
+                        itemToCall.PlanQuantityCurrent = null;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"ResetTrough Success");
+                        Console.WriteLine($@"ResetTrough Success");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"ResetTrough Error: " + ex.Message);
+                    Console.WriteLine($@"ResetTrough Error: " + ex.Message);
+                }
             }
         }
     }
