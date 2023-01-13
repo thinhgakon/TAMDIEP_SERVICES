@@ -60,7 +60,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             _queueToCallLogger.LogInfo("------------------------------");
 
             // Lay ra danh sach mang xuat xi mang bao dang hoat dong
-            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
+            var troughts = await _troughRepository.GetAllTroughCodes();
 
             if (troughts == null || troughts.Count == 0)
             {
@@ -85,12 +85,14 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                 _queueToCallLogger.LogInfo($"1. Khong ton tai mang {troughCode}. Ket thuc");
                 return; 
             }
-
-            _queueToCallLogger.LogInfo($"1. Mang {troughCode} dang hoat dong");
+            else if((bool)troughInfo.Working)
+            {
+                _queueToCallLogger.LogInfo($"1. Mang {troughCode} dang xuat hang. Ket thuc");
+                return;
+            }
 
             // Đếm số lượng đơn trong hàng chờ gọi của máng
             // Thêm đơn vào hàng chờ gọi
-            // TODO: Kiểm tra máng đang ko xuất hàng thì mới thêm đơn mới vào hàng đợi
             var numberOrderFrontTrough = _callToTroughRepository.GetNumberOrderInQueue(troughCode);
 
             _queueToCallLogger.LogInfo($"3. Co {numberOrderFrontTrough} don hang trong hang cho goi vao mang {troughCode}");
@@ -103,28 +105,34 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async Task PushOrderToQueue(string troughcode, int quantity)
         {
-            _queueToCallLogger.LogInfo($"4. Them {quantity} don vao hang doi goi loa vao mang {troughcode}");
+            try { 
+                _queueToCallLogger.LogInfo($"4. Them {quantity} don vao hang doi goi loa vao mang {troughcode}");
 
-            var orders = await _storeOrderOperatingRepository.GetOrdersToCallInTrough(troughcode, quantity);
+                var orders = await _storeOrderOperatingRepository.GetOrdersToCallInTrough(troughcode, quantity);
 
-            if (orders == null || orders.Count == 0)
-            {
-                _queueToCallLogger.LogInfo($"5. Ko con don vua can vao hop le de them vao hang cho goi. Ket thuc");
+                if (orders == null || orders.Count == 0)
+                {
+                    _queueToCallLogger.LogInfo($"5. Ko con don vua can vao hop le de them vao hang cho goi. Ket thuc");
 
-                return;
+                    return;
+                }
+
+                _queueToCallLogger.LogInfo($"5. Co {orders.Count} don hang hop le de the vao hang doi");
+
+                foreach (var order in orders)
+                {
+                    _queueToCallLogger.LogInfo($"5.1. Tien hanh them {order.Id} voi code {order.DeliveryCode}");
+
+                    // Cap nhat trang thai don hang DANG_GOI_XE
+                    await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
+
+                    // Them ban ghi vao tblCallToTrough: danh sach cho goi xe
+                    await _callToTroughRepository.CreateAsync(order.Id, troughcode);
+                }
             }
-
-            _queueToCallLogger.LogInfo($"5. Co {orders.Count} don hang hop le de the vao hang doi");
-
-            foreach (var order in orders)
+            catch(Exception ex)
             {
-                _queueToCallLogger.LogInfo($"5.1. Tien hanh them {order.Id} voi code {order.DeliveryCode}");
-
-                // Cap nhat trang thai don hang DANG_GOI_XE
-                await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
-
-                // Them ban ghi vao tblCallToTrough: danh sach cho goi xe
-                await _callToTroughRepository.CreateAsync(order.Id, troughcode);
+                _queueToCallLogger.LogInfo($"Errr: {ex.StackTrace} {ex.Message}");
             }
         }
     }

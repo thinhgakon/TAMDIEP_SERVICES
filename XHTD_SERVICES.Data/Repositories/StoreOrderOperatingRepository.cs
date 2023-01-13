@@ -245,10 +245,12 @@ namespace XHTD_SERVICES.Data.Repositories
                             join r in dbContext.tblTroughTypeProducts 
                             on v.TypeProduct equals r.TypeProduct
                             where 
-                                v.Step == (int)OrderStep.DA_CAN_VAO 
-                                && (v.DriverUserName ?? "") != ""
+                                v.Step == (int)OrderStep.DA_CAN_VAO
+                                && v.IsVoiced == false
+                                && v.IndexOrder > 0
+                                //&& (v.DriverUserName ?? "") != ""
                                 && r.TroughCode == troughCode
-                                && v.TimeConfirm3 > DateTime.Now.AddMinutes(-3)
+                                //&& v.TimeConfirm3 > DateTime.Now.AddMinutes(-2)
                             orderby v.IndexOrder
                             select new OrderToCallInTroughResponse
                             {
@@ -261,7 +263,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 var data = await query.ToListAsync();
 
                 return data;
-
             }
         }
 
