@@ -17,6 +17,7 @@ using XHTD_SERVICES.Data.Entities;
 using System.Text;
 using System.Net.Sockets;
 using System.IO;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -149,12 +150,27 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             var status = responseArr[1];
             var deliveryCode = responseArr[5].Replace("'", "");
-            var countQuantity = Double.Parse(responseArr[6]);
-            var planQuantity = Double.Parse(responseArr[8]);
+            var countQuantity = Double.Parse(responseArr[8]);
+            var planQuantity = Double.Parse(responseArr[6]);
 
             if (status == "True")
             {
                 await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
+
+                await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
+
+                var isAlmostDone = (countQuantity / planQuantity) > 0.9;
+
+                _syncTroughLogger.LogInfo($"Logoo: countQuantity={countQuantity}, planQuantity={planQuantity}, isAlmostDone={isAlmostDone}");
+
+                if (isAlmostDone)
+                {
+                    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                }
+                else
+                {
+                    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                }
             }
             else
             {
