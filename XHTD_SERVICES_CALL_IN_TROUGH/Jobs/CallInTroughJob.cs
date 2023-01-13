@@ -82,16 +82,28 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             }
         }
 
-        public void CallInTroughProcess()
+        public async void CallInTroughProcess()
         {
             _callInTroughLogger.LogInfo("start process CallInTroughJob");
 
             // TODO: Lay ra danh sach mang xuat xi mang bao dang hoat dong
             // Goi xe vao tung mang: tham khao service QueueToCall
-            CallInTrough("M1");
+
+            var troughts = await _troughRepository.GetAllTroughCodes();
+
+            if (troughts == null || troughts.Count == 0)
+            {
+                return;
+            }
+
+            // Doc lan luot thong tin tren cac mang
+            foreach (var trought in troughts)
+            {
+                await CallInTrough(trought);
+            }
         }
 
-        public async void CallInTrough(string troughCode) 
+        public async Task CallInTrough(string troughCode) 
         {
             _callInTroughLogger.LogInfo($"CallInTrough {troughCode}");
 
