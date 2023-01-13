@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using log4net;
-using XHTD_SERVICES_AUTO_REINDEX;
-using XHTD_SERVICES_AUTO_REINDEX.Schedules;
+using XHTD_SERVICES_SYNC_TROUGH;
+using XHTD_SERVICES_SYNC_TROUGH.Schedules;
 
 namespace XHTD_DEBUG
 {
