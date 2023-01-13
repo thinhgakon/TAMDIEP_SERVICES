@@ -161,8 +161,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 var isAlmostDone = (countQuantity / planQuantity) > 0.9;
 
-                _syncTroughLogger.LogInfo($"Logoo: countQuantity={countQuantity}, planQuantity={planQuantity}, isAlmostDone={isAlmostDone}");
-
                 if (isAlmostDone)
                 {
                     await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);

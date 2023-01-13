@@ -167,10 +167,10 @@ namespace XHTD_SERVICES.Data.Repositories
                             return true;
                         }
 
-                        order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+                        //order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
                     }
 
-                    order.IndexOrder = 0;
+                    //order.IndexOrder = 0;
                     order.Confirm1 = 1;
                     order.Confirm2 = 1;
                     order.Confirm3 = 1;
