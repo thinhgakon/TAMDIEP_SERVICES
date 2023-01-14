@@ -39,6 +39,8 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
             //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
 
+            log.Info("start show led bao");
+
 
             var orderShows = new List<StoreOrderForLED12>();
             orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0101", State1 = "dang moi vao" }); //1
@@ -440,6 +442,8 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             {
                 nErrorCode = CSDKExport.Hd_GetSDKLastError();
             }
+
+            log.Info("end show led xi bao");
         }
         private void SetLED12NoContent()
         {

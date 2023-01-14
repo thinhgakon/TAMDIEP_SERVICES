@@ -35,7 +35,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
         }
         public void ShowLed12Process()
         {
-
+            log.Info("start show led bao");
 
             // đổ data thay thế vào đây
 
@@ -305,6 +305,8 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             {
                 nErrorCode = CSDKExport.Hd_GetSDKLastError();
             }
+
+            log.Info("end show led xi roi");
         }
         private void SetLED12NoContent()
         {
