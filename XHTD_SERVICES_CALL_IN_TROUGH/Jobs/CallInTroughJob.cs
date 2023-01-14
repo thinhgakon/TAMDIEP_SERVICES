@@ -100,6 +100,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             foreach (var trought in troughts)
             {
                 await CallInTrough(trought);
+                Thread.Sleep(5000);
             }
         }
 

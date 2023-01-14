@@ -256,6 +256,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             {
                                 Id = v.Id,
                                 DeliveryCode = v.DeliveryCode,
+                                Vehicle = v.Vehicle,
                             };
 
                 query = query.Take(quantity);

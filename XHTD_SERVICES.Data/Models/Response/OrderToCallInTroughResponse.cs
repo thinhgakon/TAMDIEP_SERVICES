@@ -11,5 +11,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public int Id { get; set; }
 
         public string DeliveryCode { get; set; }
+
+        public string Vehicle { get; set; }
     }
 }

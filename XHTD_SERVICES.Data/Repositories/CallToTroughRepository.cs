@@ -43,17 +43,19 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task CreateAsync(int orderId, string troughCode)
+        public async Task CreateAsync(OrderToCallInTroughResponse order, string troughCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 try
                 {
-                    if (!IsInProgress(orderId))
+                    if (!IsInProgress(order.Id))
                     {
                         var newItem = new tblCallToTrough
                         {
-                            OrderId = orderId,
+                            OrderId = order.Id,
+                            DeliveryCode = order.DeliveryCode,
+                            Vehicle = order.Vehicle,
                             Trough = troughCode,
                             CountTry = 0,
                             CallLog = $@"Xe được mời vào lúc {DateTime.Now}.",

@@ -127,7 +127,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                     await _storeOrderOperatingRepository.UpdateStepDangGoiXe(order.DeliveryCode);
 
                     // Them ban ghi vao tblCallToTrough: danh sach cho goi xe
-                    await _callToTroughRepository.CreateAsync(order.Id, troughcode);
+                    await _callToTroughRepository.CreateAsync(order, troughcode);
                 }
             }
             catch(Exception ex)
