@@ -118,7 +118,6 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
                 }
             }
 
-
             //2. Xep lot XI_MANG_BAO
             var orderBaoIndexds = await _storeOrderOperatingRepository.GetOrdersXiMangBaoIndexd();
             if (orderBaoIndexds != null && orderBaoIndexds.Count > 0)
