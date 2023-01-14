@@ -10,13 +10,13 @@ using XHTD_SERVICES_LED.Models.Response;
 
 namespace XHTD_SERVICES_LED.Jobs
 {
-    public class LedHPTestXibao : IJob
+    public class LedXiBao : IJob
     {
         int m_nSendType_LED12;
         IntPtr m_pSendParams_LED12;
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
       (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public LedHPTestXibao()
+        public LedXiBao()
         {
             m_nSendType_LED12 = 0;
             string strParams_LED12 = "10.0.7.1";

@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_LED.Schedules
         {
             await _scheduler.Start();
 
-            IJobDetail showLedBaoJob = JobBuilder.Create<LedHPTestXibao>().Build();
+            IJobDetail showLedBaoJob = JobBuilder.Create<LedXiBao>().Build();
             ITrigger showLedBaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .Build();
             await _scheduler.ScheduleJob(showLedBaoJob, showLedBaoTrigger);
 
-            IJobDetail showLedRoiJob = JobBuilder.Create<LedHPTestXiroi>().Build();
+            IJobDetail showLedRoiJob = JobBuilder.Create<LedXiRoi>().Build();
             ITrigger showLedRoiTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()

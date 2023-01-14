@@ -124,8 +124,8 @@
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="LedLogger.cs" />
-    <Compile Include="Jobs\LedHPTestXibao.cs" />
-    <Compile Include="Jobs\LedHPTestXiroi.cs" />
+    <Compile Include="Jobs\LedXiBao.cs" />
+    <Compile Include="Jobs\LedXiRoi.cs" />
     <Compile Include="Libs\CSDKExport.cs" />
     <Compile Include="Models\Response\StoreOrderForLED12.cs" />
     <Compile Include="Models\Values\OrderState.cs" />
