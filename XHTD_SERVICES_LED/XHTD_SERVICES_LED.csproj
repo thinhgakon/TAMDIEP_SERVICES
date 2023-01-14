@@ -127,9 +127,6 @@
     <Compile Include="Jobs\LedHPTestXibao.cs" />
     <Compile Include="Jobs\LedHPTestXiroi.cs" />
     <Compile Include="Libs\CSDKExport.cs" />
-    <Compile Include="Models\Request\GetTokenRequest.cs" />
-    <Compile Include="Models\Request\SearchOrderRequest.cs" />
-    <Compile Include="Models\Response\GetTokenResponse.cs" />
     <Compile Include="Models\Response\StoreOrderForLED12.cs" />
     <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="ProjectInstaller.cs">
