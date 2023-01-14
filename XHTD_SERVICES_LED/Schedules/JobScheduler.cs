@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Show_Led_Bao_In_Seconds")))
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLedBaoJob, showLedBaoTrigger);
@@ -41,7 +41,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Show_Led_Roi_In_Seconds")))
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLedRoiJob, showLedRoiTrigger);

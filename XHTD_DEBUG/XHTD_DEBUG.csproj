@@ -250,6 +250,10 @@
       <Project>{a155e121-cc6a-4a34-8808-d142454bb3db}</Project>
       <Name>XHTD_SERVICES_GATEWAY</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_LED\XHTD_SERVICES_LED.csproj">
+      <Project>{3ded0d80-1b3b-468a-9944-a85efe1d37e2}</Project>
+      <Name>XHTD_SERVICES_LED</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_QUEUE_TO_CALL\XHTD_SERVICES_QUEUE_TO_CALL.csproj">
       <Project>{1b4bb622-6c20-4f23-a6b1-32bd30bf886e}</Project>
       <Name>XHTD_SERVICES_QUEUE_TO_CALL</Name>

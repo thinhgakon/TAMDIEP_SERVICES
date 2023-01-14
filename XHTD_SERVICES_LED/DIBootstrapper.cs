@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_LED
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(LedHPTestXibao).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(LedXiBao).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }
