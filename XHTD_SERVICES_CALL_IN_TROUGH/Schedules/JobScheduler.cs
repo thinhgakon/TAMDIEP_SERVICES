@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Schedules
         {
             await _scheduler.Start();
 
-            // Đồng bộ đơn hàng
+            // Mời xe vào
             IJobDetail syncOrderJob = JobBuilder.Create<CallInTroughJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
@@ -36,19 +36,6 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
-            // Đồng bộ trạng thái đơn hàng
-            /*
-            IJobDetail smsJob = JobBuilder.Create<SyncOrderStatusJob>().Build();
-            ITrigger smsTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(smsJob, smsTrigger);
-            */
         }
     }
 }
