@@ -165,7 +165,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
-                if(timeOutDate > DateTime.Now.AddMinutes(-90)) { 
+                if(timeOutDate > DateTime.Now.AddMinutes(-30)) {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
                                                     && x.Step < (int)OrderStep.DA_CAN_RA);
@@ -187,7 +187,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         isSynced = true;
                     }
                 }
-                else
+                else if (timeOutDate > DateTime.Now.AddMinutes(-60))
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
@@ -206,6 +206,29 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         Console.WriteLine($@"Update Received => DA_HOAN_THANH Order {orderId}");
                         log.Info($@"Update Received => DA_HOAN_THANH Order {orderId}");
+
+                        isSynced = true;
+                    }
+                }
+                else
+                {
+                    var order = _appDbContext.tblStoreOrderOperatings
+                                .FirstOrDefault(x => x.OrderId == orderId
+                                                    && x.Step < (int)OrderStep.DA_GIAO_HANG);
+                    if (order != null)
+                    {
+                        order.Confirm9 = 1;
+                        order.TimeConfirm9 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_GIAO_HANG;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {timeOut} ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {timeOut}; ";
+
+                        await _appDbContext.SaveChangesAsync();
+
+                        Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
+                        log.Info($@"Update Received => DA_GIAO_HANG Order {orderId}");
 
                         isSynced = true;
                     }
