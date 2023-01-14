@@ -59,16 +59,8 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
             rfidIn21,
             rfidIn22,
             m221,
-            barrierIn1,
-            barrierIn2,
-            barrierOut1,
-            barrierOut2,
             trafficLightIn1,
-            trafficLightIn2,
-            sensorIn1,
-            sensorIn2,
-            sensorOut1,
-            sensorOut2;
+            trafficLightIn2;
 
         private IHubProxy HubProxy { get; set; }
 
