@@ -36,19 +36,6 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
-            // Đồng bộ trạng thái đơn hàng
-            /*
-            IJobDetail smsJob = JobBuilder.Create<SyncOrderStatusJob>().Build();
-            ITrigger smsTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(smsJob, smsTrigger);
-            */
         }
     }
 }
