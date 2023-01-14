@@ -20,7 +20,7 @@ namespace XHTD_SERVICES_LED
             builder.RegisterType<VehicleRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
-            builder.RegisterType<AutoReindexLogger>().AsSelf();
+            builder.RegisterType<LedLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_LED
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(AutoReindexJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(LedHPTestXibao).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

@@ -26,17 +26,6 @@ namespace XHTD_SERVICES_LED.Schedules
         {
             await _scheduler.Start();
 
-            // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<AutoReindexJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
             IJobDetail showLedBaoJob = JobBuilder.Create<LedHPTestXibao>().Build();
             ITrigger showLedBaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)

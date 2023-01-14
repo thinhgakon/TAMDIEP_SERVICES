@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4935FD0D-1FE6-4114-AEB1-5068A928C059}</ProjectGuid>
+    <ProjectGuid>{3DED0D80-1B3B-468A-9944-A85EFE1D37E2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>XHTD_SERVICES_AUTO_REINDEX</RootNamespace>
     <AssemblyName>XHTD_SERVICES_AUTO_REINDEX</AssemblyName>
@@ -124,7 +124,6 @@
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="AutoReindexLogger.cs" />
-    <Compile Include="Jobs\AutoReindexJob.cs" />
     <Compile Include="Jobs\LedHPTestXibao.cs" />
     <Compile Include="Jobs\LedHPTestXiroi.cs" />
     <Compile Include="Libs\CSDKExport.cs" />

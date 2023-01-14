@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_LED
 {
-    public class AutoReindexLogger : BaseLogger<Jobs.AutoReindexJob>
+    public class LedLogger : BaseLogger<Jobs.LedHPTestXibao>
     {
     }
 }
