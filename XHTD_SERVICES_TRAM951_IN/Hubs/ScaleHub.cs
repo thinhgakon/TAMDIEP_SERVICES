@@ -30,6 +30,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
             Clients.All.SendNotificationCBV(status, inout, cardNo, message);
         }
 
+        public void SendSensor(string scaleCode, string status)
+        {
+            Clients.All.SendSensor(scaleCode, status);
+        }
+
         public void SendFakeRFID(string value)
         {
             Clients.All.SendFakeRFID(value);
