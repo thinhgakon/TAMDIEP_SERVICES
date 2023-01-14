@@ -401,7 +401,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+                                        if(currentOrder.CatId != "CLINKER") {
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+                                        }
+                                        else
+                                        {
+                                            isUpdatedOrder = true;
+                                        }
+
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
