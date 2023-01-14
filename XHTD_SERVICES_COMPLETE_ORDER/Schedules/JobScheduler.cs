@@ -32,23 +32,10 @@ namespace XHTD_SERVICES_COMPLETE_ORDER.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Call_In_Trough_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Complete_Order_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
-            // Đồng bộ trạng thái đơn hàng
-            /*
-            IJobDetail smsJob = JobBuilder.Create<SyncOrderStatusJob>().Build();
-            ITrigger smsTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(smsJob, smsTrigger);
-            */
         }
     }
 }
