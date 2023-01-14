@@ -17,9 +17,6 @@ namespace XHTD_SERVICES_AUTO_REINDEX
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<VehicleRepository>().AsSelf();
-            builder.RegisterType<SystemParameterRepository>().AsSelf();
-            builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<AutoReindexLogger>().AsSelf();
 
             RegisterScheduler(builder);

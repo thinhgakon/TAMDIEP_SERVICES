@@ -5,15 +5,6 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES_AUTO_REINDEX.Models.Response;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
-using XHTD_SERVICES_AUTO_REINDEX.Models.Values;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
-using System.Threading;
-using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 {
@@ -21,34 +12,14 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly VehicleRepository _vehicleRepository;
-
-        protected readonly SystemParameterRepository _systemParameterRepository;
-
-        protected readonly Notification _notification;
-
         protected readonly AutoReindexLogger _autoReindexLogger;
-
-        protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
-
-        protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
-
-        private static bool isActiveService = true;
-
-        private static int numberHoursSearchOrder = 48;
 
         public AutoReindexJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
-            SystemParameterRepository systemParameterRepository,
-            Notification notification,
             AutoReindexLogger autoReindexLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
-            _systemParameterRepository = systemParameterRepository;
-            _notification = notification;
             _autoReindexLogger = autoReindexLogger;
         }
 
@@ -61,35 +32,8 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
             await Task.Run(async () =>
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
-                {
-                    _autoReindexLogger.LogInfo("Service dong bo don hang dang TAT.");
-                    return;
-                }
-
                 await AutoReindexProcess();
             });
-        }
-
-        public async Task LoadSystemParameters()
-        {
-            var parameters = await _systemParameterRepository.GetSystemParameters();
-
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
-            var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
-
-            if(activeParameter == null || activeParameter.Value == "0")
-            {
-                isActiveService = false;
-            }
-
-            if (numberHoursParameter != null)
-            {
-                numberHoursSearchOrder = Convert.ToInt32(numberHoursParameter.Value);
-            }
         }
 
         public async Task AutoReindexProcess()

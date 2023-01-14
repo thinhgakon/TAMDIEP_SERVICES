@@ -125,10 +125,6 @@
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="AutoReindexLogger.cs" />
     <Compile Include="Jobs\AutoReindexJob.cs" />
-    <Compile Include="Models\Request\GetTokenRequest.cs" />
-    <Compile Include="Models\Request\SearchOrderRequest.cs" />
-    <Compile Include="Models\Response\GetTokenResponse.cs" />
-    <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
