@@ -123,7 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="AutoReindexLogger.cs" />
+    <Compile Include="LedLogger.cs" />
     <Compile Include="Jobs\LedHPTestXibao.cs" />
     <Compile Include="Jobs\LedHPTestXiroi.cs" />
     <Compile Include="Libs\CSDKExport.cs" />
