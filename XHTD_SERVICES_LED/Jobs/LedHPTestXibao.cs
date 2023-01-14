@@ -5,10 +5,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using XHTD_SERVICES_AUTO_REINDEX.Libs;
-using XHTD_SERVICES_AUTO_REINDEX.Models.Response;
+using XHTD_SERVICES_LED.Libs;
+using XHTD_SERVICES_LED.Models.Response;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
+namespace XHTD_SERVICES_LED.Jobs
 {
     public class LedHPTestXibao : IJob
     {

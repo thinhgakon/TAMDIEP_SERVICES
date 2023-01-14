@@ -1,4 +1,4 @@
-﻿namespace XHTD_SERVICES_AUTO_REINDEX
+﻿namespace XHTD_SERVICES_LED
 {
     partial class Service
     {

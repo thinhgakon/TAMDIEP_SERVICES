@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Models.Response
+namespace XHTD_SERVICES_LED.Models.Response
 {
     public class GetTokenResponse
     {

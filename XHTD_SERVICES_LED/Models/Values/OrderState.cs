@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Models.Values
+namespace XHTD_SERVICES_LED.Models.Values
 {
-    public enum  OrderState
+    public enum OrderState
     {
         [Display(Name = "Đã đặt hàng")]
         DA_DAT_HANG = 1,

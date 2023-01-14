@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_AUTO_REINDEX.Libs
+namespace XHTD_SERVICES_LED.Libs
 {
     class CSDKExport
     {

@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
-using XHTD_SERVICES_AUTO_REINDEX.Schedules;
+using XHTD_SERVICES_LED.Schedules;
 
-namespace XHTD_SERVICES_AUTO_REINDEX
+namespace XHTD_SERVICES_LED
 {
     public partial class Service : ServiceBase
     {
