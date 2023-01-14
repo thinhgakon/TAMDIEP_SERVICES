@@ -43,15 +43,15 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
 
 
             var orderShows = new List<StoreOrderForLED12>();
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0101", State1 = "dang moi vao" }); //1
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0102", State1 = "dang moi vao" }); //2
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0103", State1 = "dang moi vao" }); //3
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0104", State1 = "dang moi vao" }); //4
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0105", State1 = "dang moi vao" }); //5
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0106", State1 = "dang moi vao" }); //6
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0107", State1 = "dang moi vao" }); //7
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0108", State1 = "dang moi vao" }); //8
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H0109", State1 = "dang moi vao" }); //9
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "dang moi vao" }); //1
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "dang moi vao" }); //2
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "dang moi vao" }); //3
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "dang moi vao" }); //4
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "dang moi vao" }); //5
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "dang moi vao" }); //6
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
+            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
 
 
             IntPtr pNULL = new IntPtr(0);
