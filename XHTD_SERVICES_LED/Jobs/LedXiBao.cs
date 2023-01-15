@@ -536,7 +536,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HOÀNG MAI-");
+                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HẢI PHÒNG-");
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
 
