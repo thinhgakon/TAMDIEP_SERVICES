@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES_LED.Libs;
 using XHTD_SERVICES_LED.Models.Response;
+using XHTD_SERVICES.Data.Repositories;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_LED.Jobs
 {
@@ -16,8 +18,12 @@ namespace XHTD_SERVICES_LED.Jobs
         IntPtr m_pSendParams_LED12;
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
       (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public LedXiRoi()
+
+        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+
+        public LedXiRoi(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
+            _storeOrderOperatingRepository = storeOrderOperatingRepository;
             m_nSendType_LED12 = 0;
             string strParams_LED12 = "10.0.7.2";
             m_pSendParams_LED12 = Marshal.StringToHGlobalUni(strParams_LED12);
@@ -33,24 +39,37 @@ namespace XHTD_SERVICES_LED.Jobs
                 ShowLed12Process();
             });
         }
-        public void ShowLed12Process()
+        public async void ShowLed12Process()
         {
-            log.Info("start show led bao");
+            log.Info("start show led roi");
+            Console.WriteLine("start show led roi");
 
             // đổ data thay thế vào đây
+            var orderShows = new List<StoreOrderForLED12>();
+            var orders = await _storeOrderOperatingRepository.GetOrdersLedXiRoi();
+
+            if (orders == null || orders.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var order in orders)
+            {
+                orderShows.Add(new StoreOrderForLED12 { Vehicle = order.Vehicle, State1 = LedHelper.GetDisplayStatus((int)order.Step) }); //1
+            }
 
             //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
 
-            var orderShows = new List<StoreOrderForLED12>();
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "dang moi vao" }); //1
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "dang moi vao" }); //2
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "dang moi vao" }); //3
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "dang moi vao" }); //4
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "dang moi vao" }); //5
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "dang moi vao" }); //6
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
+            //var orderShows = new List<StoreOrderForLED12>();
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "Dang cho" }); //1
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "Dang xuat" }); //2
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "Dang cho" }); //3
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "Dang cho" }); //4
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "Dang xuat" }); //5
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "Dang cho" }); //6
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
 
 
             IntPtr pNULL = new IntPtr(0);
@@ -78,7 +97,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 return;
             }
 
-            int plusX = 12;
+            int plusX = 6;
             int plusY = 6;
             #region Add Area 0
             int nX1 = 6;
@@ -159,7 +178,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
             #region DÒNG TIÊU ĐỀ
             // 4.Add text AreaItem to Area
-            IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO." + "       " + "TRANG THAI");
+            IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "     " + "TRANG THAI");
             IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
             //int nTextColor = CSDKExport.Hd_GetColor(255, 0, 0);
             int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
@@ -185,7 +204,7 @@ namespace XHTD_SERVICES_LED.Jobs
             if (orderShows.Count > 0)
             {
                 //pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[0].State1.ToUpper());
-                pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper() + "       " + (orderShows[0].State1.ToUpper()));
+                pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper() + "     " + (orderShows[0].State1.ToUpper()));
             }
             else
             {
@@ -208,7 +227,7 @@ namespace XHTD_SERVICES_LED.Jobs
             if (orderShows.Count > 1)
             {
                 // pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[1].State1.ToUpper());
-                pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper() + "       " + (orderShows[1].State1.ToUpper()));
+                pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper() + "     " + (orderShows[1].State1.ToUpper()));
             }
             else
             {
@@ -231,7 +250,7 @@ namespace XHTD_SERVICES_LED.Jobs
             if (orderShows.Count > 2)
             {
                 //  pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[2].State1.ToUpper());
-                pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "       " + (orderShows[2].State1.ToUpper()));
+                pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "     " + (orderShows[2].State1.ToUpper()));
             }
             else
             {
@@ -254,7 +273,7 @@ namespace XHTD_SERVICES_LED.Jobs
             if (orderShows.Count > 3)
             {
                 //pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[3].State1.ToUpper());
-                pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper() + "       " + (orderShows[3].State1.ToUpper()));
+                pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper() + "     " + (orderShows[3].State1.ToUpper()));
             }
             else
             {
@@ -277,7 +296,7 @@ namespace XHTD_SERVICES_LED.Jobs
             if (orderShows.Count > 4)
             {
                 // pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[4].State1.ToUpper());
-                pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper() + "       " + (orderShows[4].State1.ToUpper()));
+                pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper() + "     " + (orderShows[4].State1.ToUpper()));
             }
             else
             {
@@ -307,6 +326,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             log.Info("end show led xi roi");
+            Console.WriteLine("end show led roi");
         }
         private void SetLED12NoContent()
         {

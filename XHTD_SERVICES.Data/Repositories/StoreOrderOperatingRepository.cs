@@ -1060,5 +1060,21 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersLedXiRoi()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step >= (int)OrderStep.DA_CAN_VAO && x.Step <= (int)OrderStep.DA_LAY_HANG
+                                                && x.CatId == "XI_MANG_XA"
+                                                && x.IsVoiced == false
+                                                && x.IndexOrder > 0
+                                    )
+                                    .OrderBy(x => x.IndexOrder)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
     }
 }

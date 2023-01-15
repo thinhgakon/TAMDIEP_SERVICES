@@ -73,6 +73,7 @@
     <Compile Include="BaseLogger.cs" />
     <Compile Include="Calculator.cs" />
     <Compile Include="HttpRequest.cs" />
+    <Compile Include="LedHelper.cs" />
     <Compile Include="Models\Request\NotificationRequest.cs" />
     <Compile Include="Models\Request\SendDataMsgRequest.cs" />
     <Compile Include="Models\Request\SendInforNotificationRequest.cs" />
