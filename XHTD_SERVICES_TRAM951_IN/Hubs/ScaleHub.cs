@@ -108,7 +108,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isInValidSensor1)
                 {
                     // Send notification signalr
-                    logger.Info("Vi pham cam bien");
+                    logger.Info("Vi pham cam bien can 1");
 
                     SendSensor(ScaleCode.CODE_SCALE_1, "1");
 
@@ -257,7 +257,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 if (isInValidSensor2)
                 {
                     // Send notification signalr
-                    logger.Info("Vi pham cam bien");
+                    logger.Info("Vi pham cam bien can 2");
 
                     SendSensor(ScaleCode.CODE_SCALE_2, "1");
 
