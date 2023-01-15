@@ -252,6 +252,8 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var currentCallInTroughs = GetCurrentOrdersToCallInTrough();
 
+                var timeToCall = DateTime.Now.AddMinutes(-2);
+
                 var query = from v in dbContext.tblStoreOrderOperatings 
                             join r in dbContext.tblTroughTypeProducts 
                             on v.TypeProduct equals r.TypeProduct
@@ -260,9 +262,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                 && v.IsVoiced == false
                                 && v.IndexOrder > 0
                                 && !currentCallInTroughs.Contains(v.DeliveryCode)
-                                //&& (v.DriverUserName ?? "") != ""
+                                && v.TimeConfirm3 < timeToCall
                                 && r.TroughCode == troughCode
-                                //&& v.TimeConfirm3 > DateTime.Now.AddMinutes(-2)
                             orderby v.IndexOrder
                             select new OrderToCallInTroughResponse
                             {
