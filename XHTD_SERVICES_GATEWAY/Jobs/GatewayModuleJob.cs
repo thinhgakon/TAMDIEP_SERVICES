@@ -384,12 +384,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             tmpCardNoLst_In.Add(newCardNoLog);
 
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            //isSuccessOpenBarrier = OpenBarrier("IN");
+                                            isSuccessOpenBarrier = OpenBarrier("IN");
+
+                                            Thread.Sleep(5000);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("IN");
 
-                                            Thread.Sleep(10000);
+                                            Thread.Sleep(15000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             TurnOnRedTrafficLight("IN");
@@ -417,12 +419,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             tmpCardNoLst_Out.Add(newCardNoLog);
 
                                             _gatewayLogger.LogInfo($"7. Mở barrier");
-                                            //isSuccessOpenBarrier = OpenBarrier("OUT");
+                                            isSuccessOpenBarrier = OpenBarrier("OUT");
+
+                                            Thread.Sleep(5000);
 
                                             _gatewayLogger.LogInfo($"6. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("OUT");
 
-                                            Thread.Sleep(10000);
+                                            Thread.Sleep(15000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             TurnOnRedTrafficLight("OUT");
@@ -495,7 +499,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
