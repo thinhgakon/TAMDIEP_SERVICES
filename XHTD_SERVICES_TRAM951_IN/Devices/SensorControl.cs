@@ -41,11 +41,12 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             }
 
             var checkInScale1 = _sensor.ReadInputPort(SCALE_1_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_1_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_1_I3);
+            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_1_I2);
+            var checkOutScale1 = _sensor.ReadInputPort(SCALE_1_I3);
             var checkRightScale1 = _sensor.ReadInputPort(SCALE_1_I4);
 
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            //if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            if (checkInScale1 || checkOutScale1)
             {
                 return true;
             }
@@ -63,16 +64,17 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
             }
 
             var checkInScale1 = _sensor.ReadInputPort(SCALE_2_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_2_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_2_I3);
+            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_2_I2);
+            var checkOutScale1 = _sensor.ReadInputPort(SCALE_2_I3);
             var checkRightScale1 = _sensor.ReadInputPort(SCALE_2_I4);
 
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            //if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            if (checkInScale1 || checkOutScale1)
             {
                 return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool CheckValidSensor()
