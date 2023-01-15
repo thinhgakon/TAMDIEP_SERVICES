@@ -359,7 +359,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 0
                 int nX1 = 0;
-                int nY1 = 40;
+                int nY1 = 20;
                 int nAreaWidth = 160;
                 int nAreaHeight = 20;
 
@@ -373,7 +373,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 1
                 int nX2 = 0;
-                int nY2 = 70;
+                int nY2 = 50;
 
 
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
@@ -386,7 +386,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 2
                 int nX3 = 0;
-                int nY3 = 90;
+                int nY3 = 70;
 
                 int nAreaID_3 = CSDKExport.Hd_AddArea(nProgramID, nX3, nY3, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_3 == -1)
@@ -400,13 +400,13 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HP-");
+                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HẢI PHÒNG-");
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
 
                 // center in bold and underline
                 int nTextStyle = 0x0004 | 0x0100; /*| 0x0200 */
-                int nFontHeight = 18;
+                int nFontHeight = 14;
                 int nEffect = 0;
                 #endregion
 
@@ -423,7 +423,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Show on Area 1
-                nFontHeight = 14;
+                nFontHeight = 12;
                 pText = Marshal.StringToHGlobalUni("HỆ THỐNG");
                 nEffect = 0;
                 int nAreaItemID_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_2, pText, nTextColor, 0, nTextStyle,
@@ -438,7 +438,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Show on Area 2
-                nFontHeight = 14;
+                nFontHeight = 12;
                 pText = Marshal.StringToHGlobalUni("XUẤT HÀNG TỰ ĐỘNG");
                 nEffect = 0;
                 int nAreaItemID_3 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_3, pText, nTextColor, 0, nTextStyle,
