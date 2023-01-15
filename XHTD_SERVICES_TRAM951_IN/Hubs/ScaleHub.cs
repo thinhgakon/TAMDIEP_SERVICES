@@ -189,7 +189,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 logger.Info($"7.2. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
 
-                                Thread.Sleep(2000);
+                                Thread.Sleep(2500);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
