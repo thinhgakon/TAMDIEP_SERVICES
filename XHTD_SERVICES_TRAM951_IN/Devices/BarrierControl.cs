@@ -51,9 +51,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (_barrier.ReadInputPort(SCALE_1_IN_I1))
             {
-                _barrier.ResetOutPort(SCALE_1_IN_Q1);
-
-                _barrier.ResetOutPort(SCALE_1_IN_Q2);
+                //_barrier.ResetOutPort(SCALE_1_IN_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_1_IN_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q1.ToString())));
                 Thread.Sleep(1000);
@@ -72,9 +73,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (!_barrier.ReadInputPort(SCALE_1_IN_I1))
             {
-                _barrier.ResetOutPort(SCALE_1_IN_Q1);
+                //_barrier.ResetOutPort(SCALE_1_IN_Q1);
+                //Thread.Sleep(500);
 
-                _barrier.ResetOutPort(SCALE_1_IN_Q2);
+                //_barrier.ResetOutPort(SCALE_1_IN_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_IN_Q2.ToString())));
                 Thread.Sleep(1000);
@@ -94,9 +97,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (_barrier.ReadInputPort(SCALE_1_OUT_I1))
             {
-                _barrier.ResetOutPort(SCALE_1_OUT_Q1);
-
-                _barrier.ResetOutPort(SCALE_1_OUT_Q2);
+                //_barrier.ResetOutPort(SCALE_1_OUT_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_1_OUT_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q1.ToString())));
                 Thread.Sleep(1000);
@@ -115,9 +119,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (!_barrier.ReadInputPort(SCALE_1_OUT_I1))
             {
-                _barrier.ResetOutPort(SCALE_1_OUT_Q1);
-
-                _barrier.ResetOutPort(SCALE_1_OUT_Q2);
+                //_barrier.ResetOutPort(SCALE_1_OUT_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_1_OUT_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_1_OUT_Q2.ToString())));
                 Thread.Sleep(1000);
@@ -137,9 +142,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (_barrier.ReadInputPort(SCALE_2_IN_I1))
             {
-                _barrier.ResetOutPort(SCALE_2_IN_Q1);
-
-                _barrier.ResetOutPort(SCALE_2_IN_Q2);
+                //_barrier.ResetOutPort(SCALE_2_IN_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_2_IN_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q1.ToString())));
                 Thread.Sleep(1000);
@@ -158,9 +164,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (!_barrier.ReadInputPort(SCALE_2_IN_I1))
             {
-                _barrier.ResetOutPort(SCALE_2_IN_Q1);
-
-                _barrier.ResetOutPort(SCALE_2_IN_Q2);
+                //_barrier.ResetOutPort(SCALE_2_IN_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_2_IN_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q2.ToString())));
                 Thread.Sleep(1000);
@@ -180,9 +187,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (_barrier.ReadInputPort(SCALE_2_OUT_I1))
             {
-                _barrier.ResetOutPort(SCALE_2_OUT_Q1);
-
-                _barrier.ResetOutPort(SCALE_2_OUT_Q2);
+                //_barrier.ResetOutPort(SCALE_2_OUT_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_2_OUT_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q1.ToString())));
                 Thread.Sleep(1000);
@@ -201,9 +209,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Devices
 
             if (!_barrier.ReadInputPort(SCALE_2_OUT_I1))
             {
-                _barrier.ResetOutPort(SCALE_2_OUT_Q1);
-
-                _barrier.ResetOutPort(SCALE_2_OUT_Q2);
+                //_barrier.ResetOutPort(SCALE_2_OUT_Q1);
+                //Thread.Sleep(500);
+                //_barrier.ResetOutPort(SCALE_2_OUT_Q2);
+                //Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q2.ToString())));
                 Thread.Sleep(1000);
