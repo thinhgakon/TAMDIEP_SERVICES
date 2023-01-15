@@ -259,12 +259,16 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                     // Send notification signalr
                     logger.Info("Vi pham cam bien");
 
+                    SendSensor(ScaleCode.CODE_SCALE_2, "1");
+
                     Program.scaleValues2.Clear();
 
                     return;
                 }
                 else
                 {
+                    SendSensor(ScaleCode.CODE_SCALE_2, "0");
+
                     logger.Info($"Received 951-2 data: time={time}, value={value}");
                 }
             }

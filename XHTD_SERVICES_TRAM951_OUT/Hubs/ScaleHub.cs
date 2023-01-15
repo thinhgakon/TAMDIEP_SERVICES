@@ -30,6 +30,11 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             Clients.All.SendNotificationCBV(status, inout, cardNo, message);
         }
 
+        public void SendSensor(string scaleCode, string status)
+        {
+            Clients.All.SendSensor(scaleCode, status);
+        }
+
         public void SendFakeRFID(string value)
         {
             Clients.All.SendFakeRFID(value);
@@ -103,12 +108,16 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                     // Send notification signalr
                     logger.Info("Vi pham cam bien");
 
+                    SendSensor(ScaleCode.CODE_SCALE_1, "1");
+
                     Program.scaleValues1.Clear();
 
                     return;
                 }
                 else
                 {
+                    SendSensor(ScaleCode.CODE_SCALE_1, "0");
+
                     logger.Info($"Received 951-1 data: time={time}, value={value}");
                 }
             }
@@ -248,12 +257,16 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                     // Send notification signalr
                     logger.Info("Vi pham cam bien");
 
+                    SendSensor(ScaleCode.CODE_SCALE_2, "1");
+
                     Program.scaleValues2.Clear();
 
                     return;
                 }
                 else
                 {
+                    SendSensor(ScaleCode.CODE_SCALE_2, "0");
+
                     logger.Info($"Received 951-2 data: time={time}, value={value}");
                 }
             }
