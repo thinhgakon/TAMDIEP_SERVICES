@@ -43,12 +43,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
             if (_barrier.ReadInputPort(SCALE_481_IN_I1))
             {
-                //_barrier.ResetOutPort(SCALE_481_IN_Q1);
-
-                //_barrier.ResetOutPort(SCALE_481_IN_Q2);
-
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
             }
         }
@@ -64,12 +60,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
             if (!_barrier.ReadInputPort(SCALE_481_IN_I1))
             {
-                //_barrier.ResetOutPort(SCALE_481_IN_Q1);
-
-                //_barrier.ResetOutPort(SCALE_481_IN_Q2);
-
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
             }
         }
@@ -86,12 +78,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
             if (_barrier.ReadInputPort(SCALE_481_OUT_I1))
             {
-                //_barrier.ResetOutPort(SCALE_481_OUT_Q1);
-
-                //_barrier.ResetOutPort(SCALE_481_OUT_Q2);
-
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
             }
         }
@@ -107,12 +95,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
             if (!_barrier.ReadInputPort(SCALE_481_OUT_I1))
             {
-                //_barrier.ResetOutPort(SCALE_481_OUT_Q1);
-
-                //_barrier.ResetOutPort(SCALE_481_OUT_Q2);
-
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
             }
         }

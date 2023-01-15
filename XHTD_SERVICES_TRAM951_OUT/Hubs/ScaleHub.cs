@@ -163,7 +163,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn1();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut1();
 
@@ -174,7 +174,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                                 // 7. Mở barrier
                                 logger.Info($"7.1. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn1();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"7.2. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
 

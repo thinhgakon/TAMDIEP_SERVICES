@@ -12,6 +12,7 @@ using Autofac;
 using XHTD_SERVICES_TRAM951_IN.Devices;
 using XHTD_SERVICES_TRAM951_IN.Business;
 using System.Threading;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace XHTD_SERVICES_TRAM951_IN.Hubs
 {
@@ -109,12 +110,16 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                     // Send notification signalr
                     logger.Info("Vi pham cam bien");
 
+                    SendSensor(ScaleCode.CODE_SCALE_1, "1");
+
                     Program.scaleValues1.Clear();
 
                     return;
                 }
                 else
                 {
+                    SendSensor(ScaleCode.CODE_SCALE_1, "0");
+
                     logger.Info($"Received 951-1 data: time={time}, value={value}");
                 }
             }
@@ -169,7 +174,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn1();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut1();
 
@@ -180,7 +185,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                                 // 7. Mở barrier
                                 logger.Info($"7.1. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn1();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"7.2. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut1();
 
