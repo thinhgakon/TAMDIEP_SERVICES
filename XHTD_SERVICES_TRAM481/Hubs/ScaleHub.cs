@@ -187,7 +187,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
 
@@ -198,7 +198,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 // 7. Mở barrier
                                 logger.Info($"7. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
@@ -235,7 +235,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 // 5. Đóng barrier
                                 logger.Info($"5. Dong barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"5. Dong barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
 
@@ -246,11 +246,11 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 // 7. Mở barrier
                                 logger.Info($"7. Mo barrier IN");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(500);
+                                Thread.Sleep(1000);
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                Thread.Sleep(2000);
+                                Thread.Sleep(2500);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
