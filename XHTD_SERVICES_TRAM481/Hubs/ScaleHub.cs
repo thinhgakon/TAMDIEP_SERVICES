@@ -115,23 +115,27 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            //if (!Program.IsLockingScale481)
-            //{
-            //    var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
-            //    if (isInValidSensor481)
-            //    {
-            //        // Send notification signalr
-            //        logger.Info("Vi pham cam bien");
+            if (!Program.IsLockingScale481)
+            {
+                var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
+                if (isInValidSensor481)
+                {
+                    // Send notification signalr
+                    logger.Info("Vi pham cam bien can 481");
 
-            //        Program.scaleValues481.Clear();
+                    SendSensor(ScaleCode.CODE_SCALE_481, "1");
 
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        logger.Info($"Received 951-1 data: time={time}, value={value}");
-            //    }
-            //}
+                    Program.scaleValues481.Clear();
+
+                    return;
+                }
+                else
+                {
+                    SendSensor(ScaleCode.CODE_SCALE_481, "0");
+
+                    logger.Info($"Received 481 data: time={time}, value={value}");
+                }
+            }
 
             if (Program.IsScalling481 && !Program.IsLockingScale481)
             {

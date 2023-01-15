@@ -14,10 +14,10 @@ namespace XHTD_SERVICES_TRAM481.Devices
 
         private const string IP_ADDRESS = "10.0.20.2";
 
-        private const int SCALE_481_I1 = 4;
-        private const int SCALE_481_I2 = 5;
-        private const int SCALE_481_I3 = 6;
-        private const int SCALE_481_I4 = 7;
+        private const int SCALE_481_I1 = 2;
+        private const int SCALE_481_I2 = 3;
+        private const int SCALE_481_I3 = 4;
+        private const int SCALE_481_I4 = 5;
 
         public SensorControl(
             Sensor sensor
@@ -35,17 +35,17 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return false;
             }
 
-            var checkInScale1 = _sensor.ReadInputPort(SCALE_481_I1);
-            var checkOutScale1 = _sensor.ReadInputPort(SCALE_481_I2);
-            var checkLeftScale1 = _sensor.ReadInputPort(SCALE_481_I3);
-            var checkRightScale1 = _sensor.ReadInputPort(SCALE_481_I4);
+            var checkInScale481 = _sensor.ReadInputPort(SCALE_481_I2);
+            var checkOutScale481 = _sensor.ReadInputPort(SCALE_481_I3);
+            var checkLeftScale481 = _sensor.ReadInputPort(SCALE_481_I1);
+            var checkRightScale481 = _sensor.ReadInputPort(SCALE_481_I4);
 
-            if (checkInScale1 || checkOutScale1 || checkLeftScale1 || checkRightScale1)
+            if (checkInScale481 || checkOutScale481 || checkLeftScale481 || checkRightScale481)
             {
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool CheckValidSensor()
