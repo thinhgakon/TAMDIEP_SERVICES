@@ -100,7 +100,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             foreach (var trought in troughts)
             {
                 await CallInTrough(trought);
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
             }
         }
 
@@ -136,11 +136,11 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 await _callToTroughRepository.UpdateWhenCall(itemToCall.Id, vehiceCode);
 
                 // Thuc hien goi xe
-                CallBySystem(vehiceCode);
+                CallBySystem(vehiceCode, troughCode);
             }
         }
 
-        public void CallBySystem(string vehicle)
+        public void CallBySystem(string vehicle, string troughCode)
         {
             var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
 
@@ -175,6 +175,16 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             }
 
             wplayer.URL = VoiceFileInOut;
+            wplayer.settings.volume = 100;
+            wplayer.controls.play();
+            Thread.Sleep(1200);
+
+            wplayer.URL = $@"{PathAudioLib}/M.wav"; ;
+            wplayer.settings.volume = 100;
+            wplayer.controls.play();
+            Thread.Sleep(500);
+
+            wplayer.URL = $@"{PathAudioLib}/{troughCode}.wav"; ;
             wplayer.settings.volume = 100;
             wplayer.controls.play();
         }
