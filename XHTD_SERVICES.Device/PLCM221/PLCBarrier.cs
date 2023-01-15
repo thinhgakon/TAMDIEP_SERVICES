@@ -41,21 +41,12 @@ namespace XHTD_SERVICES.Device.PLCM221
             return false;
         }
 
-        public bool ResetOutPort(int port)
+        public void ResetOutPort(int port)
         {
             if (ReadInputPort(port))
             {
-                var result = ShuttleOutputPort((byte.Parse(port.ToString())));
-                if (result == M221Result.SUCCESS)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                ShuttleOutputPort((byte.Parse(port.ToString())));
             }
-            return true;
         }
 
         public bool TurnOnOutPort(int port)
