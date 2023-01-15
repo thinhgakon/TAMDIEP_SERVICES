@@ -271,17 +271,19 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                //var orders = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
-                //                            .ToListAsync();
-
-                // TODO: for test
-                List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON, (int)OrderStep.DA_NHAN_DON };
                 var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo 
-                                                    && listStep.Contains((int)x.Step) 
-                                                   )
+                                                     && (x.DriverUserName ?? "") != "" 
+                                                     && x.Step == (int)OrderStep.DA_NHAN_DON)
                                             .ToListAsync();
+
+                // TODO: for test
+                //List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON, (int)OrderStep.DA_NHAN_DON };
+                //var orders = await dbContext.tblStoreOrderOperatings
+                //                            .Where(x => x.CardNo == cardNo 
+                //                                    && listStep.Contains((int)x.Step) 
+                //                                   )
+                //                            .ToListAsync();
 
                 return orders;
             }
@@ -510,17 +512,19 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string currentTime = DateTime.Now.ToString();
 
-                    //var orders = await dbContext.tblStoreOrderOperatings
-                    //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
-                    //                            .ToListAsync();
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                     && (x.DriverUserName ?? "") != ""
+                                                     && x.Step == (int)OrderStep.DA_NHAN_DON)
+                                            .ToListAsync();
 
                     // TODO: for test
-                    List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON, (int)OrderStep.DA_NHAN_DON };
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo
-                                                        && listStep.Contains((int)x.Step)
-                                                       )
-                                                .ToListAsync();
+                    //List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON, (int)OrderStep.DA_NHAN_DON };
+                    //var orders = await dbContext.tblStoreOrderOperatings
+                    //                            .Where(x => x.CardNo == cardNo
+                    //                                    && listStep.Contains((int)x.Step)
+                    //                                   )
+                    //                            .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {
