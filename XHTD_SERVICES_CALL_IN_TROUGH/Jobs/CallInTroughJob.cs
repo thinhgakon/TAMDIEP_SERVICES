@@ -89,7 +89,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             // TODO: Lay ra danh sach mang xuat xi mang bao dang hoat dong
             // Goi xe vao tung mang: tham khao service QueueToCall
 
-            var troughts = await _troughRepository.GetAllTroughCodes();
+            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
 
             if (troughts == null || troughts.Count == 0)
             {
@@ -100,7 +100,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             foreach (var trought in troughts)
             {
                 await CallInTrough(trought);
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
             }
         }
 
