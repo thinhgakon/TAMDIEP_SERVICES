@@ -836,12 +836,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
                     if (itemToCall != null)
                     {
-                        var maxIndexOrder = dbContext.tblStoreOrderOperatings
-                                            .Where(x => (x.Step == (int)OrderStep.DA_CAN_VAO || x.Step == (int)OrderStep.DANG_GOI_XE))
-                                            .OrderBy(x => x.IndexOrder)?.Max(x => x.IndexOrder) ?? 0;
-
                         var oldIndexOrder = itemToCall.IndexOrder;
-                        var newIndexOrder = maxIndexOrder + 1;
+                        var newIndexOrder = oldIndexOrder + 2;
 
                         itemToCall.CountReindex++;
                         itemToCall.IndexOrder = newIndexOrder;
