@@ -202,7 +202,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                Thread.Sleep(2500);
+                                Thread.Sleep(3500);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
@@ -250,7 +250,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 logger.Info($"7. Mo barrier OUT");
                                 DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                Thread.Sleep(2500);
+                                Thread.Sleep(3500);
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh");
