@@ -151,8 +151,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             var status = responseArr[1];
             var deliveryCode = responseArr[5].Replace("'", "");
-            var countQuantity = Double.Parse(responseArr[8]);
-            var planQuantity = Double.Parse(responseArr[6]);
+            var countQuantity = Double.Parse(responseArr[9]);
+            var planQuantity = Double.Parse(responseArr[7]);
 
             if (status == "True")
             {
