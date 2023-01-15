@@ -237,10 +237,21 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public List<string> GetCurrentOrdersToCallInTrough()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var record = dbContext.tblCallToTroughs.Where(x => x.IsDone == false).Select(x => x.DeliveryCode);
+                return record.ToList();
+            }
+        }
+
         public async Task<List<OrderToCallInTroughResponse>> GetOrdersToCallInTrough(string troughCode, int quantity)
         {
             using (var dbContext = new XHTD_Entities())
             {
+                var currentCallInTroughs = GetCurrentOrdersToCallInTrough();
+
                 var query = from v in dbContext.tblStoreOrderOperatings 
                             join r in dbContext.tblTroughTypeProducts 
                             on v.TypeProduct equals r.TypeProduct
@@ -248,6 +259,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                 v.Step == (int)OrderStep.DA_CAN_VAO
                                 && v.IsVoiced == false
                                 && v.IndexOrder > 0
+                                && !currentCallInTroughs.Contains(v.DeliveryCode)
                                 //&& (v.DriverUserName ?? "") != ""
                                 && r.TroughCode == troughCode
                                 //&& v.TimeConfirm3 > DateTime.Now.AddMinutes(-2)
