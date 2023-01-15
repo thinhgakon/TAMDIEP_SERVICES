@@ -58,7 +58,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             _queueToCallLogger.LogInfo("Start process QueueToCallJob");
 
             // Lay ra danh sach mang xuat xi mang bao dang hoat dong
-            var troughts = await _troughRepository.GetAllTroughCodes();
+            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
 
             if (troughts == null || troughts.Count == 0)
             {
@@ -77,12 +77,9 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
         {
             _queueToCallLogger.LogInfo($"Read data from trough {troughCode}");
 
-            string similarTroughCode = TroughHelper.GetSimilarTroughCode(troughCode);
-
             var troughInfo = _troughRepository.GetDetail(troughCode);
-            var similarTroughInfo = _troughRepository.GetDetail(similarTroughCode);
 
-            if((bool)troughInfo.Working || (bool)troughInfo.Working || (bool)troughInfo.Working || (bool)troughInfo.Working)
+            if((bool)troughInfo.Working)
             {
                 _queueToCallLogger.LogInfo($"1. Mang {troughCode} dang xuat hang. Ket thuc");
                 return;
