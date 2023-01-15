@@ -50,6 +50,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
             if (orders == null || orders.Count == 0)
             {
+                SetLED12NoContent();
                 return;
             }
 
@@ -70,7 +71,6 @@ namespace XHTD_SERVICES_LED.Jobs
             //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
             //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
             //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
-
 
             IntPtr pNULL = new IntPtr(0);
 
@@ -400,7 +400,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HẢI PHÒNG-");
+                IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HP-");
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
 

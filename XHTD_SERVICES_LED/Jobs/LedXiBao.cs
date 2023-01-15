@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES_LED.Libs;
 using XHTD_SERVICES_LED.Models.Response;
+using XHTD_SERVICES.Data.Repositories;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_LED.Jobs
 {
@@ -16,8 +18,12 @@ namespace XHTD_SERVICES_LED.Jobs
         IntPtr m_pSendParams_LED12;
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
       (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public LedXiBao()
+
+        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+
+        public LedXiBao(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
+            _storeOrderOperatingRepository = storeOrderOperatingRepository;
             m_nSendType_LED12 = 0;
             string strParams_LED12 = "10.0.7.1";
             m_pSendParams_LED12 = Marshal.StringToHGlobalUni(strParams_LED12);
@@ -33,26 +39,38 @@ namespace XHTD_SERVICES_LED.Jobs
                 ShowLed12Process();
             });
         }
-        public void ShowLed12Process()
+        public async void ShowLed12Process()
         {
+            log.Info("start show led bao");
+            Console.WriteLine("start show led bao");
+
             // đổ data thay thế vào đây
+            var orderShows = new List<StoreOrderForLED12>();
+            var orders = await _storeOrderOperatingRepository.GetOrdersLedXiBao();
+
+            if (orders == null || orders.Count == 0)
+            {
+                SetLED12NoContent();
+                return;
+            }
+
+            foreach (var order in orders)
+            {
+                orderShows.Add(new StoreOrderForLED12 { Vehicle = order.Vehicle, State1 = LedHelper.GetDisplayStatus((int)order.Step) }); //1
+            }
 
             //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
 
-            log.Info("start show led bao");
-
-
-            var orderShows = new List<StoreOrderForLED12>();
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "dang moi vao" }); //1
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "dang moi vao" }); //2
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "dang moi vao" }); //3
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "dang moi vao" }); //4
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "dang moi vao" }); //5
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "dang moi vao" }); //6
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
-            orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
-
+            //var orderShows = new List<StoreOrderForLED12>();
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "dang moi vao" }); //1
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "dang moi vao" }); //2
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "dang moi vao" }); //3
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "dang moi vao" }); //4
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "dang moi vao" }); //5
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "dang moi vao" }); //6
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
+            //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
 
             IntPtr pNULL = new IntPtr(0);
 
@@ -444,6 +462,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             log.Info("end show led xi bao");
+            Console.WriteLine("end show led bao");
         }
         private void SetLED12NoContent()
         {
