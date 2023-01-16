@@ -96,6 +96,11 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 //Program.IsLockingScale1 = false;
                 Program.scaleValues1.Clear();
 
+                if (Program.IsScalling1)
+                {
+                    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_1);
+                }
+
                 return;
             }
 
@@ -244,6 +249,11 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 //Program.IsScalling2 = false;
                 //Program.IsLockingScale2 = false;
                 Program.scaleValues2.Clear();
+
+                if (Program.IsScalling2)
+                {
+                    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2);
+                }
 
                 return;
             }
