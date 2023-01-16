@@ -123,7 +123,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 {
                     SendSensor(ScaleCode.CODE_SCALE_1, "0");
 
-                    logger.Info($"Received 951-1 data: time={time}, value={value}");
+                    logger.Info($"Received 951-1 KHONG ON DINH data: time={time}, value={value}");
                 }
             }
 
@@ -141,7 +141,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can: " + scaleText);
 
-                logger.Info($"Received 951-1 data: time={time}, value={value}");
+                logger.Info($"Received 951-1 DA ON DINH data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {
@@ -277,7 +277,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 {
                     SendSensor(ScaleCode.CODE_SCALE_2, "0");
 
-                    logger.Info($"Received 951-2 data: time={time}, value={value}");
+                    logger.Info($"Received 951-2 KHONG ON DINH data: time={time}, value={value}");
                 }
             }
 
@@ -295,7 +295,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 //var scaleText = String.Join(",", Program.scaleValues2);
                 //logger.Info("Gia tri can: " + scaleText);
 
-                logger.Info($"Received 951-2 data: time={time}, value={value}");
+                logger.Info($"Received 951-2 DA ON DINH data: time={time}, value={value}");
 
                 if (isOnDinh)
                 {
