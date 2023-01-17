@@ -1032,7 +1032,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == "XI_MANG_XA"
                                                 && x.IsVoiced == false
-                                                && x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
+                                                //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
                                                 && (x.IndexOrder == null || x.IndexOrder == 0)
                                     )
                                     .OrderBy(x => x.TimeConfirm3)
@@ -1065,7 +1065,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == "XI_MANG_BAO"
                                                 && x.IsVoiced == false
-                                                && x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
+                                                //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
                                                 && (x.IndexOrder == null || x.IndexOrder == 0)
                                     )
                                     .OrderBy(x => x.TimeConfirm3)
@@ -1079,7 +1079,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.Step >= (int)OrderStep.DA_CAN_VAO && x.Step <= (int)OrderStep.DA_LAY_HANG
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == "XI_MANG_BAO"
                                                 && x.IsVoiced == false
                                                 && x.IndexOrder > 0
@@ -1095,7 +1095,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.Step >= (int)OrderStep.DA_CAN_VAO && x.Step <= (int)OrderStep.DA_LAY_HANG
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == "XI_MANG_XA"
                                                 && x.IsVoiced == false
                                                 && x.IndexOrder > 0
