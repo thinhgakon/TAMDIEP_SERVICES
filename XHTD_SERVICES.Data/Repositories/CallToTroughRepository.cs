@@ -200,7 +200,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var order = await dbContext.tblCallToTroughs
-                                .Where(x => x.Trough == code)
+                                .Where(x => x.Machine == code)
                                 .OrderByDescending(x => x.IndexTrough)
                                 .FirstOrDefaultAsync();
 
@@ -213,7 +213,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task AddItem(int orderId, string deliveryCode, string vehicle, string trough, decimal sumNumber)
+        public async Task AddItem(int orderId, string deliveryCode, string vehicle, string machineCode, decimal sumNumber)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -221,14 +221,15 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     if (!IsInProgress(orderId))
                     {
-                        var indexTrough = await GetMaxIndexByCode(trough);
+                        var indexTrough = await GetMaxIndexByCode(machineCode);
 
                         var newItem = new tblCallToTrough
                         {
                             OrderId = orderId,
                             DeliveryCode = deliveryCode,
                             Vehicle = vehicle,
-                            Trough = trough,
+                            Machine = machineCode,
+                            MachineId = Int32.Parse(machineCode),
                             CountTry = 0,
                             IsDone = false,
                             CreateDay = DateTime.Now,

@@ -76,10 +76,10 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                 var sumNumber = (decimal)order.SumNumber;
                 var typeProduct = order.TypeProduct;
 
-                var troughCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
+                var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
 
-                if (!String.IsNullOrEmpty(troughCode)){ 
-                    await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, troughCode, sumNumber);
+                if (!String.IsNullOrEmpty(machineCode)){ 
+                    await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
                 }
             }
         }
