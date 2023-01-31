@@ -106,6 +106,9 @@
     <Compile Include="Entities\tblFunction.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblMachine.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblNotification.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -162,6 +165,7 @@
     </Compile>
     <Compile Include="Models\Response\CategoriesDevicesLogItemResponse.cs" />
     <Compile Include="Models\Response\OrderItemResponse.cs" />
+    <Compile Include="Models\Response\AbcResponse.cs" />
     <Compile Include="Models\Response\OrderToCallInTroughResponse.cs" />
     <Compile Include="Models\Response\SearchOrderResponse.cs" />
     <Compile Include="Models\Values\OrderStep.cs" />
@@ -193,7 +197,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Entities\XHTDModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

@@ -39,6 +39,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblDriver> tblDrivers { get; set; }
         public virtual DbSet<tblDriverVehicle> tblDriverVehicles { get; set; }
         public virtual DbSet<tblFunction> tblFunctions { get; set; }
+        public virtual DbSet<tblMachine> tblMachines { get; set; }
         public virtual DbSet<tblNotification> tblNotifications { get; set; }
         public virtual DbSet<tblRfid> tblRfids { get; set; }
         public virtual DbSet<tblRfidSign> tblRfidSigns { get; set; }

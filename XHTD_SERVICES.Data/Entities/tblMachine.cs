@@ -12,20 +12,16 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class tblCallToTrough
+    public partial class tblMachine
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
-        public string DeliveryCode { get; set; }
-        public string Vehicle { get; set; }
-        public string Trough { get; set; }
-        public int CountTry { get; set; }
-        public string CallLog { get; set; }
-        public Nullable<bool> IsDone { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public Nullable<bool> State { get; set; }
+        public string LineCode { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
+        public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
-        public Nullable<int> IndexTrough { get; set; }
-        public Nullable<int> MachineId { get; set; }
-        public Nullable<decimal> SumNumber { get; set; }
+        public string UpdateBy { get; set; }
     }
 }

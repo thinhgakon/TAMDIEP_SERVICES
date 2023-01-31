@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'E:\HaiPhong\vc_hp_xhtd_services\XHTD_SERVICES.Data\Entities\XHTDModel.edmx'. 
+﻿// T4 code generation is enabled for model 'G:\HaiPhong\vc_hp_xhtd_services\XHTD_SERVICES.Data\Entities\XHTDModel.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

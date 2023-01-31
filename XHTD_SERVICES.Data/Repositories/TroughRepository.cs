@@ -117,5 +117,42 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public async Task<string> GetMinQuantityTrough(string typeProduct)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = from t in dbContext.tblTroughs
+                            join ttp in dbContext.tblTroughTypeProducts
+                            on t.Code equals ttp.TroughCode into typeProducts
+                            join ctt in dbContext.tblCallToTroughs 
+                            on t.Code equals ctt.Trough into callToTroughs
+                            from typeProductItem in typeProducts.DefaultIfEmpty()
+                            where typeProductItem.TypeProduct == typeProduct
+                            from callToTroughItem in callToTroughs.DefaultIfEmpty()
+                            select new {
+                                t.Code,
+                                callToTroughItem.SumNumber,
+                            };
+
+                var records = await query.ToListAsync();
+
+                var record = records.GroupBy(x => x.Code)
+                                    .Select(item => new MinQuantityTroughResponse
+                                                {
+                                                    Code = item.Key,
+                                                    SumNumber = (double)item.Sum(m => m.SumNumber)
+                                                })
+                                    .OrderBy(x => x.SumNumber)
+                                    .FirstOrDefault();
+
+                if (record != null)
+                {
+                    return record.Code;
+                }
+            }
+
+            return null;
+        }
     }
 }

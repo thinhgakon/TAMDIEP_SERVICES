@@ -66,6 +66,9 @@
           <Property Name="IsDone" Type="bit" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="UpdateDay" Type="datetime" />
+          <Property Name="IndexTrough" Type="int" />
+          <Property Name="MachineId" Type="int" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="0" />
         </EntityType>
         <EntityType Name="tblCategories">
           <Key>
@@ -249,6 +252,20 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="GroupIndex" Type="int" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
           <Property Name="ItemIndex" Type="int" />
+          <Property Name="CreateDay" Type="datetime" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdateDay" Type="datetime" />
+          <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tblMachine">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="State" Type="bit" />
+          <Property Name="LineCode" Type="varchar" MaxLength="2" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
@@ -557,6 +574,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblDriver" EntityType="Self.tblDriver" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblDriverVehicle" EntityType="Self.tblDriverVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblFunction" EntityType="Self.tblFunction" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblMachine" EntityType="Self.tblMachine" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblNotification" EntityType="Self.tblNotification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfid" EntityType="Self.tblRfid" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfidSign" EntityType="Self.tblRfidSign" Schema="dbo" store:Type="Tables" />
@@ -667,6 +685,9 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="IsDone" Type="Boolean" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
+          <Property Name="IndexTrough" Type="Int32" />
+          <Property Name="MachineId" Type="Int32" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="0" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -830,6 +851,20 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="GroupIndex" Type="Int32" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="ItemIndex" Type="Int32" />
+          <Property Name="CreateDay" Type="DateTime" Precision="3" />
+          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdateDay" Type="DateTime" Precision="3" />
+          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tblMachine">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="Boolean" />
+          <Property Name="LineCode" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
@@ -1154,6 +1189,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblDrivers" EntityType="Self.tblDriver" />
           <EntitySet Name="tblDriverVehicles" EntityType="Self.tblDriverVehicle" />
           <EntitySet Name="tblFunctions" EntityType="Self.tblFunction" />
+          <EntitySet Name="tblMachines" EntityType="Self.tblMachine" />
           <EntitySet Name="tblNotifications" EntityType="Self.tblNotification" />
           <EntitySet Name="tblRfids" EntityType="Self.tblRfid" />
           <EntitySet Name="tblRfidSigns" EntityType="Self.tblRfidSign" />
@@ -1238,6 +1274,9 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="IsDone" ColumnName="IsDone" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
+                <ScalarProperty Name="IndexTrough" ColumnName="IndexTrough" />
+                <ScalarProperty Name="MachineId" ColumnName="MachineId" />
+                <ScalarProperty Name="SumNumber" ColumnName="SumNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1411,6 +1450,21 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="GroupIndex" ColumnName="GroupIndex" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ItemIndex" ColumnName="ItemIndex" />
+                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
+                <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblMachines">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblMachine">
+              <MappingFragment StoreEntitySet="tblMachine">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="LineCode" ColumnName="LineCode" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
