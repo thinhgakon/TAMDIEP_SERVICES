@@ -122,7 +122,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var query = from t in dbContext.tblMachines
+                var query = from t in dbContext.tblMachines where t.State == true
                             join ttp in dbContext.tblMachineTypeProducts
                             on t.Code equals ttp.MachineCode into typeProducts
                             join ctt in dbContext.tblCallToTroughs

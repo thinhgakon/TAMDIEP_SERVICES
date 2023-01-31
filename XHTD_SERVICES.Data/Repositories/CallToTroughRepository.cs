@@ -230,6 +230,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             Vehicle = vehicle,
                             Machine = machineCode,
                             MachineId = Int32.Parse(machineCode),
+                            Trough = machineCode,
                             CountTry = 0,
                             IsDone = false,
                             CreateDay = DateTime.Now,
@@ -250,8 +251,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error("CreateAsync vehicle log Error: " + ex.Message); ;
-                    Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
+                    log.Error("Log Error: " + ex.Message); ;
+                    Console.WriteLine("Log Error: " + ex.Message);
                 }
             }
         }

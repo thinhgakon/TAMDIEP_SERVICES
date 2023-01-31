@@ -1115,7 +1115,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                 && x.CatId == "XI_MANG_BAO"
                                                 && x.IsVoiced == false
                                                 //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
-                                                && (x.IndexOrder == null || x.IndexOrder == 0)
+                                                //&& (x.IndexOrder == null || x.IndexOrder == 0)
                                     )
                                     .OrderBy(x => x.TimeConfirm3)
                                     .ToListAsync();
