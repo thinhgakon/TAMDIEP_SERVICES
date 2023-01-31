@@ -57,19 +57,30 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
         {
             _queueToCallLogger.LogInfo("Start process QueueToCallJob");
 
-            // Lay ra danh sach mang xuat xi mang bao dang hoat dong
-            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
-
-            if (troughts == null || troughts.Count == 0)
+            // 1. Lay danh sach don hang chua duoc xep vao may xuat
+            var orders = await _storeOrderOperatingRepository.GetOrdersXiMangBaoNoIndex();
+            if (orders == null || orders.Count == 0)
             {
                 return;
             }
 
-            // Doc lan luot thong tin tren cac mang
-            foreach (var trought in troughts)
+            // 2. Voi moi don hang o B1 thi thuc hien
+            // 3. Tim may xuat hien tai co it khoi luong don nhat (tuong ung voi type product)
+            // 4. Tim STT lon nhat trong may tim duoc o B3: maxIndex
+            // 5. Them don hang vao may o B3 voi index = maxIndex + 1
+            foreach (var order in orders)
             {
-                await ReadDataFromTrough(trought);
-                _queueToCallLogger.LogInfo("------------------------------");
+                var orderId = order.Id;
+                var deliveryCode = order.DeliveryCode;
+                var vehicle = order.Vehicle;
+                var sumNumber = (decimal)order.SumNumber;
+                var typeProduct = order.TypeProduct;
+
+                var troughCode = await _troughRepository.GetMinQuantityTrough(typeProduct);
+
+                if (!String.IsNullOrEmpty(troughCode)){ 
+                    await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, troughCode, sumNumber);
+                }
             }
         }
 

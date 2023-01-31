@@ -194,5 +194,65 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+
+        public async Task<int> GetMaxIndexByCode(string code)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblCallToTroughs
+                                .Where(x => x.Trough == code)
+                                .OrderByDescending(x => x.IndexTrough)
+                                .FirstOrDefaultAsync();
+
+                if (order != null)
+                {
+                    return (int)order.IndexTrough;
+                }
+
+                return 0;
+            }
+        }
+
+        public async Task AddItem(int orderId, string deliveryCode, string vehicle, string trough, decimal sumNumber)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    if (!IsInProgress(orderId))
+                    {
+                        var indexTrough = await GetMaxIndexByCode(trough);
+
+                        var newItem = new tblCallToTrough
+                        {
+                            OrderId = orderId,
+                            DeliveryCode = deliveryCode,
+                            Vehicle = vehicle,
+                            Trough = trough,
+                            CountTry = 0,
+                            IsDone = false,
+                            CreateDay = DateTime.Now,
+                            UpdateDay = DateTime.Now,
+                            IndexTrough = indexTrough + 1,
+                            SumNumber = sumNumber,
+                            CallLog = $@"Xe được xếp vào máng lúc {DateTime.Now}.",
+                        };
+
+                        dbContext.tblCallToTroughs.Add(newItem);
+                        await dbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        log.Error("Da ton tai"); 
+                        Console.WriteLine("Da ton tai");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("CreateAsync vehicle log Error: " + ex.Message); ;
+                    Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
+                }
+            }
+        }
     }
 }

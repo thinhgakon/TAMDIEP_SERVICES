@@ -165,7 +165,7 @@
     </Compile>
     <Compile Include="Models\Response\CategoriesDevicesLogItemResponse.cs" />
     <Compile Include="Models\Response\OrderItemResponse.cs" />
-    <Compile Include="Models\Response\AbcResponse.cs" />
+    <Compile Include="Models\Response\MinQuantityTroughResponse.cs" />
     <Compile Include="Models\Response\OrderToCallInTroughResponse.cs" />
     <Compile Include="Models\Response\SearchOrderResponse.cs" />
     <Compile Include="Models\Values\OrderStep.cs" />
