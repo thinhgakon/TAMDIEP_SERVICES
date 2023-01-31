@@ -61,6 +61,7 @@
           <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
           <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
           <Property Name="SumNumber" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Machine" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Trough" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="MachineId" Type="int" />
           <Property Name="IndexTrough" Type="int" />
@@ -693,6 +694,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Machine" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Trough" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="MachineId" Type="Int32" />
           <Property Name="IndexTrough" Type="Int32" />
@@ -1295,6 +1297,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
                 <ScalarProperty Name="SumNumber" ColumnName="SumNumber" />
+                <ScalarProperty Name="Machine" ColumnName="Machine" />
                 <ScalarProperty Name="Trough" ColumnName="Trough" />
                 <ScalarProperty Name="MachineId" ColumnName="MachineId" />
                 <ScalarProperty Name="IndexTrough" ColumnName="IndexTrough" />

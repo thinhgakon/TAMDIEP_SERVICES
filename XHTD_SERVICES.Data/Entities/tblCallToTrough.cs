@@ -19,6 +19,7 @@ namespace XHTD_SERVICES.Data.Entities
         public string DeliveryCode { get; set; }
         public string Vehicle { get; set; }
         public Nullable<decimal> SumNumber { get; set; }
+        public string Machine { get; set; }
         public string Trough { get; set; }
         public Nullable<int> MachineId { get; set; }
         public Nullable<int> IndexTrough { get; set; }
