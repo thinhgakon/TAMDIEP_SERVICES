@@ -58,7 +58,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             _queueToCallLogger.LogInfo("Start process QueueToCallJob");
 
             // 1. Lay danh sach don hang chua duoc xep vao may xuat
-            var orders = await _storeOrderOperatingRepository.GetOrdersXiMangBaoNoIndex();
+            var orders = await _storeOrderOperatingRepository.GetOrdersAddToQueueToCall();
             if (orders == null || orders.Count == 0)
             {
                 return;
@@ -76,7 +76,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                 var sumNumber = (decimal)order.SumNumber;
                 var typeProduct = order.TypeProduct;
 
-                var troughCode = await _troughRepository.GetMinQuantityTrough(typeProduct);
+                var troughCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
 
                 if (!String.IsNullOrEmpty(troughCode)){ 
                     await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, troughCode, sumNumber);

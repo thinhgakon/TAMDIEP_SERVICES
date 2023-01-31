@@ -1105,5 +1105,22 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersAddToQueueToCall()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.IsVoiced == false
+                                                //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
+                                                && (x.IndexOrder == null || x.IndexOrder == 0)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
     }
 }

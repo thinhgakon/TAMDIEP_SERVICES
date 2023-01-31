@@ -118,7 +118,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<string> GetMinQuantityTrough(string typeProduct)
+        public async Task<string> GetMinQuantityMachine(string typeProduct)
         {
             using (var dbContext = new XHTD_Entities())
             {
