@@ -137,19 +137,17 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var impactedItem = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Machine == overCountTryItem.Machine && x.IsDone == false && x.CountTry <= 3 && x.IndexTrough == indexTrough + 1);
 
-                    if (impactedItem == null)
-                    {
-                        return;
+                    if (impactedItem != null)
+                    { 
+                        overCountTryItem.IndexTrough = indexTrough + 1;
+
+                        impactedItem.IndexTrough = indexTrough;
+                        impactedItem.CallLog = $@"{impactedItem.CallLog} #Dịch lốt sau khi xe trước gọi không vào lúc {DateTime.Now}";
                     }
 
                     overCountTryItem.CountTry = 0;
                     overCountTryItem.CountReindex = countReindex + 1;
-                    overCountTryItem.IndexTrough = indexTrough + 1;
-
-                    overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
-
-                    impactedItem.IndexTrough = indexTrough;
-                    impactedItem.CallLog = $@"{impactedItem.CallLog} #Dịch lốt sau khi xe trước gọi không vào lúc {DateTime.Now}";
+                    overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} #Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
 
                     await dbContext.SaveChangesAsync();
                 }
