@@ -17,7 +17,11 @@ namespace XHTD_SERVICES.Data.Entities
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public Nullable<bool> Working { get; set; }
         public Nullable<bool> State { get; set; }
+        public string DeliveryCodeCurrent { get; set; }
+        public Nullable<double> PlanQuantityCurrent { get; set; }
+        public Nullable<double> CountQuantityCurrent { get; set; }
         public string LineCode { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }

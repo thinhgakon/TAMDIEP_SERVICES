@@ -17,6 +17,7 @@ namespace XHTD_SERVICES.Data.Entities
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public string Machine { get; set; }
         public Nullable<double> Height { get; set; }
         public Nullable<double> Width { get; set; }
         public Nullable<double> Long { get; set; }

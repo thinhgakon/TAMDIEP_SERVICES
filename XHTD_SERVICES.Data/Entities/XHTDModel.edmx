@@ -266,7 +266,11 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="Working" Type="bit" />
           <Property Name="State" Type="bit" />
+          <Property Name="DeliveryCodeCurrent" Type="nvarchar" MaxLength="50" />
+          <Property Name="PlanQuantityCurrent" Type="float" />
+          <Property Name="CountQuantityCurrent" Type="float" />
           <Property Name="LineCode" Type="varchar" MaxLength="2" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
@@ -504,6 +508,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
+          <Property Name="Machine" Type="varchar" MaxLength="5" />
           <Property Name="Height" Type="float" />
           <Property Name="Width" Type="float" />
           <Property Name="Long" Type="float" />
@@ -880,7 +885,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Working" Type="Boolean" />
           <Property Name="State" Type="Boolean" />
+          <Property Name="DeliveryCodeCurrent" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PlanQuantityCurrent" Type="Double" />
+          <Property Name="CountQuantityCurrent" Type="Double" />
           <Property Name="LineCode" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1101,6 +1110,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Machine" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
           <Property Name="Height" Type="Double" />
           <Property Name="Width" Type="Double" />
           <Property Name="Long" Type="Double" />
@@ -1495,7 +1505,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Working" ColumnName="Working" />
                 <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="DeliveryCodeCurrent" ColumnName="DeliveryCodeCurrent" />
+                <ScalarProperty Name="PlanQuantityCurrent" ColumnName="PlanQuantityCurrent" />
+                <ScalarProperty Name="CountQuantityCurrent" ColumnName="CountQuantityCurrent" />
                 <ScalarProperty Name="LineCode" ColumnName="LineCode" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
@@ -1726,6 +1740,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Machine" ColumnName="Machine" />
                 <ScalarProperty Name="Height" ColumnName="Height" />
                 <ScalarProperty Name="Width" ColumnName="Width" />
                 <ScalarProperty Name="Long" ColumnName="Long" />
