@@ -24,6 +24,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> MachineId { get; set; }
         public Nullable<int> IndexTrough { get; set; }
         public int CountTry { get; set; }
+        public int CountReindex { get; set; }
         public string CallLog { get; set; }
         public Nullable<bool> IsDone { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }

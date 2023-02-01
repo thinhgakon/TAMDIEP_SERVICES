@@ -66,6 +66,7 @@
           <Property Name="MachineId" Type="int" />
           <Property Name="IndexTrough" Type="int" />
           <Property Name="CountTry" Type="int" Nullable="false" />
+          <Property Name="CountReindex" Type="int" Nullable="false" />
           <Property Name="CallLog" Type="nvarchar(max)" />
           <Property Name="IsDone" Type="bit" />
           <Property Name="CreateDay" Type="datetime" />
@@ -699,6 +700,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="MachineId" Type="Int32" />
           <Property Name="IndexTrough" Type="Int32" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
+          <Property Name="CountReindex" Type="Int32" Nullable="false" />
           <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsDone" Type="Boolean" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
@@ -1302,6 +1304,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="MachineId" ColumnName="MachineId" />
                 <ScalarProperty Name="IndexTrough" ColumnName="IndexTrough" />
                 <ScalarProperty Name="CountTry" ColumnName="CountTry" />
+                <ScalarProperty Name="CountReindex" ColumnName="CountReindex" />
                 <ScalarProperty Name="CallLog" ColumnName="CallLog" />
                 <ScalarProperty Name="IsDone" ColumnName="IsDone" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
