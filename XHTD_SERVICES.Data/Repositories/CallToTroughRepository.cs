@@ -201,6 +201,17 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<tblCallToTrough>> GetItemsOverCountReindex(int maxCountReindex = 3)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblCallToTroughs
+                                            .Where(x => x.IsDone == false && x.CountReindex >= maxCountReindex)
+                                            .ToListAsync();
+                return orders;
+            }
+        }
+
         public async Task<int> GetMaxIndexByCode(string code)
         {
             using (var dbContext = new XHTD_Entities())

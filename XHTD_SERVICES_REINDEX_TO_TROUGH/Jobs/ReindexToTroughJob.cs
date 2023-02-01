@@ -136,17 +136,36 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
             }
 
             // Xử lý các order quá 3 lần xoay vòng lốt mà ko vào máng
-            var overCountReindexOrders = await _storeOrderOperatingRepository.GetOrdersOverCountReindex(maxCountReindex);
+            var overCountReindexItems = await _callToTroughRepository.GetItemsOverCountReindex(maxCountReindex);
 
-            if (overCountReindexOrders != null && overCountReindexOrders.Count > 0)
+            if (overCountReindexItems != null && overCountReindexItems.Count > 0)
             {
-                foreach (var detailOrder in overCountReindexOrders)
+                foreach (var item in overCountReindexItems)
                 {
-                    await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+                    var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(overTimeToReindex) > DateTime.Now;
+                    if (isOverTime)
+                    {
+                        continue;
+                    }
 
-                    await _callToTroughRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+                    // cập nhật trạng thái isDone trong hàng đợi
+                    await _callToTroughRepository.UpdateWhenOverCountReindex(item.Id);
+
+                    await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(item.OrderId);
                 }
             }
+
+            //var overCountReindexOrders = await _storeOrderOperatingRepository.GetOrdersOverCountReindex(maxCountReindex);
+
+            //if (overCountReindexOrders != null && overCountReindexOrders.Count > 0)
+            //{
+            //    foreach (var detailOrder in overCountReindexOrders)
+            //    {
+            //        await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+
+            //        await _callToTroughRepository.UpdateWhenOverCountReindex(detailOrder.Id);
+            //    }
+            //}
         }
     }
 }
