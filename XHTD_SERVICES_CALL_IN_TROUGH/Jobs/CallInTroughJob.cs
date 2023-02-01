@@ -112,10 +112,20 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         {
             _callInTroughLogger.LogInfo($"CallInTrough {machineCode}");
 
+            var machineInfo = _troughRepository.GetDetail(machineCode);
+
+            // Khong goi xe vao may dang xuat hang
+            if ((bool)machineInfo.Working)
+            {
+                _callInTroughLogger.LogInfo($"May {machineCode} dang xuat hang. Ket thuc");
+                return;
+            }
+
             // Tìm đơn hàng sẽ được gọi
             var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
 
-            if (itemToCall == null)
+            // Khong goi 1 xe qua 3 lan
+            if (itemToCall == null || itemToCall.CountTry >= maxCountTryCall)
             {
                 return;
             }

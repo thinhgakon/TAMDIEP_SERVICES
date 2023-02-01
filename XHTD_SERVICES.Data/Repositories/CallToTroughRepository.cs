@@ -81,8 +81,8 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 return dbContext.tblCallToTroughs
-                        .Where(x => x.Machine == machineCode && x.IsDone == false && x.CountTry < maxCountTryCall)
-                        //.Where(x => x.Trough == troughCode && x.IsDone == false)
+                        //.Where(x => x.Machine == machineCode && x.IsDone == false && x.CountTry < maxCountTryCall)
+                        .Where(x => x.Machine == machineCode && x.IsDone == false)
                         .OrderBy(x => x.IndexTrough)
                         .FirstOrDefault();
             }
