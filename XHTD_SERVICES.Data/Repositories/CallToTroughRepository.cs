@@ -147,6 +147,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     overCountTryItem.CountTry = 0;
                     overCountTryItem.CountReindex = countReindex + 1;
+                    overCountTryItem.UpdateDay = DateTime.Now;
                     overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} #Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
 
                     await dbContext.SaveChangesAsync();
