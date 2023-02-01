@@ -122,6 +122,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> UpdateWhenOverCountTry(int id)
         {
+            //TODO: tìm đơn hàng có STT ngay sau đơn hàng này. 
+            //Nếu có thì Update STT của 2 đơn hàng
             using (var dbContext = new XHTD_Entities())
             {
                 bool isUpdated = false;
@@ -160,6 +162,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> UpdateWhenOverCountReindex(int id)
         {
+            //TODO: xếp lại STT của toàn bộ đơn hàng đang chờ trong máng
             using (var dbContext = new XHTD_Entities())
             {
                 bool isUpdated = false;
