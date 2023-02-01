@@ -122,26 +122,22 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> UpdateWhenOverCountTry(int id)
         {
-            //TODO: tìm đơn hàng có STT ngay sau đơn hàng này. 
-            //Nếu có thì Update STT của 2 đơn hàng
             using (var dbContext = new XHTD_Entities())
             {
                 bool isUpdated = false;
 
                 try
                 {
-                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
-                    if (itemToCall != null)
+                    var overCountTryItem = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
+                    if (overCountTryItem != null)
                     {
-                        var countReindex = itemToCall.CountReindex;
-                        var indexTrough = itemToCall.IndexTrough;
-                        //itemToCall.IsDone = true;
-                        //itemToCall.UpdateDay = DateTime.Now;
-                        itemToCall.CountTry = 0;
-                        itemToCall.CountReindex = countReindex + 1;
-                        itemToCall.IndexTrough = indexTrough + 2;
+                        var countReindex = overCountTryItem.CountReindex;
+                        var indexTrough = overCountTryItem.IndexTrough;
+                        overCountTryItem.CountTry = 0;
+                        overCountTryItem.CountReindex = countReindex + 1;
+                        overCountTryItem.IndexTrough = indexTrough + 2;
 
-                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
+                        overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
 
