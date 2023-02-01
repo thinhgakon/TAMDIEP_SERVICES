@@ -34,35 +34,58 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateMachine(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        public async Task UpdateMachine(string machineCode, string deliveryCode, double countQuantity, double planQuantity)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 try
                 {
-                    var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
-
-                    if (trough != null)
+                    var itemToCall = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == machineCode);
+                    if (itemToCall != null)
                     {
-                        var machine = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == trough.Machine);
-                        if (machine != null)
-                        {
-                            machine.Working = true;
-                            machine.DeliveryCodeCurrent = deliveryCode;
-                            machine.CountQuantityCurrent = countQuantity;
-                            machine.PlanQuantityCurrent = planQuantity;
+                        itemToCall.Working = true;
+                        itemToCall.DeliveryCodeCurrent = deliveryCode;
+                        itemToCall.CountQuantityCurrent = countQuantity;
+                        itemToCall.PlanQuantityCurrent = planQuantity;
 
-                            await dbContext.SaveChangesAsync();
+                        await dbContext.SaveChangesAsync();
 
-                            log.Info($@"UpdateMachine Success");
-                            Console.WriteLine($@"UpdateMachine Success");
-                        }
+                        log.Info($@"UpdateMachine Success");
+                        Console.WriteLine($@"UpdateMachine Success");
                     }
                 }
                 catch (Exception ex)
                 {
                     log.Error($@"UpdateMachine Error: " + ex.Message);
                     Console.WriteLine($@"UpdateMachine Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task ResetMachine(string machineCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == machineCode);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.Working = false;
+                        itemToCall.DeliveryCodeCurrent = null;
+                        itemToCall.CountQuantityCurrent = null;
+                        itemToCall.PlanQuantityCurrent = null;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"ResetMachine Success");
+                        Console.WriteLine($@"ResetMachine Success");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"ResetMachine Error: " + ex.Message);
+                    Console.WriteLine($@"ResetMachine Error: " + ex.Message);
                 }
             }
         }

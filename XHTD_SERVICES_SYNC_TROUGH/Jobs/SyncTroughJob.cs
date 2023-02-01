@@ -141,6 +141,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task ReadDataFromTrough(string troughCode, Stream stream)
         {
+            var troughInfo = _troughRepository.GetDetail(troughCode);
+
+            if(troughInfo == null)
+            {
+                return;
+            }
+
+            var machineCode = troughInfo.Machine;
+
             _syncTroughLogger.LogInfo($"ReadDataFromTrough: {troughCode}");
             // 2. send 1
             byte[] data1 = encoding.GetBytes($"SendTroughInfo_{troughCode}");
@@ -162,7 +171,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
 
-                await _machineRepository.UpdateMachine(troughCode, deliveryCode, countQuantity, planQuantity);
+                await _machineRepository.UpdateMachine(machineCode, deliveryCode, countQuantity, planQuantity);
 
                 await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
 
@@ -180,6 +189,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             else
             {
                 await _troughRepository.ResetTrough(troughCode);
+
+                await _machineRepository.ResetMachine(machineCode);
             }
         }
     }
