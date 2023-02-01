@@ -131,8 +131,14 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
                     if (itemToCall != null)
                     {
-                        itemToCall.IsDone = true;
+                        var countReindex = itemToCall.CountReindex;
+                        var indexTrough = itemToCall.IndexTrough;
+                        //itemToCall.IsDone = true;
                         //itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CountTry = 0;
+                        itemToCall.CountReindex = countReindex + 1;
+                        itemToCall.IndexTrough = indexTrough + 2;
+
                         itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
