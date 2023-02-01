@@ -134,13 +134,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {timeIn}; ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Đã cân vào lúc {timeIn}; ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {timeIn}; ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {timeIn}; ";
 
                     await _appDbContext.SaveChangesAsync();
 
-                    Console.WriteLine($@"Update Receiving Order {orderId}");
-                    log.Info($@"Update Receiving Order {orderId}");
+                    Console.WriteLine($@"Sync Update Receiving Order {orderId}");
+                    log.Info($@"Sync Update Receiving Order {orderId}");
 
                     isSynced = true;
                 }
@@ -149,8 +149,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"Update Receiving Order {orderId} Error: " + ex.Message);
-                Console.WriteLine($@"Update Receiving Order {orderId} Error: " + ex.Message);
+                log.Error($@"Sync Update Receiving Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Sync Update Receiving Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
             }
@@ -176,13 +176,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra lúc {timeOut} ";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Cân ra lúc {timeOut}; ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {timeOut} ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {timeOut}; ";
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Update Received => DA_CAN_RA Order {orderId}");
-                        log.Info($@"Update Received => DA_CAN_RA Order {orderId}");
+                        Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {orderId}");
+                        log.Info($@"Sync Update Received => DA_CAN_RA Order {orderId}");
 
                         isSynced = true;
                     }
@@ -204,8 +204,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Update Received => DA_HOAN_THANH Order {orderId}");
-                        log.Info($@"Update Received => DA_HOAN_THANH Order {orderId}");
+                        Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
+                        log.Info($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
 
                         isSynced = true;
                     }
@@ -227,8 +227,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
-                        log.Info($@"Update Received => DA_GIAO_HANG Order {orderId}");
+                        Console.WriteLine($@"Sync Update Received => DA_GIAO_HANG Order {orderId}");
+                        log.Info($@"Sync Update Received => DA_GIAO_HANG Order {orderId}");
 
                         isSynced = true;
                     }
@@ -238,8 +238,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"Update Received Order {orderId} Error: " + ex.Message);
-                Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
+                log.Error($@"Sync Update Received Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Sync Update Received Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
             }
