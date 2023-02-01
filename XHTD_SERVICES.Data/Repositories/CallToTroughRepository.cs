@@ -83,7 +83,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 return dbContext.tblCallToTroughs
                         .Where(x => x.Machine == machineCode && x.IsDone == false && x.CountTry < maxCountTryCall)
                         //.Where(x => x.Trough == troughCode && x.IsDone == false)
-                        .OrderBy(x => x.Id)
+                        .OrderBy(x => x.IndexTrough)
                         .FirstOrDefault();
             }
         }
