@@ -37,6 +37,8 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         private static int maxCountTryCall = 3;
 
+        private static int maxCountReindex = 3;
+
         public CallInTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
@@ -125,7 +127,9 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
 
             // Khong goi 1 xe qua 3 lan
-            if (itemToCall == null || itemToCall.CountTry >= maxCountTryCall)
+            if (itemToCall == null 
+                || itemToCall.CountTry >= maxCountTryCall 
+                || itemToCall.CountReindex >= maxCountReindex)
             {
                 return;
             }
