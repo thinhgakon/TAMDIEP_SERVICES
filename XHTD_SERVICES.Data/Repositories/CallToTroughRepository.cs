@@ -160,13 +160,11 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateWhenOverCountReindex(int id)
+        public async Task UpdateWhenOverCountReindex(int id)
         {
             //TODO: xếp lại STT của toàn bộ đơn hàng đang chờ trong máng
             using (var dbContext = new XHTD_Entities())
             {
-                bool isUpdated = false;
-
                 try
                 {
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
@@ -177,18 +175,12 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
-
-                        isUpdated = true;
                     }
-
-                    return isUpdated;
                 }
                 catch (Exception ex)
                 {
                     log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
                     Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
-
-                    return isUpdated;
                 }
             }
         }
