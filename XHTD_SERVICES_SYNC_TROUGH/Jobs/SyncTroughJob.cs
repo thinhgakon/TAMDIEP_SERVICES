@@ -29,6 +29,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected readonly TroughRepository _troughRepository;
 
+        protected readonly MachineRepository _machineRepository;
+
         protected readonly SystemParameterRepository _systemParameterRepository;
 
         protected readonly Notification _notification;
@@ -53,6 +55,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
             TroughRepository troughRepository,
+            MachineRepository machineRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
             SyncTroughLogger syncTroughLogger
@@ -61,6 +64,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
             _troughRepository = troughRepository;
+            _machineRepository = machineRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
             _syncTroughLogger = syncTroughLogger;
@@ -157,6 +161,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             if (status == "True")
             {
                 await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
+
+                await _machineRepository.UpdateMachine(troughCode, deliveryCode, countQuantity, planQuantity);
 
                 await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
 

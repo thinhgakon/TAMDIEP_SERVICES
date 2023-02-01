@@ -33,5 +33,38 @@ namespace XHTD_SERVICES.Data.Repositories
                 return machines;
             }
         }
+
+        public async Task UpdateMachine(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+
+                    if (trough != null)
+                    {
+                        var machine = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == trough.Machine);
+                        if (machine != null)
+                        {
+                            machine.Working = true;
+                            machine.DeliveryCodeCurrent = deliveryCode;
+                            machine.CountQuantityCurrent = countQuantity;
+                            machine.PlanQuantityCurrent = planQuantity;
+
+                            await dbContext.SaveChangesAsync();
+
+                            log.Info($@"UpdateMachine Success");
+                            Console.WriteLine($@"UpdateMachine Success");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateMachine Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateMachine Error: " + ex.Message);
+                }
+            }
+        }
     }
 }
