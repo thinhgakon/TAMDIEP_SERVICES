@@ -168,14 +168,34 @@ namespace XHTD_SERVICES.Data.Repositories
                 try
                 {
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
-                    if (itemToCall != null)
-                    {
-                        itemToCall.IsDone = true;
-                        itemToCall.UpdateDay = DateTime.Now;
-                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc {DateTime.Now}";
 
-                        await dbContext.SaveChangesAsync();
+                    if(itemToCall == null)
+                    {
+                        return;
                     }
+                    
+                    itemToCall.IsDone = true;
+                    itemToCall.UpdateDay = DateTime.Now;
+                    itemToCall.CallLog = $@"{itemToCall.CallLog} # Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc {DateTime.Now}";
+
+                    await dbContext.SaveChangesAsync();
+
+                    // Đặt lại STT cho các order khác
+                    var impactedItems = await dbContext.tblCallToTroughs
+                                                .Where(x => x.IsDone == false && x.Machine == itemToCall.Machine)
+                                                .ToListAsync();
+
+                    if (impactedItems != null && impactedItems.Count > 0)
+                    {
+                        int i = 1;
+                        foreach (var impactedItem in impactedItems)
+                        {
+                            impactedItem.IndexTrough = i;
+                            i++;
+                        }
+                    }
+
+                    await dbContext.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
