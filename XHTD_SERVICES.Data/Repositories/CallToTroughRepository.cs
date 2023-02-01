@@ -120,38 +120,43 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateWhenOverCountTry(int id)
+        public async Task UpdateWhenOverCountTry(int id)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                bool isUpdated = false;
-
                 try
                 {
                     var overCountTryItem = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Id == id);
-                    if (overCountTryItem != null)
-                    {
-                        var countReindex = overCountTryItem.CountReindex;
-                        var indexTrough = overCountTryItem.IndexTrough;
-                        overCountTryItem.CountTry = 0;
-                        overCountTryItem.CountReindex = countReindex + 1;
-                        overCountTryItem.IndexTrough = indexTrough + 2;
 
-                        overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
-
-                        await dbContext.SaveChangesAsync();
-
-                        isUpdated = true;
+                    if (overCountTryItem == null) {
+                        return;
                     }
 
-                    return isUpdated;
+                    var countReindex = overCountTryItem.CountReindex;
+                    var indexTrough = overCountTryItem.IndexTrough;
+
+                    var impactedItem = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.Machine == overCountTryItem.Machine && x.IsDone == false && x.CountTry <= 3 && x.IndexTrough == indexTrough + 1);
+
+                    if (impactedItem == null)
+                    {
+                        return;
+                    }
+
+                    overCountTryItem.CountTry = 0;
+                    overCountTryItem.CountReindex = countReindex + 1;
+                    overCountTryItem.IndexTrough = indexTrough + 1;
+
+                    overCountTryItem.CallLog = $@"{overCountTryItem.CallLog} # Quá 5 phút sau gần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}";
+
+                    impactedItem.IndexTrough = indexTrough;
+                    impactedItem.CallLog = $@"{impactedItem.CallLog} #Dịch lốt sau khi xe trước gọi không vào lúc {DateTime.Now}";
+
+                    await dbContext.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
                     log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
                     Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
-
-                    return isUpdated;
                 }
             }
         }
