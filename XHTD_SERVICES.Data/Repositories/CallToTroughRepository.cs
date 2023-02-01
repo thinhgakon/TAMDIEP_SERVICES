@@ -76,12 +76,12 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public tblCallToTrough GetItemToCall(string troughCode, int maxCountTryCall)
+        public tblCallToTrough GetItemToCall(string machineCode, int maxCountTryCall)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 return dbContext.tblCallToTroughs
-                        .Where(x => x.Trough == troughCode && x.IsDone == false && x.CountTry < maxCountTryCall)
+                        .Where(x => x.Machine == machineCode && x.IsDone == false && x.CountTry < maxCountTryCall)
                         //.Where(x => x.Trough == troughCode && x.IsDone == false)
                         .OrderBy(x => x.Id)
                         .FirstOrDefault();

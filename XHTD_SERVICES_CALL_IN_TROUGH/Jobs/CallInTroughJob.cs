@@ -23,6 +23,8 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         protected readonly TroughRepository _troughRepository;
 
+        protected readonly MachineRepository _machineRepository;
+
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
@@ -39,6 +41,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
             TroughRepository troughRepository,
+            MachineRepository machineRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
@@ -48,6 +51,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
             _troughRepository = troughRepository;
+            _machineRepository = machineRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
@@ -89,27 +93,27 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             // TODO: Lay ra danh sach mang xuat xi mang bao dang hoat dong
             // Goi xe vao tung mang: tham khao service QueueToCall
 
-            var troughts = await _troughRepository.GetActiveXiBaoTroughs();
+            var machines = await _machineRepository.GetAllMachineCodes();
 
-            if (troughts == null || troughts.Count == 0)
+            if (machines == null || machines.Count == 0)
             {
                 return;
             }
 
             // Doc lan luot thong tin tren cac mang
-            foreach (var trought in troughts)
+            foreach (var machine in machines)
             {
-                await CallInTrough(trought);
+                await CallInTrough(machine);
                 Thread.Sleep(5000);
             }
         }
 
-        public async Task CallInTrough(string troughCode) 
+        public async Task CallInTrough(string machineCode)
         {
-            _callInTroughLogger.LogInfo($"CallInTrough {troughCode}");
+            _callInTroughLogger.LogInfo($"CallInTrough {machineCode}");
 
             // Tìm đơn hàng sẽ được gọi
-            var itemToCall = _callToTroughRepository.GetItemToCall(troughCode, maxCountTryCall);
+            var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
 
             if (itemToCall == null)
             {
@@ -124,7 +128,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 return;
             }
 
-            if(order.Step == (int)OrderStep.DANG_GOI_XE)
+            if(order.Step == (int)OrderStep.DA_CAN_VAO)
             {
                 var vehiceCode = order.Vehicle;
 
@@ -136,7 +140,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 await _callToTroughRepository.UpdateWhenCall(itemToCall.Id, vehiceCode);
 
                 // Thuc hien goi xe
-                CallBySystem(vehiceCode, troughCode);
+                CallBySystem(vehiceCode, machineCode);
             }
         }
 
