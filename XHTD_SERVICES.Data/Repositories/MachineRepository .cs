@@ -34,6 +34,16 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblMachine> GetDetail(string code)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == code && x.State == true);
+
+                return trough;
+            }
+        }
+
         public async Task UpdateMachine(string machineCode, string deliveryCode, double countQuantity, double planQuantity)
         {
             using (var dbContext = new XHTD_Entities())

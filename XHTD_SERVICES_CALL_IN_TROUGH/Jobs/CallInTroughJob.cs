@@ -114,7 +114,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         {
             _callInTroughLogger.LogInfo($"CallInTrough {machineCode}");
 
-            var machineInfo = await _troughRepository.GetDetail(machineCode);
+            var machineInfo = await _machineRepository.GetDetail(machineCode);
 
             // Khong goi xe vao may dang xuat hang
             if ((bool)machineInfo.Working)
