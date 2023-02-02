@@ -120,6 +120,30 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task UpdateWhenIntoTrough(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe vào máng lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateWhenIntoTrough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenIntoTrough Error: " + ex.Message);
+                }
+            }
+        }
+
         public async Task UpdateWhenOverCountTry(int id)
         {
             using (var dbContext = new XHTD_Entities())
