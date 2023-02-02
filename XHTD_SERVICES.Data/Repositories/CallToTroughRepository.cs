@@ -293,7 +293,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             UpdateDay = DateTime.Now,
                             IndexTrough = indexTrough + 1,
                             SumNumber = sumNumber,
-                            CallLog = $@"Xe được xếp vào máng lúc {DateTime.Now}.",
+                            CallLog = $@"#Xe được xếp vào máng lúc {DateTime.Now}.",
                         };
 
                         dbContext.tblCallToTroughs.Add(newItem);
