@@ -34,13 +34,17 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<tblMachine> GetDetail(string code)
+        public async Task<bool> IsWorkingMachine(string machineCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var trough = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == code && x.State == true);
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Machine == machineCode && x.Working == true);
+                if(trough != null)
+                {
+                    return true;
+                }
 
-                return trough;
+                return false;
             }
         }
 
