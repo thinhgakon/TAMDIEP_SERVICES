@@ -997,7 +997,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangRoiIndexd()
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangRoiIndexed()
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -1030,7 +1030,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangBaoIndexd()
+        public async Task<List<tblStoreOrderOperating>> GetOrdersXiMangBaoIndexed()
         {
             using (var dbContext = new XHTD_Entities())
             {

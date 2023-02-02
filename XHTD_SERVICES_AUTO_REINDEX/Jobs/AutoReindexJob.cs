@@ -41,7 +41,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             _autoReindexLogger.LogInfo("Start process AutoReindexProcess");
 
             //1.  Xep lot XI_MANG_XA
-            var orderRoiIndexds = await _storeOrderOperatingRepository.GetOrdersXiMangRoiIndexd();
+            var orderRoiIndexds = await _storeOrderOperatingRepository.GetOrdersXiMangRoiIndexed();
             if (orderRoiIndexds != null && orderRoiIndexds.Count > 0)
             {
                 int i = 1;
@@ -63,7 +63,7 @@ namespace XHTD_SERVICES_AUTO_REINDEX.Jobs
             }
 
             //2. Xep lot XI_MANG_BAO
-            var orderBaoIndexds = await _storeOrderOperatingRepository.GetOrdersXiMangBaoIndexd();
+            var orderBaoIndexds = await _storeOrderOperatingRepository.GetOrdersXiMangBaoIndexed();
             if (orderBaoIndexds != null && orderBaoIndexds.Count > 0)
             {
                 int j = 1;
