@@ -88,7 +88,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
         {
             _queueToCallLogger.LogInfo($"Read data from trough {troughCode}");
 
-            var troughInfo = _troughRepository.GetDetail(troughCode);
+            var troughInfo = await _troughRepository.GetDetail(troughCode);
 
             if((bool)troughInfo.Working)
             {

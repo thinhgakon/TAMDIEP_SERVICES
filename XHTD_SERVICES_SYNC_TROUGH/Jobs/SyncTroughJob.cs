@@ -141,7 +141,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task ReadDataFromTrough(string troughCode, Stream stream)
         {
-            var troughInfo = _troughRepository.GetDetail(troughCode);
+            var troughInfo = await _troughRepository.GetDetail(troughCode);
 
             if(troughInfo == null)
             {

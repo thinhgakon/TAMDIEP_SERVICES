@@ -52,11 +52,11 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public tblTrough GetDetail(string code)
+        public async Task<tblTrough> GetDetail(string code)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var trough = dbContext.tblTroughs.FirstOrDefault(x => x.Code == code && x.State == true);
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == code && x.State == true);
 
                 return trough;
             }
