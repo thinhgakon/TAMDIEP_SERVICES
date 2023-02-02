@@ -78,8 +78,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"UpdateTrough Success");
-                        Console.WriteLine($@"UpdateTrough Success");
+                        log.Info($@"UpdateTrough {troughCode} Success");
+                        Console.WriteLine($@"UpdateTrough {troughCode} Success");
                     }
                 }
                 catch (Exception ex)
@@ -106,8 +106,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"ResetTrough Success");
-                        Console.WriteLine($@"ResetTrough Success");
+                        log.Info($@"ResetTrough {troughCode} Success");
+                        Console.WriteLine($@"ResetTrough {troughCode} Success");
                     }
                 }
                 catch (Exception ex)
