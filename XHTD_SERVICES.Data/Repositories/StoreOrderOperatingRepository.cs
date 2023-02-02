@@ -31,11 +31,11 @@ namespace XHTD_SERVICES.Data.Repositories
             return false;
         }
 
-        public async Task<tblStoreOrderOperating> GetDetail(int orderId)
+        public async Task<tblStoreOrderOperating> GetDetail(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
 
                 return order;
             }

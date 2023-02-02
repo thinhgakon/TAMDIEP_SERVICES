@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             }
 
             // Lấy thông tin đơn hàng
-            var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.OrderId);
+            var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.DeliveryCode);
 
             if(order == null)
             {
