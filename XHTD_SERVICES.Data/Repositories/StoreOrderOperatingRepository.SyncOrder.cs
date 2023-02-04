@@ -199,8 +199,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {timeOut} ";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {timeOut}; ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {DateTime.Now.ToString()};";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {DateTime.Now.ToString()};";
 
                         await _appDbContext.SaveChangesAsync();
 
@@ -222,8 +222,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_GIAO_HANG;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {timeOut} ";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {timeOut}; ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {DateTime.Now.ToString()};";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {DateTime.Now.ToString()};";
 
                         await _appDbContext.SaveChangesAsync();
 
