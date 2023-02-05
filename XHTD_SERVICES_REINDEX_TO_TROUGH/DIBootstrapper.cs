@@ -17,11 +17,8 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<VehicleRepository>().AsSelf();
-            builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
-            builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<ReindexToTroughLogger>().AsSelf();
 
             RegisterScheduler(builder);

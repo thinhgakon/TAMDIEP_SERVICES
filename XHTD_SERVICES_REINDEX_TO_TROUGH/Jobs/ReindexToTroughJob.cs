@@ -19,15 +19,9 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly VehicleRepository _vehicleRepository;
-
-        protected readonly TroughRepository _troughRepository;
-
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
-
-        protected readonly Notification _notification;
 
         protected readonly ReindexToTroughLogger _reindexToTroughLogger;
 
@@ -45,20 +39,14 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
 
         public ReindexToTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
-            TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
-            Notification notification,
             ReindexToTroughLogger reindexToTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
-            _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _notification = notification;
             _reindexToTroughLogger = reindexToTroughLogger;
         }
 
