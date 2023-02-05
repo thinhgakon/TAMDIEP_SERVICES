@@ -96,7 +96,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode && x.Working == true);
                     if (itemToCall != null)
                     {
                         itemToCall.Working = false;
