@@ -126,7 +126,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             join ttp in dbContext.tblMachineTypeProducts
                             on t.Code equals ttp.MachineCode into typeProducts
                             join ctt in dbContext.tblCallToTroughs
-                            on t.Code equals ctt.Trough into callToTroughs
+                            on t.Code equals ctt.Machine into callToTroughs
                             from typeProductItem in typeProducts.DefaultIfEmpty()
                             where typeProductItem.TypeProduct == typeProduct
                             from callToTroughItem in callToTroughs.DefaultIfEmpty()
