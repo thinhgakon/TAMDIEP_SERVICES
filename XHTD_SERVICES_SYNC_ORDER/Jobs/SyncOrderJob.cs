@@ -87,6 +87,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 isActiveService = false;
             }
+            else
+            {
+                isActiveService = true;
+            }
 
             if (numberHoursParameter != null)
             {

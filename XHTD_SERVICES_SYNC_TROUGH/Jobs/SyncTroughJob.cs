@@ -90,6 +90,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 isActiveService = false;
             }
+            else
+            {
+                isActiveService = true;
+            }
         }
 
         public async Task SyncTroughProcess()

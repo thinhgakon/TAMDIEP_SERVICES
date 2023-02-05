@@ -156,6 +156,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 isActiveService = false;
             }
+            else
+            {
+                isActiveService = true;
+            }
         }
 
         public async Task LoadDevicesInfo()

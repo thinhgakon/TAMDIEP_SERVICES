@@ -88,6 +88,10 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             {
                 isActiveService = false;
             }
+            else
+            {
+                isActiveService = true;
+            }
 
             if (maxCountTryCallParameter != null)
             {
