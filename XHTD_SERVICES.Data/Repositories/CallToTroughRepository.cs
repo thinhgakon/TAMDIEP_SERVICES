@@ -22,14 +22,6 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
-        public int GetNumberOrderInQueue(string machineCode)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                return dbContext.tblCallToTroughs.Where(x => x.Machine == machineCode && x.IsDone == false).Count();
-            }
-        }
-
         public bool IsInProgress(int orderId)
         {
             using (var dbContext = new XHTD_Entities())
@@ -40,39 +32,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     return true;
                 }
                 return false;
-            }
-        }
-
-        public async Task CreateAsync(OrderToCallInTroughResponse order, string troughCode)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    if (!IsInProgress(order.Id))
-                    {
-                        var newItem = new tblCallToTrough
-                        {
-                            OrderId = order.Id,
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            Machine = troughCode,
-                            CountTry = 0,
-                            CallLog = $@"Xe được mời vào lúc {DateTime.Now}.",
-                            IsDone = false,
-                            CreateDay = DateTime.Now,
-                            UpdateDay = DateTime.Now,
-                        };
-
-                        dbContext.tblCallToTroughs.Add(newItem);
-                        await dbContext.SaveChangesAsync();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error("CreateAsync vehicle log Error: " + ex.Message); ;
-                    Console.WriteLine("CreateAsync vehicle log Error: " + ex.Message);
-                }
             }
         }
 
