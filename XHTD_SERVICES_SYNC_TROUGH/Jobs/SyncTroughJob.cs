@@ -41,11 +41,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
 
-        protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
-
         private static bool isActiveService = true;
-
-        private static int numberHoursSearchOrder = 48;
 
         private const string IP_ADDRESS = "10.0.7.40";
         private const int BUFFER_SIZE = 1024;
@@ -101,16 +97,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
-            var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
                 isActiveService = false;
-            }
-
-            if (numberHoursParameter != null)
-            {
-                numberHoursSearchOrder = Convert.ToInt32(numberHoursParameter.Value);
             }
         }
 
@@ -151,8 +141,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 return;
             }
-
-            var machineCode = troughInfo.Machine;
 
             _syncTroughLogger.LogInfo($"ReadDataFromTrough: {troughCode}");
             // 2. send 1
