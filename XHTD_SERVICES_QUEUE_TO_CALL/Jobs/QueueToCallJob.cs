@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 {
