@@ -58,7 +58,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
             // 5. Them don hang vao may o B3 voi index = maxIndex + 1
             foreach (var order in orders)
             {
-                var orderId = order.Id;
+                var orderId = (int)order.OrderId;
                 var deliveryCode = order.DeliveryCode;
                 var vehicle = order.Vehicle;
                 var sumNumber = (decimal)order.SumNumber;
