@@ -11,32 +11,22 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly VehicleRepository _vehicleRepository;
-
         protected readonly TroughRepository _troughRepository;
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
-        protected readonly Notification _notification;
-
         protected readonly QueueToCallLogger _queueToCallLogger;
-
-        const int MAX_ORDER_IN_QUEUE_TO_CALL = 1;
 
         public QueueToCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            Notification notification,
             QueueToCallLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
-            _notification = notification;
             _queueToCallLogger = queueToCallLogger;
         }
 

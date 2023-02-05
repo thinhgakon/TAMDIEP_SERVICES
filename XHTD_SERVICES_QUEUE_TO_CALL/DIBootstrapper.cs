@@ -17,10 +17,8 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<VehicleRepository>().AsSelf();
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
-            builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<QueueToCallLogger>().AsSelf();
 
             RegisterScheduler(builder);
