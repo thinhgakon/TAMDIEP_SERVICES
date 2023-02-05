@@ -16,6 +16,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
+            var syncTime = DateTime.Now.ToString();
+
             try
             {
                 string typeProduct = "";
@@ -90,7 +92,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         CountReindex = 0,
                         Step = (int)OrderStep.CHUA_NHAN_DON,
                         IsVoiced = false,
-                        LogJobAttach = $@"#Sync Order",
+                        LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
+                        LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
                         IsSyncedByNewWS = true
                     };
 
@@ -118,6 +121,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
+            var syncTime = DateTime.Now.ToString();
+
             try
             {
                 DateTime timeInDate = DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
@@ -134,8 +139,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {timeIn}; ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {timeIn}; ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
                     await _appDbContext.SaveChangesAsync();
 
@@ -160,6 +165,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
+            var syncTime = DateTime.Now.ToString();
+
             try
             {
                 DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
@@ -176,8 +183,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {timeOut} ";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {timeOut}; ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
 
                         await _appDbContext.SaveChangesAsync();
 
@@ -199,8 +206,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {DateTime.Now.ToString()};";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {DateTime.Now.ToString()};";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {syncTime};";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {syncTime};";
 
                         await _appDbContext.SaveChangesAsync();
 
@@ -222,8 +229,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_GIAO_HANG;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {DateTime.Now.ToString()};";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {DateTime.Now.ToString()};";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {syncTime};";
 
                         await _appDbContext.SaveChangesAsync();
 
@@ -251,14 +258,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
             try
             {
-                string cancelTime = DateTime.Now.ToString();
+                string syncTime = DateTime.Now.ToString();
 
-                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && (x.Step != (int)OrderStep.DA_HOAN_THANH && x.Step != (int)OrderStep.DA_GIAO_HANG));
+                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && x.Step < (int)OrderStep.DA_HOAN_THANH);
                 if (order != null)
                 {
                     order.IsVoiced = true;
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Hủy đơn lúc {cancelTime} ";
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Hủy đơn lúc {cancelTime} ";
+                    order.LogJobAttach = $@"{order.LogJobAttach} #Sync Hủy đơn lúc {syncTime} ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Hủy đơn lúc {syncTime} ";
 
                     await _appDbContext.SaveChangesAsync();
 
