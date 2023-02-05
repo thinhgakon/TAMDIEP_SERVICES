@@ -1105,11 +1105,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Select(x => x.DeliveryCode)
                                     .ToListAsync();
 
+                var timeToAdd = DateTime.Now.AddMinutes(-2);
+
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == "XI_MANG_BAO"
                                                 && x.IsVoiced == false
-                                                && x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
+                                                && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
                                     )
                                     .OrderBy(x => x.TimeConfirm3)
