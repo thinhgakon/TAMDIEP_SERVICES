@@ -62,13 +62,11 @@
           <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
           <Property Name="SumNumber" Type="decimal" Precision="18" Scale="0" />
           <Property Name="Machine" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Trough" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MachineId" Type="int" />
           <Property Name="IndexTrough" Type="int" />
           <Property Name="CountTry" Type="int" Nullable="false" />
           <Property Name="CountReindex" Type="int" Nullable="false" />
-          <Property Name="CallLog" Type="nvarchar(max)" />
           <Property Name="IsDone" Type="bit" />
+          <Property Name="CallLog" Type="nvarchar(max)" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="UpdateDay" Type="datetime" />
         </EntityType>
@@ -266,12 +264,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
-          <Property Name="Working" Type="bit" />
           <Property Name="State" Type="bit" />
-          <Property Name="DeliveryCodeCurrent" Type="nvarchar" MaxLength="50" />
-          <Property Name="PlanQuantityCurrent" Type="float" />
-          <Property Name="CountQuantityCurrent" Type="float" />
-          <Property Name="LineCode" Type="varchar" MaxLength="2" />
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
@@ -701,13 +694,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Machine" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Trough" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="MachineId" Type="Int32" />
           <Property Name="IndexTrough" Type="Int32" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
           <Property Name="CountReindex" Type="Int32" Nullable="false" />
-          <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsDone" Type="Boolean" />
+          <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
         </EntityType>
@@ -885,12 +876,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Working" Type="Boolean" />
           <Property Name="State" Type="Boolean" />
-          <Property Name="DeliveryCodeCurrent" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="PlanQuantityCurrent" Type="Double" />
-          <Property Name="CountQuantityCurrent" Type="Double" />
-          <Property Name="LineCode" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
@@ -1310,13 +1296,11 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
                 <ScalarProperty Name="SumNumber" ColumnName="SumNumber" />
                 <ScalarProperty Name="Machine" ColumnName="Machine" />
-                <ScalarProperty Name="Trough" ColumnName="Trough" />
-                <ScalarProperty Name="MachineId" ColumnName="MachineId" />
                 <ScalarProperty Name="IndexTrough" ColumnName="IndexTrough" />
                 <ScalarProperty Name="CountTry" ColumnName="CountTry" />
                 <ScalarProperty Name="CountReindex" ColumnName="CountReindex" />
-                <ScalarProperty Name="CallLog" ColumnName="CallLog" />
                 <ScalarProperty Name="IsDone" ColumnName="IsDone" />
+                <ScalarProperty Name="CallLog" ColumnName="CallLog" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
               </MappingFragment>
@@ -1505,12 +1489,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Working" ColumnName="Working" />
                 <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="DeliveryCodeCurrent" ColumnName="DeliveryCodeCurrent" />
-                <ScalarProperty Name="PlanQuantityCurrent" ColumnName="PlanQuantityCurrent" />
-                <ScalarProperty Name="CountQuantityCurrent" ColumnName="CountQuantityCurrent" />
-                <ScalarProperty Name="LineCode" ColumnName="LineCode" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
