@@ -19,17 +19,11 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly VehicleRepository _vehicleRepository;
-
-        protected readonly TroughRepository _troughRepository;
-
         protected readonly MachineRepository _machineRepository;
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
-
-        protected readonly Notification _notification;
 
         protected readonly CallInTroughLogger _callInTroughLogger;
 
@@ -41,22 +35,16 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         public CallInTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
-            TroughRepository troughRepository,
             MachineRepository machineRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
-            Notification notification,
             CallInTroughLogger callInTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
-            _troughRepository = troughRepository;
             _machineRepository = machineRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _notification = notification;
             _callInTroughLogger = callInTroughLogger;
         }
 
