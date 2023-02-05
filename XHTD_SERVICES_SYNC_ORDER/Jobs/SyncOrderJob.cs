@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         private static string strToken;
 
-        protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
+        protected const string SERVICE_ACTIVE_CODE = "SYNC_ORDER_ACTIVE";
 
         protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
 
@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                 if (!isActiveService)
                 {
-                    _syncOrderLogger.LogInfo("Service dong bo don hang dang TAT.");
+                    _syncOrderLogger.LogInfo("Service dong bo don hang dang TAT");
                     return;
                 }
 
@@ -80,7 +80,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
 
             if(activeParameter == null || activeParameter.Value == "0")
@@ -96,7 +96,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo("start process SyncOrderJob");
+            _syncOrderLogger.LogInfo("Start process Sync Order service");
 
             GetToken();
 

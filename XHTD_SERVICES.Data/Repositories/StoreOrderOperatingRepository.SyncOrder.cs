@@ -110,8 +110,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error("CreateAsync OrderItemResponse Error: " + ex.Message); ;
-                Console.WriteLine("CreateAsync OrderItemResponse Error: " + ex.Message);
+                log.Error("=========================== CreateAsync Error: " + ex.Message); ;
+                Console.WriteLine("CreateAsync Error: " + ex.Message);
 
                 return isSynced;
             }
@@ -144,8 +144,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     await _appDbContext.SaveChangesAsync();
 
-                    Console.WriteLine($@"Sync Update Receiving Order {orderId}");
-                    log.Info($@"Sync Update Receiving Order {orderId}");
+                    Console.WriteLine($@"Update Receiving Order {orderId}");
+                    log.Info($@"Update Receiving Order {orderId}");
 
                     isSynced = true;
                 }
@@ -154,8 +154,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"Sync Update Receiving Order {orderId} Error: " + ex.Message);
-                Console.WriteLine($@"Sync Update Receiving Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Update Receiving Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Update Receiving Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
             }
@@ -234,8 +234,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Sync Update Received => DA_GIAO_HANG Order {orderId}");
-                        log.Info($@"Sync Update Received => DA_GIAO_HANG Order {orderId}");
+                        Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
+                        log.Info($@"Update Received => DA_GIAO_HANG Order {orderId}");
 
                         isSynced = true;
                     }
@@ -245,8 +245,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"Sync Update Received Order {orderId} Error: " + ex.Message);
-                Console.WriteLine($@"Sync Update Received Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message);
+                Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
             }
@@ -279,7 +279,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"Cancel Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Cancel Order {orderId} Error: " + ex.Message);
                 Console.WriteLine($@"Cancel Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
