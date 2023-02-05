@@ -255,17 +255,20 @@ namespace XHTD_SERVICES.Data.Repositories
                         };
 
                         dbContext.tblCallToTroughs.Add(newItem);
+
                         await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Them THANH CONG orderId {orderId} deliveryCode {deliveryCode} vao mang {machineCode}");
                     }
                     else
                     {
-                        log.Error("Da ton tai"); 
+                        log.Error($"Da ton tai ban ghi orderId {orderId} deliveryCode {deliveryCode} trong mang {machineCode}"); 
                         Console.WriteLine("Da ton tai");
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.Error("Log Error: " + ex.Message); ;
+                    log.Error("============================ AddItem Error: " + ex.Message); ;
                     Console.WriteLine("Log Error: " + ex.Message);
                 }
             }

@@ -43,7 +43,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCallJob");
+            _queueToCallLogger.LogInfo("Start process QueueToCall service");
 
             // 1. Lay danh sach don hang chua duoc xep vao may xuat
             var orders = await _storeOrderOperatingRepository.GetOrdersAddToQueueToCall();
@@ -65,6 +65,8 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                 var typeProduct = order.TypeProduct;
 
                 var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
+
+                _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
                 if (!String.IsNullOrEmpty(machineCode)){ 
                     await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
