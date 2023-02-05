@@ -78,13 +78,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"UpdateTrough {troughCode} Success");
+                        log.Info($@"Update Trough {troughCode} success");
                         Console.WriteLine($@"UpdateTrough {troughCode} Success");
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"UpdateTrough Error: " + ex.Message);
+                    log.Error($@"=================== UpdateTrough Error: " + ex.Message);
                     Console.WriteLine($@"UpdateTrough Error: " + ex.Message);
                 }
             }
@@ -106,13 +106,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"ResetTrough {troughCode} Success");
+                        log.Info($@"Reset Trough {troughCode} success");
                         Console.WriteLine($@"ResetTrough {troughCode} Success");
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"ResetTrough Error: " + ex.Message);
+                    log.Error($@"===================== ResetTrough Error: " + ex.Message);
                     Console.WriteLine($@"ResetTrough Error: " + ex.Message);
                 }
             }

@@ -93,11 +93,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe vào máng lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} trong callToTrough");
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"UpdateWhenIntoTrough Error: " + ex.Message);
+                    log.Error($@"====================== UpdateWhenIntoTrough Error: " + ex.Message);
                     Console.WriteLine($@"UpdateWhenIntoTrough Error: " + ex.Message);
                 }
             }

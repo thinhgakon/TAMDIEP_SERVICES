@@ -49,7 +49,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 try
                 {
-                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.TroughLineCode != throughCode);
                     if (order != null)
                     {
                         order.TroughLineCode = throughCode;
@@ -57,6 +57,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         await dbContext.SaveChangesAsync();
 
                         isUpdated = true;
+
+                        log.Info($@"Update Trough Line {throughCode} cho deliveryCode {deliveryCode} trong bang orderOperatings");
                     }
 
                     return isUpdated;
@@ -158,7 +160,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.Confirm6 = 1;
                         order.TimeConfirm6 = DateTime.Now;
-                        order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng xong lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+                        order.LogProcessOrder = order.LogProcessOrder + $@" #Xuất hàng xong lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
                     }
                     else if (step == (int)OrderStep.DANG_LAY_HANG)
                     {
@@ -166,11 +168,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             return true;
                         }
-
-                        //order.LogProcessOrder = order.LogProcessOrder + $@" #xuất hàng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
                     }
 
-                    //order.IndexOrder = 0;
                     order.Confirm1 = 1;
                     order.Confirm2 = 1;
                     order.Confirm3 = 1;
@@ -183,11 +182,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     isUpdated = true;
 
+                    log.Info($@"Cap nhat trang thai don hang deliveryCode {deliveryCode} step {step} thanh cong");
+
                     return isUpdated;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"UpdateStepInTrough Error: " + ex.Message);
+                    log.Error($@"================== UpdateStepInTrough Error: " + ex.Message);
                     Console.WriteLine($@"UpdateStepInTrough Error: " + ex.Message);
 
                     return isUpdated;

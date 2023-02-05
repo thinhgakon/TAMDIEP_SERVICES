@@ -25,21 +25,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly VehicleRepository _vehicleRepository;
-
         protected readonly TroughRepository _troughRepository;
-
-        protected readonly MachineRepository _machineRepository;
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly Notification _notification;
-
         protected readonly SyncTroughLogger _syncTroughLogger;
 
-        protected const string SYNC_ORDER_ACTIVE = "SYNC_ORDER_ACTIVE";
+        protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
 
         private static bool isActiveService = true;
 
@@ -51,22 +45,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public SyncTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
-            VehicleRepository vehicleRepository,
             TroughRepository troughRepository,
-            MachineRepository machineRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
-            Notification notification,
             SyncTroughLogger syncTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _vehicleRepository = vehicleRepository;
             _troughRepository = troughRepository;
-            _machineRepository = machineRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _notification = notification;
             _syncTroughLogger = syncTroughLogger;
         }
 
@@ -84,7 +72,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (!isActiveService)
                 {
-                    _syncTroughLogger.LogInfo("Service dong bo don hang dang TAT.");
+                    _syncTroughLogger.LogInfo("Service lay thong tin mang xuat SYNC TROUGH dang TAT.");
                     return;
                 }
 
@@ -96,7 +84,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_ACTIVE);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -106,7 +94,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task SyncTroughProcess()
         {
-            _syncTroughLogger.LogInfo("Start process SyncTroughProcess");
+            _syncTroughLogger.LogInfo("Start process Sync Trough service");
 
             TcpClient client = new TcpClient();
 
@@ -114,7 +102,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             client.Connect(IP_ADDRESS, PORT_NUMBER);
             Stream stream = client.GetStream();
 
-            _syncTroughLogger.LogInfo("Connected to MANG XUAT.");
+            _syncTroughLogger.LogInfo($"Connected to MANG XUAT {IP_ADDRESS}");
 
             var troughCodes = await _troughRepository.GetAllTroughCodes();
 
@@ -142,7 +130,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 return;
             }
 
-            _syncTroughLogger.LogInfo($"ReadDataFromTrough: {troughCode}");
+            _syncTroughLogger.LogInfo($"Read Trough: {troughCode}");
             // 2. send 1
             byte[] data1 = encoding.GetBytes($"SendTroughInfo_{troughCode}");
             stream.Write(data1, 0, data1.Length);
@@ -161,6 +149,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             if (status == "True")
             {
+                _syncTroughLogger.LogInfo($"Mang {troughCode} dang xuat hang deliveryCode {deliveryCode}");
+
                 await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
 
                 await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode);
@@ -180,6 +170,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             else
             {
+                _syncTroughLogger.LogInfo($"Mang {troughCode} dang nghi");
+
                 await _troughRepository.ResetTrough(troughCode);
             }
         }
