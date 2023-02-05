@@ -25,17 +25,21 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
 
         protected readonly ReindexToTroughLogger _reindexToTroughLogger;
 
-        protected const string MAX_COUNT_TRY_CALL = "MAX_COUNT_TRY_CALL";
+        protected const string SERVICE_ACTIVE_CODE = "REINDEX_TO_TROUGH_ACTIVE";
 
-        protected const string OVER_TIME_TO_REINDEX = "OVER_TIME_TO_REINDEX";
+        protected const string MAX_COUNT_TRY_CALL_CODE = "MAX_COUNT_TRY_CALL";
 
-        protected const string MAX_COUNT_REINDEX = "MAX_COUNT_REINDEX";
+        protected const string MAX_COUNT_REINDEX_CODE = "MAX_COUNT_REINDEX";
+
+        protected const string OVER_TIME_TO_REINDEX_CODE = "OVER_TIME_TO_REINDEX";
+
+        private static bool isActiveService = true;
 
         private static int maxCountTryCall = 3;
 
-        private static int overTimeToReindex = 5;
-
         private static int maxCountReindex = 3;
+
+        private static int overTimeToReindex = 5;
 
         public ReindexToTroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -62,6 +66,12 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
                 // Get System Parameters
                 await LoadSystemParameters();
 
+                if (!isActiveService)
+                {
+                    _reindexToTroughLogger.LogInfo("Service tu dong quay vong lot xe vao mang dang TAT");
+                    return;
+                }
+
                 ReindexToTroughProcess();
             });
         }
@@ -70,33 +80,42 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var maxCountTryCallParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_TRY_CALL);
-            var overTimeToReindexParameter = parameters.FirstOrDefault(x => x.Code == OVER_TIME_TO_REINDEX);
-            var maxCountReindexParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_REINDEX);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+            var maxCountTryCallParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_TRY_CALL_CODE);
+            var maxCountReindexParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_REINDEX_CODE);
+            var overTimeToReindexParameter = parameters.FirstOrDefault(x => x.Code == OVER_TIME_TO_REINDEX_CODE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
+            else
+            {
+                isActiveService = true;
+            }
 
             if (maxCountTryCallParameter != null)
             {
                 maxCountTryCall = Convert.ToInt32(maxCountTryCallParameter.Value);
             }
 
-            if (overTimeToReindexParameter != null)
-            {
-                overTimeToReindex = Convert.ToInt32(overTimeToReindexParameter.Value);
-            }
-
             if (maxCountReindexParameter != null)
             {
                 maxCountReindex = Convert.ToInt32(maxCountReindexParameter.Value);
+            }
+
+            if (overTimeToReindexParameter != null)
+            {
+                overTimeToReindex = Convert.ToInt32(overTimeToReindexParameter.Value);
             }
         }
 
         public async void ReindexToTroughProcess()
         {
-            _reindexToTroughLogger.LogInfo("start process ReindexToTroughJob");
+            _reindexToTroughLogger.LogInfo("Start process ReindexToTrough service");
 
             // Xử lý các order đã quá 3 lần gọi loa mà ko vào máng
             var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry(maxCountTryCall);
-
             if (overCountTryItems != null && overCountTryItems.Count > 0)
             {
                 foreach (var item in overCountTryItems)
@@ -114,7 +133,6 @@ namespace XHTD_SERVICES_REINDEX_TO_TROUGH.Jobs
 
             // Xử lý các order quá 3 lần xoay vòng lốt mà ko vào máng
             var overCountReindexItems = await _callToTroughRepository.GetItemsOverCountReindex(maxCountReindex);
-
             if (overCountReindexItems != null && overCountReindexItems.Count > 0)
             {
                 foreach (var item in overCountReindexItems)
