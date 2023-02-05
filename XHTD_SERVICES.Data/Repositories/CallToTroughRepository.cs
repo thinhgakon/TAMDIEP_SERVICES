@@ -22,11 +22,11 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
-        public int GetNumberOrderInQueue(string troughCode)
+        public int GetNumberOrderInQueue(string machineCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
-                return dbContext.tblCallToTroughs.Where(x => x.Trough == troughCode && x.IsDone == false).Count();
+                return dbContext.tblCallToTroughs.Where(x => x.Machine == machineCode && x.IsDone == false).Count();
             }
         }
 
@@ -56,7 +56,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             OrderId = order.Id,
                             DeliveryCode = order.DeliveryCode,
                             Vehicle = order.Vehicle,
-                            Trough = troughCode,
+                            Machine = troughCode,
                             CountTry = 0,
                             CallLog = $@"Xe được mời vào lúc {DateTime.Now}.",
                             IsDone = false,
@@ -284,16 +284,15 @@ namespace XHTD_SERVICES.Data.Repositories
                             OrderId = orderId,
                             DeliveryCode = deliveryCode,
                             Vehicle = vehicle,
+                            SumNumber = sumNumber,
                             Machine = machineCode,
-                            MachineId = Int32.Parse(machineCode),
-                            Trough = machineCode,
+                            IndexTrough = indexTrough + 1,
                             CountTry = 0,
+                            CountReindex = 0,
                             IsDone = false,
+                            CallLog = $@"#Xe được xếp vào máng lúc {DateTime.Now}.",
                             CreateDay = DateTime.Now,
                             UpdateDay = DateTime.Now,
-                            IndexTrough = indexTrough + 1,
-                            SumNumber = sumNumber,
-                            CallLog = $@"#Xe được xếp vào máng lúc {DateTime.Now}.",
                         };
 
                         dbContext.tblCallToTroughs.Add(newItem);

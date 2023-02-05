@@ -175,8 +175,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
 
-                //await _machineRepository.UpdateMachine(machineCode, deliveryCode, countQuantity, planQuantity);
-
                 await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode);
 
                 await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
@@ -195,8 +193,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             else
             {
                 await _troughRepository.ResetTrough(troughCode);
-
-                //await _machineRepository.ResetMachine(machineCode);
             }
         }
     }
