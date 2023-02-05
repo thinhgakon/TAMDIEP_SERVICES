@@ -27,7 +27,13 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         protected readonly CallInTroughLogger _callInTroughLogger;
 
-        protected const string MAX_COUNT_TRY_CALL = "MAX_COUNT_TRY_CALL";
+        protected const string SERVICE_ACTIVE_CODE = "CALL_IN_TROUGH_ACTIVE";
+
+        protected const string MAX_COUNT_TRY_CALL_CODE = "MAX_COUNT_TRY_CALL";
+
+        protected const string MAX_COUNT_REINDEX_CODE = "MAX_COUNT_REINDEX";
+
+        private static bool isActiveService = true;
 
         private static int maxCountTryCall = 3;
 
@@ -60,6 +66,12 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 // Get System Parameters
                 await LoadSystemParameters();
 
+                if (!isActiveService)
+                {
+                    _callInTroughLogger.LogInfo("Service tu dong goi xe vao mang dang TAT");
+                    return;
+                }
+
                 CallInTroughProcess();
             });
         }
@@ -68,20 +80,29 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var maxCountTryCallParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_TRY_CALL);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+            var maxCountTryCallParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_TRY_CALL_CODE);
+            var maxCountReindexParameter = parameters.FirstOrDefault(x => x.Code == MAX_COUNT_REINDEX_CODE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
 
             if (maxCountTryCallParameter != null)
             {
                 maxCountTryCall = Convert.ToInt32(maxCountTryCallParameter.Value);
             }
+
+            if (maxCountReindexParameter != null)
+            {
+                maxCountReindex = Convert.ToInt32(maxCountReindexParameter.Value);
+            }
         }
 
         public async void CallInTroughProcess()
         {
-            _callInTroughLogger.LogInfo("start process CallInTroughJob");
-
-            // TODO: Lay ra danh sach mang xuat xi mang bao dang hoat dong
-            // Goi xe vao tung mang: tham khao service QueueToCall
+            _callInTroughLogger.LogInfo("Start process CallInTrough service");
 
             var machines = await _machineRepository.GetAllMachineCodes();
 
@@ -115,12 +136,20 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
 
             // Khong goi 1 xe qua 3 lan
-            if (itemToCall == null 
-                || itemToCall.CountTry >= maxCountTryCall 
-                || itemToCall.CountReindex >= maxCountReindex)
+            if (itemToCall == null)
             {
+                _callInTroughLogger.LogInfo($"Khong co don hang nao dang cho trong mang {machineCode}");
                 return;
             }
+
+            if (itemToCall.CountTry >= maxCountTryCall
+                || itemToCall.CountReindex >= maxCountReindex)
+            {
+                _callInTroughLogger.LogInfo($"Don hang {itemToCall.DeliveryCode} da qua so lan goi CountTry {itemToCall.CountTry} CountReindex {itemToCall.CountReindex}");
+                return;
+            }
+
+            _callInTroughLogger.LogInfo($"Tien hanh goi loa deliveryCode {itemToCall.DeliveryCode} vehicle {itemToCall.Vehicle} vao mang {machineCode}");
 
             // Lấy thông tin đơn hàng
             var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.DeliveryCode);

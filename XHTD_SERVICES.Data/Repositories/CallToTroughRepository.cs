@@ -60,7 +60,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         itemToCall.CountTry = itemToCall.CountTry + 1;
                         itemToCall.UpdateDay = DateTime.Now;
-                        itemToCall.CallLog = $@"{itemToCall.CallLog} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} #Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
 
