@@ -30,6 +30,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             where
                                 v.State == true 
                                 &&  (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
+                                orderby v.Id ascending
                             select v.Code;
 
                 var troughts = await query.Distinct().ToListAsync();

@@ -108,7 +108,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             _syncTroughLogger.LogInfo($"Connected to MANG XUAT {IP_ADDRESS}");
 
-            var troughCodes = await _troughRepository.GetAllTroughCodes();
+            var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
 
             if (troughCodes == null || troughCodes.Count == 0)
             {
