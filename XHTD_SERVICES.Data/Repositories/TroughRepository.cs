@@ -130,9 +130,9 @@ namespace XHTD_SERVICES.Data.Repositories
                             from typeProductItem in typeProducts.DefaultIfEmpty()
                             where typeProductItem.TypeProduct == typeProduct
                             from callToTroughItem in callToTroughs.DefaultIfEmpty()
-                            where callToTroughItem.IsDone == false
                             select new {
                                 t.Code,
+                                callToTroughItem.IsDone,
                                 callToTroughItem.SumNumber,
                             };
 
@@ -140,10 +140,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var record = records.GroupBy(x => x.Code)
                                     .Select(item => new MinQuantityTroughResponse
-                                                {
-                                                    Code = item.Key,
-                                                    SumNumber = (double)item.Sum(m => m.SumNumber)
-                                                })
+                                    {
+                                        Code = item.Key,
+                                        SumNumber = (double)item.Where(i => i.IsDone == false).Sum(sm => sm.SumNumber)
+                                    })
                                     .OrderBy(x => x.SumNumber)
                                     .FirstOrDefault();
 
