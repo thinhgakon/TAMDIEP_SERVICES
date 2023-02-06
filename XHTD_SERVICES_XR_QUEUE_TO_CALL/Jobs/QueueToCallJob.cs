@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
+namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
 {
     public class QueueToCallJob : IJob
     {

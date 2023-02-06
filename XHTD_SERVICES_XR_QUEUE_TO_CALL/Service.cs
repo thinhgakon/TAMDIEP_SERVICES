@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
-using XHTD_SERVICES_QUEUE_TO_CALL.Schedules;
+using XHTD_SERVICES_XR_QUEUE_TO_CALL.Schedules;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL
+namespace XHTD_SERVICES_XR_QUEUE_TO_CALL
 {
     public partial class Service : ServiceBase
     {

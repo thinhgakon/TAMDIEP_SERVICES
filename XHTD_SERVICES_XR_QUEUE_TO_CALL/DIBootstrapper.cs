@@ -1,13 +1,13 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
 using System.Collections.Specialized;
-using XHTD_SERVICES_QUEUE_TO_CALL.Schedules;
+using XHTD_SERVICES_XR_QUEUE_TO_CALL.Schedules;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_QUEUE_TO_CALL.Jobs;
+using XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL
+namespace XHTD_SERVICES_XR_QUEUE_TO_CALL
 {
     public static class DIBootstrapper
     {

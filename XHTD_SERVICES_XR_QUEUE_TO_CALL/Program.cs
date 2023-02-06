@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL
+namespace XHTD_SERVICES_XR_QUEUE_TO_CALL
 {
     internal static class Program
     {
