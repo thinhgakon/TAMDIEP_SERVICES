@@ -219,6 +219,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
+                // TODO
+                // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
+
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
                     isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
