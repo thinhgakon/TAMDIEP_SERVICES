@@ -20,17 +20,22 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
-        public async Task<List<string>> GetAllMachineCodes()
+        public async Task<List<string>> GetActiveXiBaoMachines()
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var machines = await dbContext.tblMachines
-                                    .Where(x => x.State == true)
-                                    .OrderBy(x => x.Id)
-                                    .Select(x => x.Code)
-                                    .ToListAsync();
+                var query = from v in dbContext.tblMachines
+                            join r in dbContext.tblMachineTypeProducts
+                            on v.Code equals r.MachineCode
+                            where
+                                v.State == true
+                                && (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
+                            orderby v.Id ascending
+                            select v.Code;
 
-                return machines;
+                var troughts = await query.Distinct().ToListAsync();
+
+                return troughts;
             }
         }
 

@@ -108,7 +108,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
         {
             _callInTroughLogger.LogInfo("Start process CallInTrough service");
 
-            var machines = await _machineRepository.GetAllMachineCodes();
+            var machines = await _machineRepository.GetActiveXiBaoMachines();
 
             if (machines == null || machines.Count == 0)
             {
