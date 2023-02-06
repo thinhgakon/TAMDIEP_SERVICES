@@ -15,6 +15,8 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
 
         protected readonly QueueToCallLogger _queueToCallLogger;
 
+        private static string CODE_MACHINE_9 = "9";
+
         public QueueToCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
@@ -46,7 +48,7 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
             _queueToCallLogger.LogInfo("Start process XR QueueToCall service");
 
             // 1. Lay danh sach don hang chua duoc xep vao may xuat
-            var orders = await _storeOrderOperatingRepository.GetOrdersAddToQueueToCall();
+            var orders = await _storeOrderOperatingRepository.GetOrdersAddToQueueToCall("XI_MANG_XA");
             if (orders == null || orders.Count == 0)
             {
                 return;
@@ -64,7 +66,8 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
                 var sumNumber = (decimal)order.SumNumber;
                 var typeProduct = order.TypeProduct;
 
-                var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
+                // Mặc định luôn đẩy vào máng 9
+                var machineCode = CODE_MACHINE_9;
 
                 _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 

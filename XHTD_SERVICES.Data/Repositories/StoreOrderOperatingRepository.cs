@@ -1096,7 +1096,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersAddToQueueToCall()
+        public async Task<List<tblStoreOrderOperating>> GetOrdersAddToQueueToCall(string catId = "XI_MANG_BAO")
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -1109,7 +1109,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.CatId == catId
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
