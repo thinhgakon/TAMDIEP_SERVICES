@@ -135,7 +135,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
-                    order.TimeConfirm3 = timeInDate;
+                    order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
