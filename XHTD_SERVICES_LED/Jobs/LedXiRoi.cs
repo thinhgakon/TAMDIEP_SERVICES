@@ -57,7 +57,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 foreach (var order in orders)
                 {
-                    orderShows.Add(new StoreOrderForLED12 { Vehicle = order.Vehicle, State1 = LedHelper.GetDisplayStatus((int)order.Step) }); //1
+                    orderShows.Add(new StoreOrderForLED12 { Vehicle = order.Vehicle, State1 = LedHelper.GetDisplayMachine(order.Machine) }); //1
                 }
 
                 //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
@@ -179,7 +179,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "     " + "TRANG THAI");
+                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "               " + "VI TRI");
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 //int nTextColor = CSDKExport.Hd_GetColor(255, 0, 0);
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
@@ -204,8 +204,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 nFontHeight = 12;
                 if (orderShows.Count > 0)
                 {
-                    //pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[0].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper() + "     " + (orderShows[0].State1.ToUpper()));
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[0].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper() + "               " + (orderShows[0].State1.ToUpper()));
                 }
                 else
                 {
@@ -227,8 +227,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 nFontHeight = 12;
                 if (orderShows.Count > 1)
                 {
-                    // pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[1].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper() + "     " + (orderShows[1].State1.ToUpper()));
+                    // pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[1].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper() + "               " + (orderShows[1].State1.ToUpper()));
                 }
                 else
                 {
@@ -250,8 +250,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 nFontHeight = 12;
                 if (orderShows.Count > 2)
                 {
-                    //  pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[2].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "     " + (orderShows[2].State1.ToUpper()));
+                    //  pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[2].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "               " + (orderShows[2].State1.ToUpper()));
                 }
                 else
                 {
@@ -273,8 +273,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 nFontHeight = 12;
                 if (orderShows.Count > 3)
                 {
-                    //pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[3].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper() + "     " + (orderShows[3].State1.ToUpper()));
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[3].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper() + "               " + (orderShows[3].State1.ToUpper()));
                 }
                 else
                 {
@@ -296,8 +296,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 nFontHeight = 12;
                 if (orderShows.Count > 4)
                 {
-                    // pText = Marshal.StringToHGlobalUni("37C00000" + "       " + orderShows[4].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper() + "     " + (orderShows[4].State1.ToUpper()));
+                    // pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[4].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper() + "               " + (orderShows[4].State1.ToUpper()));
                 }
                 else
                 {

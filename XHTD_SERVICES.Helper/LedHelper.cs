@@ -24,5 +24,10 @@ namespace XHTD_SERVICES.Helper
                     return "DANG CHO";
             }
         }
+
+        public static string GetDisplayMachine(string machineCode)
+        {
+            return "M" + machineCode;
+        }
     }
 }

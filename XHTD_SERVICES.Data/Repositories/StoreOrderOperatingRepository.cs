@@ -10,6 +10,7 @@ using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Models.Response;
+using System.Web.UI.WebControls;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -1064,33 +1065,33 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersLedXiBao()
+        public async Task<List<tblCallToTrough>> GetOrdersLedXiBao()
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_BAO"
-                                                && x.IsVoiced == false
-                                                && x.IndexOrder > 0
+                List<string> listMachine = new List<string>() { "1", "2", "3", "4" };
+
+                var orders = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false
+                                                && listMachine.Contains(x.Machine)
                                     )
-                                    .OrderBy(x => x.IndexOrder)
+                                    .OrderBy(x => x.IndexTrough)
                                     .ToListAsync();
                 return orders;
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersLedXiRoi()
+        public async Task<List<tblCallToTrough>> GetOrdersLedXiRoi()
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var orders = await dbContext.tblStoreOrderOperatings
-                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_XA"
-                                                && x.IsVoiced == false
-                                                && x.IndexOrder > 0
+                List<string> listMachine = new List<string>() { "9", "10" };
+
+                var orders = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false
+                                                && listMachine.Contains(x.Machine)
                                     )
-                                    .OrderBy(x => x.IndexOrder)
+                                    .OrderBy(x => x.IndexTrough)
                                     .ToListAsync();
                 return orders;
             }
