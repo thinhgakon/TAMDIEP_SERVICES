@@ -11,6 +11,7 @@ using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Models.Response;
 using System.Web.UI.WebControls;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -1069,7 +1070,12 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                List<string> listMachine = new List<string>() { "1", "2", "3", "4" };
+                List<string> listMachine = new List<string>() { 
+                    MachineCode.CODE_MACHINE_1,
+                    MachineCode.CODE_MACHINE_2,
+                    MachineCode.CODE_MACHINE_3,
+                    MachineCode.CODE_MACHINE_4,
+                };
 
                 var orders = await dbContext.tblCallToTroughs
                                     .Where(x => x.IsDone == false
@@ -1085,7 +1091,10 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                List<string> listMachine = new List<string>() { "9", "10" };
+                List<string> listMachine = new List<string>() {
+                    MachineCode.CODE_MACHINE_9,
+                    MachineCode.CODE_MACHINE_10,
+                };
 
                 var orders = await dbContext.tblCallToTroughs
                                     .Where(x => x.IsDone == false

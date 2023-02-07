@@ -15,7 +15,7 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
 
         protected readonly QueueToCallLogger _queueToCallLogger;
 
-        private static string CODE_MACHINE_9 = "9";
+        private static string CODE_MACHINE_MAIN = "10";
 
         public QueueToCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -66,8 +66,8 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
                 var sumNumber = (decimal)order.SumNumber;
                 var typeProduct = order.TypeProduct;
 
-                // Mặc định luôn đẩy vào máng 9
-                var machineCode = CODE_MACHINE_9;
+                // Mặc định luôn đẩy vào máng 10
+                var machineCode = CODE_MACHINE_MAIN;
 
                 _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
