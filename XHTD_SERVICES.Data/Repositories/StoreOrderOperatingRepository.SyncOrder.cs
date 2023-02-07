@@ -110,7 +110,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error("=========================== CreateAsync Error: " + ex.Message); ;
+                log.Error("=========================== CreateAsync Error: " + ex.Message + " ========== " + ex.StackTrace); ;
                 Console.WriteLine("CreateAsync Error: " + ex.Message);
 
                 return isSynced;
@@ -245,7 +245,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message + " ============ " + ex.StackTrace);
                 Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
 
                 return isSynced;

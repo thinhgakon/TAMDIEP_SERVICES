@@ -105,6 +105,32 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task UpdateWhenCanRa(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe cân ra lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} da can ra");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"====================== UpdateWhenCanRa Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenCanRa Error: " + ex.Message);
+                }
+            }
+        }
+
         public async Task UpdateWhenOverCountTry(int id)
         {
             using (var dbContext = new XHTD_Entities())

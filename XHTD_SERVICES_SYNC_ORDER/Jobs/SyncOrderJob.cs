@@ -23,6 +23,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected readonly VehicleRepository _vehicleRepository;
 
+        protected readonly CallToTroughRepository _callToTroughRepository;
+
         protected readonly SystemParameterRepository _systemParameterRepository;
 
         protected readonly Notification _notification;
@@ -42,6 +44,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         public SyncOrderJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
+            CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
             SyncOrderLogger syncOrderLogger
@@ -49,6 +52,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _vehicleRepository = vehicleRepository;
+            _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
             _syncOrderLogger = syncOrderLogger;
@@ -221,6 +225,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 // TODO
                 // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
+                await _callToTroughRepository.UpdateWhenCanRa(websaleOrder.deliveryCode);
 
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
