@@ -145,7 +145,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 try
                 {
-                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.Step < (int)OrderStep.DA_CAN_RA);
                     if (order == null)
                     {
                         return false;
@@ -153,7 +153,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if(step == (int)OrderStep.DA_LAY_HANG)
                     {
-                        if(order.Step == (int)OrderStep.DA_LAY_HANG)
+                        if(order.Step >= (int)OrderStep.DA_LAY_HANG)
                         {
                             return true;
                         }

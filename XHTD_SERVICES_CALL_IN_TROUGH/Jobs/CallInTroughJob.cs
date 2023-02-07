@@ -181,7 +181,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         public void CallBySystem(string vehicle, string troughCode)
         {
-            var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+            var PathAudioLib = $@"C:/XHTD/ThuVienGoiLoa/AudioNormal";
 
             string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
             string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
