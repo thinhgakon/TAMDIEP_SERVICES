@@ -217,7 +217,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var order = await dbContext.tblCallToTroughs
-                                .Where(x => x.Machine == code)
+                                .Where(x => x.Machine == code && x.IsDone == false)
                                 .OrderByDescending(x => x.IndexTrough)
                                 .FirstOrDefaultAsync();
 
