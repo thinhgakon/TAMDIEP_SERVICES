@@ -175,6 +175,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             else
             {
+                //TODO: xét thêm trường hợp đang xuất dở đơn mà chuyển qua máng khác thì không update được lại trạng thái Đang lấy hàng
+
                 _syncTroughLogger.LogInfo($"Mang {troughCode} dang nghi");
 
                 _syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
