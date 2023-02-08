@@ -309,19 +309,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                //var orders = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
-                //                            .ToListAsync();
-
-                // TODO: for test
-                List<int> listStep = new List<int>() { (int)OrderStep.DA_VAO_CONG, 
-                                                        (int)OrderStep.DA_CAN_VAO, 
-                                                        (int)OrderStep.DA_CAN_RA
-                                                    };
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
-                                                    && listStep.Contains((int)x.Step)
-                                                   )
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
                                             .ToListAsync();
 
                 return orders;
@@ -356,19 +345,8 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                //var order = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
-                //                            .OrderByDescending(x => x.Id)
-                //                            .FirstOrDefaultAsync();
-
-                // TODO: for test
-                //List<int> listStep = new List<int>() { (int)OrderStep.DA_CAN_VAO
-                //                                    };
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
-                                                    && (int)x.Step >= (int)OrderStep.DA_CAN_VAO
-                                                    && (int)x.Step < (int)OrderStep.DA_CAN_RA
-                                                   )
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
                                             .OrderByDescending(x => x.Id)
                                             .FirstOrDefaultAsync();
 
@@ -477,19 +455,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string currentTime = DateTime.Now.ToString();
 
-                    //var orders = await dbContext.tblStoreOrderOperatings
-                    //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
-                    //                            .ToListAsync();
-
-                    // TODO: for test
-                    List<int> listStep = new List<int>() { (int)OrderStep.DA_VAO_CONG,
-                                                        (int)OrderStep.DA_CAN_VAO,
-                                                        (int)OrderStep.DA_CAN_RA
-                                                    };
                     var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo
-                                                        && listStep.Contains((int)x.Step)
-                                                       )
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
@@ -613,21 +580,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string cancelTime = DateTime.Now.ToString();
 
-                    //var orders = await dbContext.tblStoreOrderOperatings
-                    //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
-                    //                            .ToListAsync();
-
-                    // TODO: for test
-                    //List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON,
-                    //                                    (int)OrderStep.DA_NHAN_DON,
-                    //                                    (int)OrderStep.DA_VAO_CONG
-                    //                                };
-
                     var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo
-                                                        && (int)x.Step >= (int)OrderStep.DA_CAN_VAO
-                                                        && (int)x.Step < (int)OrderStep.DA_CAN_RA
-                                                       )
+                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
@@ -663,16 +617,10 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    //var orders = await dbContext.tblStoreOrderOperatings
-                    //                            .Where(x => x.CardNo == cardNo 
-                    //                                    && (x.DriverUserName ?? "") != "" 
-                    //                                    && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
-                    //                            .ToListAsync();
-
-                    // TODO: for test service
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo
-                                                        && x.Step >= (int)OrderStep.CHUA_NHAN_DON && x.Step < (int)OrderStep.DA_HOAN_THANH)
+                                                        && (x.DriverUserName ?? "") != ""
+                                                        && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
@@ -703,16 +651,10 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    //var orders = await dbContext.tblStoreOrderOperatings
-                    //                            .Where(x => x.CardNo == cardNo 
-                    //                                    && (x.DriverUserName ?? "") != "" 
-                    //                                    && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
-                    //                            .ToListAsync();
-
-                    // TODO: for test service
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo
-                                                        && x.Step >= (int)OrderStep.CHUA_NHAN_DON && x.Step < (int)OrderStep.DA_HOAN_THANH)
+                                                        && (x.DriverUserName ?? "") != ""
+                                                        && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
