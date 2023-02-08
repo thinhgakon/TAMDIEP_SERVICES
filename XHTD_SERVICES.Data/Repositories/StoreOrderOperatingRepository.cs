@@ -293,14 +293,6 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.Step == (int)OrderStep.DA_NHAN_DON)
                                             .ToListAsync();
 
-                // TODO: for test
-                //List<int> listStep = new List<int>() { (int)OrderStep.CHUA_NHAN_DON, (int)OrderStep.DA_NHAN_DON };
-                //var orders = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo 
-                //                                    && listStep.Contains((int)x.Step) 
-                //                                   )
-                //                            .ToListAsync();
-
                 return orders;
             }
         }
@@ -322,7 +314,7 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_VAO_CONG)
+                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
                                             .OrderByDescending(x => x.Id)
                                             .FirstOrDefaultAsync();
 
