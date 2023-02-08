@@ -60,7 +60,7 @@
           <Property Name="OrderId" Type="int" Nullable="false" />
           <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
           <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
-          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="1" />
           <Property Name="Machine" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IndexTrough" Type="int" />
           <Property Name="CountTry" Type="int" Nullable="false" />
@@ -431,6 +431,8 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="CountReindex" Type="int" />
           <Property Name="IsVoiced" Type="bit" />
           <Property Name="LocationCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="TransportMethodId" Type="int" />
+          <Property Name="TransportMethodName" Type="nvarchar" MaxLength="50" />
           <Property Name="LockInDbet" Type="bit" />
           <Property Name="LogJobAttach" Type="nvarchar(max)" />
           <Property Name="IsSyncedByNewWS" Type="bit" />
@@ -692,7 +694,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="1" />
           <Property Name="Machine" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IndexTrough" Type="Int32" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
@@ -1043,6 +1045,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CountReindex" Type="Int32" />
           <Property Name="IsVoiced" Type="Boolean" />
           <Property Name="LocationCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TransportMethodId" Type="Int32" />
+          <Property Name="TransportMethodName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="LockInDbet" Type="Boolean" />
           <Property Name="LogJobAttach" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsSyncedByNewWS" Type="Boolean" />
@@ -1663,6 +1667,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="CountReindex" ColumnName="CountReindex" />
                 <ScalarProperty Name="IsVoiced" ColumnName="IsVoiced" />
                 <ScalarProperty Name="LocationCode" ColumnName="LocationCode" />
+                <ScalarProperty Name="TransportMethodId" ColumnName="TransportMethodId" />
+                <ScalarProperty Name="TransportMethodName" ColumnName="TransportMethodName" />
                 <ScalarProperty Name="LockInDbet" ColumnName="LockInDbet" />
                 <ScalarProperty Name="LogJobAttach" ColumnName="LogJobAttach" />
                 <ScalarProperty Name="IsSyncedByNewWS" ColumnName="IsSyncedByNewWS" />

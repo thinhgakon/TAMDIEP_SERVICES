@@ -79,6 +79,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> CountReindex { get; set; }
         public Nullable<bool> IsVoiced { get; set; }
         public string LocationCode { get; set; }
+        public Nullable<int> TransportMethodId { get; set; }
+        public string TransportMethodName { get; set; }
         public Nullable<bool> LockInDbet { get; set; }
         public string LogJobAttach { get; set; }
         public Nullable<bool> IsSyncedByNewWS { get; set; }
