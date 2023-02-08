@@ -86,6 +86,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         Confirm8 = 0,
                         MoocCode = websaleOrder.moocCode,
                         LocationCode = websaleOrder.locationCode,
+                        TransportMethodId = websaleOrder.transportMethodId,
+                        TransportMethodName = websaleOrder.transportMethodName,
                         State = websaleOrder.status,
                         IndexOrder = 0,
                         IndexOrder2 = 0,

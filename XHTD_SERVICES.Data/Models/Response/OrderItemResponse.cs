@@ -45,7 +45,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string currency { get; set; }
         public string uomCode { get; set; }
         public string locationCode { get; set; }
-        public string transportMethodId { get; set; }
+        public int? transportMethodId { get; set; }
         public string transportMethodName { get; set; }
         public string transportMethodTypeId { get; set; }
         public string transportMethodTypeName { get; set; }
