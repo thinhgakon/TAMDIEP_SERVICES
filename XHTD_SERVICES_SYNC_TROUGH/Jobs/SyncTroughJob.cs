@@ -161,17 +161,17 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
 
-                //var isAlmostDone = (countQuantity / planQuantity) > 0.9;
+                var isAlmostDone = (countQuantity / planQuantity) > 0.98;
 
-                //if (isAlmostDone)
-                //{
-                //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
-                //}
-                //else
-                //{
-                //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
-                //}
-                await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                if (isAlmostDone)
+                {
+                    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                }
+                else
+                {
+                    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                }
+                //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
             }
             else
             {
