@@ -57,7 +57,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 foreach (var order in orders)
                 {
-                    orderShows.Add(new StoreOrderForLED12 { Vehicle = order.Vehicle, State1 = LedHelper.GetDisplayMachine(order.Machine) }); //1
+                    orderShows.Add(new StoreOrderForLED12 { Vehicle = LedHelper.GetDisplayVehicle(order.Vehicle), State1 = LedHelper.GetDisplayMachine(order.Machine) }); //1
                 }
 
                 //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
