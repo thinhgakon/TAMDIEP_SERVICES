@@ -330,7 +330,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Không thuộc hệ thống");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Phương tiện chưa dán thẻ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -353,7 +353,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Không có đơn hàng");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Phương tiện không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
