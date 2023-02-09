@@ -30,9 +30,19 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             Clients.All.SendNotificationCBV(status, inout, cardNo, message);
         }
 
-        public void SendSensor(string scaleCode, string status)
+        public void SendSensor(string sensorCode, string status)
         {
-            Clients.All.SendSensor(scaleCode, status);
+            try
+            {
+                Console.WriteLine($"Send: sensorCode {sensorCode} status {status}");
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<ScaleHub>();
+                broadcast.Clients.All.SendSensor(sensorCode, status);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            //Clients.All.SendSensor(sensorCode, status);
         }
 
         public void SendFakeRFID(string value)
