@@ -268,6 +268,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
+                                    _gatewayLogger.LogInfo("----------------------------");
+                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _gatewayLogger.LogInfo("-----");
+
                                     // 1.Xác định xe cân vào / ra
                                     var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
@@ -302,9 +306,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         }
                                     }
 
-                                    _gatewayLogger.LogInfo("----------------------------");
-                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _gatewayLogger.LogInfo("-----");
+                                    //_gatewayLogger.LogInfo("----------------------------");
+                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_gatewayLogger.LogInfo("-----");
 
                                     var inout = "";
                                     if (isLuongVao)
@@ -379,7 +383,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
+                                        //isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
+                                        // TODO for test
+                                        isUpdatedOrder = true;
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
@@ -408,7 +414,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     else if (isLuongRa)
                                     {
                                         if(currentOrder.CatId != "CLINKER") {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+                                            //isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+                                            // TODO for test
+                                            isUpdatedOrder = true;
                                         }
                                         else
                                         {
