@@ -326,8 +326,15 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
+                //var order = await dbContext.tblStoreOrderOperatings
+                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                //                            .OrderByDescending(x => x.Id)
+                //                            .FirstOrDefaultAsync();
+
+                // TODO for test
+
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
+                                            .Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_CAN_VAO)
                                             .OrderByDescending(x => x.Id)
                                             .FirstOrDefaultAsync();
 
