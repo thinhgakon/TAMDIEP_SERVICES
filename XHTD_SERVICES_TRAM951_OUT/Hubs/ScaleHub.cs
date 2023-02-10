@@ -265,7 +265,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 if (isInValidSensor2)
                 {
                     // Send notification signalr
-                    logger.Info("Vi pham cam bien");
+                    //logger.Info("Vi pham cam bien");
 
                     SendSensor(ScaleCode.CODE_SCALE_2, "1");
 
@@ -277,7 +277,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
                 {
                     SendSensor(ScaleCode.CODE_SCALE_2, "0");
 
-                    logger.Info($"Received 951-2 KHONG ON DINH data: time={time}, value={value}");
+                    //logger.Info($"Received 951-2 KHONG ON DINH data: time={time}, value={value}");
                 }
             }
 
@@ -353,7 +353,7 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
                                 //logger.Info($"10. Xep so thu tu vao mang xuat");
