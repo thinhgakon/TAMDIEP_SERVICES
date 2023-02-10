@@ -216,6 +216,10 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
+                                    _tram951Logger.LogInfo("----------------------------");
+                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _tram951Logger.LogInfo("-----");
+
                                     // 1. Xác định xe ở cân 1 hay cân 2
                                     var isRfidFromScale1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
@@ -250,9 +254,9 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                         }
                                     }
 
-                                    _tram951Logger.LogInfo("----------------------------");
-                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _tram951Logger.LogInfo("-----");
+                                    //_tram951Logger.LogInfo("----------------------------");
+                                    //_tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_tram951Logger.LogInfo("-----");
 
                                     if (isRfidFromScale1)
                                     {
@@ -330,7 +334,11 @@ namespace XHTD_SERVICES_TRAM951_OUT.Jobs
                                     _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                     // 5. Xác thực cân ra
-                                    if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
+                                    //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent);
+                                    // TODO for test
+                                    var isUpdatedOrder = true;
+
+                                    if (isUpdatedOrder)
                                     {
                                         _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
                                         if (isRfidFromScale1) 
