@@ -217,6 +217,10 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
+                                    _tram951Logger.LogInfo("----------------------------");
+                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _tram951Logger.LogInfo("-----");
+
                                     // 1. Xác định xe ở cân 1 hay cân 2
                                     var isRfidFromScale1 = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
@@ -251,9 +255,9 @@ namespace XHTD_SERVICES_TRAM951_IN.Jobs
                                         }
                                     }
 
-                                    _tram951Logger.LogInfo("----------------------------");
-                                    _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _tram951Logger.LogInfo("-----");
+                                    //_tram951Logger.LogInfo("----------------------------");
+                                    //_tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_tram951Logger.LogInfo("-----");
 
                                     if (isRfidFromScale1)
                                     {
