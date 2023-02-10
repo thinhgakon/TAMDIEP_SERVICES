@@ -20,10 +20,18 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        public void Send(string name, string message)
+        public void SendMessage(string name, string message)
         {
-            Clients.All.addMessage(name, message);
-            Console.WriteLine("send send");
+            try
+            {
+                Console.WriteLine($"Send: name {name} message {message}");
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<ScaleHub>();
+                broadcast.Clients.All.SendMessage(name, message);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void SendNotificationCBV(int status, string inout, string cardNo, string message)
