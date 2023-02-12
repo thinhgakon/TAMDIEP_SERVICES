@@ -114,6 +114,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (itemToCall != null)
                     {
+                        var machineCode = itemToCall.Machine; 
+
                         itemToCall.IsDone = true;
                         itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe cân ra lúc {DateTime.Now}";
@@ -121,6 +123,21 @@ namespace XHTD_SERVICES.Data.Repositories
                         await dbContext.SaveChangesAsync();
 
                         log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} da can ra");
+
+                        // Xep lai STT với các đơn khác
+                        var items = await dbContext.tblCallToTroughs
+                                        .Where(x => x.Machine == machineCode && x.IsDone == false)
+                                        .ToListAsync();
+
+                        if (items != null && items.Count > 0)
+                        {
+                            int i = 1;
+                            foreach (var item in items)
+                            {
+                                await UpdateIndex(item.DeliveryCode, i);
+                                i++;
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -324,6 +341,41 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error("============================ AddItem Error: " + ex.Message); ;
                     Console.WriteLine("Log Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task<bool> UpdateIndex(string deliveryCode, int index)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblCallToTroughs.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (order != null)
+                    {
+                        order.IndexTrough = index;
+                        order.CallLog = $@"#Reindex lúc {DateTime.Now}.";
+                        order.UpdateDay = DateTime.Now;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($"Update Index Trough:  deliveryCode={deliveryCode}, index={index}");
+                        Console.WriteLine($"Update Index Trough: deliveryCode={deliveryCode}, index={index}");
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateIndex Trough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateIndex Trough Error: " + ex.Message);
+
+                    return isUpdated;
                 }
             }
         }
