@@ -88,6 +88,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (itemToCall != null)
                     {
+                        var machineCode = itemToCall.Machine;
+
                         itemToCall.IsDone = true;
                         itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe vào máng lúc {DateTime.Now}";
@@ -95,6 +97,21 @@ namespace XHTD_SERVICES.Data.Repositories
                         await dbContext.SaveChangesAsync();
 
                         log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} trong callToTrough");
+
+                        // Xep lai STT với các đơn khác
+                        var items = await dbContext.tblCallToTroughs
+                                        .Where(x => x.Machine == machineCode && x.IsDone == false)
+                                        .ToListAsync();
+
+                        if (items != null && items.Count > 0)
+                        {
+                            int i = 1;
+                            foreach (var item in items)
+                            {
+                                await UpdateIndex(item.DeliveryCode, i);
+                                i++;
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
