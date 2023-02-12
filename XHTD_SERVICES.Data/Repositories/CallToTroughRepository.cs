@@ -131,6 +131,32 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task UpdateWhenHuyDon(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} #Huy don lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} bi huy don");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"====================== UpdateWhenHuyDon Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenHuyDon Error: " + ex.Message);
+                }
+            }
+        }
+
         public async Task UpdateWhenOverCountTry(int id)
         {
             using (var dbContext = new XHTD_Entities())

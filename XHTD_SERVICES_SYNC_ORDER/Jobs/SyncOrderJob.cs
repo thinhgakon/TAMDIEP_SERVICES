@@ -223,7 +223,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
-                // TODO
                 // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
                 await _callToTroughRepository.UpdateWhenCanRa(websaleOrder.deliveryCode);
 
@@ -236,7 +235,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut);
                 }
             }
-            else if (stateId == (int)OrderState.DA_HUY_DON){
+            else if (stateId == (int)OrderState.DA_HUY_DON)
+            {
+                // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
+                await _callToTroughRepository.UpdateWhenHuyDon(websaleOrder.deliveryCode);
+
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
             }
 
