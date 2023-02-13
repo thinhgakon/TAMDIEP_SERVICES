@@ -38,7 +38,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private static bool DeviceConnected = false;
 
-        private List<CardNoLog> tmpCardNoLst_1 = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
 
         private List<CardNoLog> tmpCardNoLst_2 = new List<CardNoLog>();
 
@@ -226,8 +226,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        if (tmpCardNoLst_1.Count > 5) tmpCardNoLst_1.RemoveRange(0, 4);
-                                        if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                        if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
+                                        if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
                                             //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                             continue;
@@ -336,7 +336,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân vao");
 
-                                            tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst_In.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can vao");
