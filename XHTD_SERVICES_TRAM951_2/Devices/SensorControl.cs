@@ -49,38 +49,38 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             {
                 if (checkInScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_1, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_1, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_1, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_1, "0");
                 }
 
                 if (checkLeftScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_2, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_2, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_2, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_2, "0");
                 }
 
                 if (checkOutScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_3, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_3, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_3, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_3, "0");
                 }
 
                 if (checkRightScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_4, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_4, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_4, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_4, "0");
                 }
             }
             catch (Exception ex)

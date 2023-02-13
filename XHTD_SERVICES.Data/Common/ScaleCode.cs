@@ -38,6 +38,14 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly string CODE_481_CB_4 = "481-CB-4";
 
+        public static readonly string CODE_SCALE_1_DGT_IN = "SCALE_1_DGT_IN";
+
+        public static readonly string CODE_SCALE_1_DGT_OUT = "SCALE_1_DGT_OUT";
+
+        public static readonly string CODE_SCALE_2_DGT_IN = "SCALE_2_DGT_IN";
+
+        public static readonly string CODE_SCALE_2_DGT_OUT = "SCALE_2_DGT_OUT";
+
         public static readonly string CODE_SCALE_481_DGT_IN = "SCALE_481_DGT_IN";
 
         public static readonly string CODE_SCALE_481_DGT_OUT = "SCALE_481_DGT_OUT";

@@ -294,7 +294,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
                                     if (Program.IsScalling951)
                                     {
-                                        var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_951);
+                                        var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_2);
                                         if (scaleInfo != null
                                             && (bool)scaleInfo.IsScaling
                                             && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
@@ -336,7 +336,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
 
                                             // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_951, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling951 = true;
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -345,9 +345,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_951_DGT_IN);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_951_DGT_OUT);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                         }
                                         else
                                         {
@@ -363,7 +363,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
 
                                             // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_951, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling951 = true;
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
@@ -372,9 +372,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_951_DGT_IN);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_951_DGT_OUT);
+                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                         }
                                         else
                                         {
@@ -415,11 +415,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         {
             var ipAddress = "";
 
-            if (code == ScaleCode.CODE_SCALE_951_DGT_IN)
+            if (code == ScaleCode.CODE_SCALE_2_DGT_IN)
             {
                 ipAddress = trafficLightIn?.IpAddress;
             }
-            else if (code == ScaleCode.CODE_SCALE_951_DGT_OUT)
+            else if (code == ScaleCode.CODE_SCALE_2_DGT_OUT)
             {
                 ipAddress = trafficLightOut?.IpAddress;
             }
