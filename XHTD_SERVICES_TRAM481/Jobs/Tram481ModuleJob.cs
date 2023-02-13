@@ -136,18 +136,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
             m221 = devices.FirstOrDefault(x => x.Code == "CLK.M221");
 
-            //barrierIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-1");
-            //barrierIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.BRE-2");
-            //barrierOut1 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-1");
-            //barrierOut2 = devices.FirstOrDefault(x => x.Code == "951-OUT.M221.BRE-2");
-
             trafficLightIn = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
             trafficLightOut = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
-
-            //sensorIn1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
-            //sensorIn2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
-            //sensorOut1 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-1");
-            //sensorOut2 = devices.FirstOrDefault(x => x.Code == "951-IN.M221.CB-1-2");
         }
 
         public void AuthenticateTram481Module()
