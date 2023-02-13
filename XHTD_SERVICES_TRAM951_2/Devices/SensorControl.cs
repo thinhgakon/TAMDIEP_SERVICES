@@ -40,9 +40,9 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return false;
             }
 
-            var checkInScale951 = _sensor.ReadInputPort(SCALE_2_I2);
+            var checkInScale951 = _sensor.ReadInputPort(SCALE_2_I1);
             var checkOutScale951 = _sensor.ReadInputPort(SCALE_2_I3);
-            var checkLeftScale951 = _sensor.ReadInputPort(SCALE_2_I1);
+            var checkLeftScale951 = _sensor.ReadInputPort(SCALE_2_I2);
             var checkRightScale951 = _sensor.ReadInputPort(SCALE_2_I4);
 
             try
