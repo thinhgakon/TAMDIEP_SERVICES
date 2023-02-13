@@ -273,7 +273,7 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 return;
             }
 
-            if (Program.IsScalling1)
+            if (Program.IsScalling2)
             {
                 SendMessage("SCALE_2_STATUS", $"Cân tự động");
             }
