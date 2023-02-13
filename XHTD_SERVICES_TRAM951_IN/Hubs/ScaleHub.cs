@@ -107,6 +107,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 //Program.IsLockingScale1 = false;
                 Program.scaleValues1.Clear();
 
+                SendMessage("SCALE_1_STATUS", $"Cân đang nghỉ");
+
                 if (Program.IsScalling1)
                 {
                     DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_1);
@@ -117,11 +119,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             if (Program.IsScalling1)
             {
-                SendMessage("SCALE_1_STATUS", $"Đang cân");
+                SendMessage("SCALE_1_STATUS", $"Cân tự động");
             }
             else
             {
-                SendMessage("SCALE_1_STATUS", $"Cân đang nghỉ");
+                SendMessage("SCALE_1_STATUS", $"Cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
@@ -261,6 +263,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 //Program.IsLockingScale2 = false;
                 Program.scaleValues2.Clear();
 
+                SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
+
                 if (Program.IsScalling2)
                 {
                     DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2);
@@ -271,11 +275,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             if (Program.IsScalling1)
             {
-                SendMessage("SCALE_2_STATUS", $"Đang cân");
+                SendMessage("SCALE_2_STATUS", $"Cân tự động");
             }
             else
             {
-                SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
+                SendMessage("SCALE_2_STATUS", $"Cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
