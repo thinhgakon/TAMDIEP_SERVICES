@@ -115,6 +115,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 return;
             }
 
+            if (Program.IsScalling1)
+            {
+                SendMessage("SCALE_1_STATUS", $"Đang cân");
+            }
+            else
+            {
+                SendMessage("SCALE_1_STATUS", $"Cân đang nghỉ");
+            }
+
             // TODO: kiểm tra vi phạm cảm biến cân
             if (!Program.IsLockingScale1) {
                 var isInValidSensor1 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale1();
@@ -159,6 +168,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 1 on dinh: " + currentScaleValue);
+
+                    SendMessage("SCALE_1_BALANCE", $"{currentScaleValue}");
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -258,6 +269,15 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
                 return;
             }
 
+            if (Program.IsScalling1)
+            {
+                SendMessage("SCALE_2_STATUS", $"Đang cân");
+            }
+            else
+            {
+                SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
+            }
+
             // TODO: kiểm tra vi phạm cảm biến cân
             if (!Program.IsLockingScale2)
             {
@@ -303,6 +323,8 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 2 on dinh: " + currentScaleValue);
+
+                    SendMessage("SCALE_2_BALANCE", $"{currentScaleValue}");
 
                     using (var dbContext = new XHTD_Entities())
                     {
