@@ -348,15 +348,16 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling951 = true;
 
-                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân vao");
 
                                             tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do");
+                                            _tram951Logger.LogInfo($@"7. Bat den do can vao");
                                             TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            //Thread.Sleep(500);
                                         }
                                         else
                                         {
@@ -379,15 +380,16 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling951 = true;
 
-                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân ra");
 
                                             tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
-                                            Thread.Sleep(500);
+                                            _tram951Logger.LogInfo($@"7. Bat den do can ra");
+                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                            //Thread.Sleep(500);
                                             TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            Thread.Sleep(500);
                                         }
                                         else
                                         {
@@ -443,6 +445,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         public bool TurnOnRedTrafficLight(string code)
         {
             var ipAddress = GetTrafficLightIpAddress(code);
+
+            _tram951Logger.LogInfo($@"IP den: {ipAddress}");
 
             if (String.IsNullOrEmpty(ipAddress))
             {
