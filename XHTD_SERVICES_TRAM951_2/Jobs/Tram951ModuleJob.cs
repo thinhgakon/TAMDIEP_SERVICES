@@ -125,19 +125,19 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("CLK");
+            var devices = await _categoriesDevicesRepository.GetDevices("951");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400");
+            c3400 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400");
 
-            rfidIn11 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-1");
-            rfidIn12 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-2");
-            rfidIn21 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-1");
-            rfidIn22 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-2");
+            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-1");
+            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-2");
+            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-1");
+            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-2");
 
-            m221 = devices.FirstOrDefault(x => x.Code == "CLK.M221");
+            m221 = devices.FirstOrDefault(x => x.Code == "951-2.M221");
 
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
+            trafficLightIn = devices.FirstOrDefault(x => x.Code == "951-2.DGT-IN");
+            trafficLightOut = devices.FirstOrDefault(x => x.Code == "951-2.DGT-OUT");
         }
 
         public void AuthenticateTram951Module()
