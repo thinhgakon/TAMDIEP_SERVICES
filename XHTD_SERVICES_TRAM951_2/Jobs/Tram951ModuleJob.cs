@@ -44,6 +44,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst_In = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpInvalidCardNoLst_Out = new List<CardNoLog>();
+
         private tblCategoriesDevice
             c3400,
             rfidIn11,
@@ -217,15 +219,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
                                     // 2. Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst_In.Count > 10) tmpInvalidCardNoLst_In.RemoveRange(0, 3);
-                                    if (tmpInvalidCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                    {
-                                        //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                        continue;
-                                    }
-
                                     if (isLuongVao)
                                     {
+                                        if (tmpInvalidCardNoLst_In.Count > 10) tmpInvalidCardNoLst_In.RemoveRange(0, 3);
+                                        if (tmpInvalidCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                                        {
+                                            //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                            continue;
+                                        }
+
                                         if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
                                         if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
@@ -235,6 +237,13 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
+                                        if (tmpInvalidCardNoLst_Out.Count > 10) tmpInvalidCardNoLst_Out.RemoveRange(0, 3);
+                                        if (tmpInvalidCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                                        {
+                                            //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                            continue;
+                                        }
+
                                         if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
                                         if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
@@ -271,7 +280,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst_In.Add(newCardNoLog);
+
+                                        if (isLuongVao)
+                                        {
+                                            tmpInvalidCardNoLst_In.Add(newCardNoLog);
+                                        }
+                                        else if (isLuongRa)
+                                        {
+                                            tmpInvalidCardNoLst_Out.Add(newCardNoLog);
+                                        } 
 
                                         continue;
                                     }
