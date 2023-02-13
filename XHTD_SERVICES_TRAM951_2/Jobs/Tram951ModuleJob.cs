@@ -331,7 +331,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     // 5. Xác thực cân vào
                                     if (isLuongVao)
                                     {
-                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
+                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent);
+                                        // TODO for test
+                                        var isUpdatedOrder = true;
+
+                                        if (isUpdatedOrder)
                                         {
                                             _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
 
@@ -358,7 +362,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     // 5. Xác thực cân ra
                                     else if (isLuongRa)
                                     {
-                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
+                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent);
+                                        // TODO for test
+                                        var isUpdatedOrder = true;
+
+                                        if (isUpdatedOrder)
                                         {
                                             _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
 
