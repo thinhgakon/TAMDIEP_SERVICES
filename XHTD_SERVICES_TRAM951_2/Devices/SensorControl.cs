@@ -17,12 +17,12 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         protected readonly Sensor _sensor;
 
-        private const string IP_ADDRESS = "10.0.20.2";
+        private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_951_I1 = 2;
-        private const int SCALE_951_I2 = 3;
-        private const int SCALE_951_I3 = 4;
-        private const int SCALE_951_I4 = 5;
+        private const int SCALE_2_I1 = 8;
+        private const int SCALE_2_I2 = 9;
+        private const int SCALE_2_I3 = 10;
+        private const int SCALE_2_I4 = 11;
 
         public SensorControl(
             Sensor sensor
@@ -40,10 +40,10 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return false;
             }
 
-            var checkInScale951 = _sensor.ReadInputPort(SCALE_951_I2);
-            var checkOutScale951 = _sensor.ReadInputPort(SCALE_951_I3);
-            var checkLeftScale951 = _sensor.ReadInputPort(SCALE_951_I1);
-            var checkRightScale951 = _sensor.ReadInputPort(SCALE_951_I4);
+            var checkInScale951 = _sensor.ReadInputPort(SCALE_2_I2);
+            var checkOutScale951 = _sensor.ReadInputPort(SCALE_2_I3);
+            var checkLeftScale951 = _sensor.ReadInputPort(SCALE_2_I1);
+            var checkRightScale951 = _sensor.ReadInputPort(SCALE_2_I4);
 
             try
             {
