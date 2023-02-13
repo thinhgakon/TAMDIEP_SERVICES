@@ -42,7 +42,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
-        private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
+        private List<CardNoLog> tmpInvalidCardNoLst_In = new List<CardNoLog>();
 
         private tblCategoriesDevice
             c3400,
@@ -217,8 +217,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
                                     // 2. Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
-                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                                    if (tmpInvalidCardNoLst_In.Count > 10) tmpInvalidCardNoLst_In.RemoveRange(0, 3);
+                                    if (tmpInvalidCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
                                         //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
@@ -271,7 +271,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
+                                        tmpInvalidCardNoLst_In.Add(newCardNoLog);
 
                                         continue;
                                     }
@@ -310,7 +310,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
+                                        tmpInvalidCardNoLst_In.Add(newCardNoLog);
 
                                         continue;
                                     }
