@@ -88,6 +88,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (itemToCall != null)
                     {
+                        var machineCode = itemToCall.Machine;
+
                         itemToCall.IsDone = true;
                         itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe vào máng lúc {DateTime.Now}";
@@ -95,6 +97,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         await dbContext.SaveChangesAsync();
 
                         log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} trong callToTrough");
+
+                        // Xep lai STT với các đơn khác
+                        await ReIndexInMachine(machineCode);
                     }
                 }
                 catch (Exception ex)
@@ -114,6 +119,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (itemToCall != null)
                     {
+                        var machineCode = itemToCall.Machine; 
+
                         itemToCall.IsDone = true;
                         itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe cân ra lúc {DateTime.Now}";
@@ -121,12 +128,46 @@ namespace XHTD_SERVICES.Data.Repositories
                         await dbContext.SaveChangesAsync();
 
                         log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} da can ra");
+
+                        // Xep lai STT với các đơn khác
+                        await ReIndexInMachine(machineCode);
                     }
                 }
                 catch (Exception ex)
                 {
                     log.Error($@"====================== UpdateWhenCanRa Error: " + ex.Message);
                     Console.WriteLine($@"UpdateWhenCanRa Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task UpdateWhenHuyDon(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (itemToCall != null)
+                    {
+                        var machineCode = itemToCall.Machine;
+
+                        itemToCall.IsDone = true;
+                        itemToCall.UpdateDay = DateTime.Now;
+                        itemToCall.CallLog = $@"{itemToCall.CallLog} #Huy don lúc {DateTime.Now}";
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} bi huy don");
+
+                        // Xep lai STT với các đơn khác
+                        await ReIndexInMachine(machineCode);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"====================== UpdateWhenHuyDon Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateWhenHuyDon Error: " + ex.Message);
                 }
             }
         }
@@ -298,6 +339,70 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error("============================ AddItem Error: " + ex.Message); ;
                     Console.WriteLine("Log Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task<bool> UpdateIndex(string deliveryCode, int index)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblCallToTroughs.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (order != null)
+                    {
+                        order.IndexTrough = index;
+                        order.CallLog = $@"#Reindex lúc {DateTime.Now}.";
+                        order.UpdateDay = DateTime.Now;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($"Update Index Trough:  deliveryCode={deliveryCode}, index={index}");
+                        Console.WriteLine($"Update Index Trough: deliveryCode={deliveryCode}, index={index}");
+
+                        isUpdated = true;
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"UpdateIndex Trough Error: " + ex.Message);
+                    Console.WriteLine($@"UpdateIndex Trough Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
+
+        public async Task ReIndexInMachine(string machineCode) 
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    // Xep lai STT của các đơn trong máng
+                    var items = await dbContext.tblCallToTroughs
+                                    .Where(x => x.Machine == machineCode && x.IsDone == false)
+                                    .ToListAsync();
+
+                    if (items != null && items.Count > 0)
+                    {
+                        int i = 1;
+                        foreach (var item in items)
+                        {
+                            await UpdateIndex(item.DeliveryCode, i);
+                            i++;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"== ReIndexInMachine Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                    Console.WriteLine($@"== ReIndexInMachine Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
                 }
             }
         }
