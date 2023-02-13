@@ -19,10 +19,10 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         private const string IP_ADDRESS = "10.0.20.2";
 
-        private const int SCALE_481_I1 = 2;
-        private const int SCALE_481_I2 = 3;
-        private const int SCALE_481_I3 = 4;
-        private const int SCALE_481_I4 = 5;
+        private const int SCALE_951_I1 = 2;
+        private const int SCALE_951_I2 = 3;
+        private const int SCALE_951_I3 = 4;
+        private const int SCALE_951_I4 = 5;
 
         public SensorControl(
             Sensor sensor
@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             _sensor = sensor;
         }
 
-        public bool IsInValidSensorScale481()
+        public bool IsInValidSensorScale951()
         {
             var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
 
@@ -40,47 +40,47 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return false;
             }
 
-            var checkInScale481 = _sensor.ReadInputPort(SCALE_481_I2);
-            var checkOutScale481 = _sensor.ReadInputPort(SCALE_481_I3);
-            var checkLeftScale481 = _sensor.ReadInputPort(SCALE_481_I1);
-            var checkRightScale481 = _sensor.ReadInputPort(SCALE_481_I4);
+            var checkInScale951 = _sensor.ReadInputPort(SCALE_951_I2);
+            var checkOutScale951 = _sensor.ReadInputPort(SCALE_951_I3);
+            var checkLeftScale951 = _sensor.ReadInputPort(SCALE_951_I1);
+            var checkRightScale951 = _sensor.ReadInputPort(SCALE_951_I4);
 
             try
             {
-                if (checkInScale481)
+                if (checkInScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_1, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_1, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_1, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_1, "0");
                 }
 
-                if (checkLeftScale481)
+                if (checkLeftScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_2, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_2, "0");
                 }
 
-                if (checkOutScale481)
+                if (checkOutScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_3, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_3, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_3, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_3, "0");
                 }
 
-                if (checkRightScale481)
+                if (checkRightScale951)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_4, "1");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_4, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_4, "0");
+                    new ScaleHub().SendSensor(ScaleCode.CODE_951_CB_4, "0");
                 }
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 logger.Info($"Sensor Control ERROR: {ex.Message} ===== {ex.StackTrace} ==== {ex.InnerException}");
             }
 
-            if (checkInScale481 || checkOutScale481 || checkLeftScale481 || checkRightScale481)
+            if (checkInScale951 || checkOutScale951 || checkLeftScale951 || checkRightScale951)
             {
                 return true;
             }

@@ -27,9 +27,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             // for more information.
             try
             {
-                WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL);
+                WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM951_SERVICE_URL);
 
-                logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM481_SERVICE_URL}");
+                logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM951_SERVICE_URL}");
             }
             catch (Exception ex)
             {

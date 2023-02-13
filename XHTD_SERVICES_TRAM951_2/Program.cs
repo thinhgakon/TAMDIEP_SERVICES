@@ -13,9 +13,9 @@ namespace XHTD_SERVICES_TRAM951_2
         /// The main entry point for the application.
         /// </summary>
 
-        public static List<int> scaleValues481 = new List<int>();
-        public static bool IsScalling481 = false;
-        public static bool IsLockingScale481 = false;
+        public static List<int> scaleValues951 = new List<int>();
+        public static bool IsScalling951 = false;
+        public static bool IsLockingScale951 = false;
 
         static void Main()
         {

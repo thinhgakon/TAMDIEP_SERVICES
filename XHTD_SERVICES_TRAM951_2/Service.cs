@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_TRAM951_2
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service TRAM481");
+            log.Info("OnStart service TRAM951");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
 
@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_TRAM951_2
 
         protected override void OnStop()
         {
-            log.Info("OnStop service TRAM481");
+            log.Info("OnStop service TRAM951");
         }
     }
 }

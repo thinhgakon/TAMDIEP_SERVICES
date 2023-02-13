@@ -16,13 +16,13 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         private const string IP_ADDRESS = "10.0.20.2";
 
-        private const int SCALE_481_IN_I1 = 0;
-        private const int SCALE_481_IN_Q1 = 0;
-        private const int SCALE_481_IN_Q2 = 1;
+        private const int SCALE_951_IN_I1 = 0;
+        private const int SCALE_951_IN_Q1 = 0;
+        private const int SCALE_951_IN_Q2 = 1;
 
-        private const int SCALE_481_OUT_I1 = 1;
-        private const int SCALE_481_OUT_Q1 = 2;
-        private const int SCALE_481_OUT_Q2 = 3;
+        private const int SCALE_951_OUT_I1 = 1;
+        private const int SCALE_951_OUT_Q1 = 2;
+        private const int SCALE_951_OUT_Q2 = 3;
 
         public BarrierControl(
             PLCBarrier barrier
@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             _barrier = barrier;
         }
 
-        // Barrier chiều vào cân 481
+        // Barrier chiều vào cân 951
         public void OpenBarrierScaleIn()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
@@ -41,11 +41,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_481_IN_I1))
+            if (_barrier.ReadInputPort(SCALE_951_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_IN_Q1.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_IN_Q1.ToString())));
             }
         }
 
@@ -58,15 +58,15 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_481_IN_I1))
+            if (!_barrier.ReadInputPort(SCALE_951_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_IN_Q2.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_IN_Q2.ToString())));
             }
         }
 
-        // Barrier chiều ra cân 481
+        // Barrier chiều ra cân 951
         public void OpenBarrierScaleOut()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
@@ -76,11 +76,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_481_OUT_I1))
+            if (_barrier.ReadInputPort(SCALE_951_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_OUT_Q1.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_OUT_Q1.ToString())));
             }
         }
 
@@ -93,11 +93,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_481_OUT_I1))
+            if (!_barrier.ReadInputPort(SCALE_951_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_OUT_Q2.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_481_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_951_OUT_Q2.ToString())));
             }
         }
     }

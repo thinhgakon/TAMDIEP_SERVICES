@@ -292,7 +292,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Tram481Logger.cs" />
+    <Compile Include="Tram951Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

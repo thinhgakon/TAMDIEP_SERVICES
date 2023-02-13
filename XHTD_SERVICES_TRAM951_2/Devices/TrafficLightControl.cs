@@ -24,11 +24,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
         {
             var ipAddress = "10.0.20.3";
 
-            if (scaleCode == ScaleCode.CODE_SCALE_481_DGT_IN)
+            if (scaleCode == ScaleCode.CODE_SCALE_951_DGT_IN)
             {
                 ipAddress = "10.0.20.3";
             }
-            else if (scaleCode == ScaleCode.CODE_SCALE_481_DGT_OUT)
+            else if (scaleCode == ScaleCode.CODE_SCALE_951_DGT_OUT)
             {
                 ipAddress = "10.0.20.4";
             }
