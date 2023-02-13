@@ -327,7 +327,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst_In.Add(newCardNoLog);
+
+                                        if (isLuongVao)
+                                        {
+                                            tmpInvalidCardNoLst_In.Add(newCardNoLog);
+                                        }
+                                        else if (isLuongRa)
+                                        {
+                                            tmpInvalidCardNoLst_Out.Add(newCardNoLog);
+                                        }
 
                                         continue;
                                     }
@@ -357,9 +365,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can vao");
-
-                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
-                                            //Thread.Sleep(500);
 
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
@@ -392,9 +397,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can ra");
                                             
-                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
-                                            //Thread.Sleep(500);
-
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                             Thread.Sleep(500);
                                         }
