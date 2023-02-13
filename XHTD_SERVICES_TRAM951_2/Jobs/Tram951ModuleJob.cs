@@ -40,7 +40,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
 
-        private List<CardNoLog> tmpCardNoLst_2 = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
@@ -235,8 +235,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        if (tmpCardNoLst_2.Count > 5) tmpCardNoLst_2.RemoveRange(0, 4);
-                                        if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                        if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
+                                        if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                         {
                                             //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                             continue;
@@ -370,7 +370,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân ra");
 
-                                            tmpCardNoLst_2.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst_Out.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can ra");
