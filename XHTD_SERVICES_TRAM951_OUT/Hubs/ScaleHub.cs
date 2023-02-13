@@ -77,16 +77,6 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             //logger.Info($"Received 951-1 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
-            if(currentScaleValue == 111)
-            {
-                Program.IsScalling1 = true;
-                logger.Info("IsScalling1 true");
-            }
-            else if(currentScaleValue == 999)
-            {
-                Program.IsScalling1 = false;
-                logger.Info("IsScalling1 false");
-            }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
@@ -231,16 +221,6 @@ namespace XHTD_SERVICES_TRAM951_OUT.Hubs
             //logger.Info($"Received 951-2 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
-            if (currentScaleValue == 111)
-            {
-                Program.IsScalling2 = true;
-                logger.Info("IsScalling2 true");
-            }
-            else if (currentScaleValue == 999)
-            {
-                Program.IsScalling2 = false;
-                logger.Info("IsScalling2 false");
-            }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {

@@ -89,16 +89,6 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             //logger.Info($"Received 481 data: time={time}, value={value}");
 
             int currentScaleValue = Int32.Parse(value);
-            if (currentScaleValue == 111)
-            {
-                Program.IsScalling481 = true;
-                logger.Info("IsScalling481 true");
-            }
-            else if (currentScaleValue == 999)
-            {
-                Program.IsScalling481 = false;
-                logger.Info("IsScalling481 false");
-            }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
