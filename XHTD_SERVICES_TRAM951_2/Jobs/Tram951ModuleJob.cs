@@ -13,6 +13,8 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Common;
 using System.Threading;
 using XHTD_SERVICES_TRAM951_2.Hubs;
+using Autofac;
+using XHTD_SERVICES_TRAM951_2.Devices;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
@@ -101,7 +103,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
             await Task.Run(async () =>
             {
-                _tram951Logger.LogInfo("Start tram951 service");
+                _tram951Logger.LogInfo("Start tram951 2 service");
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -349,10 +351,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can vao");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
-                                            Thread.Sleep(500);
-                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+
+                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             //Thread.Sleep(500);
+
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                            Thread.Sleep(500);
                                         }
                                         else
                                         {
@@ -381,9 +385,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can ra");
-                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                            
+                                            //TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                             //Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                             Thread.Sleep(500);
                                         }
                                         else
@@ -419,38 +425,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                 AuthenticateTram951Module();
             }
-        }
-
-        public string GetTrafficLightIpAddress(string code)
-        {
-            var ipAddress = "";
-
-            if (code == ScaleCode.CODE_SCALE_2_DGT_IN)
-            {
-                ipAddress = trafficLightIn?.IpAddress;
-            }
-            else if (code == ScaleCode.CODE_SCALE_2_DGT_OUT)
-            {
-                ipAddress = trafficLightOut?.IpAddress;
-            }
-
-            return ipAddress;
-        }
-
-        public bool TurnOnRedTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            _tram951Logger.LogInfo($@"IP den: {ipAddress}");
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOffGreenOnRed();
         }
     }
 }
