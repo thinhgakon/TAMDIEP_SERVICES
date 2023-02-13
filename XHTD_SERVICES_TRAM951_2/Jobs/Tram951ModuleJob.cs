@@ -20,7 +20,7 @@ using System.Threading;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
-    public class Tram481ModuleJob : IJob
+    public class Tram951ModuleJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -40,7 +40,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly Sensor _sensor;
 
-        protected readonly Tram481Logger _tram481Logger;
+        protected readonly Tram951Logger _tram481Logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -79,7 +79,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
-        public Tram481ModuleJob(
+        public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
@@ -89,7 +89,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
-            Tram481Logger tram481Logger
+            Tram951Logger tram481Logger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
