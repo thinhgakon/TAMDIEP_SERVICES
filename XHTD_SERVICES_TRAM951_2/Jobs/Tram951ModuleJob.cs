@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Data.Common;
 using System.Threading;
+using XHTD_SERVICES_TRAM951_2.Hubs;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
@@ -281,6 +282,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     {
                                         _tram951Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
+                                        new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
+
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -295,6 +298,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             && (bool)scaleInfo.IsScaling
                                             && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
                                         {
+                                            new ScaleHub().SendMessage("Notification", $"== Can 2 dang hoat dong => Ket thuc {cardNoCurrent} ==");
+
                                             // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                                             _tram951Logger.LogInfo($"== Can 951 dang hoat dong => Ket thuc ==");
                                             continue;
@@ -316,11 +321,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     {
                                         _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
+                                        new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
+
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
                                     }
+
+                                    new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} hợp lệ");
 
                                     _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
