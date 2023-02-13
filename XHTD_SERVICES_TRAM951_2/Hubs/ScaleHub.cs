@@ -68,13 +68,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9512ScaleInfo(time, value);
+            ReadDataScale951(time, value);
         }
 
         public void SendClinkerScaleInfo(DateTime time, string value)
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.SendClinkerScaleInfo(time, value);
-            ReadDataScale951(time, value);
+            //ReadDataScale951(time, value);
         }
 
         /*
@@ -117,9 +118,20 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 //    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_951_DGT_IN);
                 //}
 
+                SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
+
                 Program.scaleValues951.Clear();
 
                 return;
+            }
+
+            if (Program.IsScalling951)
+            {
+                SendMessage("SCALE_2_STATUS", $"Cân tự động");
+            }
+            else
+            {
+                SendMessage("SCALE_2_STATUS", $"Cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
@@ -129,7 +141,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 if (isInValidSensor951)
                 {
                     // Send notification signalr
-                    logger.Info("Vi pham cam bien can 951");
+                    //logger.Info("Vi pham cam bien can 951");
 
                     SendSensor(ScaleCode.CODE_SCALE_2, "1");
 
@@ -141,7 +153,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 {
                     SendSensor(ScaleCode.CODE_SCALE_2, "0");
 
-                    logger.Info($"Received 951 data: time={time}, value={value}");
+                    //logger.Info($"Received 951 data: time={time}, value={value}");
                 }
             }
 
@@ -167,6 +179,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 951 on dinh: " + currentScaleValue);
+
+                    SendMessage("SCALE_2_BALANCE", $"{currentScaleValue}");
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -220,7 +234,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can vao");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
                                 //logger.Info($"10. Xep so thu tu vao mang xuat");
@@ -268,7 +282,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 951");
