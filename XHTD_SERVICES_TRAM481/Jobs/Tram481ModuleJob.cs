@@ -210,7 +210,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    // 1. Xác định xe ở cân 1 hay cân 2
+                                    // 1. Xác định xe vào hay ra
                                     var isLuongVao = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
 
@@ -315,7 +315,11 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     // 5. Xác thực cân vào
                                     if (isLuongVao)
                                     {
-                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
+                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent);
+                                        // TODO for test
+                                        var isUpdatedOrder = true;
+
+                                        if (isUpdatedOrder)
                                         {
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
                                         
@@ -342,7 +346,10 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     // 5. Xác thực cân ra
                                     else if (isLuongRa)
                                     {
-                                        if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
+                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent);
+                                        // TODO for test
+                                        var isUpdatedOrder = true;
+                                        if (isUpdatedOrder)
                                         {
                                             _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
                                         
