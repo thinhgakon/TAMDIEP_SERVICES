@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Data.Common;
 using System.Threading;
+using XHTD_SERVICES_TRAM481.Devices;
+using Autofac;
 
 namespace XHTD_SERVICES_TRAM481.Jobs
 {
@@ -333,9 +335,9 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                             // Bat den do
                                             _tram481Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                             Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
                                         }
                                         else
                                         {
@@ -363,9 +365,9 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                             // Bat den do
                                             _tram481Logger.LogInfo($@"7. Bat den do");
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                             Thread.Sleep(500);
-                                            TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
                                         }
                                         else
                                         {
@@ -400,36 +402,6 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                 AuthenticateTram481Module();
             }
-        }
-
-        public string GetTrafficLightIpAddress(string code)
-        {
-            var ipAddress = "";
-
-            if (code == ScaleCode.CODE_SCALE_481_DGT_IN)
-            {
-                ipAddress = trafficLightIn?.IpAddress;
-            }
-            else if (code == ScaleCode.CODE_SCALE_481_DGT_OUT)
-            {
-                ipAddress = trafficLightOut?.IpAddress;
-            }
-
-            return ipAddress;
-        }
-
-        public bool TurnOnRedTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOffGreenOnRed();
         }
     }
 }
