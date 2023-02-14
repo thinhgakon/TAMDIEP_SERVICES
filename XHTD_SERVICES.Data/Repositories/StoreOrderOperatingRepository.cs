@@ -364,7 +364,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 // TODO for test
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && x.Step > (int)OrderStep.DA_CAN_VAO)
+                                            .Where(x => x.CardNo == cardNo && x.Step > (int)OrderStep.DA_CAN_VAO && x.Step < (int)OrderStep.DA_CAN_RA)
                                             .OrderByDescending(x => x.Id)
                                             .FirstOrDefaultAsync();
 
