@@ -34,11 +34,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly ScaleOperatingRepository _scaleOperatingRepository;
 
-        protected readonly PLCBarrier _barrier;
-
         protected readonly TCPTrafficLight _trafficLight;
-
-        protected readonly Sensor _sensor;
 
         protected readonly Tram481Logger _tram481Logger;
 
@@ -78,9 +74,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
-            PLCBarrier barrier,
             TCPTrafficLight trafficLight,
-            Sensor sensor,
             Tram481Logger tram481Logger
             )
         {
@@ -90,9 +84,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _vehicleRepository = vehicleRepository;
             _scaleOperatingRepository = scaleOperatingRepository;
-            _barrier = barrier;
             _trafficLight = trafficLight;
-            _sensor = sensor;
             _tram481Logger = tram481Logger;
         }
 
