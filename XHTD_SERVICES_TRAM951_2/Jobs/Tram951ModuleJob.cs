@@ -182,11 +182,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var timeCurrent = tmp[0]?.ToString();
 
                                     // 1. Xác định xe vào hay ra
-                                    var isLuongVao = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
-                                                    || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
-
-                                    var isLuongRa = doorCurrent == rfidIn21.PortNumberDeviceIn.ToString()
-                                                    || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
+                                    var isLuongVao = true;
 
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
@@ -206,15 +202,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     _tram951Logger.LogInfo("----------------------------");
                                     _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram951Logger.LogInfo("-----");
-
-                                    if (isLuongVao)
-                                    {
-                                        _tram951Logger.LogInfo($"1. Xe can vao");
-                                    }
-                                    else
-                                    {
-                                        _tram951Logger.LogInfo($"1. Xe can ra");
-                                    }
 
                                     _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
@@ -256,15 +243,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
 
                                     // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    tblStoreOrderOperating currentOrder = null;
-                                    if (isLuongVao)
-                                    {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceTram951ByCardNo(cardNoCurrent);
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitTram951ByCardNo(cardNoCurrent);
-                                    }
+                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
 
                                     if (currentOrder == null)
                                     {
@@ -286,6 +265,24 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} hợp lệ");
 
                                     _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+
+                                    if(currentOrder.Step < 3)
+                                    {
+                                        isLuongVao = true;
+                                    } 
+                                    else
+                                    {
+                                        isLuongVao = false;
+                                    }
+
+                                    if (isLuongVao)
+                                    {
+                                        _tram951Logger.LogInfo($"1. Xe can vao");
+                                    }
+                                    else
+                                    {
+                                        _tram951Logger.LogInfo($"1. Xe can ra");
+                                    }
 
                                     // 5. Xác thực cân vào
                                     if (isLuongVao)
@@ -317,9 +314,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             _tram951Logger.LogInfo($@"5. Confirm 3 failed");
                                         }
                                     }
-
                                     // 5. Xác thực cân ra
-                                    else if (isLuongRa)
+                                    else
                                     {
                                         //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent);
                                         // TODO for test
