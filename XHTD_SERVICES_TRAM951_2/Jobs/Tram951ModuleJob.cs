@@ -51,10 +51,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             rfidIn11,
             rfidIn12,
             rfidIn21,
-            rfidIn22,
-            m221,
-            trafficLightIn,
-            trafficLightOut;
+            rfidIn22;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -72,7 +69,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
-            PLCBarrier barrier,
             Tram951Logger tram951Logger
             )
         {
@@ -114,33 +110,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-2");
             rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-1");
             rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-2");
-
-            m221 = devices.FirstOrDefault(x => x.Code == "951-2.M221");
-
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "951-2.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "951-2.DGT-OUT");
         }
 
         public void AuthenticateTram951Module()
         {
-            /*
-             * 1. Xác định xe vao can 1 hay can 2 theo gia tri door từ C3-400
-             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
-             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Xác thực cân vào: update step, confirm
-             * 6. Đánh dấu đang cân
-             * * *  Lưu vào bảng tblScale xe đang cân vào
-             * * *  Program.IsScalling = true;
-             */
-
-            // 1. Connect Device
             while (!DeviceConnected)
             {
                 ConnectTram951Module();
             }
 
-            // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
         }
 
