@@ -19,10 +19,18 @@ namespace XHTD_SERVICES_TRAM481.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        public void Send(string name, string message)
+        public void SendMessage(string name, string message)
         {
-            Clients.All.addMessage(name, message);
-            Console.WriteLine("send send");
+            try
+            {
+                Console.WriteLine($"Send: name {name} message {message}");
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<ScaleHub>();
+                broadcast.Clients.All.SendMessage(name, message);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void SendNotificationCBV(int status, string inout, string cardNo, string message)
@@ -109,9 +117,20 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                 //    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
                 //}
 
+                SendMessage("SCALE_481_STATUS", $"Cân đang nghỉ");
+
                 Program.scaleValues481.Clear();
 
                 return;
+            }
+
+            if (Program.IsScalling481)
+            {
+                SendMessage("SCALE_481_STATUS", $"Cân tự động");
+            }
+            else
+            {
+                SendMessage("SCALE_481_STATUS", $"Cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
@@ -121,7 +140,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                 if (isInValidSensor481)
                 {
                     // Send notification signalr
-                    logger.Info("Vi pham cam bien can 481");
+                    //logger.Info("Vi pham cam bien can 481");
 
                     SendSensor(ScaleCode.CODE_SCALE_481, "1");
 
@@ -133,7 +152,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                 {
                     SendSensor(ScaleCode.CODE_SCALE_481, "0");
 
-                    logger.Info($"Received 481 data: time={time}, value={value}");
+                    //logger.Info($"Received 481 data: time={time}, value={value}");
                 }
             }
 
@@ -159,6 +178,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 481 on dinh: " + currentScaleValue);
+
+                    SendMessage("SCALE_481_BALANCE", $"{currentScaleValue}");
 
                     using (var dbContext = new XHTD_Entities())
                     {
@@ -212,7 +233,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can vao");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
 
                                 // 10. Tiến hành xếp số thứ tự vào máng xuất lấy hàng của xe vừa cân vào xong
                                 //logger.Info($"10. Xep so thu tu vao mang xuat");
@@ -260,7 +281,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 481");
