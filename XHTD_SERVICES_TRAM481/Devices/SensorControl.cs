@@ -40,9 +40,9 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return false;
             }
 
-            var checkCB1 = _sensor.ReadInputPort(SCALE_481_I2);
-            var checkCB2 = _sensor.ReadInputPort(SCALE_481_I3);
-            var checkCB3 = _sensor.ReadInputPort(SCALE_481_I1);
+            var checkCB1 = _sensor.ReadInputPort(SCALE_481_I1);
+            var checkCB2 = _sensor.ReadInputPort(SCALE_481_I2);
+            var checkCB3 = _sensor.ReadInputPort(SCALE_481_I3);
             var checkCB4 = _sensor.ReadInputPort(SCALE_481_I4);
 
             try
@@ -56,7 +56,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_1, "0");
                 }
 
-                if (checkCB3)
+                if (checkCB2)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "1");
                 }
@@ -65,7 +65,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "0");
                 }
 
-                if (checkCB2)
+                if (checkCB3)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_3, "1");
                 }
