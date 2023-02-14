@@ -38,13 +38,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private static bool DeviceConnected = false;
 
-        private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
 
-        private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
-
-        private List<CardNoLog> tmpInvalidCardNoLst_In = new List<CardNoLog>();
-
-        private List<CardNoLog> tmpInvalidCardNoLst_Out = new List<CardNoLog>();
+        private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
         private tblCategoriesDevice
             c3400,
@@ -185,10 +181,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    //_tram951Logger.LogInfo("----------------------------");
-                                    //_tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    //_tram951Logger.LogInfo("-----");
-
                                     // 1. Xác định xe vào hay ra
                                     var isLuongVao = doorCurrent == rfidIn11.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidIn12.PortNumberDeviceIn.ToString();
@@ -197,37 +189,18 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                                     || doorCurrent == rfidIn22.PortNumberDeviceIn.ToString();
 
                                     // 2. Loại bỏ các tag đã check trước đó
-                                    if (isLuongVao)
+                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
+                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
-                                        if (tmpInvalidCardNoLst_In.Count > 10) tmpInvalidCardNoLst_In.RemoveRange(0, 3);
-                                        if (tmpInvalidCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                        {
-                                            //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
-
-                                        if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 4);
-                                        if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
-                                        {
-                                            //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
+                                        //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                        continue;
                                     }
-                                    else if (isLuongRa)
-                                    {
-                                        if (tmpInvalidCardNoLst_Out.Count > 10) tmpInvalidCardNoLst_Out.RemoveRange(0, 3);
-                                        if (tmpInvalidCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                        {
-                                            //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
 
-                                        if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 4);
-                                        if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
-                                        {
-                                            //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
+                                    if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
+                                    if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                    {
+                                        //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                        continue;
                                     }
 
                                     _tram951Logger.LogInfo("----------------------------");
@@ -261,14 +234,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                        if (isLuongVao)
-                                        {
-                                            tmpInvalidCardNoLst_In.Add(newCardNoLog);
-                                        }
-                                        else if (isLuongRa)
-                                        {
-                                            tmpInvalidCardNoLst_Out.Add(newCardNoLog);
-                                        } 
+                                        tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
                                     }
@@ -310,14 +276,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                        if (isLuongVao)
-                                        {
-                                            tmpInvalidCardNoLst_In.Add(newCardNoLog);
-                                        }
-                                        else if (isLuongRa)
-                                        {
-                                            tmpInvalidCardNoLst_Out.Add(newCardNoLog);
-                                        }
+                                        tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
                                     }
@@ -345,7 +304,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân vao");
 
-                                            tmpCardNoLst_In.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can vao");
@@ -376,7 +335,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                             _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân ra");
 
-                                            tmpCardNoLst_Out.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
+                                            tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"7. Bat den do can ra");
