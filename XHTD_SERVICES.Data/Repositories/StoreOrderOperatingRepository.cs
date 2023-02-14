@@ -313,10 +313,25 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 // TODO for test
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo 
+                                            .Where(x => x.CardNo == cardNo
                                                         && x.Step >= (int)OrderStep.DA_CAN_VAO
                                                         && x.Step <= (int)OrderStep.DA_CAN_RA)
                                             .ToListAsync();
+
+                return orders;
+            }
+        }
+
+        public async Task<tblStoreOrderOperating> GetCurrentOrderByCardNoReceiving(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo 
+                                                        && x.Step <= (int)OrderStep.DA_CAN_RA
+                                                        )
+                                            .OrderByDescending(x => x.Step)
+                                            .FirstOrDefaultAsync();
 
                 return orders;
             }
