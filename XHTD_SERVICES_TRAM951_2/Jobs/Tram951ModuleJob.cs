@@ -15,6 +15,7 @@ using System.Threading;
 using XHTD_SERVICES_TRAM951_2.Hubs;
 using Autofac;
 using XHTD_SERVICES_TRAM951_2.Devices;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
@@ -266,7 +267,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                    if(currentOrder.Step < 3)
+                                    if(currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
                                     {
                                         isLuongVao = true;
                                     } 
