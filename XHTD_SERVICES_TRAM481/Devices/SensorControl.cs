@@ -40,14 +40,14 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 return false;
             }
 
-            var checkInScale481 = _sensor.ReadInputPort(SCALE_481_I2);
-            var checkOutScale481 = _sensor.ReadInputPort(SCALE_481_I3);
-            var checkLeftScale481 = _sensor.ReadInputPort(SCALE_481_I1);
-            var checkRightScale481 = _sensor.ReadInputPort(SCALE_481_I4);
+            var checkCB1 = _sensor.ReadInputPort(SCALE_481_I2);
+            var checkCB2 = _sensor.ReadInputPort(SCALE_481_I3);
+            var checkCB3 = _sensor.ReadInputPort(SCALE_481_I1);
+            var checkCB4 = _sensor.ReadInputPort(SCALE_481_I4);
 
             try
             {
-                if (checkInScale481)
+                if (checkCB1)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_1, "1");
                 }
@@ -56,7 +56,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_1, "0");
                 }
 
-                if (checkLeftScale481)
+                if (checkCB3)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "1");
                 }
@@ -65,7 +65,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_2, "0");
                 }
 
-                if (checkOutScale481)
+                if (checkCB2)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_3, "1");
                 }
@@ -74,7 +74,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_3, "0");
                 }
 
-                if (checkRightScale481)
+                if (checkCB4)
                 {
                     new ScaleHub().SendSensor(ScaleCode.CODE_481_CB_4, "1");
                 }
@@ -88,7 +88,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
                 logger.Info($"Sensor Control ERROR: {ex.Message} ===== {ex.StackTrace} ==== {ex.InnerException}");
             }
 
-            if (checkInScale481 || checkOutScale481 || checkLeftScale481 || checkRightScale481)
+            if (checkCB1 || checkCB2 || checkCB3 || checkCB4)
             {
                 return true;
             }
