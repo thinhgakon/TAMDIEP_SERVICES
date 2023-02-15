@@ -228,10 +228,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 8. Bật đèn xanh
                                 logger.Info($"8. Bat den xanh chieu vao");
-                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
-                                //Thread.Sleep(500);
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                 Thread.Sleep(500);
+                                logger.Info($"8. Bat den xanh chieu ra");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can vao");
@@ -276,11 +276,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 Thread.Sleep(3500);
 
                                 // 8. Bật đèn xanh
+                                logger.Info($"8. Bat den xanh chieu vao");
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                Thread.Sleep(500);
                                 logger.Info($"8. Bat den xanh chieu ra");
                                 DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
-                                Thread.Sleep(500);
-                                //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
-                                //Thread.Sleep(500);
 
                                 // 9. Update giá trị cân của đơn hàng
                                 logger.Info($"9. Update gia tri can ra");
