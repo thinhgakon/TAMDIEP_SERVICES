@@ -182,9 +182,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    // 1. Xác định xe vào hay ra
-                                    var isLuongVao = true;
-
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
@@ -267,21 +264,17 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                    if(currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
+                                    // 1. Xác định xe vào hay ra
+                                    var isLuongVao = true;
+
+                                    if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
                                     {
                                         isLuongVao = true;
+                                        _tram951Logger.LogInfo($"1. Xe can vao");
                                     } 
                                     else
                                     {
                                         isLuongVao = false;
-                                    }
-
-                                    if (isLuongVao)
-                                    {
-                                        _tram951Logger.LogInfo($"1. Xe can vao");
-                                    }
-                                    else
-                                    {
                                         _tram951Logger.LogInfo($"1. Xe can ra");
                                     }
 
@@ -305,10 +298,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do can vao");
-
+                                            _tram951Logger.LogInfo($@"7. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
+                                            _tram951Logger.LogInfo($@"7. Bat den do chieu ra");
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                         }
                                         else
                                         {
@@ -335,10 +329,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do can ra");
-                                            
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            _tram951Logger.LogInfo($@"7. Bat den do chieu vao");
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
+                                            _tram951Logger.LogInfo($@"7. Bat den do chieu ra");
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
                                         }
                                         else
                                         {
