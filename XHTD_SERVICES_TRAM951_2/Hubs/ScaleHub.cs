@@ -134,6 +134,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             else
             {
                 SendMessage("SCALE_2_STATUS", $"Cân thủ công");
+
+                SendMessage("SCALE_2_BALANCE", "");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
