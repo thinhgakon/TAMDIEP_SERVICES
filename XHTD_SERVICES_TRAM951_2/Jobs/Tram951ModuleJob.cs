@@ -182,18 +182,18 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    // 2. Loại bỏ các tag đã check trước đó
+                                    // 1. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
-                                        //_tram951Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                        //_tram951Logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                                         continue;
                                     }
 
                                     if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
                                     if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
-                                        //_tram951Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                        //_tram951Logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                                         continue;
                                     }
 
@@ -201,17 +201,17 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram951Logger.LogInfo("-----");
 
-                                    _tram951Logger.LogInfo($"2. Kiem tra tag da check truoc do");
+                                    _tram951Logger.LogInfo($"1. Kiem tra tag da check truoc do");
 
-                                    // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
+                                    // 2. Kiểm tra cardNoCurrent hợp lệ
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                                     if (isValid)
                                     {
-                                        _tram951Logger.LogInfo($"3. Tag hop le");
+                                        _tram951Logger.LogInfo($"2. Tag hop le");
                                     }
                                     else
                                     {
-                                        _tram951Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+                                        _tram951Logger.LogInfo($"2. Tag KHONG hop le => Ket thuc.");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
 
@@ -240,12 +240,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         }
                                     }
 
-                                    // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                    // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                     var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
 
                                     if (currentOrder == null)
                                     {
-                                        _tram951Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                                        _tram951Logger.LogInfo($"3. Tag KHONG co don hang hop le => Ket thuc.");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
 
@@ -262,7 +262,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} hợp lệ");
 
-                                    _tram951Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                                    _tram951Logger.LogInfo($"3. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                     // 1. Xác định xe vào hay ra
                                     var isLuongVao = true;
