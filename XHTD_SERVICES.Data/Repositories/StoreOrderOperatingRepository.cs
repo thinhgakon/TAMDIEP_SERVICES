@@ -296,7 +296,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 // TODO for test
                 var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
-                                                     && x.Step == (int)OrderStep.CHUA_NHAN_DON)
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO)
                                             .ToListAsync();
 
                 return orders;
