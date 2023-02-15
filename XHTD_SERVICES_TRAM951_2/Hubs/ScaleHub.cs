@@ -120,6 +120,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                 SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
 
+                SendMessage("SCALE_2_BALANCE", "");
+
                 Program.scaleValues951.Clear();
 
                 return;
@@ -207,22 +209,22 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_951);
 
                                 // 5. Đóng barrier
-                                logger.Info($"5. Dong barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                Thread.Sleep(1000);
-                                logger.Info($"5. Dong barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                                //logger.Info($"5. Dong barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"5. Dong barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
                                 Thread.Sleep(7000);
 
                                 // 7. Mở barrier
-                                logger.Info($"7. Mo barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(1000);
-                                logger.Info($"7. Mo barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                //logger.Info($"7. Mo barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"7. Mo barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
                                 Thread.Sleep(3500);
 
@@ -256,22 +258,22 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 //DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_1);
 
                                 // 5. Đóng barrier
-                                logger.Info($"5. Dong barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                Thread.Sleep(1000);
-                                logger.Info($"5. Dong barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                                //logger.Info($"5. Dong barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"5. Dong barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
 
                                 // 6. Gọi iERP API lưu giá trị cân
                                 logger.Info($"6. Goi iERP API luu gia tri can");
                                 Thread.Sleep(7000);
 
                                 // 7. Mở barrier
-                                logger.Info($"7. Mo barrier IN");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                Thread.Sleep(1000);
-                                logger.Info($"7. Mo barrier OUT");
-                                DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                //logger.Info($"7. Mo barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"7. Mo barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
                                 Thread.Sleep(3500);
 
