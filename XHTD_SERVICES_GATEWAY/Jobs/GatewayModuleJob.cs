@@ -310,6 +310,28 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     //_gatewayLogger.LogInfo("-----");
 
+                                    try { 
+                                        _notification.SendNotification(
+                                            "GATE_WAY_RFID",
+                                            null,
+                                            1,
+                                            cardNoCurrent,
+                                            0,
+                                            null,
+                                            null,
+                                            0,
+                                            null,
+                                            null,
+                                            null
+                                        );
+
+                                        _gatewayLogger.LogInfo($"Sent notification: {cardNoCurrent}");
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                                    }
+
                                     var inout = "";
                                     if (isLuongVao)
                                     {
