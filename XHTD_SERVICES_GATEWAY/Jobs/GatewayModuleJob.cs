@@ -268,9 +268,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    _gatewayLogger.LogInfo("----------------------------");
-                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _gatewayLogger.LogInfo("-----");
+                                    //_gatewayLogger.LogInfo("----------------------------");
+                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    //_gatewayLogger.LogInfo("-----");
 
                                     // 1.Xác định xe cân vào / ra
                                     var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
@@ -306,11 +306,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         }
                                     }
 
-                                    //_gatewayLogger.LogInfo("----------------------------");
-                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    //_gatewayLogger.LogInfo("-----");
+                                    _gatewayLogger.LogInfo("----------------------------");
+                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _gatewayLogger.LogInfo("-----");
 
-                                    try { 
+                                    try
+                                    { 
                                         _notification.SendNotification(
                                             "GATE_WAY_RFID",
                                             null,
