@@ -279,6 +279,32 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
+                                    if (isLuongVao)
+                                    {
+                                        try
+                                        {
+                                            _notification.SendNotification(
+                                                "GATE_WAY_RFID",
+                                                null,
+                                                1,
+                                                cardNoCurrent,
+                                                0,
+                                                null,
+                                                null,
+                                                0,
+                                                null,
+                                                null,
+                                                null
+                                            );
+
+                                            _gatewayLogger.LogInfo($"Sent notification to DMS: {cardNoCurrent}");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                                        }
+                                    }
+
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
@@ -315,29 +341,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         inout = "IN";
                                         _gatewayLogger.LogInfo($"1. Xe vao cong");
-
-                                        try
-                                        {
-                                            _notification.SendNotification(
-                                                "GATE_WAY_RFID",
-                                                null,
-                                                1,
-                                                cardNoCurrent,
-                                                0,
-                                                null,
-                                                null,
-                                                0,
-                                                null,
-                                                null,
-                                                null
-                                            );
-
-                                            _gatewayLogger.LogInfo($"Sent notification: {cardNoCurrent}");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                                        }
                                     }
                                     else
                                     {
