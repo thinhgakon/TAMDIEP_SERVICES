@@ -533,7 +533,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                Thread.Sleep(500);
+                Thread.Sleep(100);
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
