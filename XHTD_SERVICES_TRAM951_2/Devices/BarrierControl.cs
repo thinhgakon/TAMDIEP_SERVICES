@@ -16,13 +16,13 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_2_IN_I1 = 2;
-        private const int SCALE_2_IN_Q1 = 4;
-        private const int SCALE_2_IN_Q2 = 5;
+        private const int SCALE_IN_I1 = 2;
+        private const int SCALE_IN_Q1 = 4;
+        private const int SCALE_IN_Q2 = 5;
 
-        private const int SCALE_2_OUT_I1 = 3;
-        private const int SCALE_2_OUT_Q1 = 6;
-        private const int SCALE_2_OUT_Q2 = 7;
+        private const int SCALE_OUT_I1 = 3;
+        private const int SCALE_OUT_Q1 = 6;
+        private const int SCALE_OUT_Q2 = 7;
 
         public BarrierControl(
             PLCBarrier barrier
@@ -41,11 +41,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_2_IN_I1))
+            if (_barrier.ReadInputPort(SCALE_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
             }
         }
 
@@ -58,11 +58,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_2_IN_I1))
+            if (!_barrier.ReadInputPort(SCALE_IN_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_IN_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
             }
         }
 
@@ -76,11 +76,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (_barrier.ReadInputPort(SCALE_2_OUT_I1))
+            if (_barrier.ReadInputPort(SCALE_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q1.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
             }
         }
 
@@ -93,11 +93,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                 return;
             }
 
-            if (!_barrier.ReadInputPort(SCALE_2_OUT_I1))
+            if (!_barrier.ReadInputPort(SCALE_OUT_I1))
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
                 Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_2_OUT_Q2.ToString())));
+                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
             }
         }
     }
