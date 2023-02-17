@@ -182,7 +182,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    // 1. Loại bỏ các tag đã check trước đó
+                                    // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
@@ -201,7 +201,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram951Logger.LogInfo("-----");
 
-                                    // 2. Kiểm tra cardNoCurrent hợp lệ
+                                    // 1. Kiểm tra cardNoCurrent hợp lệ
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                                     if (isValid)
                                     {
@@ -238,7 +238,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         }
                                     }
 
-                                    // 3. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                    // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                     var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
 
                                     if (currentOrder == null)
@@ -262,7 +262,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     _tram951Logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
-                                    // 1. Xác định xe vào hay ra
+                                    // 3. Xác định xe vào hay ra
                                     var isLuongVao = true;
 
                                     if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
@@ -276,27 +276,22 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         _tram951Logger.LogInfo($"3. Xe can ra");
                                     }
 
-                                    // 5. Xác thực cân vào
                                     if (isLuongVao)
                                     {
-                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent);
-                                        // TODO for test
-                                        var isUpdatedOrder = true;
-
+                                        // 4. Lưu thông tin xe đang cân
+                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                         if (isUpdatedOrder)
                                         {
-                                            _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
+                                            _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // 6. Đánh dấu đang cân
-                                            await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            // 5. Đánh dấu trạng thái đang cân
+                                            _tram951Logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
                                             Program.IsScalling951 = true;
-
-                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân vao");
 
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do chieu vao");
+                                            _tram951Logger.LogInfo($@"6. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
                                             _tram951Logger.LogInfo($@"7. Bat den do chieu ra");
@@ -304,31 +299,25 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         }
                                         else
                                         {
-                                            _tram951Logger.LogInfo($@"5. Confirm 3 failed");
+                                            _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân THẤT BẠI");
                                         }
                                     }
-                                    // 5. Xác thực cân ra
                                     else
                                     {
-                                        //var isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent);
-                                        // TODO for test
-                                        var isUpdatedOrder = true;
-
+                                        // 4. Lưu thông tin xe đang cân
+                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                         if (isUpdatedOrder)
                                         {
-                                            _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
+                                            _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // 6. Đánh dấu đang cân
-                                            // TODO: Thực hiện lưu xe đang cân thành công thì mới set IsScalling951 và bật đèn
-                                            await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                            // 5. Đánh dấu trạng thái đang cân
+                                            _tram951Logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
                                             Program.IsScalling951 = true;
-
-                                            _tram951Logger.LogInfo($@"6. Đánh dấu xe đang cân ra");
 
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"7. Bat den do chieu vao");
+                                            _tram951Logger.LogInfo($@"6. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
                                             _tram951Logger.LogInfo($@"7. Bat den do chieu ra");
@@ -336,7 +325,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         }
                                         else
                                         {
-                                            _tram951Logger.LogInfo($@"5. Confirm 7 failed");
+                                            _tram951Logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
                                         }
                                     }
 
