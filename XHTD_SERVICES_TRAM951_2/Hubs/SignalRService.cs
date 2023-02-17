@@ -13,6 +13,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(SignalRService));
 
+        protected readonly string SIGNALR_START_ON_SERVICE_URL = URIConfig.SIGNALR_START_ON_TRAM951_2_SERVICE_URL;
+
         public SignalRService()
         {
         }
@@ -27,9 +29,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             // for more information.
             try
             {
-                WebApp.Start(URIConfig.SIGNALR_START_ON_TRAM951_2_SERVICE_URL);
+                WebApp.Start(SIGNALR_START_ON_SERVICE_URL);
 
-                logger.Info($"Server running on {URIConfig.SIGNALR_START_ON_TRAM951_2_SERVICE_URL}");
+                logger.Info($"Server running on {SIGNALR_START_ON_SERVICE_URL}");
             }
             catch (Exception ex)
             {
