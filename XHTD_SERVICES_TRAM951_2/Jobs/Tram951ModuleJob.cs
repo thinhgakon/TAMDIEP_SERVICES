@@ -209,7 +209,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
                                     else
                                     {
-                                        _tram951Logger.LogInfo($"1. Tag KHONG hop le => Ket thuc.");
+                                        _tram951Logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
 
@@ -243,7 +243,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     if (currentOrder == null)
                                     {
-                                        _tram951Logger.LogInfo($"3. Tag KHONG co don hang hop le => Ket thuc.");
+                                        _tram951Logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
 
@@ -260,7 +260,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                     new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} hợp lệ");
 
-                                    _tram951Logger.LogInfo($"3. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                                    _tram951Logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                     // 1. Xác định xe vào hay ra
                                     var isLuongVao = true;
@@ -268,12 +268,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
                                     {
                                         isLuongVao = true;
-                                        _tram951Logger.LogInfo($"1. Xe can vao");
+                                        _tram951Logger.LogInfo($"3. Xe can vao");
                                     } 
                                     else
                                     {
                                         isLuongVao = false;
-                                        _tram951Logger.LogInfo($"1. Xe can ra");
+                                        _tram951Logger.LogInfo($"3. Xe can ra");
                                     }
 
                                     // 5. Xác thực cân vào
