@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(SignalRService));
 
-        protected readonly string SIGNALR_START_ON_SERVICE_URL = URIConfig.SIGNALR_START_ON_TRAM951_2_SERVICE_URL;
+        protected readonly string SIGNALR_START_ON_SERVICE_URL = URIConfig.SIGNALR_START_ON_TRAM951_1_SERVICE_URL;
 
         public SignalRService()
         {
