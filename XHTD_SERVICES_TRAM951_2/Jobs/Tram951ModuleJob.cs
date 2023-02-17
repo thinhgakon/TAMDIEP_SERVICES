@@ -190,7 +190,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         continue;
                                     }
 
-                                    if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 4);
+                                    if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 3);
                                     if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         //_tram951Logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
@@ -201,17 +201,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram951Logger.LogInfo("-----");
 
-                                    _tram951Logger.LogInfo($"1. Kiem tra tag da check truoc do");
-
                                     // 2. Kiểm tra cardNoCurrent hợp lệ
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                                     if (isValid)
                                     {
-                                        _tram951Logger.LogInfo($"2. Tag hop le");
+                                        _tram951Logger.LogInfo($"1. Tag hop le");
                                     }
                                     else
                                     {
-                                        _tram951Logger.LogInfo($"2. Tag KHONG hop le => Ket thuc.");
+                                        _tram951Logger.LogInfo($"1. Tag KHONG hop le => Ket thuc.");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} chưa dán thẻ");
 
