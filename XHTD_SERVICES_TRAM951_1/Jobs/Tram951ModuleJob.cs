@@ -36,13 +36,13 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly Tram951Logger _tram951Logger;
 
-        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
 
-        protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
+        protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -96,7 +96,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             await Task.Run(async () =>
             {
-                _tram951Logger.LogInfo("Start tram951 2 service");
+                _tram951Logger.LogInfo("Start tram951 1 service");
                 _tram951Logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -110,12 +110,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         {
             var devices = await _categoriesDevicesRepository.GetDevices("951");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400");
+            c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
 
-            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-1");
-            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-2");
-            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-1");
-            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-2");
+            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-1");
+            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-2");
+            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-1");
+            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-2");
         }
 
         public void AuthenticateTram951Module()
