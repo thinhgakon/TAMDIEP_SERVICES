@@ -102,6 +102,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
+                // Hàm kiểm tra xe đang ra khỏi bàn cân: khối lượng giảm dần
+
                 //if (Program.IsScalling951) {
                 //    logger.Info($"==== Giai phong can 951 khi can khong thanh cong ===");
 
