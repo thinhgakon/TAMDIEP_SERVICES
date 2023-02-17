@@ -35,6 +35,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly Tram951Logger _tram951Logger;
 
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
+
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+
         private IntPtr h21 = IntPtr.Zero;
 
         private static bool DeviceConnected = false;
@@ -223,7 +229,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
                                     if (Program.IsScalling951)
                                     {
-                                        var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_2);
+                                        var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
                                         if (scaleInfo != null
                                             && (bool)scaleInfo.IsScaling
                                             && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
@@ -275,17 +281,17 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     if (isLuongVao)
                                     {
                                         // 4. Lưu thông tin xe đang cân
-                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                         if (isUpdatedOrder)
                                         {
                                             _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"5. Bat den do chieu vao");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
                                             _tram951Logger.LogInfo($@"6. Bat den do chieu ra");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
                                             // 7. Đánh dấu trạng thái đang cân
                                             _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
@@ -301,17 +307,17 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     else
                                     {
                                         // 4. Lưu thông tin xe đang cân
-                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                                        var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                         if (isUpdatedOrder)
                                         {
                                             _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // Bat den do
                                             _tram951Logger.LogInfo($@"5. Bat den do chieu vao");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
                                             _tram951Logger.LogInfo($@"6. Bat den do chieu ra");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
                                             // 5. Đánh dấu trạng thái đang cân
                                             _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
