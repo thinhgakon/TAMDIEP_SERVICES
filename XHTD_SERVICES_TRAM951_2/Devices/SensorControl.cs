@@ -24,6 +24,14 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
         private const int SCALE_I3 = 10;
         private const int SCALE_I4 = 11;
 
+        protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_2_CB_1;
+
+        protected readonly string SCALE_CB_2_CODE = ScaleCode.CODE_951_2_CB_2;
+
+        protected readonly string SCALE_CB_3_CODE = ScaleCode.CODE_951_2_CB_3;
+
+        protected readonly string SCALE_CB_4_CODE = ScaleCode.CODE_951_2_CB_4;
+
         public SensorControl(
             Sensor sensor
             )
@@ -49,38 +57,38 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             {
                 if (checkCB1)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_1, "1");
+                    new ScaleHub().SendSensor(SCALE_CB_1_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_1, "0");
+                    new ScaleHub().SendSensor(SCALE_CB_1_CODE, "0");
                 }
 
                 if (checkCB2)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_2, "1");
+                    new ScaleHub().SendSensor(SCALE_CB_2_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_2, "0");
+                    new ScaleHub().SendSensor(SCALE_CB_2_CODE, "0");
                 }
 
                 if (checkCB3)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_3, "1");
+                    new ScaleHub().SendSensor(SCALE_CB_3_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_3, "0");
+                    new ScaleHub().SendSensor(SCALE_CB_3_CODE, "0");
                 }
 
                 if (checkCB4)
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_4, "1");
+                    new ScaleHub().SendSensor(SCALE_CB_4_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(ScaleCode.CODE_951_2_CB_4, "0");
+                    new ScaleHub().SendSensor(SCALE_CB_4_CODE, "0");
                 }
             }
             catch (Exception ex)
