@@ -8,7 +8,7 @@ using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
 
-namespace XHTD_SERVICES_TRAM951_2.Devices
+namespace XHTD_SERVICES_TRAM951_1.Devices
 {
     public class BarrierControl
     {

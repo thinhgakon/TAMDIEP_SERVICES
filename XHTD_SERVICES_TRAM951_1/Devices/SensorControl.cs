@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
-using XHTD_SERVICES_TRAM951_2.Hubs;
+using XHTD_SERVICES_TRAM951_1.Hubs;
 using XHTD_SERVICES.Data.Common;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_2.Devices
+namespace XHTD_SERVICES_TRAM951_1.Devices
 {
     public class SensorControl
     {

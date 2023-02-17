@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_TRAM951_2.Business
+namespace XHTD_SERVICES_TRAM951_1.Business
 {
     public class UnladenWeightBusiness
     {

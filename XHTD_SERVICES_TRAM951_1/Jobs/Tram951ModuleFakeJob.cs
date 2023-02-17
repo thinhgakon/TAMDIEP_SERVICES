@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_2.Models.Response;
+using XHTD_SERVICES_TRAM951_1.Models.Response;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
@@ -18,7 +18,7 @@ using XHTD_SERVICES.Helper;
 using Newtonsoft.Json;
 using XHTD_SERVICES.Data.Common;
 
-namespace XHTD_SERVICES_TRAM951_2.Jobs
+namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class Tram951ModuleFakeJob : IJob
     {

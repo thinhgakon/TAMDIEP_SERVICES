@@ -5,20 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_2.Models.Response;
+using XHTD_SERVICES_TRAM951_1.Models.Response;
 using System.Runtime.InteropServices;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Common;
 using System.Threading;
-using XHTD_SERVICES_TRAM951_2.Hubs;
+using XHTD_SERVICES_TRAM951_1.Hubs;
 using Autofac;
-using XHTD_SERVICES_TRAM951_2.Business;
-using XHTD_SERVICES_TRAM951_2.Devices;
+using XHTD_SERVICES_TRAM951_1.Business;
+using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES.Data.Models.Values;
 
-namespace XHTD_SERVICES_TRAM951_2.Jobs
+namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class Tram951ModuleJob : IJob
     {

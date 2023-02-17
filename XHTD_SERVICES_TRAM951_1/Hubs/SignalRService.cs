@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Common;
 
-namespace XHTD_SERVICES_TRAM951_2.Hubs
+namespace XHTD_SERVICES_TRAM951_1.Hubs
 {
     public partial class SignalRService : IDisposable
     {
