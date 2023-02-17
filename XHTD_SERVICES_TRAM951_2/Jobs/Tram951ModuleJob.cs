@@ -321,6 +321,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             _tram951Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
 
                                             // 6. Đánh dấu đang cân
+                                            // TODO: Thực hiện lưu xe đang cân thành công thì mới set IsScalling951 và bật đèn
                                             await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_2, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                             Program.IsScalling951 = true;
 
