@@ -255,12 +255,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         continue;
                                     }
+                                    else { 
+                                        new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} hợp lệ");
+                                        new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} hợp lệ");
 
-                                    new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} hợp lệ");
-
-                                    new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} hợp lệ");
-
-                                    _tram951Logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                                        _tram951Logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                                    }
 
                                     // 3. Xác định xe vào hay ra
                                     var isLuongVao = true;
