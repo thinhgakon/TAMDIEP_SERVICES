@@ -19,6 +19,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        protected readonly string SCALE_STATUS = "SCALE_2_STATUS";
+
+        protected readonly string SCALE_BALANCE = "SCALE_2_BALANCE";
+
         public void SendMessage(string name, string message)
         {
             try
@@ -100,9 +104,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 //    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_951_DGT_IN);
                 //}
 
-                SendMessage("SCALE_2_STATUS", $"Cân đang nghỉ");
+                SendMessage($"{SCALE_STATUS}", $"Cân đang nghỉ");
 
-                SendMessage("SCALE_2_BALANCE", "");
+                SendMessage($"{SCALE_BALANCE}", "");
 
                 Program.scaleValues951.Clear();
 
@@ -111,13 +115,13 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
             if (Program.IsScalling951)
             {
-                SendMessage("SCALE_2_STATUS", $"Cân tự động");
+                SendMessage($"{SCALE_STATUS}", $"Cân tự động");
             }
             else
             {
-                SendMessage("SCALE_2_STATUS", $"Cân thủ công");
+                SendMessage($"{SCALE_STATUS}", $"Cân thủ công");
 
-                SendMessage("SCALE_2_BALANCE", "");
+                SendMessage($"{SCALE_BALANCE}", "");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
@@ -164,7 +168,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 951 on dinh: " + currentScaleValue);
 
-                    SendMessage("SCALE_2_BALANCE", $"{currentScaleValue}");
+                    SendMessage($"{SCALE_BALANCE}", $"{currentScaleValue}");
 
                     using (var dbContext = new XHTD_Entities())
                     {
