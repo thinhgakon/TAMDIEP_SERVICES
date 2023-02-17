@@ -19,15 +19,15 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
 
-        protected readonly string SCALE_STATUS = "SCALE_2_STATUS";
+        protected readonly string SCALE_STATUS = "SCALE_1_STATUS";
 
-        protected readonly string SCALE_BALANCE = "SCALE_2_BALANCE";
+        protected readonly string SCALE_BALANCE = "SCALE_1_BALANCE";
 
         public void SendMessage(string name, string message)
         {
@@ -69,13 +69,13 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9511ScaleInfo(time, value);
+            ReadDataScale951(time, value);
         }
 
         public void Send9512ScaleInfo(DateTime time, string value)
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9512ScaleInfo(time, value);
-            ReadDataScale951(time, value);
         }
 
         public void SendClinkerScaleInfo(DateTime time, string value)
