@@ -29,6 +29,7 @@ namespace XHTD_SERVICES.Data.Entities
         public string DeliveryCodeParent { get; set; }
         public Nullable<System.DateTime> OrderDate { get; set; }
         public string TypeProduct { get; set; }
+        public string TypeXK { get; set; }
         public Nullable<System.DateTime> TimeIn21 { get; set; }
         public Nullable<System.DateTime> TimeIn22 { get; set; }
         public Nullable<int> Confirm1 { get; set; }

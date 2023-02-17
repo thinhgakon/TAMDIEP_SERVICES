@@ -381,6 +381,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="DeliveryCodeParent" Type="nvarchar" MaxLength="50" />
           <Property Name="OrderDate" Type="datetime" />
           <Property Name="TypeProduct" Type="nvarchar" MaxLength="50" />
+          <Property Name="TypeXK" Type="nvarchar" MaxLength="50" />
           <Property Name="TimeIn21" Type="datetime" />
           <Property Name="TimeIn22" Type="datetime" />
           <Property Name="Confirm1" Type="int" />
@@ -995,6 +996,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="DeliveryCodeParent" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="OrderDate" Type="DateTime" Precision="3" />
           <Property Name="TypeProduct" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TypeXK" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="TimeIn21" Type="DateTime" Precision="3" />
           <Property Name="TimeIn22" Type="DateTime" Precision="3" />
           <Property Name="Confirm1" Type="Int32" />
@@ -1617,6 +1619,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="DeliveryCodeParent" ColumnName="DeliveryCodeParent" />
                 <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
                 <ScalarProperty Name="TypeProduct" ColumnName="TypeProduct" />
+                <ScalarProperty Name="TypeXK" ColumnName="TypeXK" />
                 <ScalarProperty Name="TimeIn21" ColumnName="TimeIn21" />
                 <ScalarProperty Name="TimeIn22" ColumnName="TimeIn22" />
                 <ScalarProperty Name="Confirm1" ColumnName="Confirm1" />
