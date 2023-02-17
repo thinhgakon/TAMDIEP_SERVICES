@@ -19,6 +19,12 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
+
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+
         protected readonly string SCALE_STATUS = "SCALE_2_STATUS";
 
         protected readonly string SCALE_BALANCE = "SCALE_2_BALANCE";
@@ -133,7 +139,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     // Send notification signalr
                     //logger.Info("Vi pham cam bien can 951");
 
-                    SendSensor(ScaleCode.CODE_SCALE_2, "1");
+                    SendSensor(SCALE_CODE, "1");
 
                     Program.scaleValues951.Clear();
 
@@ -141,7 +147,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 }
                 else
                 {
-                    SendSensor(ScaleCode.CODE_SCALE_2, "0");
+                    SendSensor(SCALE_CODE, "0");
                 }
             }
 
@@ -173,10 +179,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     using (var dbContext = new XHTD_Entities())
                     {
                         // 2. Lấy thông tin xe, đơn hàng đang cân
-                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == ScaleCode.CODE_SCALE_2);
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE);
                         if (scaleInfo == null)
                         {
-                            logger.Info($"Khong co ban ghi trong table Scale voi code = {ScaleCode.CODE_SCALE_2}");
+                            logger.Info($"Khong co ban ghi trong table Scale voi code = {SCALE_CODE}");
                             return;
                         }
                         logger.Info($"2. Phuong tien dang can 951: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
@@ -212,10 +218,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 7. Bật đèn xanh
                                 logger.Info($"7.1. Bat den xanh chieu vao");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
                                 Thread.Sleep(500);
                                 logger.Info($"7.2. Bat den xanh chieu ra");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
 
                                 // 8. Update giá trị cân của đơn hàng
                                 logger.Info($"8. Update gia tri can vao");
@@ -226,7 +232,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 Program.IsScalling951 = false;
                                 Program.IsLockingScale951 = false;
                                 Program.scaleValues951.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_2);
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
                             }
                             // Đang cân ra
                             else if ((bool)scaleInfo.ScaleOut)
@@ -253,10 +259,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 6. Bật đèn xanh
                                 logger.Info($"6.1. Bat den xanh chieu vao");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
                                 Thread.Sleep(500);
                                 logger.Info($"6.2. Bat den xanh chieu ra");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
+                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
 
                                 // 7. Update giá trị cân của đơn hàng
                                 logger.Info($"7. Update gia tri can ra");
@@ -267,7 +273,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 Program.IsScalling951 = false;
                                 Program.IsLockingScale951 = false;
                                 Program.scaleValues951.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_2);
+                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
                             }
                         }
                     }
