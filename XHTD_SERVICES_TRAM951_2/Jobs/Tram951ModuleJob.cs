@@ -246,11 +246,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         _tram951Logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} không có đơn hàng");
-
                                         new ScaleHub().SendMessage("VEHICLE_2_STATUS", $"RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
