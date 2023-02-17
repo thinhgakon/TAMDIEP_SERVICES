@@ -21,6 +21,7 @@ namespace XHTD_SERVICES.Data.Repositories
             try
             {
                 string typeProduct = "";
+                string typeXK = null;
                 string productNameUpper = websaleOrder.productName.ToUpper();
                 string itemCategory = websaleOrder.itemCategory;
 
@@ -34,6 +35,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 else
                 {
+                    // Type Product
                     if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
@@ -49,6 +51,16 @@ namespace XHTD_SERVICES.Data.Repositories
                     else if (productNameUpper.Contains("PC40"))
                     {
                         typeProduct = "PC40";
+                    }
+
+                    // Type XK
+                    if (productNameUpper.Contains("JUMBO"))
+                    {
+                        typeXK = "JUMBO";
+                    }
+                    else if (productNameUpper.Contains("SLING"))
+                    {
+                        typeXK = "SLING";
                     }
                 }
 
@@ -76,6 +88,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         DeliveryCode = websaleOrder.deliveryCode,
                         OrderDate = orderDate,
                         TypeProduct = typeProduct,
+                        TypeXK = typeXK,
                         Confirm1 = 0,
                         Confirm2 = 0,
                         Confirm3 = 0,
