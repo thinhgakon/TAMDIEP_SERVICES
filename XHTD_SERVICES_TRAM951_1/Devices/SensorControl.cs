@@ -19,18 +19,18 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
         private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_I1 = 8;
-        private const int SCALE_I2 = 9;
-        private const int SCALE_I3 = 10;
-        private const int SCALE_I4 = 11;
+        private const int SCALE_I1 = 4;
+        private const int SCALE_I2 = 5;
+        private const int SCALE_I3 = 6;
+        private const int SCALE_I4 = 7;
 
-        protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_2_CB_1;
+        protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_1_CB_1;
 
-        protected readonly string SCALE_CB_2_CODE = ScaleCode.CODE_951_2_CB_2;
+        protected readonly string SCALE_CB_2_CODE = ScaleCode.CODE_951_1_CB_2;
 
-        protected readonly string SCALE_CB_3_CODE = ScaleCode.CODE_951_2_CB_3;
+        protected readonly string SCALE_CB_3_CODE = ScaleCode.CODE_951_1_CB_3;
 
-        protected readonly string SCALE_CB_4_CODE = ScaleCode.CODE_951_2_CB_4;
+        protected readonly string SCALE_CB_4_CODE = ScaleCode.CODE_951_1_CB_4;
 
         public SensorControl(
             Sensor sensor
