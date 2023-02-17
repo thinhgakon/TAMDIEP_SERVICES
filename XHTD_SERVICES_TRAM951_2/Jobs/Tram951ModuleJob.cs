@@ -229,7 +229,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
 
                                     // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                    if (Program.IsScalling951)
+                                    if (Program.IsScalling)
                                     {
                                         var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
                                         if (scaleInfo != null
@@ -296,8 +296,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
                                             // 7. Đánh dấu trạng thái đang cân
-                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
-                                            Program.IsScalling951 = true;
+                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                                            Program.IsScalling = true;
 
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                         }
@@ -322,8 +322,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
                                             // 5. Đánh dấu trạng thái đang cân
-                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
-                                            Program.IsScalling951 = true;
+                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                                            Program.IsScalling = true;
 
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                         }
