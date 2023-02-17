@@ -1081,7 +1081,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersAddToQueueToCall(string catId = "XI_MANG_BAO")
+        public async Task<List<tblStoreOrderOperating>> GetXiMangBaoOrdersAddToQueueToCall()
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -1094,7 +1094,32 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == catId
+                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.TypeXK != "JUMBO"
+                                                && x.IsVoiced == false
+                                                && x.TimeConfirm3 < timeToAdd
+                                                && !ordersInQueue.Contains(x.DeliveryCode)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetXiMangRoiOrdersAddToQueueToCall()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                var timeToAdd = DateTime.Now.AddMinutes(-2);
+
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && (x.CatId == "XI_MANG_XA" || (x.CatId == "XI_MANG_BAO" && x.TypeXK == "JUMBO")) 
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)

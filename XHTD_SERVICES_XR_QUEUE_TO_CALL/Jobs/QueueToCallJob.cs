@@ -48,7 +48,7 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
             _queueToCallLogger.LogInfo("Start process XR QueueToCall service");
 
             // 1. Lay danh sach don hang chua duoc xep vao may xuat
-            var orders = await _storeOrderOperatingRepository.GetOrdersAddToQueueToCall("XI_MANG_XA");
+            var orders = await _storeOrderOperatingRepository.GetXiMangRoiOrdersAddToQueueToCall();
             if (orders == null || orders.Count == 0)
             {
                 return;
