@@ -14,6 +14,7 @@ using XHTD_SERVICES.Data.Common;
 using System.Threading;
 using XHTD_SERVICES_TRAM951_2.Hubs;
 using Autofac;
+using XHTD_SERVICES_TRAM951_2.Business;
 using XHTD_SERVICES_TRAM951_2.Devices;
 using XHTD_SERVICES.Data.Models.Values;
 
@@ -209,6 +210,36 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     _tram951Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _tram951Logger.LogInfo("-----");
 
+                                    // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+                                    if (Program.IsScalling)
+                                    {
+                                        var timeToRelease = DateTime.Now.AddMinutes(-5);
+
+                                        var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
+                                        if (scaleInfo != null
+                                            && (bool)scaleInfo.IsScaling
+                                            && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
+                                            && scaleInfo.TimeIn > timeToRelease
+                                            )
+                                        {
+                                            new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+
+                                            // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
+                                            _tram951Logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            // Giải phóng cân khi bị giữ quá 5 phút
+
+                                            _tram951Logger.LogInfo($"== Giai phong can {SCALE_CODE} khi bi giu qua 5 phut ==");
+
+                                            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+
+                                            Program.IsScalling = false;
+                                        }
+                                    }
+
                                     // 1. Kiểm tra cardNoCurrent hợp lệ
                                     bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                                     if (isValid)
@@ -226,22 +257,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
-                                    }
-
-                                    // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                                    if (Program.IsScalling)
-                                    {
-                                        var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
-                                        if (scaleInfo != null
-                                            && (bool)scaleInfo.IsScaling
-                                            && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
-                                        {
-                                            new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-
-                                            // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                                            _tram951Logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
-                                            continue;
-                                        }
                                     }
 
                                     // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
