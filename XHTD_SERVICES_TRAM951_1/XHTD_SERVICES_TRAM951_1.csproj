@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{567A44F3-5D4D-474A-A14C-54FFC805F527}</ProjectGuid>
+    <ProjectGuid>{78CEBE67-C3A1-4F68-8271-C6D4F2F8A9D4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>XHTD_SERVICES_TRAM951_2</RootNamespace>
     <AssemblyName>XHTD_SERVICES_TRAM951_2</AssemblyName>
