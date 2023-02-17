@@ -264,12 +264,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
                                     {
                                         isLuongVao = true;
-                                        _tram951Logger.LogInfo($"3. Xe can vao");
+                                        _tram951Logger.LogInfo($"3. Xe can VAO");
                                     } 
                                     else
                                     {
                                         isLuongVao = false;
-                                        _tram951Logger.LogInfo($"3. Xe can ra");
+                                        _tram951Logger.LogInfo($"3. Xe can RA");
                                     }
 
                                     if (isLuongVao)
