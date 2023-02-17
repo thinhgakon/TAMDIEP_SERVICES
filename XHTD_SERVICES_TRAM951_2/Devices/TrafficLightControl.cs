@@ -43,8 +43,6 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
         {
             var ipAddress = GetIpAddress(scaleCode);
 
-            log.Info($"IP den: {ipAddress}");
-
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
@@ -53,8 +51,6 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
         public bool TurnOnRedTrafficLight(string scaleCode)
         {
             var ipAddress = GetIpAddress(scaleCode);
-
-            log.Info($"IP den: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 
