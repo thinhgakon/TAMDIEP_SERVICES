@@ -23,7 +23,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             try
             {
-                Console.WriteLine($"Send: name {name} message {message}");
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<ScaleHub>();
                 broadcast.Clients.All.SendMessage(name, message);
             }
@@ -42,7 +41,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             try
             {
-                Console.WriteLine($"Send: sensorCode {sensorCode} status {status}");
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<ScaleHub>();
                 broadcast.Clients.All.SendSensor(sensorCode, status);
             }
@@ -50,7 +48,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             {
 
             }
-            //Clients.All.SendSensor(sensorCode, status);
         }
 
         public void SendFakeRFID(string value)
@@ -78,25 +75,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             //ReadDataScale951(time, value);
         }
 
-        /*
-        * Cân vào
-        * 1. Xác định giá trị cân ổn định
-        * 2. Lấy thông tin xe, đơn hàng đang cân
-        * 3. Cập nhật khối lượng không tải của phương tiện
-        * 4. Bật đèn đỏ
-        * 5. Đóng barrier 2 chiều
-        * 6. Gọi iERP API lưu giá trị cân
-        * 7. Bật đèn xanh
-        * 8. Mở barrier 2 chiều
-        * 9. Update giá trị cân vào của đơn hàng
-        * 10. Xếp STT
-        * 11. Giải phóng cân
-        */
-
         public async void ReadDataScale951(DateTime time, string value)
         {
-            //logger.Info($"Received 951 data: time={time}, value={value}");
-
             int currentScaleValue = Int32.Parse(value);
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
@@ -158,8 +138,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 else
                 {
                     SendSensor(ScaleCode.CODE_SCALE_2, "0");
-
-                    //logger.Info($"Received 951 data: time={time}, value={value}");
                 }
             }
 
