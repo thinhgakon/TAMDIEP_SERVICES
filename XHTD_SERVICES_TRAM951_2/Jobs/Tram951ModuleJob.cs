@@ -234,10 +234,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             && (bool)scaleInfo.IsScaling
                                             && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
                                         {
-                                            new ScaleHub().SendMessage("Notification", $"== Can 2 dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                                            new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
 
                                             // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                                            _tram951Logger.LogInfo($"== Can 951 dang hoat dong => Ket thuc ==");
+                                            _tram951Logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                                             continue;
                                         }
                                     }
