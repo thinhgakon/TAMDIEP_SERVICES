@@ -94,24 +94,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
                 // Hàm kiểm tra xe đang ra khỏi bàn cân: khối lượng giảm dần
 
-                //if (Program.IsScalling) {
-                //    logger.Info($"==== Giai phong can 951 khi can khong thanh cong ===");
-
-                //    Program.IsScalling = false;
-                //    Program.IsLockingScale = false;
-                //    Program.scaleValues.Clear();
-
-                //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_951);
-
-                //    // 8. Bật đèn xanh
-                //    logger.Info($"=== Bat den xanh khi can khong thanh cong ===");
-                //    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_951_DGT_OUT);
-                //    Thread.Sleep(500);
-                //    DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(ScaleCode.CODE_SCALE_951_DGT_IN);
-                //}
-
                 SendMessage($"{SCALE_STATUS}", $"Cân đang nghỉ");
-
                 SendMessage($"{SCALE_BALANCE}", "");
 
                 Program.scaleValues.Clear();
@@ -126,7 +109,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             else
             {
                 SendMessage($"{SCALE_STATUS}", $"Cân thủ công");
-
                 SendMessage($"{SCALE_BALANCE}", "");
             }
 
@@ -136,9 +118,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 var isInValidSensor951 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale951();
                 if (isInValidSensor951)
                 {
-                    // Send notification signalr
-                    //logger.Info("Vi pham cam bien can 951");
-
                     SendSensor(SCALE_CODE, "1");
 
                     Program.scaleValues.Clear();

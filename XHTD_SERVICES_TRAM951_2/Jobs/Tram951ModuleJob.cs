@@ -231,7 +231,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         else
                                         {
                                             // Giải phóng cân khi bị giữ quá 5 phút
-
                                             _tram951Logger.LogInfo($"== Giai phong can {SCALE_CODE} khi bi giu qua 5 phut ==");
 
                                             await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
