@@ -16,6 +16,14 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         protected readonly TCPTrafficLight _trafficLight;
 
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+
+        protected readonly string SCALE_DGT_IN_URL = "10.0.9.11";
+
+        protected readonly string SCALE_DGT_OUT_URL = "10.0.9.12";
+
         public TrafficLightControl(
             TCPTrafficLight trafficLight
             )
@@ -25,15 +33,15 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         public string GetIpAddress(string scaleCode)
         {
-            var ipAddress = "10.0.9.11";
+            var ipAddress = SCALE_DGT_IN_URL;
 
-            if (scaleCode == ScaleCode.CODE_SCALE_2_DGT_IN)
+            if (scaleCode == SCALE_DGT_IN_CODE)
             {
-                ipAddress = "10.0.9.11";
+                ipAddress = SCALE_DGT_IN_URL;
             }
-            else if (scaleCode == ScaleCode.CODE_SCALE_2_DGT_OUT)
+            else if (scaleCode == SCALE_DGT_OUT_CODE)
             {
-                ipAddress = "10.0.9.12";
+                ipAddress = SCALE_DGT_OUT_URL;
             }
 
             return ipAddress;
