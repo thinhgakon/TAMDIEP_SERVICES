@@ -307,14 +307,14 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // Bat den do
-                                            _tram951Logger.LogInfo($@"6. Bat den do chieu vao");
+                                            _tram951Logger.LogInfo($@"5. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_IN);
                                             Thread.Sleep(500);
-                                            _tram951Logger.LogInfo($@"7. Bat den do chieu ra");
+                                            _tram951Logger.LogInfo($@"6. Bat den do chieu ra");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_2_DGT_OUT);
 
                                             // 5. Đánh dấu trạng thái đang cân
-                                            _tram951Logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
+                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling951 = true");
                                             Program.IsScalling951 = true;
 
                                             tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
