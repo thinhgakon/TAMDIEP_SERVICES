@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,8 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES_TRAM951_2.Models.Response;
+using XHTD_SERVICES_TRAM951_2.Hubs;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_2.Business
 {
