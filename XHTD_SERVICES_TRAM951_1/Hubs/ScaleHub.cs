@@ -238,7 +238,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 4. Gọi iERP API lưu giá trị cân
                                 logger.Info($"4. Goi iERP API luu gia tri can");
-                                var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
+                                var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
 
                                 if (scaleInfoResult.Code == "01")
                                 {
@@ -263,7 +263,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
-                                    logger.Info($"Lưu giá trị cân thất bại");
+                                    logger.Info($"Lưu giá trị cân thất bại: {scaleInfoResult.Message}");
                                 }
 
                                 // 6. Bật đèn xanh
