@@ -8,11 +8,15 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES_TRAM951_1.Models.Response;
+using XHTD_SERVICES_TRAM951_1.Hubs;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_1.Business
 {
     public class DesicionScaleBusiness
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(DesicionScaleBusiness));
+
         protected readonly ScaleOperatingRepository _scaleOperatingRepository;
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -39,10 +43,16 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             if (response.Code == "01")
             {
                 // Gọi API lưu thành công
+                logger.Info($"Scale_Send_Successed: {response.Message}");
+
+                new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
             }
             else
             {
                 // Gọi API lưu thất bại
+                logger.Info($"Scale_Send_Failed: {response.Message}");
+
+                new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
             }
 
             resultResponse.Code = response.Code;
@@ -64,6 +74,10 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             if (CheckToleranceLimit(order, weight))
             {
                 // vi phạm độ lệch khối lượng
+                logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
+
+                new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
+
                 return new DesicionScaleResponse
                 {
                     Code = "02",
@@ -76,10 +90,16 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             if (response.Code == "01")
             {
                 // Gọi API lưu thành công
+                logger.Info($"Scale_Send_Successed: {response.Message}");
+
+                new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
             }
             else
             {
                 // Gọi API lưu thất bại
+                logger.Info($"Scale_Send_Failed: {response.Message}");
+
+                new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
             }
 
             resultResponse.Code = response.Code;
