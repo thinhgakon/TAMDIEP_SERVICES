@@ -28,9 +28,27 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
+            var resultResponse = new DesicionScaleResponse
+            {
+                Code = "02",
+                Message = "Cân thất bại"
+            };
+
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleIn(deliveryCode, weight);
 
-            return response;
+            if (response.Code == "01")
+            {
+                // Gọi API lưu thành công
+            }
+            else
+            {
+                // Gọi API lưu thất bại
+            }
+
+            resultResponse.Code = response.Code;
+            resultResponse.Message = response.Message;
+
+            return resultResponse;
         }
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
