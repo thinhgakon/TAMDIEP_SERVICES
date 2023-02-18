@@ -132,11 +132,13 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn)
+        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull)
         {
             bool isSynced = false;
 
             var syncTime = DateTime.Now.ToString();
+
+            var weightIn = Double.Parse(loadweightnull);
 
             try
             {
@@ -154,6 +156,10 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
+
+                    order.WeightIn = (int)(weightIn * 1000);
+                    order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
+
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
@@ -176,11 +182,13 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull)
         {
             bool isSynced = false;
 
             var syncTime = DateTime.Now.ToString();
+
+            var weightOut = Double.Parse(loadweightfull);
 
             try
             {
@@ -198,6 +206,10 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
+
+                        order.WeightOut = (int)(weightOut * 1000);
+                        order.WeightInTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
 
