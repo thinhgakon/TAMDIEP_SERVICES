@@ -185,6 +185,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 // 5. Gọi iERP API lưu giá trị cân
                                 logger.Info($"5. Goi iERP API luu gia tri can");
                                 var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
+
                                 if (scaleInfoResult.Code == "01")
                                 {
                                     // Lưu giá trị cân thành công
