@@ -277,6 +277,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         new ScaleHub().SendMessage("Notification", $"Phương tiện RFID {cardNoCurrent} hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} hợp lệ");
 
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                        tmpCardNoLst.Add(newCardNoLog);
+
                                         _tram951Logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
                                     }
 
@@ -312,8 +315,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             // 7. Đánh dấu trạng thái đang cân
                                             _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
-
-                                            tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                         }
                                         else
                                         {
@@ -338,8 +339,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                             // 5. Đánh dấu trạng thái đang cân
                                             _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
-
-                                            tmpCardNoLst.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
                                         }
                                         else
                                         {
