@@ -305,15 +305,15 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                         {
                                             _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // Bat den do
-                                            _tram951Logger.LogInfo($@"5. Bat den do chieu vao");
+                                            // 5. Bat den do
+                                            _tram951Logger.LogInfo($@"5.1. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
-                                            _tram951Logger.LogInfo($@"6. Bat den do chieu ra");
+                                            _tram951Logger.LogInfo($@"5.2. Bat den do chieu ra");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
-                                            // 7. Đánh dấu trạng thái đang cân
-                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                                            // 6. Đánh dấu trạng thái đang cân
+                                            _tram951Logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
                                         }
                                         else
@@ -329,15 +329,15 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                         {
                                             _tram951Logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // Bat den do
-                                            _tram951Logger.LogInfo($@"5. Bat den do chieu vao");
+                                            // 5. Bat den do
+                                            _tram951Logger.LogInfo($@"5..1 Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
-                                            _tram951Logger.LogInfo($@"6. Bat den do chieu ra");
+                                            _tram951Logger.LogInfo($@"5.2. Bat den do chieu ra");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
 
-                                            // 5. Đánh dấu trạng thái đang cân
-                                            _tram951Logger.LogInfo($@"7. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                                            // 6. Đánh dấu trạng thái đang cân
+                                            _tram951Logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
                                         }
                                         else
