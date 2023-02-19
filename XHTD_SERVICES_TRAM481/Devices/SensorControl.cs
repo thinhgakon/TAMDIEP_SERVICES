@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_TRAM481.Devices
             _sensor = sensor;
         }
 
-        public bool IsInValidSensorScale481()
+        public bool IsInValidSensorScale()
         {
             var connectStatus = _sensor.ConnectPLC(IP_ADDRESS);
 

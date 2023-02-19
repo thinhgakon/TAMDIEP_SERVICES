@@ -128,8 +128,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             // TODO: kiểm tra vi phạm cảm biến cân
             if (!Program.IsLockingScale)
             {
-                var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
-                if (isInValidSensor481)
+                var isInValidSensor = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale();
+                if (isInValidSensor)
                 {
                     // Send notification signalr
                     //logger.Info("Vi pham cam bien can 481");
