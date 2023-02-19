@@ -412,9 +412,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        //isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
-                                        // TODO for test
-                                        isUpdatedOrder = true;
+                                        if (currentOrder.CatId != "CLINKER" 
+                                            && currentOrder.TypeXK != "JUMBO" 
+                                            && currentOrder.TypeXK != "SLING")
+                                        {
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
+                                        }
+                                        else
+                                        {
+                                            isUpdatedOrder = true;
+                                        }
+
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
@@ -439,10 +447,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        if(currentOrder.CatId != "CLINKER") {
-                                            //isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
-                                            // TODO for test
-                                            isUpdatedOrder = true;
+                                        if (currentOrder.CatId != "CLINKER"
+                                            && currentOrder.TypeXK != "JUMBO"
+                                            && currentOrder.TypeXK != "SLING")
+                                        {
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
                                         }
                                         else
                                         {
