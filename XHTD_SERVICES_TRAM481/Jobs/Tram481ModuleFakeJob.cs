@@ -40,7 +40,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly Sensor _sensor;
 
-        protected readonly Tram481Logger _tram481Logger;
+        protected readonly Logger _logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -99,7 +99,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Sensor sensor,
-            Tram481Logger tram481Logger
+            Logger logger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -111,7 +111,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             _barrier = barrier;
             _trafficLight = trafficLight;
             _sensor = sensor;
-            _tram481Logger = tram481Logger;
+            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -126,8 +126,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                 // Connect Scale Hub
                 ConnectScaleHubAsync();
 
-                _tram481Logger.LogInfo("Start tram481 fake service");
-                _tram481Logger.LogInfo("----------------------------");
+                _logger.LogInfo("Start tram481 fake service");
+                _logger.LogInfo("----------------------------");
 
                 // Get devices info
                 await LoadDevicesInfo();
@@ -144,8 +144,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
             HubProxy.On<string>("SendFakeRFID", (value) =>
             {
-                //_tram481Logger.LogInfo("----------------------------");
-                //_tram481Logger.LogInfo($"Received fake RFID data: value={value}");
+                //_logger.LogInfo("----------------------------");
+                //_logger.LogInfo($"Received fake RFID data: value={value}");
                 RFIDValue = value;
                 IsJustReceivedRFIDData = true;
             }
@@ -154,11 +154,11 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             try
             {
                 await Connection.Start();
-                _tram481Logger.LogInfo("Connected scale hub");
+                _logger.LogInfo("Connected scale hub");
             }
             catch (System.Net.Http.HttpRequestException ex)
             {
-                _tram481Logger.LogInfo("Connect failed scale hub");
+                _logger.LogInfo("Connect failed scale hub");
             }
         }
 
@@ -232,7 +232,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         public bool ConnectTram481Module()
         {
-            _tram481Logger.LogInfo("Connected to C3-400");
+            _logger.LogInfo("Connected to C3-400");
 
             DeviceConnected = true;
 
@@ -241,7 +241,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         public async void ReadDataFromC3400()
         {
-            _tram481Logger.LogInfo("Reading RFID from C3-400 ...");
+            _logger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -275,7 +275,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                             if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
                             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                             {
-                                //_tram481Logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                //_logger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
                                 continue;
                             }
 
@@ -284,7 +284,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                 if (tmpCardNoLst_1.Count > 5) tmpCardNoLst_1.RemoveRange(0, 4);
                                 if (tmpCardNoLst_1.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                 {
-                                    //_tram481Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                    //_logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                     continue;
                                 }
                             }
@@ -293,35 +293,35 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                 if (tmpCardNoLst_2.Count > 5) tmpCardNoLst_2.RemoveRange(0, 4);
                                 if (tmpCardNoLst_2.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                 {
-                                    //_tram481Logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
+                                    //_logger.LogInfo($"2. Tag da duoc check truoc do => Ket thuc.");
                                     continue;
                                 }
                             }
 
-                            _tram481Logger.LogInfo("----------------------------");
-                            _tram481Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                            _tram481Logger.LogInfo("-----");
+                            _logger.LogInfo("----------------------------");
+                            _logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                            _logger.LogInfo("-----");
 
                             if (isLuongVao)
                             {
-                                _tram481Logger.LogInfo($"1. Xe can vao");
+                                _logger.LogInfo($"1. Xe can vao");
                             }
                             else
                             {
-                                _tram481Logger.LogInfo($"1. Xe can ra");
+                                _logger.LogInfo($"1. Xe can ra");
                             }
 
-                            _tram481Logger.LogInfo($"2. Kiem tra tag da check truoc do");
+                            _logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                             // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
                             bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
                             if (isValid)
                             {
-                                _tram481Logger.LogInfo($"3. Tag hop le");
+                                _logger.LogInfo($"3. Tag hop le");
                             }
                             else
                             {
-                                _tram481Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+                                _logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -338,7 +338,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     && !String.IsNullOrEmpty(scaleInfo.DeliveryCode))
                                 {
                                     // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                                    _tram481Logger.LogInfo($"== Can 481 dang hoat dong => Ket thuc ==");
+                                    _logger.LogInfo($"== Can 481 dang hoat dong => Ket thuc ==");
                                     continue;
                                 }
                             }
@@ -356,7 +356,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                             if (currentOrder == null)
                             {
-                                _tram481Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                                _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
                                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -364,30 +364,30 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                 continue;
                             }
 
-                            _tram481Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                            _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                             // 5. Xác thực cân vào
                             if (isLuongVao)
                             {
                                 if (await _storeOrderOperatingRepository.UpdateOrderConfirm3(cardNoCurrent))
                                 {
-                                    _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
+                                    _logger.LogInfo($@"5. Đã xác thực trạng thái Cân vào");
 
                                     // 6. Đánh dấu đang cân
                                     await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                     Program.IsScalling = true;
 
-                                    _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                    _logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                     tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                     // Bat den do
-                                    _tram481Logger.LogInfo($@"7. Bat den do");
+                                    _logger.LogInfo($@"7. Bat den do");
                                     TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_IN);
                                 }
                                 else
                                 {
-                                    _tram481Logger.LogInfo($@"5. Confirm 3 failed");
+                                    _logger.LogInfo($@"5. Confirm 3 failed");
                                 }
                             }
 
@@ -396,23 +396,23 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                             {
                                 if (await _storeOrderOperatingRepository.UpdateOrderConfirm7(cardNoCurrent))
                                 {
-                                    _tram481Logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
+                                    _logger.LogInfo($@"5. Đã xác thực trạng thái Cân ra");
 
                                     // 6. Đánh dấu đang cân
                                     await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                                     Program.IsScalling = true;
 
-                                    _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
+                                    _logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
                                     tmpCardNoLst_1.Add(new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now });
 
                                     // Bat den do
-                                    _tram481Logger.LogInfo($@"7. Bat den do");
+                                    _logger.LogInfo($@"7. Bat den do");
                                     TurnOnRedTrafficLight(ScaleCode.CODE_SCALE_481_DGT_OUT);
                                 }
                                 else
                                 {
-                                    _tram481Logger.LogInfo($@"5. Confirm 7 failed");
+                                    _logger.LogInfo($@"5. Confirm 7 failed");
                                 }
                             }
 
