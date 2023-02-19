@@ -19,6 +19,10 @@ using XHTD_SERVICES.Data.Common;
 using System.Threading;
 using XHTD_SERVICES_TRAM481.Devices;
 using Autofac;
+using XHTD_SERVICES_TRAM481.Models.Response;
+using XHTD_SERVICES_TRAM481.Hubs;
+using XHTD_SERVICES_TRAM481.Business;
+using XHTD_SERVICES_TRAM481.Devices;
 
 namespace XHTD_SERVICES_TRAM481.Jobs
 {
