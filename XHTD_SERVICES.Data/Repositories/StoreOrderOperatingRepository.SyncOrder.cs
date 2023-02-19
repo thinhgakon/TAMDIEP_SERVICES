@@ -69,8 +69,10 @@ namespace XHTD_SERVICES.Data.Repositories
                 var cardNo = rfidItem?.Code ?? null;
 
                 var orderDateString = websaleOrder?.orderDate;
-
                 DateTime orderDate = DateTime.ParseExact(orderDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+                var lastUpdatedDateString = websaleOrder?.lastUpdatedDate;
+                DateTime lastUpdatedDate = DateTime.ParseExact(lastUpdatedDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 if (!CheckExist(websaleOrder.id))
                 {
@@ -107,6 +109,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         CountReindex = 0,
                         Step = (int)OrderStep.CHUA_NHAN_DON,
                         IsVoiced = false,
+                        UpdateDay = lastUpdatedDate > DateTime.MinValue ? lastUpdatedDate : DateTime.Now,
                         LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
                         LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
                         IsSyncedByNewWS = true
@@ -119,6 +122,39 @@ namespace XHTD_SERVICES.Data.Repositories
                     log.Info($@"Inserted order {websaleOrder.id}");
 
                     isSynced = true;
+                }
+                else
+                {
+                    var order = _appDbContext.tblStoreOrderOperatings
+                            .FirstOrDefault(x => x.OrderId == websaleOrder.id
+                                                && x.IsVoiced == false
+                                                && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                );
+                    if(order != null)
+                    {
+                        if(lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
+                        {
+                            return false;
+                        }
+
+                        if (order.UpdateDay == null || order.UpdateDay < lastUpdatedDate)
+                        {
+                            log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
+
+                            order.Vehicle = vehicleCode;
+                            order.DriverName = websaleOrder.driverName;
+                            order.CardNo = cardNo;
+                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            order.UpdateDay = lastUpdatedDate;
+
+                            order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
+                            order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
+
+                            await _appDbContext.SaveChangesAsync();
+
+                            log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
+                        }
+                    }
                 }
 
                 return isSynced;

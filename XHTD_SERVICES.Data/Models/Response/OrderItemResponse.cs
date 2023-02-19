@@ -88,6 +88,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string topSealCount { get; set; }
         public string topSealDes { get; set; }
         public string createDate { get; set; }
+        public string lastUpdatedDate { get; set; }
         public string dmsId { get; set; }
     }
 }
