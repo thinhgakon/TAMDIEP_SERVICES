@@ -259,7 +259,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     }
 
                                     // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderByCardNoReceiving(cardNoCurrent);
+                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(cardNoCurrent);
 
                                     if (currentOrder == null)
                                     {

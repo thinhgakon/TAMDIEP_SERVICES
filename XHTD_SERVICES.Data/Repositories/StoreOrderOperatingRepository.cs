@@ -335,7 +335,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<tblStoreOrderOperating> GetCurrentOrderByCardNoReceiving(string cardNo)
+        public async Task<tblStoreOrderOperating> GetCurrentOrderScaleStation(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
