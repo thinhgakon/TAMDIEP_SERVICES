@@ -208,7 +208,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.CountReindex = 0;
 
                         order.WeightOut = (int)(weightOut * 1000);
-                        order.WeightInTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+                        order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
