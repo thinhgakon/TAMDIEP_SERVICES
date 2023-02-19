@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_TRAM951_1
 {
-    public class Tram951Logger : BaseLogger<Jobs.Tram951ModuleJob>
+    public class Logger : BaseLogger<Jobs.Tram951ModuleJob>
     {
     }
 }
