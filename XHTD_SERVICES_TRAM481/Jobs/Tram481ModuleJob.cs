@@ -38,6 +38,14 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly Tram481Logger _tram481Logger;
 
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_481;
+
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_481_DGT_IN;
+
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_481_DGT_OUT;
+
+        protected readonly string VEHICLE_STATUS = "VEHICLE_481_STATUS";
+
         private IntPtr h21 = IntPtr.Zero;
 
         private static bool DeviceConnected = false;
@@ -53,10 +61,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             rfidIn11,
             rfidIn12,
             rfidIn21,
-            rfidIn22,
-            m221,
-            trafficLightIn,
-            trafficLightOut;
+            rfidIn22;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -115,33 +120,15 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             rfidIn12 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-IN-2");
             rfidIn21 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-1");
             rfidIn22 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-2");
-
-            m221 = devices.FirstOrDefault(x => x.Code == "CLK.M221");
-
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CLK.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CLK.DGT-OUT");
         }
 
         public void AuthenticateTram481Module()
         {
-            /*
-             * 1. Xác định xe vao can 1 hay can 2 theo gia tri door từ C3-400
-             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó) hoặc khi đang cân xe khác
-             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Xác thực cân vào: update step, confirm
-             * 6. Đánh dấu đang cân
-             * * *  Lưu vào bảng tblScale xe đang cân vào
-             * * *  Program.IsScalling = true;
-             */
-
-            // 1. Connect Device
             while (!DeviceConnected)
             {
                 ConnectTram481Module();
             }
 
-            // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
         }
 
