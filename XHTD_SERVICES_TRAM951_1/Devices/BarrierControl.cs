@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             _barrier = barrier;
         }
 
-        // Barrier chiều vào cân 951
+        // Barrier chiều vào
         public void OpenBarrierScaleIn()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
@@ -66,7 +66,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             }
         }
 
-        // Barrier chiều ra cân 951
+        // Barrier chiều ra
         public void OpenBarrierScaleOut()
         {
             var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
