@@ -428,7 +428,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
 
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            isSuccessOpenBarrier = OpenBarrier("IN");
+                                            //isSuccessOpenBarrier = OpenBarrier("IN");
 
                                             Thread.Sleep(5000);
 
@@ -463,7 +463,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
 
                                             _gatewayLogger.LogInfo($"7. Mở barrier");
-                                            isSuccessOpenBarrier = OpenBarrier("OUT");
+                                            //isSuccessOpenBarrier = OpenBarrier("OUT");
 
                                             Thread.Sleep(5000);
 
