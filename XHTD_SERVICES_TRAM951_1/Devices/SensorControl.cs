@@ -96,7 +96,8 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                 logger.Info($"Sensor Control ERROR: {ex.Message} ===== {ex.StackTrace} ==== {ex.InnerException}");
             }
 
-            if (checkCB1 || checkCB3 || checkCB2 || checkCB4)
+            //if (checkCB1 || checkCB3 || checkCB2 || checkCB4)
+            if (checkCB1 || checkCB3)
             {
                 return true;
             }
