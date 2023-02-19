@@ -36,8 +36,6 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly ScaleOperatingRepository _scaleOperatingRepository;
 
-        protected readonly TCPTrafficLight _trafficLight;
-
         protected readonly Tram481Logger _tram481Logger;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -76,7 +74,6 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
-            TCPTrafficLight trafficLight,
             Tram481Logger tram481Logger
             )
         {
@@ -86,7 +83,6 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _vehicleRepository = vehicleRepository;
             _scaleOperatingRepository = scaleOperatingRepository;
-            _trafficLight = trafficLight;
             _tram481Logger = tram481Logger;
         }
 
