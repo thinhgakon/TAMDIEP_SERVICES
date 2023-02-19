@@ -291,6 +291,5 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 }
             }
         }
-
     }
 }
