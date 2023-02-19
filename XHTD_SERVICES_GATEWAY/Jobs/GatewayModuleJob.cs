@@ -390,13 +390,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                         continue;
                                     }
+                                    else
+                                    {
+                                        await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
+
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+
+                                        if (isLuongVao)
+                                        {
+                                            tmpCardNoLst_In.Add(newCardNoLog);
+                                        }
+                                        else if (isLuongRa)
+                                        {
+                                            tmpCardNoLst_Out.Add(newCardNoLog);
+                                        }
+                                    }
 
                                     var currentOrder = currentOrders.FirstOrDefault();
                                     var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
                                     _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
-
-                                    await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
 
                                     // 5. Xác thực vào / ra cổng
                                     // 6. Bật đèn xanh giao thông, 
@@ -415,9 +428,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
-
-                                            var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                            tmpCardNoLst_In.Add(newCardNoLog);
 
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("IN");
@@ -452,9 +462,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
-
-                                            var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                            tmpCardNoLst_Out.Add(newCardNoLog);
 
                                             _gatewayLogger.LogInfo($"7. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("OUT");
