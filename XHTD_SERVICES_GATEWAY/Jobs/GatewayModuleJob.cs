@@ -268,10 +268,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    //_gatewayLogger.LogInfo("----------------------------");
-                                    //_gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    //_gatewayLogger.LogInfo("-----");
-
                                     // 1.Xác định xe cân vào / ra
                                     var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
@@ -410,12 +406,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
 
                                     _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
-
-                                    // 5. Xác thực vào / ra cổng
-                                    // 6. Bật đèn xanh giao thông, 
-                                    // 7. Mở barrier
-                                    // 8. Ghi log thiết bị
-                                    // 9. Bắn tín hiệu thông báo
 
                                     var isUpdatedOrder = false;
                                     bool isSuccessOpenBarrier = false;
