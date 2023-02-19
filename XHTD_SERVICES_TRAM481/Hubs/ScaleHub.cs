@@ -81,10 +81,10 @@ namespace XHTD_SERVICES_TRAM481.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.SendClinkerScaleInfo(time, value);
-            ReadDataScale481(time, value);
+            ReadDataScale(time, value);
         }
 
-        public async void ReadDataScale481(DateTime time, string value)
+        public async void ReadDataScale(DateTime time, string value)
         {
             //logger.Info($"Received 481 data: time={time}, value={value}");
 

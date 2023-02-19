@@ -69,7 +69,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9511ScaleInfo(time, value);
-            ReadDataScale951(time, value);
+            ReadDataScale(time, value);
         }
 
         public void Send9512ScaleInfo(DateTime time, string value)
@@ -82,10 +82,9 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.SendClinkerScaleInfo(time, value);
-            //ReadDataScale951(time, value);
         }
 
-        public async void ReadDataScale951(DateTime time, string value)
+        public async void ReadDataScale(DateTime time, string value)
         {
             int currentScaleValue = Int32.Parse(value);
 
