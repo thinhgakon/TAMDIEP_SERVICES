@@ -543,8 +543,20 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
-                                                     && (x.DriverUserName ?? "") != ""
-                                                     && x.Step == (int)OrderStep.DA_NHAN_DON)
+                                                     && (
+                                                            (
+                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        ||
+                                                            (
+                                                                (x.DriverUserName ?? "") != ""
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        )
+                                                     )
                                             .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
