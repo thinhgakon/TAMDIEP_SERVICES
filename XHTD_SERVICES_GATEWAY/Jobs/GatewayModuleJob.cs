@@ -340,12 +340,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     if (isLuongVao)
                                     {
                                         inout = "IN";
-                                        _gatewayLogger.LogInfo($"1. Xe vao cong");
+                                        _gatewayLogger.LogInfo($"1. Xe VAO cong");
                                     }
                                     else
                                     {
                                         inout = "OUT";
-                                        _gatewayLogger.LogInfo($"1. Xe ra cong");
+                                        _gatewayLogger.LogInfo($"1. Xe RA cong");
                                     }
 
                                     _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
