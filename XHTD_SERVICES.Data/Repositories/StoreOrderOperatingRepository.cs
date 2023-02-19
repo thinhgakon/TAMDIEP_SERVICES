@@ -502,8 +502,22 @@ namespace XHTD_SERVICES.Data.Repositories
                     string currentTime = DateTime.Now.ToString();
 
                     var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
-                                                .ToListAsync();
+                                            .Where(x => x.CardNo == cardNo
+                                                    && (
+                                                            (
+                                                                x.CatId == "CLINKER"
+                                                                &&
+                                                                x.Step == (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        ||
+                                                            (
+                                                                x.CatId != "CLINKER"
+                                                                &&
+                                                                x.Step == (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                        )
+                                                     )
+                                            .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
                     {
