@@ -55,9 +55,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         private static bool DeviceConnected = false;
 
-        private List<CardNoLog> tmpCardNoLst_1 = new List<CardNoLog>();
-
-        private List<CardNoLog> tmpCardNoLst_2 = new List<CardNoLog>();
+        private List<CardNoLog> tmpCardNoLst = new List<CardNoLog>();
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
