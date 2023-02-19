@@ -19,15 +19,15 @@ namespace XHTD_SERVICES_TRAM481.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleHub));
 
-        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_481;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_481_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_481_DGT_OUT;
 
-        protected readonly string SCALE_STATUS = "SCALE_1_STATUS";
+        protected readonly string SCALE_STATUS = "SCALE_481_STATUS";
 
-        protected readonly string SCALE_BALANCE = "SCALE_1_BALANCE";
+        protected readonly string SCALE_BALANCE = "SCALE_481_BALANCE";
 
         public void SendMessage(string name, string message)
         {
