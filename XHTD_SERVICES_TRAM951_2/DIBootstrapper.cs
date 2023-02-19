@@ -30,7 +30,7 @@ namespace XHTD_SERVICES_TRAM951_2
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Sensor>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
-            builder.RegisterType<Tram951Logger>().AsSelf();
+            builder.RegisterType<Logger>().AsSelf();
 
             builder.RegisterType<TrafficLightControl>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
