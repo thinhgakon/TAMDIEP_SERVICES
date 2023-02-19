@@ -119,11 +119,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             if (Program.IsScalling1)
             {
-                SendMessage("SCALE_1_STATUS", $"Cân tự động");
+                SendMessage("SCALE_1_STATUS", $"Đang cân tự động");
             }
             else
             {
-                SendMessage("SCALE_1_STATUS", $"Cân thủ công");
+                SendMessage("SCALE_1_STATUS", $"Đang cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
@@ -275,11 +275,11 @@ namespace XHTD_SERVICES_TRAM951_IN.Hubs
 
             if (Program.IsScalling2)
             {
-                SendMessage("SCALE_2_STATUS", $"Cân tự động");
+                SendMessage("SCALE_2_STATUS", $"Đang cân tự động");
             }
             else
             {
-                SendMessage("SCALE_2_STATUS", $"Cân thủ công");
+                SendMessage("SCALE_2_STATUS", $"Đang cân thủ công");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân

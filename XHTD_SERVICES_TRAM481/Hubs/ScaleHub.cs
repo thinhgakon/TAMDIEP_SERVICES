@@ -103,11 +103,11 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
             if (Program.IsScalling)
             {
-                SendMessage($"{SCALE_STATUS}", $"Cân tự động");
+                SendMessage($"{SCALE_STATUS}", $"Đang cân tự động");
             }
             else
             {
-                SendMessage($"{SCALE_STATUS}", $"Cân thủ công");
+                SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                 SendMessage($"{SCALE_BALANCE}", "");
             }
 
