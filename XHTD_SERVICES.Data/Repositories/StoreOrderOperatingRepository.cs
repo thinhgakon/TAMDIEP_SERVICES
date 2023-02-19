@@ -309,7 +309,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGatewayByCardNoReceiving(string cardNo)
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {

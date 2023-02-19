@@ -372,7 +372,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGatewayByCardNoReceiving(cardNoCurrent);
+                                        currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGateway(cardNoCurrent);
                                     }
 
                                     if (currentOrders == null || currentOrders.Count == 0)
