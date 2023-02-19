@@ -101,12 +101,12 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {
                 // TODO: giải phóng cân khi xe ra khỏi bàn cân
-                //if (Program.IsScalling481) {
+                //if (Program.IsScalling) {
                 //    logger.Info($"==== Giai phong can 481 khi can khong thanh cong ===");
 
-                //    Program.IsScalling481 = false;
-                //    Program.IsLockingScale481 = false;
-                //    Program.scaleValues481.Clear();
+                //    Program.IsScalling = false;
+                //    Program.IsLockingScale = false;
+                //    Program.scaleValues.Clear();
 
                 //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481);
 
@@ -119,12 +119,12 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                 SendMessage("SCALE_481_STATUS", $"Cân đang nghỉ");
 
-                Program.scaleValues481.Clear();
+                Program.scaleValues.Clear();
 
                 return;
             }
 
-            if (Program.IsScalling481)
+            if (Program.IsScalling)
             {
                 SendMessage("SCALE_481_STATUS", $"Cân tự động");
             }
@@ -134,7 +134,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            if (!Program.IsLockingScale481)
+            if (!Program.IsLockingScale)
             {
                 var isInValidSensor481 = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale481();
                 if (isInValidSensor481)
@@ -144,7 +144,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                     SendSensor(ScaleCode.CODE_SCALE_481, "1");
 
-                    Program.scaleValues481.Clear();
+                    Program.scaleValues.Clear();
 
                     return;
                 }
@@ -156,16 +156,16 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                 }
             }
 
-            if (Program.IsScalling481 && !Program.IsLockingScale481)
+            if (Program.IsScalling && !Program.IsLockingScale)
             {
-                Program.scaleValues481.Add(currentScaleValue);
+                Program.scaleValues.Add(currentScaleValue);
 
-                if (Program.scaleValues481.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
+                if (Program.scaleValues.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
                 {
-                    Program.scaleValues481.RemoveRange(0, 1);
+                    Program.scaleValues.RemoveRange(0, 1);
                 }
 
-                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues481, ScaleConfig.WEIGHT_SAISO);
+                var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues, ScaleConfig.WEIGHT_SAISO);
 
                 //var scaleText = String.Join(",", Program.scaleValues1);
                 //logger.Info("Gia tri can 1: " + scaleText);
@@ -174,7 +174,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                 if (isOnDinh)
                 {
-                    Program.IsLockingScale481 = true;
+                    Program.IsLockingScale = true;
 
                     // 1. Xác định giá trị cân ổn định
                     logger.Info($"1. Can 481 on dinh: " + currentScaleValue);
@@ -241,9 +241,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 11. Giải phóng cân
                                 logger.Info($"11. Giai phong can 481");
-                                Program.IsScalling481 = false;
-                                Program.IsLockingScale481 = false;
-                                Program.scaleValues481.Clear();
+                                Program.IsScalling = false;
+                                Program.IsLockingScale = false;
+                                Program.scaleValues.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481);
                             }
                             // Đang cân ra
@@ -285,9 +285,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 9. Giải phóng cân: Program.IsScalling = false, update table tblScale
                                 logger.Info($"11. Giai phong can 481");
-                                Program.IsScalling481 = false;
-                                Program.IsLockingScale481 = false;
-                                Program.scaleValues481.Clear();
+                                Program.IsScalling = false;
+                                Program.IsLockingScale = false;
+                                Program.scaleValues.Clear();
                                 await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(ScaleCode.CODE_SCALE_481);
                             }
                         }
@@ -296,9 +296,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
             else
             {
-                if (Program.scaleValues481.Count > 5)
+                if (Program.scaleValues.Count > 5)
                 {
-                    Program.scaleValues481.Clear();
+                    Program.scaleValues.Clear();
                 }
             }
         }

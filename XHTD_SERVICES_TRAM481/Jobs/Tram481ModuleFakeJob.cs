@@ -330,7 +330,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                             }
 
                             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-                            if (Program.IsScalling481)
+                            if (Program.IsScalling)
                             {
                                 var scaleInfo = _scaleOperatingRepository.GetDetail(ScaleCode.CODE_SCALE_481);
                                 if (scaleInfo != null
@@ -375,7 +375,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                     // 6. Đánh dấu đang cân
                                     await _scaleOperatingRepository.UpdateWhenConfirmEntrace(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                    Program.IsScalling481 = true;
+                                    Program.IsScalling = true;
 
                                     _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
@@ -400,7 +400,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                     // 6. Đánh dấu đang cân
                                     await _scaleOperatingRepository.UpdateWhenConfirmExit(ScaleCode.CODE_SCALE_481, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                                    Program.IsScalling481 = true;
+                                    Program.IsScalling = true;
 
                                     _tram481Logger.LogInfo($@"6. Đánh dấu xe đang cân");
 
