@@ -326,7 +326,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             List<tblStoreOrderOperating> currentOrders = null;
                             if (isLuongVao)
                             {
-                                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGatewayByCardNoReceiving(cardNoCurrent);
+                                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGateway(cardNoCurrent);
                             }
                             else if (isLuongRa)
                             {

@@ -283,7 +283,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGatewayByCardNoReceiving(string cardNo)
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
