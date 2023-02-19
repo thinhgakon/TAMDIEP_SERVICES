@@ -110,7 +110,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateTram481Module();
+                AuthenticateScaleStationModule();
             });
         }
 
@@ -126,17 +126,17 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             rfidIn22 = devices.FirstOrDefault(x => x.Code == "CLK.C3-400.RFID-OUT-2");
         }
 
-        public void AuthenticateTram481Module()
+        public void AuthenticateScaleStationModule()
         {
             while (!DeviceConnected)
             {
-                ConnectTram481Module();
+                ConnectScaleStationModule();
             }
 
             ReadDataFromC3400();
         }
 
-        public bool ConnectTram481Module()
+        public bool ConnectScaleStationModule()
         {
             var ipAddress = c3400?.IpAddress;
             try
@@ -164,7 +164,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($@"ConnectTram481Module {ipAddress} error: {ex.Message}");
+                _logger.LogInfo($@"ConnectScaleStationModule {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
@@ -376,7 +376,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
-                            AuthenticateTram481Module();
+                            AuthenticateScaleStationModule();
                         }
                     }
                 }
@@ -387,7 +387,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                 DeviceConnected = false;
                 h21 = IntPtr.Zero;
 
-                AuthenticateTram481Module();
+                AuthenticateScaleStationModule();
             }
         }
     }
