@@ -363,7 +363,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Show on Area 0_2: DÒNG TIÊU ĐỀ
-                nFontHeight = 12;
+                nFontHeight = 14;
                 pText = Marshal.StringToHGlobalUni("VI TRI");
                 nEffect = 0;
 
