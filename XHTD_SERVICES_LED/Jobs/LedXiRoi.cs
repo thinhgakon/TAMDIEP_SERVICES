@@ -63,15 +63,15 @@ namespace XHTD_SERVICES_LED.Jobs
                 //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
 
                 //var orderShows = new List<StoreOrderForLED12>();
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01011", State1 = "Dang cho" }); //1
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01012", State1 = "Dang xuat" }); //2
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01013", State1 = "Dang cho" }); //3
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01014", State1 = "Dang cho" }); //4
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01015", State1 = "Dang xuat" }); //5
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01016", State1 = "Dang cho" }); //6
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01017", State1 = "dang moi vao" }); //7
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01018", State1 = "dang moi vao" }); //8
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "37H01019", State1 = "dang moi vao" }); //9
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H09099", State1 = "M9" }); //1
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H010129", State1 = "M9" }); //2
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01013", State1 = "M9" }); //3
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01014", State1 = "M9" }); //4
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01015", State1 = "M10" }); //5
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01016", State1 = "M10" }); //6
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01017", State1 = "M10" }); //7
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01018", State1 = "M10" }); //8
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01019", State1 = "M10" }); //9
 
                 IntPtr pNULL = new IntPtr(0);
 
