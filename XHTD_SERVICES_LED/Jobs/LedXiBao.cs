@@ -198,6 +198,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
+
                 #region Add Area 8
                 int nX9 = 0 + plusX;
                 int nY9 = 128 + plusY;
@@ -209,6 +210,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
+
                 #region Add Area 9
                 //int nX10 = 0 + plusX;
                 //int nY10 = 144 + plusY;
@@ -381,6 +383,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
+
                 // mới thêm
                 #region Show on Area 7
                 nFontHeight = 14;
@@ -449,8 +452,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 //    return;
                 //}
                 #endregion
-
-
 
                 Marshal.FreeHGlobal(pText);
                 Marshal.FreeHGlobal(pFontName);
@@ -538,8 +539,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
-
-
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
                 IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HẢI PHÒNG-");
@@ -593,8 +592,6 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
-
-
 
                 Marshal.FreeHGlobal(pText);
                 Marshal.FreeHGlobal(pFontName);

@@ -118,7 +118,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 int nX2 = 0 + plusX;
                 int nY2 = 16 + plusY;
 
-
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2 == -1)
                 {
@@ -174,8 +173,6 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
-
-
 
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
@@ -315,7 +312,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
-
                 Marshal.FreeHGlobal(pText);
                 Marshal.FreeHGlobal(pFontName);
 
@@ -402,8 +398,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
-
-
                 #region DÒNG TIÊU ĐỀ
                 // 4.Add text AreaItem to Area
                 IntPtr pText = Marshal.StringToHGlobalUni("-VICEM HẢI PHÒNG-");
@@ -457,8 +451,6 @@ namespace XHTD_SERVICES_LED.Jobs
                     return;
                 }
                 #endregion
-
-
 
                 Marshal.FreeHGlobal(pText);
                 Marshal.FreeHGlobal(pFontName);
