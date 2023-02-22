@@ -682,6 +682,9 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                 }
+
+                log.Info("end show led xi roi: no content");
+                Console.WriteLine("end show led roi: no content");
             }
             catch (Exception ex)
             {
