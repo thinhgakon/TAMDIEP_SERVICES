@@ -389,7 +389,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 if (orderShows.Count > 2)
                 {
                     //  pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[2].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "               " + (orderShows[2].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -400,6 +400,30 @@ namespace XHTD_SERVICES_LED.Jobs
                 int nAreaItemID_4 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_4, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_4 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Show on Area 3_2
+                nFontHeight = 12;
+                if (orderShows.Count > 2)
+                {
+                    //  pText = Marshal.StringToHGlobalUni("37C00000" + "               " + orderShows[2].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[2].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_4_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_4_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_4_2 == -1)
                 {
                     Marshal.FreeHGlobal(pText);
                     Marshal.FreeHGlobal(pFontName);
