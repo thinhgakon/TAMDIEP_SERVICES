@@ -100,11 +100,21 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 int plusX = 12;
                 int plusY = 6;
+
+                int WIDTH_LEFT = 134;
+                int WIDTH_RIGHT = 90;
+
+                int HEIGHT_ROW = 16;
+
+                int nAreaWidth = WIDTH_LEFT - plusX;
+                int nAreaHeight = HEIGHT_ROW;
+
+                int nAreaWidth_2 = WIDTH_RIGHT - plusX;
+                int nAreaHeight_2 = HEIGHT_ROW;
+
                 #region Add Area 0
-                int nX1 = 12;
-                int nY1 = 6;
-                int nAreaWidth = 224 - plusX;
-                int nAreaHeight = 16;
+                int nX1 = 0 + plusX;
+                int nY1 = 0 * HEIGHT_ROW + plusY;
 
                 int nAreaID_1 = CSDKExport.Hd_AddArea(nProgramID, nX1, nY1, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_1 == -1)
@@ -117,7 +127,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 #region Add Area 1
                 int nX2 = 0 + plusX;
                 int nY2 = 16 + plusY;
-
 
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2 == -1)
@@ -258,6 +267,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_2, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_2 == -1)
@@ -304,6 +314,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_4 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_4, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_4 == -1)
@@ -327,6 +338,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_5 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_5, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_5 == -1)
@@ -350,6 +362,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_6 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_6, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_6 == -1)
@@ -373,6 +386,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_7 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_7, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_7 == -1)
@@ -397,6 +411,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_8 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_8, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_8 == -1)
@@ -420,6 +435,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     pText = Marshal.StringToHGlobalUni("");
                 }
                 nEffect = 0;
+
                 int nAreaItemID_9 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_9, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_9 == -1)
