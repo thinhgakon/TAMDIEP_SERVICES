@@ -383,7 +383,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 if (orderShows.Count > 0)
                 {
                     //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[0].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper() + "            " + (orderShows[0].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[0].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -402,12 +402,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 1_2
+                nFontHeight = 14;
+                if (orderShows.Count > 0)
+                {
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[0].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[0].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_2_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_2_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_2_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 2
                 nFontHeight = 14;
                 if (orderShows.Count > 1)
                 {
                     // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[1].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper() + "            " + (orderShows[1].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[1].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -425,12 +449,35 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 2_2
+                nFontHeight = 14;
+                if (orderShows.Count > 1)
+                {
+                    // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[1].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[1].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+                int nAreaItemID_3_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_3_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_3_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 3
                 nFontHeight = 14;
                 if (orderShows.Count > 2)
                 {
                     //  pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[2].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper() + "            " + (orderShows[2].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[2].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -449,12 +496,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 3_2
+                nFontHeight = 14;
+                if (orderShows.Count > 2)
+                {
+                    //  pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[2].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[2].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_4_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_4_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_4_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 4
                 nFontHeight = 14;
                 if (orderShows.Count > 3)
                 {
                     //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[3].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper() + "            " + (orderShows[3].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[3].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -473,12 +544,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 4_2
+                nFontHeight = 14;
+                if (orderShows.Count > 3)
+                {
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[3].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[3].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_5_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_5_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_5_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 5
                 nFontHeight = 14;
                 if (orderShows.Count > 4)
                 {
                     // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[4].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper() + "            " + (orderShows[4].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[4].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -497,12 +592,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 5_2
+                nFontHeight = 14;
+                if (orderShows.Count > 4)
+                {
+                    // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[4].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[4].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_6_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_6_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_6_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 6
                 nFontHeight = 14;
                 if (orderShows.Count > 5)
                 {
                     //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[5].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[5].Vehicle.ToUpper() + "            " + (orderShows[5].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[5].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -521,13 +640,37 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 6_2
+                nFontHeight = 14;
+                if (orderShows.Count > 5)
+                {
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[5].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[5].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_7_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_7_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_7_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 // mới thêm
                 #region Show on Area 7
                 nFontHeight = 14;
                 if (orderShows.Count > 6)
                 {
                     // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[6].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[6].Vehicle.ToUpper() + "            " + (orderShows[6].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[6].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -546,12 +689,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Show on Area 7_2
+                nFontHeight = 14;
+                if (orderShows.Count > 6)
+                {
+                    // pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[6].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[6].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_8_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_8_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_8_2 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Show on Area 8
                 nFontHeight = 14;
                 if (orderShows.Count > 7)
                 {
                     //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[7].State1.ToUpper());
-                    pText = Marshal.StringToHGlobalUni(orderShows[7].Vehicle.ToUpper() + "            " + (orderShows[7].State1.ToUpper()));
+                    pText = Marshal.StringToHGlobalUni(orderShows[7].Vehicle.ToUpper());
                 }
                 else
                 {
@@ -562,6 +729,30 @@ namespace XHTD_SERVICES_LED.Jobs
                 int nAreaItemID_9 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_9, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_9 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Show on Area 8_2
+                nFontHeight = 14;
+                if (orderShows.Count > 7)
+                {
+                    //pText = Marshal.StringToHGlobalUni("37C00000" + "            " + orderShows[7].State1.ToUpper());
+                    pText = Marshal.StringToHGlobalUni(orderShows[7].State1.ToUpper());
+                }
+                else
+                {
+                    pText = Marshal.StringToHGlobalUni("");
+                }
+                nEffect = 0;
+
+                int nAreaItemID_9_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_9_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_9_2 == -1)
                 {
                     Marshal.FreeHGlobal(pText);
                     Marshal.FreeHGlobal(pFontName);
