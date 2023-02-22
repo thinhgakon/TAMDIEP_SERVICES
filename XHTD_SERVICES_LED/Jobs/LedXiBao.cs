@@ -340,21 +340,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 //}
                 #endregion
 
-                #region DÒNG TIÊU ĐỀ
-                // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "            " + "VI TRI");
+                // Config chung
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 //int nTextColor = CSDKExport.Hd_GetColor(255, 0, 0);
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
                 int nTextStyle = 0x0000 | 0x0100 /*| 0x0200 */;
-                int nFontHeight = 14;
-                int nEffect = 0;
-                #endregion
 
-                #region Show on Area 0
+                #region Show on Area 0 DÒNG TIÊU ĐỀ
+                int nFontHeight = 14;
+                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO");
+                int nEffect = 0;
+                
                 int nAreaItemID_1 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_1, pText, nTextColor, 0, nTextStyle,
                     pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
                 if (nAreaItemID_1 == -1)
+                {
+                    Marshal.FreeHGlobal(pText);
+                    Marshal.FreeHGlobal(pFontName);
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Show on Area 0_2: DÒNG TIÊU ĐỀ
+                nFontHeight = 12;
+                pText = Marshal.StringToHGlobalUni("VI TRI");
+                nEffect = 0;
+
+                int nAreaItemID_1_2 = CSDKExport.Hd_AddSimpleTextAreaItem(nAreaID_1_2, pText, nTextColor, 0, nTextStyle,
+                    pFontName, nFontHeight, nEffect, 30, 201, 3, pNULL, 0);
+                if (nAreaItemID_1_2 == -1)
                 {
                     Marshal.FreeHGlobal(pText);
                     Marshal.FreeHGlobal(pFontName);
