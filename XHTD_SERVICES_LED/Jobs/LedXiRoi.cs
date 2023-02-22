@@ -100,11 +100,12 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 int plusX = 6;
                 int plusY = 6;
+                int nAreaWidth = 160 - plusX;
+                int nAreaHeight = 16;
+
                 #region Add Area 0
                 int nX1 = 6;
                 int nY1 = 6;
-                int nAreaWidth = 160 - plusX;
-                int nAreaHeight = 16;
 
                 int nAreaID_1 = CSDKExport.Hd_AddArea(nProgramID, nX1, nY1, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_1 == -1)
@@ -174,14 +175,16 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
-                #region DÒNG TIÊU ĐỀ
-                // 4.Add text AreaItem to Area
-                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "               " + "VI TRI");
+                // Config chung
                 IntPtr pFontName = Marshal.StringToHGlobalUni("Times New Roman");
                 //int nTextColor = CSDKExport.Hd_GetColor(255, 0, 0);
                 int nTextColor = CSDKExport.Hd_GetColor(255, 255, 255);
                 int nTextStyle = 0x0000 | 0x0100 /*| 0x0200 */;
+
+                #region DÒNG TIÊU ĐỀ
+                // 4.Add text AreaItem to Area
                 int nFontHeight = 12;
+                IntPtr pText = Marshal.StringToHGlobalUni("BIEN SO" + "               " + "VI TRI");
                 int nEffect = 0;
                 #endregion
 
@@ -376,7 +379,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 #region Add Area 1
                 int nX2 = 0;
                 int nY2 = 50;
-
 
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2 == -1)
