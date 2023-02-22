@@ -104,8 +104,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 int nAreaHeight = 16;
 
                 #region Add Area 0
-                int nX1 = 6;
-                int nY1 = 6;
+                int nX1 = 0 + plusX;
+                int nY1 = 0 + plusY;
 
                 int nAreaID_1 = CSDKExport.Hd_AddArea(nProgramID, nX1, nY1, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_1 == -1)
