@@ -100,15 +100,21 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 int plusX = 6;
                 int plusY = 6;
-                int nAreaWidth = 80 - plusX;
-                int nAreaHeight = 16;
 
-                int nAreaWidth_2 = 80 - plusX;
-                int nAreaHeight_2 = 16;
+                int WIDTH_LEFT = 80;
+                int WIDTH_RIGHT = 80;
+
+                int HEIGHT_ROW = 16;
+
+                int nAreaWidth = WIDTH_LEFT - plusX;
+                int nAreaHeight = HEIGHT_ROW;
+
+                int nAreaWidth_2 = WIDTH_RIGHT - plusX;
+                int nAreaHeight_2 = HEIGHT_ROW;
 
                 #region Add Area 0
                 int nX1 = 0 + plusX;
-                int nY1 = 0 + plusY;
+                int nY1 = 0 * HEIGHT_ROW + plusY;
 
                 int nAreaID_1 = CSDKExport.Hd_AddArea(nProgramID, nX1, nY1, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_1 == -1)
@@ -119,8 +125,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 0_2
-                int nX1_2 = 80 + plusX;
-                int nY1_2 = 0 + plusY;
+                int nX1_2 = WIDTH_RIGHT + plusX;
+                int nY1_2 = 0 * HEIGHT_ROW + plusY;
 
                 int nAreaID_1_2 = CSDKExport.Hd_AddArea(nProgramID, nX1_2, nY1_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_1_2 == -1)
@@ -132,7 +138,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 1
                 int nX2 = 0 + plusX;
-                int nY2 = 16 + plusY;
+                int nY2 = 1 * HEIGHT_ROW + plusY;
 
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2 == -1)
@@ -143,8 +149,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 1_2
-                int nX2_2 = 80 + plusX;
-                int nY2_2 = 16 + plusY;
+                int nX2_2 = WIDTH_RIGHT + plusX;
+                int nY2_2 = 1 * HEIGHT_ROW + plusY;
 
                 int nAreaID_2_2 = CSDKExport.Hd_AddArea(nProgramID, nX2_2, nY2_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2_2 == -1)
@@ -156,7 +162,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 2
                 int nX3 = 0 + plusX;
-                int nY3 = 32 + plusY;
+                int nY3 = 2 * HEIGHT_ROW + plusY;
 
                 int nAreaID_3 = CSDKExport.Hd_AddArea(nProgramID, nX3, nY3, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_3 == -1)
@@ -167,8 +173,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 2_2
-                int nX3_2 = 80 + plusX;
-                int nY3_2 = 32 + plusY;
+                int nX3_2 = WIDTH_RIGHT + plusX;
+                int nY3_2 = 2 * HEIGHT_ROW + plusY;
 
                 int nAreaID_3_2 = CSDKExport.Hd_AddArea(nProgramID, nX3_2, nY3_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_3_2 == -1)
@@ -180,7 +186,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 3
                 int nX4 = 0 + plusX;
-                int nY4 = 48 + plusY;
+                int nY4 = 3 * HEIGHT_ROW + plusY;
 
                 int nAreaID_4 = CSDKExport.Hd_AddArea(nProgramID, nX4, nY4, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_4 == -1)
@@ -191,8 +197,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 3_2
-                int nX4_2 = 80 + plusX;
-                int nY4_2 = 48 + plusY;
+                int nX4_2 = WIDTH_RIGHT + plusX;
+                int nY4_2 = 3 * HEIGHT_ROW + plusY;
 
                 int nAreaID_4_2 = CSDKExport.Hd_AddArea(nProgramID, nX4_2, nY4_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_4_2 == -1)
@@ -204,7 +210,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 4
                 int nX5 = 0 + plusX;
-                int nY5 = 64 + plusY;
+                int nY5 = 4 * HEIGHT_ROW + plusY;
 
                 int nAreaID_5 = CSDKExport.Hd_AddArea(nProgramID, nX5, nY5, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_5 == -1)
@@ -215,8 +221,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 4_2
-                int nX5_2 = 80 + plusX;
-                int nY5_2 = 64 + plusY;
+                int nX5_2 = WIDTH_RIGHT + plusX;
+                int nY5_2 = 4 * HEIGHT_ROW + plusY;
 
                 int nAreaID_5_2 = CSDKExport.Hd_AddArea(nProgramID, nX5_2, nY5_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_5_2 == -1)
@@ -228,7 +234,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 #region Add Area 5
                 int nX6 = 0 + plusX;
-                int nY6 = 80 + plusY;
+                int nY6 = 5 * HEIGHT_ROW + plusY;
 
                 int nAreaID_6 = CSDKExport.Hd_AddArea(nProgramID, nX6, nY6, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_6 == -1)
@@ -239,8 +245,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 #endregion
 
                 #region Add Area 5_2
-                int nX6_2 = 80 + plusX;
-                int nY6_2 = 80 + plusY;
+                int nX6_2 = WIDTH_RIGHT + plusX;
+                int nY6_2 = 5 * HEIGHT_ROW + plusY;
 
                 int nAreaID_6_2 = CSDKExport.Hd_AddArea(nProgramID, nX6_2, nY6_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_6_2 == -1)
