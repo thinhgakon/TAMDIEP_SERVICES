@@ -124,12 +124,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Add Area 0_2
+                int nX1_2 = WIDTH_LEFT + plusX;
+                int nY1_2 = 0 * HEIGHT_ROW + plusY;
+
+                int nAreaID_1_2 = CSDKExport.Hd_AddArea(nProgramID, nX1_2, nY1_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_1_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Add Area 1
                 int nX2 = 0 + plusX;
                 int nY2 = 16 + plusY;
 
                 int nAreaID_2 = CSDKExport.Hd_AddArea(nProgramID, nX2, nY2, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Add Area 1_2
+                int nX2_2 = WIDTH_LEFT + plusX;
+                int nY2_2 = 1 * HEIGHT_ROW + plusY;
+
+                int nAreaID_2_2 = CSDKExport.Hd_AddArea(nProgramID, nX2_2, nY2_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_2_2 == -1)
                 {
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                     return;
@@ -148,12 +172,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Add Area 2_2
+                int nX3_2 = WIDTH_LEFT + plusX;
+                int nY3_2 = 2 * HEIGHT_ROW + plusY;
+
+                int nAreaID_3_2 = CSDKExport.Hd_AddArea(nProgramID, nX3_2, nY3_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_3_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Add Area 3
                 int nX4 = 0 + plusX;
                 int nY4 = 48 + plusY;
 
                 int nAreaID_4 = CSDKExport.Hd_AddArea(nProgramID, nX4, nY4, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_4 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Add Area 3_2
+                int nX4_2 = WIDTH_LEFT + plusX;
+                int nY4_2 = 3 * HEIGHT_ROW + plusY;
+
+                int nAreaID_4_2 = CSDKExport.Hd_AddArea(nProgramID, nX4_2, nY4_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_4_2 == -1)
                 {
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                     return;
@@ -172,12 +220,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Add Area 4_2
+                int nX5_2 = WIDTH_LEFT + plusX;
+                int nY5_2 = 4 * HEIGHT_ROW + plusY;
+
+                int nAreaID_5_2 = CSDKExport.Hd_AddArea(nProgramID, nX5_2, nY5_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_5_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Add Area 5
                 int nX6 = 0 + plusX;
                 int nY6 = 80 + plusY;
 
                 int nAreaID_6 = CSDKExport.Hd_AddArea(nProgramID, nX6, nY6, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_6 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Add Area 5_2
+                int nX6_2 = WIDTH_LEFT + plusX;
+                int nY6_2 = 5 * HEIGHT_ROW + plusY;
+
+                int nAreaID_6_2 = CSDKExport.Hd_AddArea(nProgramID, nX6_2, nY6_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_6_2 == -1)
                 {
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                     return;
@@ -196,6 +268,18 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Add Area 6_2
+                int nX7_2 = WIDTH_LEFT + plusX;
+                int nY7_2 = 5 * HEIGHT_ROW + plusY;
+
+                int nAreaID_7_2 = CSDKExport.Hd_AddArea(nProgramID, nX7_2, nY7_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_7_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Add Area 7
                 int nX8 = 0 + plusX;
                 int nY8 = 112 + plusY;
@@ -208,12 +292,36 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 #endregion
 
+                #region Add Area 7_2
+                int nX8_2 = WIDTH_LEFT + plusX;
+                int nY8_2 = 5 * HEIGHT_ROW + plusY;
+
+                int nAreaID_8_2 = CSDKExport.Hd_AddArea(nProgramID, nX8_2, nY8_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_8_2 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
                 #region Add Area 8
                 int nX9 = 0 + plusX;
                 int nY9 = 128 + plusY;
 
                 int nAreaID_9 = CSDKExport.Hd_AddArea(nProgramID, nX9, nY9, nAreaWidth, nAreaHeight, pNULL, 0, 0, pNULL, 0);
                 if (nAreaID_9 == -1)
+                {
+                    nErrorCode = CSDKExport.Hd_GetSDKLastError();
+                    return;
+                }
+                #endregion
+
+                #region Add Area 8_2
+                int nX9_2 = WIDTH_LEFT + plusX;
+                int nY9_2 = 5 * HEIGHT_ROW + plusY;
+
+                int nAreaID_9_2 = CSDKExport.Hd_AddArea(nProgramID, nX9_2, nY9_2, nAreaWidth_2, nAreaHeight_2, pNULL, 0, 0, pNULL, 0);
+                if (nAreaID_9_2 == -1)
                 {
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                     return;
