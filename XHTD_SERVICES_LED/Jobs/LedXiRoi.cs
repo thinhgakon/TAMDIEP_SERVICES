@@ -63,7 +63,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 //nếu không có data thì sử dụng màn hình led với thông tin mong muốn ở hàm  SetLED12NoContent
 
                 //var orderShows = new List<StoreOrderForLED12>();
-                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H09099", State1 = "M9" }); //1
+                //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H090", State1 = "M9" }); //1
                 //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H010129", State1 = "M9" }); //2
                 //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01013", State1 = "M9" }); //3
                 //orderShows.Add(new StoreOrderForLED12 { Vehicle = "15H01014", State1 = "M9" }); //4
