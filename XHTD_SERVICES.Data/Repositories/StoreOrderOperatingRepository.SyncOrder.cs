@@ -183,8 +183,11 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
                                                 && x.Step < (int)OrderStep.DA_CAN_VAO);
+
                 if (order != null)
                 {
+                    log.Info($@"===== Update Receiving Order {orderId}: weightIn {order.WeightIn} ==>> {weightIn * 1000}");
+
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
@@ -235,8 +238,11 @@ namespace XHTD_SERVICES.Data.Repositories
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
                                                     && x.Step < (int)OrderStep.DA_CAN_RA);
+
                     if (order != null)
                     {
+                        log.Info($@"===== Update Received Order {orderId}: WeightOut {order.WeightOut} ==>> {weightOut * 1000}");
+
                         order.Confirm7 = 1;
                         order.TimeConfirm7 = timeOutDate;
                         order.Step = (int)OrderStep.DA_CAN_RA;
