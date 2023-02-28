@@ -199,8 +199,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     var timeCurrent = tmp[0]?.ToString();
 
                                     // Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) 
-                                    { 
+                                    if (tmpInvalidCardNoLst.Count > 10)
+                                    {
                                         tmpInvalidCardNoLst.RemoveRange(0, 3); 
                                     }
 
@@ -210,9 +210,9 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                         continue;
                                     }
 
-                                    if (tmpCardNoLst.Count > 5) 
-                                    { 
-                                        tmpCardNoLst.RemoveRange(0, 3); 
+                                    if (tmpCardNoLst.Count > 5)
+                                    {
+                                        tmpCardNoLst.RemoveRange(0, 3);
                                     }
 
                                     if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))

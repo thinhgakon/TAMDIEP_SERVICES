@@ -192,9 +192,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var timeCurrent = tmp[0]?.ToString();
 
                                     // Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) 
-                                    { 
-                                        tmpInvalidCardNoLst.RemoveRange(0, 3); 
+                                    if (tmpInvalidCardNoLst.Count > 10)
+                                    {
+                                        tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     }
 
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
@@ -203,9 +203,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         continue;
                                     }
 
-                                    if (tmpCardNoLst.Count > 5) 
-                                    { 
-                                        tmpCardNoLst.RemoveRange(0, 3); 
+                                    if (tmpCardNoLst.Count > 5)
+                                    {
+                                        tmpCardNoLst.RemoveRange(0, 3);
                                     }
 
                                     if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
@@ -281,7 +281,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         continue;
                                     }
-                                    else 
+                                    else
                                     {
                                         new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
@@ -314,7 +314,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         {
                                             _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // 5.Bat den do
+                                            // 5. Bat den do
                                             _logger.LogInfo($@"5.1. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
@@ -338,7 +338,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         {
                                             _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                                            // 5.Bat den do
+                                            // 5. Bat den do
                                             _logger.LogInfo($@"5.1. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
