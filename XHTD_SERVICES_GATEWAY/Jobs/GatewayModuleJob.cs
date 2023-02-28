@@ -15,6 +15,7 @@ using XHTD_SERVICES.Helper;
 using Microsoft.AspNet.SignalR.Client;
 using System.Threading;
 using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -357,13 +358,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(cardNoCurrent);
 
-                                        isValidCardNo = true;
+                                        isValidCardNo = IsValidOrderEntraceGateway(currentOrder);
                                     }
                                     else if (isLuongRa)
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(cardNoCurrent);
 
-                                        isValidCardNo = true;
+                                        isValidCardNo = IsValidOrderExitGateway(currentOrder);
                                     }
 
                                     if (isValidCardNo == false)
@@ -481,7 +482,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             {
                                                 Code = deviceCode,
                                                 ActionType = 1,
-                                                ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {deliveryCodes}",
+                                                ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentOrder.DeliveryCode}",
                                                 ActionDate = DateTime.Now,
                                             };
 
@@ -611,6 +612,67 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
             }
+        }
+
+        public bool IsValidOrderEntraceGateway(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                return false;
+            }
+
+            if (
+                (
+                    order.CatId == "CLINKER"
+                    && order.Step < (int)OrderStep.DA_CAN_VAO
+                )
+                ||
+                (
+                    (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+                    && order.Step < (int)OrderStep.DA_CAN_VAO
+                )
+                ||
+                (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                )
+                )
+            { 
+                return true; 
+            }
+
+            return false;
+        }
+
+        public bool IsValidOrderExitGateway(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                return false;
+            }
+
+            if (
+                (
+                    order.CatId == "CLINKER"
+                    && order.Step >= (int)OrderStep.DA_CAN_VAO
+                    && order.Step <= (int)OrderStep.DA_CAN_RA
+                )
+                ||
+                (
+                    (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+                    && order.Step == (int)OrderStep.DA_CAN_RA
+                )
+                ||
+                (
+                    order.Step == (int)OrderStep.DA_CAN_RA
+                    && (order.DriverUserName ?? "") != ""
+                )
+                )
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
