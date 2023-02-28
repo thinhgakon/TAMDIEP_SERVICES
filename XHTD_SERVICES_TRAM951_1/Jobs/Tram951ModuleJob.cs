@@ -281,7 +281,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                                         continue;
                                     }
-                                    else { 
+                                    else 
+                                    {
                                         new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
 
@@ -338,7 +339,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                             _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // 5. Bat den do
-                                            _logger.LogInfo($@"5..1 Bat den do chieu vao");
+                                            _logger.LogInfo($@"5.1. Bat den do chieu vao");
                                             DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
                                             Thread.Sleep(500);
                                             _logger.LogInfo($@"5.2. Bat den do chieu ra");

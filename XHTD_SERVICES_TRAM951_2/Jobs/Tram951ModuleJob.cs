@@ -281,7 +281,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         continue;
                                     }
-                                    else { 
+                                    else 
+                                    {
                                         new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
 
