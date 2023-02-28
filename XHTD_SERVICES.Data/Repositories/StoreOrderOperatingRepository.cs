@@ -309,6 +309,33 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceGateway(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                     && (
+                                                            (
+                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        ||
+                                                            (
+                                                                (x.DriverUserName ?? "") != ""
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        )
+                                                     )
+                                            .OrderByDescending(x => x.Step)
+                                            .FirstOrDefaultAsync();
+
+                return order;
+            }
+        }
+
         public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -332,6 +359,33 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .ToListAsync();
 
                 return orders;
+            }
+        }
+
+        public async Task<tblStoreOrderOperating> GetCurrentOrderExitGateway(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                    && (
+                                                            (
+                                                                x.CatId == "CLINKER"
+                                                                &&
+                                                                x.Step == (int)OrderStep.DA_CAN_VAO
+                                                            )
+                                                        ||
+                                                            (
+                                                                x.CatId != "CLINKER"
+                                                                &&
+                                                                x.Step == (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                        )
+                                                     )
+                                            .OrderByDescending(x => x.Step)
+                                            .FirstOrDefaultAsync();
+
+                return order;
             }
         }
 

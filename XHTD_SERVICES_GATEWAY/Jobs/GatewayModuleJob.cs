@@ -350,17 +350,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
 
                                     // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    List<tblStoreOrderOperating> currentOrders = null;
+                                    tblStoreOrderOperating currentOrder = null;
+
                                     if (isLuongVao)
                                     {
-                                        currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGateway(cardNoCurrent);
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(cardNoCurrent);
                                     }
                                     else if (isLuongRa)
                                     {
-                                        currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGateway(cardNoCurrent);
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(cardNoCurrent);
                                     }
 
-                                    if (currentOrders == null || currentOrders.Count == 0)
+                                    if (currentOrder == null)
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
@@ -387,10 +388,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         }
                                     }
 
-                                    var currentOrder = currentOrders.FirstOrDefault();
-                                    var deliveryCodes = String.Join(";", currentOrders.Select(x => x.DeliveryCode).ToArray());
-
-                                    _gatewayLogger.LogInfo($"4. Tag co cac don hang hop le DeliveryCode = {deliveryCodes}");
+                                    _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
 
                                     var isUpdatedOrder = false;
                                     bool isSuccessOpenBarrier = false;
