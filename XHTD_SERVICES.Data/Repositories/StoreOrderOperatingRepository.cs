@@ -319,13 +319,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                             (
                                                                 (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
-                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                                x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
                                                         ||
                                                             (
                                                                 (x.DriverUserName ?? "") != ""
                                                                 &&
-                                                                x.Step < (int)OrderStep.DA_CAN_VAO
+                                                                x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
                                                         )
                                                      )
@@ -372,7 +372,11 @@ namespace XHTD_SERVICES.Data.Repositories
                                                             (
                                                                 x.CatId == "CLINKER"
                                                                 &&
-                                                                x.Step == (int)OrderStep.DA_CAN_VAO
+                                                                (
+                                                                    x.Step >= (int)OrderStep.DA_CAN_VAO
+                                                                    ||
+                                                                    x.Step <= (int)OrderStep.DA_CAN_VAO
+                                                                )
                                                             )
                                                         ||
                                                             (
