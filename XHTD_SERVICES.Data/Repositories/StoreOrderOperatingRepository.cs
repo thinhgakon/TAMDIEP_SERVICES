@@ -560,44 +560,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
         // Cổng bảo vệ
         // Xác thực ra cổng
-        public async Task<bool> UpdateOrderConfirm8ByDeliveryCode(string deliveryCode)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    string currentTime = DateTime.Now.ToString();
-
-                    var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.DeliveryCode == deliveryCode
-                                                    && x.Step < (int)OrderStep.DA_CAN_RA
-                                                     )
-                                            .FirstOrDefaultAsync();
-
-                    if (order == null)
-                    {
-                        return false;
-                    }
-                    
-                    order.Confirm8 = 1;
-                    order.TimeConfirm8 = DateTime.Now;
-                    order.Step = (int)OrderStep.DA_HOAN_THANH;
-                    order.IndexOrder = 0;
-                    order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
-
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
-                    return false;
-                }
-            }
-        }
-
         public async Task<bool> UpdateOrderConfirm8(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -608,20 +570,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
-                                                    && (
-                                                            (
-                                                                x.CatId == "CLINKER"
-                                                                &&
-                                                                x.Step == (int)OrderStep.DA_CAN_VAO
-                                                            )
-                                                        ||
-                                                            (
-                                                                x.CatId != "CLINKER"
-                                                                &&
-                                                                x.Step == (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                        )
-                                                     )
+                                                     && x.Step == (int)OrderStep.DA_CAN_RA
+                                                    )
                                             .ToListAsync();
 
                     if (orders == null || orders.Count == 0)

@@ -441,7 +441,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != "JUMBO"
                                             && currentOrder.TypeXK != "SLING")
                                         {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByDeliveryCode(currentDeliveryCode);
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
                                         }
                                         else
                                         {
