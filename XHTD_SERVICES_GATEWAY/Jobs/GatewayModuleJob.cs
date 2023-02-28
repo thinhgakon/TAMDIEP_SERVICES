@@ -387,7 +387,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     var isUpdatedOrder = false;
-                                    bool isSuccessOpenBarrier = false;
+                                    bool isSuccessOpenBarrier = true;
 
                                     if (isLuongVao)
                                     {
