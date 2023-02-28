@@ -42,6 +42,7 @@ namespace XHTD_SERVICES_TRAM951_1
             builder.RegisterType<IndexOrderBusiness>().AsSelf();
             builder.RegisterType<DesicionScaleBusiness>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
+            builder.RegisterType<VehicleBusiness>().AsSelf();
 
             RegisterScheduler(builder);
 

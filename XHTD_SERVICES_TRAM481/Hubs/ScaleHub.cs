@@ -167,6 +167,16 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                         }
                         logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
+                        var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
+                        if (isLongVehicle)
+                        {
+                            logger.Info($"{scaleInfo.Vehicle} la long vehicle => Khong dong mo barrier");
+                        }
+                        else
+                        {
+                            logger.Info($"{scaleInfo.Vehicle} khong phai la long vehicle");
+                        }
+
                         // Đang cân vào
                         if ((bool)scaleInfo.ScaleIn)
                         {

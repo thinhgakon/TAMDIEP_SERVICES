@@ -40,6 +40,7 @@ namespace XHTD_SERVICES_TRAM481
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
             builder.RegisterType<WeightBusiness>().AsSelf();
             builder.RegisterType<IndexOrderBusiness>().AsSelf();
+            builder.RegisterType<VehicleBusiness>().AsSelf();
 
             RegisterScheduler(builder);
 

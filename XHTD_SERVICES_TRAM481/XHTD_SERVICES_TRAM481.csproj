@@ -262,6 +262,7 @@
     <Compile Include="Business\ScaleApiLib.cs" />
     <Compile Include="Business\ScaleBusiness.cs" />
     <Compile Include="Business\UnladenWeightBusiness.cs" />
+    <Compile Include="Business\VehicleBusiness.cs" />
     <Compile Include="Business\WeightBusiness.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\SensorControl.cs" />

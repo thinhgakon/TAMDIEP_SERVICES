@@ -20,9 +20,9 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
-        public bool CheckExist(string vehicleCode)
+        public async Task<bool> CheckExist(string vehicleCode)
         {
-            var vehicleExist = _appDbContext.tblLongVehicles.FirstOrDefault(x => x.Vehicle == vehicleCode);
+            var vehicleExist = await _appDbContext.tblLongVehicles.FirstOrDefaultAsync(x => x.Vehicle == vehicleCode);
             if (vehicleExist != null)
             {
                 return true;
