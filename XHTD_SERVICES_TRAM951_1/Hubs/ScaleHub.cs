@@ -154,128 +154,130 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     using (var dbContext = new XHTD_Entities())
                     {
                         // 2. Lấy thông tin xe, đơn hàng đang cân
-                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE);
+                        var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE && (bool)x.IsScaling);
                         if (scaleInfo == null)
                         {
-                            logger.Info($"Khong co ban ghi trong table Scale voi code = {SCALE_CODE}");
+                            logger.Info($"Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
+
+                            // TODO
+                            // Giải phóng cân
+                            // Thông báo chuyển sang cân thủ công
+
                             return;
                         }
                         logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
-                        if ((bool)scaleInfo.IsScaling)
+                        // Đang cân vào
+                        if ((bool)scaleInfo.ScaleIn)
                         {
-                            // Đang cân vào
-                            if ((bool)scaleInfo.ScaleIn)
+                            // 3. Cập nhật khối lượng không tải của phương tiện
+                            logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
+                            //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+
+                            // 4. Đóng barrier
+                            //logger.Info($"4.1. Dong barrier IN");
+                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                            //Thread.Sleep(1000);
+                            //logger.Info($"4.2. Dong barrier OUT");
+                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+
+                            // 5. Gọi iERP API lưu giá trị cân
+                            logger.Info($"5. Goi iERP API luu gia tri can");
+                            var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
+
+                            if (scaleInfoResult.Code == "01")
                             {
-                                // 3. Cập nhật khối lượng không tải của phương tiện
-                                logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
-                                //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+                                // Lưu giá trị cân thành công
+                                logger.Info($"Lưu giá trị cân thành công");
 
-                                // 4. Đóng barrier
-                                //logger.Info($"4.1. Dong barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                Thread.Sleep(7000);
+
+                                // 6. Mở barrier
+                                //logger.Info($"6.1. Mo barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
                                 //Thread.Sleep(1000);
-                                //logger.Info($"4.2. Dong barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                                //logger.Info($"6.2. Mo barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-                                // 5. Gọi iERP API lưu giá trị cân
-                                logger.Info($"5. Goi iERP API luu gia tri can");
-                                var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
+                                Thread.Sleep(3500);
 
-                                if (scaleInfoResult.Code == "01")
-                                {
-                                    // Lưu giá trị cân thành công
-                                    logger.Info($"Lưu giá trị cân thành công");
-
-                                    Thread.Sleep(7000);
-
-                                    // 6. Mở barrier
-                                    //logger.Info($"6.1. Mo barrier IN");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //Thread.Sleep(1000);
-                                    //logger.Info($"6.2. Mo barrier OUT");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-
-                                    Thread.Sleep(3500);
-
-                                    // 8. Update giá trị cân của đơn hàng
-                                    logger.Info($"8. Update gia tri can vao");
-                                    //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
-                                }
-                                else
-                                {
-                                    // Lưu giá trị cân thất bại
-                                    logger.Info($"Lưu giá trị cân thất bại");
-                                }
-
-                                // 7. Bật đèn xanh
-                                logger.Info($"7.1. Bat den xanh chieu vao");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
-                                Thread.Sleep(500);
-                                logger.Info($"7.2. Bat den xanh chieu ra");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
-
-                                // 9. Giải phóng cân
-                                logger.Info($"9. Giai phong can {SCALE_CODE}");
-                                Program.IsScalling = false;
-                                Program.IsLockingScale = false;
-                                Program.scaleValues.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+                                // 8. Update giá trị cân của đơn hàng
+                                logger.Info($"8. Update gia tri can vao");
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
                             }
-                            // Đang cân ra
-                            else if ((bool)scaleInfo.ScaleOut)
+                            else
                             {
-                                // 3. Đóng barrier
-                                //logger.Info($"3.1. Dong barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                //Thread.Sleep(1000);
-                                //logger.Info($"3.2. Dong barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
-
-                                // 4. Gọi iERP API lưu giá trị cân
-                                logger.Info($"4. Goi iERP API luu gia tri can");
-                                var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
-
-                                if (scaleInfoResult.Code == "01")
-                                {
-                                    // Lưu giá trị cân thành công
-                                    logger.Info($"Lưu giá trị cân thành công");
-
-                                    Thread.Sleep(7000);
-
-                                    // 5. Mở barrier
-                                    //logger.Info($"5.1. Mo barrier IN");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //Thread.Sleep(1000);
-                                    //logger.Info($"5.2. Mo barrier OUT");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-
-                                    Thread.Sleep(3500);
-
-                                    // 7. Update giá trị cân của đơn hàng
-                                    logger.Info($"7. Update gia tri can ra");
-                                    //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
-                                }
-                                else
-                                {
-                                    // Lưu giá trị cân thất bại
-                                    logger.Info($"Lưu giá trị cân thất bại: {scaleInfoResult.Message}");
-                                }
-
-                                // 6. Bật đèn xanh
-                                logger.Info($"6.1. Bat den xanh chieu vao");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
-                                Thread.Sleep(500);
-                                logger.Info($"6.2. Bat den xanh chieu ra");
-                                DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
-
-                                // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                logger.Info($"8. Giai phong can {SCALE_CODE}");
-                                Program.IsScalling = false;
-                                Program.IsLockingScale = false;
-                                Program.scaleValues.Clear();
-                                await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+                                // Lưu giá trị cân thất bại
+                                logger.Info($"Lưu giá trị cân thất bại");
                             }
+
+                            // 7. Bật đèn xanh
+                            logger.Info($"7.1. Bat den xanh chieu vao");
+                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
+                            Thread.Sleep(500);
+                            logger.Info($"7.2. Bat den xanh chieu ra");
+                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
+
+                            // 9. Giải phóng cân
+                            logger.Info($"9. Giai phong can {SCALE_CODE}");
+                            Program.IsScalling = false;
+                            Program.IsLockingScale = false;
+                            Program.scaleValues.Clear();
+                            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+                        }
+                        // Đang cân ra
+                        else if ((bool)scaleInfo.ScaleOut)
+                        {
+                            // 3. Đóng barrier
+                            //logger.Info($"3.1. Dong barrier IN");
+                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                            //Thread.Sleep(1000);
+                            //logger.Info($"3.2. Dong barrier OUT");
+                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+
+                            // 4. Gọi iERP API lưu giá trị cân
+                            logger.Info($"4. Goi iERP API luu gia tri can");
+                            var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
+
+                            if (scaleInfoResult.Code == "01")
+                            {
+                                // Lưu giá trị cân thành công
+                                logger.Info($"Lưu giá trị cân thành công");
+
+                                Thread.Sleep(7000);
+
+                                // 5. Mở barrier
+                                //logger.Info($"5.1. Mo barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"5.2. Mo barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+                                Thread.Sleep(3500);
+
+                                // 7. Update giá trị cân của đơn hàng
+                                logger.Info($"7. Update gia tri can ra");
+                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.CardNo, currentScaleValue);
+                            }
+                            else
+                            {
+                                // Lưu giá trị cân thất bại
+                                logger.Info($"Lưu giá trị cân thất bại: {scaleInfoResult.Message}");
+                            }
+
+                            // 6. Bật đèn xanh
+                            logger.Info($"6.1. Bat den xanh chieu vao");
+                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE);
+                            Thread.Sleep(500);
+                            logger.Info($"6.2. Bat den xanh chieu ra");
+                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE);
+
+                            // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
+                            logger.Info($"8. Giai phong can {SCALE_CODE}");
+                            Program.IsScalling = false;
+                            Program.IsLockingScale = false;
+                            Program.scaleValues.Clear();
+                            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
                         }
                     }
                 }
