@@ -341,7 +341,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Phương tiện chưa dán thẻ");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -364,7 +364,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, "Phương tiện không có đơn hàng");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không có đơn hàng hợp lệ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -373,7 +373,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else
                                     {
-                                        await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện hợp lệ");
+                                        await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện có đơn hàng hợp lệ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
