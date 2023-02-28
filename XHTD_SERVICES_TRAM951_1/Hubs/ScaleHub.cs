@@ -213,6 +213,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 8. Update giá trị cân của đơn hàng
                                 logger.Info($"8. Update gia tri can vao");
+                                // TODO: update trạng thái đơn hàng đã cân vào
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
                             }
                             else
@@ -267,6 +268,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 7. Update giá trị cân của đơn hàng
                                 logger.Info($"7. Update gia tri can ra");
+                                // TODO: update trạng thái đơn hàng đã cân ra
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
                             }
                             else
