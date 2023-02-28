@@ -265,7 +265,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     SendRFIDInfo(isLuongVao, cardNoCurrent);
 
                                     // 2. Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
+                                    if (tmpInvalidCardNoLst.Count > 10)
+                                    { 
+                                        tmpInvalidCardNoLst.RemoveRange(0, 3); 
+                                    }
+
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
                                     {
                                         //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
@@ -274,7 +278,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        if (tmpCardNoLst_In.Count > 5) tmpCardNoLst_In.RemoveRange(0, 3);
+                                        if (tmpCardNoLst_In.Count > 5)
+                                        { 
+                                            tmpCardNoLst_In.RemoveRange(0, 3); 
+                                        }
+
                                         if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                         {
                                             //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
@@ -283,7 +291,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        if (tmpCardNoLst_Out.Count > 5) tmpCardNoLst_Out.RemoveRange(0, 3);
+                                        if (tmpCardNoLst_Out.Count > 5) 
+                                        { 
+                                            tmpCardNoLst_Out.RemoveRange(0, 3); 
+                                        }
+
                                         if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                         {
                                             //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
