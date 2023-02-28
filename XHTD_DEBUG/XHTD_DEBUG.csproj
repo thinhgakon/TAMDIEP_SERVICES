@@ -270,14 +270,6 @@
       <Project>{567a44f3-5d4d-474a-a14c-54ffc805f527}</Project>
       <Name>XHTD_SERVICES_TRAM951_2</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_TRAM951_IN\XHTD_SERVICES_TRAM951_IN.csproj">
-      <Project>{13e42194-55cf-4fb7-a218-d879353da89e}</Project>
-      <Name>XHTD_SERVICES_TRAM951_IN</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_TRAM951_OUT\XHTD_SERVICES_TRAM951_OUT.csproj">
-      <Project>{272b4836-1ad4-40e0-abe2-6e9521c2791f}</Project>
-      <Name>XHTD_SERVICES_TRAM951_OUT</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_XR_QUEUE_TO_CALL\XHTD_SERVICES_XR_QUEUE_TO_CALL.csproj">
       <Project>{eb93b207-e24a-4c22-8396-07049f24d4d5}</Project>
       <Name>XHTD_SERVICES_XR_QUEUE_TO_CALL</Name>
