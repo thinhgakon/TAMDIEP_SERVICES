@@ -396,16 +396,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != "SLING")
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
+
+                                            if (isUpdatedOrder)
+                                            {
+                                                _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
+                                            }
                                         }
                                         else
                                         {
                                             isUpdatedOrder = true;
+                                            _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái vào cổng.");
                                         }
 
                                         if (isUpdatedOrder)
                                         {
-                                            _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng.");
-
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             //isSuccessOpenBarrier = OpenBarrier("IN");
 
@@ -431,16 +435,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != "SLING")
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+
+                                            if (isUpdatedOrder)
+                                            {
+                                                _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng");
+                                            }
                                         }
                                         else
                                         {
                                             isUpdatedOrder = true;
+                                            _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái ra cổng.");
                                         }
 
                                         if (isUpdatedOrder)
                                         {
-                                            _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng.");
-
                                             _gatewayLogger.LogInfo($"7. Mở barrier");
                                             //isSuccessOpenBarrier = OpenBarrier("OUT");
 
