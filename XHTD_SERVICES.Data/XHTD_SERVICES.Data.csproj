@@ -186,6 +186,7 @@
     <Compile Include="Repositories\SystemParameterRepository.cs" />
     <Compile Include="Repositories\TroughRepository.cs" />
     <Compile Include="Repositories\ScaleOperatingRepository.cs" />
+    <Compile Include="Repositories\LongVehicleRepository.cs" />
     <Compile Include="Repositories\VehicleRepository.cs" />
     <Compile Include="Repositories\RfidRepository.cs" />
     <Compile Include="Repositories\CategoriesDevicesLogRepository.cs" />
