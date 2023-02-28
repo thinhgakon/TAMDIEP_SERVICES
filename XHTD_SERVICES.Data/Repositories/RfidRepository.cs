@@ -21,14 +21,19 @@ namespace XHTD_SERVICES.Data.Repositories
         public bool CheckValidCode(string code)
         {
             bool isValid = false;
-            if (code.Trim().StartsWith("999"))
+            using (var dbContext = new XHTD_Entities())
             {
-                using (var dbContext = new XHTD_Entities())
-                {
-                    isValid = dbContext.tblRfids.Any(x => x.Code == code.Trim());
-                }
+                isValid = dbContext.tblRfids.Any(x => x.Code == code.Trim());
             }
-            
+
+            //if (code.Trim().StartsWith("999"))
+            //{
+            //    using (var dbContext = new XHTD_Entities())
+            //    {
+            //        isValid = dbContext.tblRfids.Any(x => x.Code == code.Trim());
+            //    }
+            //}
+
             return isValid;
         }
 
