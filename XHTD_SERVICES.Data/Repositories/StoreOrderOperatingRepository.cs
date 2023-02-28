@@ -560,6 +560,44 @@ namespace XHTD_SERVICES.Data.Repositories
 
         // Cổng bảo vệ
         // Xác thực ra cổng
+        public async Task<bool> UpdateOrderConfirm8ByDeliveryCode(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.DeliveryCode == deliveryCode
+                                                    && x.Step < (int)OrderStep.DA_CAN_RA
+                                                     )
+                                            .FirstOrDefaultAsync();
+
+                    if (order == null)
+                    {
+                        return false;
+                    }
+                    
+                    order.Confirm8 = 1;
+                    order.TimeConfirm8 = DateTime.Now;
+                    order.Step = (int)OrderStep.DA_HOAN_THANH;
+                    order.IndexOrder = 0;
+                    order.CountReindex = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm8(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -614,6 +652,47 @@ namespace XHTD_SERVICES.Data.Repositories
         }
 
         // Xác thực vào cổng
+        public async Task<bool> UpdateOrderConfirm2ByDeliveryCode(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.DeliveryCode == deliveryCode
+                                                     && x.Step < (int)OrderStep.DA_VAO_CONG
+                                                     )
+                                            .FirstOrDefaultAsync();
+
+                    if (order == null)
+                    {
+                        return false;
+                    }
+
+                    order.Confirm1 = 1;
+                    order.TimeConfirm1 = order.TimeConfirm1 ?? DateTime.Now;
+                    order.Confirm2 = 1;
+                    order.TimeConfirm2 = DateTime.Now;
+                    order.Step = (int)OrderStep.DA_VAO_CONG;
+                    order.IndexOrder = 0;
+                    order.CountReindex = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {currentTime} ";
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm2(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())

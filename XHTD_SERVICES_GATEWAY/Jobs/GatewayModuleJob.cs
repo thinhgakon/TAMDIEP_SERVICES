@@ -394,7 +394,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         }
                                     }
 
-                                    _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+                                    var currentDeliveryCode = currentOrder.DeliveryCode;
+                                    _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     var isUpdatedOrder = false;
                                     bool isSuccessOpenBarrier = false;
@@ -405,7 +406,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != "JUMBO" 
                                             && currentOrder.TypeXK != "SLING")
                                         {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2(cardNoCurrent);
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
                                         }
                                         else
                                         {
@@ -440,7 +441,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != "JUMBO"
                                             && currentOrder.TypeXK != "SLING")
                                         {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByDeliveryCode(currentDeliveryCode);
                                         }
                                         else
                                         {
@@ -482,7 +483,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             {
                                                 Code = deviceCode,
                                                 ActionType = 1,
-                                                ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentOrder.DeliveryCode}",
+                                                ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
                                                 ActionDate = DateTime.Now,
                                             };
 
