@@ -351,17 +351,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                     tblStoreOrderOperating currentOrder = null;
+                                    var isValidCardNo = false;
 
                                     if (isLuongVao)
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(cardNoCurrent);
+
+                                        isValidCardNo = true;
                                     }
                                     else if (isLuongRa)
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(cardNoCurrent);
+
+                                        isValidCardNo = true;
                                     }
 
-                                    if (currentOrder == null)
+                                    if (isValidCardNo == false)
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
