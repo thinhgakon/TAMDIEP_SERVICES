@@ -696,7 +696,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         null
                     );
 
-                    _gatewayLogger.LogInfo($"Sent notification to DMS: {cardNo}");
+                    //_gatewayLogger.LogInfo($"Sent notification to DMS: {cardNo}");
                 }
                 catch (Exception ex)
                 {
