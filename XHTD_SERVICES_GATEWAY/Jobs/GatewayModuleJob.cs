@@ -261,31 +261,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
-                                    if (isLuongVao)
-                                    {
-                                        try
-                                        {
-                                            _notification.SendNotification(
-                                                "GATE_WAY_RFID",
-                                                null,
-                                                1,
-                                                cardNoCurrent,
-                                                0,
-                                                null,
-                                                null,
-                                                0,
-                                                null,
-                                                null,
-                                                null
-                                            );
-
-                                            _gatewayLogger.LogInfo($"Sent notification to DMS: {cardNoCurrent}");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                                        }
-                                    }
+                                    // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
+                                    SendRFIDInfo(isLuongVao, cardNoCurrent);
 
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
@@ -674,6 +651,35 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
 
             return false;
+        }
+
+        public void SendRFIDInfo(bool isLuongVao, string cardNo)
+        {
+            if (isLuongVao)
+            {
+                try
+                {
+                    _notification.SendNotification(
+                        "GATE_WAY_RFID",
+                        null,
+                        1,
+                        cardNo,
+                        0,
+                        null,
+                        null,
+                        0,
+                        null,
+                        null,
+                        null
+                    );
+
+                    _gatewayLogger.LogInfo($"Sent notification to DMS: {cardNo}");
+                }
+                catch (Exception ex)
+                {
+                    _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                }
+            }
         }
     }
 }
