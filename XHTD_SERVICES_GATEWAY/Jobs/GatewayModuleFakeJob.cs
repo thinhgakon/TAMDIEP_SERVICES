@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Threading;
 using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
