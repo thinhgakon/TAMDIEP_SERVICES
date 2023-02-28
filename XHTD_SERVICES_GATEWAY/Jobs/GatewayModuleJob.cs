@@ -449,12 +449,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                         if (isUpdatedOrder)
                                         {
-                                            _gatewayLogger.LogInfo($"7. Mở barrier");
+                                            _gatewayLogger.LogInfo($"6. Mở barrier");
                                             //isSuccessOpenBarrier = OpenBarrier("OUT");
 
                                             Thread.Sleep(5000);
 
-                                            _gatewayLogger.LogInfo($"6. Bật đèn xanh");
+                                            _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("OUT");
 
                                             Thread.Sleep(15000);
@@ -488,7 +488,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         }
                                         else
                                         {
-                                            _gatewayLogger.LogInfo($"8. Mo barrier KHONG thanh cong");
+                                            _gatewayLogger.LogInfo($"9. Mo barrier KHONG thanh cong");
                                         }
                                     }
                                 }
