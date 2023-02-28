@@ -192,14 +192,22 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     var timeCurrent = tmp[0]?.ToString();
 
                                     // Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10) tmpInvalidCardNoLst.RemoveRange(0, 3);
+                                    if (tmpInvalidCardNoLst.Count > 10) 
+                                    { 
+                                        tmpInvalidCardNoLst.RemoveRange(0, 3); 
+                                    }
+
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
                                         //_logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                                         continue;
                                     }
 
-                                    if (tmpCardNoLst.Count > 5) tmpCardNoLst.RemoveRange(0, 3);
+                                    if (tmpCardNoLst.Count > 5) 
+                                    { 
+                                        tmpCardNoLst.RemoveRange(0, 3); 
+                                    }
+
                                     if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
                                     {
                                         //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
