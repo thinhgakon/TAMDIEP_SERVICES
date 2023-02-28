@@ -299,7 +299,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     {
                                         isLuongVao = true;
                                         _logger.LogInfo($"3. Xe can VAO");
-                                    } 
+                                    }
                                     else
                                     {
                                         isLuongVao = false;
