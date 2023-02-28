@@ -140,9 +140,6 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                 var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues, ScaleConfig.WEIGHT_SAISO);
 
-                //var scaleText = String.Join(",", Program.scaleValues1);
-                //logger.Info("Gia tri can 1: " + scaleText);
-
                 logger.Info($"Received {SCALE_CODE} data: time={time}, value={value}");
 
                 if (isOnDinh)
