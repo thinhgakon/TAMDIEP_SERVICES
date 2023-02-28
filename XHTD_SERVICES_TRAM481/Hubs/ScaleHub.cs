@@ -157,7 +157,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                         var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE && (bool)x.IsScaling);
                         if (scaleInfo == null)
                         {
-                            logger.Info($"Khong co ban ghi trong table Scale voi code = {SCALE_CODE}");
+                            logger.Info($"Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
                             // TODO
                             // Giải phóng cân
