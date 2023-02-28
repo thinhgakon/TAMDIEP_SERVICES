@@ -816,35 +816,34 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateWeightOut(string cardNo, int weightOut)
+        public async Task<bool> UpdateWeightOut(string deliveryCode, int weightOut)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 try
                 {
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo
-                                                        && (x.DriverUserName ?? "") != ""
-                                                        && x.Step > (int)OrderStep.DA_VAO_CONG && x.Step < (int)OrderStep.DA_HOAN_THANH)
-                                                .ToListAsync();
+                    var order = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.DeliveryCode == deliveryCode
+                                                         && x.Step > (int)OrderStep.DA_CAN_VAO 
+                                                         && x.Step < (int)OrderStep.DA_HOAN_THANH
+                                                         && x.WeightOut == null
+                                                      )
+                                                .FirstOrDefaultAsync();
 
-                    if (orders == null || orders.Count == 0)
+                    if (order == null)
                     {
                         return false;
                     }
 
-                    foreach (var order in orders)
-                    {
-                        order.WeightOut = weightOut;
-                    }
+                    order.WeightOut = weightOut;
 
                     await dbContext.SaveChangesAsync();
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cân vào {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào {cardNo} Error: " + ex.Message);
+                    log.Error($@"Cân ra deliveryCode={deliveryCode} Error: " + ex.Message);
+                    Console.WriteLine($@"Cân ra deliveryCode={deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
