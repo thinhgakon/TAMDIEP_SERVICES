@@ -172,7 +172,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                         {
                             // 3. Cập nhật khối lượng không tải của phương tiện
                             logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
-                            //await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
+                            await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                             // 4. Đóng barrier
                             //logger.Info($"4.1. Dong barrier IN");
@@ -203,7 +203,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 // 8. Update giá trị cân của đơn hàng
                                 logger.Info($"8. Update gia tri can vao");
-                                //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.CardNo, currentScaleValue);
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
                             }
                             else
                             {
