@@ -19,10 +19,10 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
         private const string IP_ADDRESS = "10.0.9.6";
 
-        private const int SCALE_I1 = 8;
-        private const int SCALE_I2 = 9;
+        private const int SCALE_I1 = 9;
+        private const int SCALE_I2 = 11;
         private const int SCALE_I3 = 10;
-        private const int SCALE_I4 = 11;
+        private const int SCALE_I4 = 8;
 
         protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_2_CB_1;
 
