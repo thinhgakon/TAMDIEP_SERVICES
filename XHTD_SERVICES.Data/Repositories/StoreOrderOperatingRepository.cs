@@ -372,17 +372,15 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .Where(x => x.CardNo == cardNo
                                                     && (
                                                             (
-                                                                x.CatId == "CLINKER"
+                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
-                                                                (
-                                                                    x.Step >= (int)OrderStep.DA_CAN_VAO
-                                                                    &&
-                                                                    x.Step <= (int)OrderStep.DA_CAN_RA
-                                                                )
+                                                                x.Step >= (int)OrderStep.DA_CAN_VAO
+                                                                &&
+                                                                x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
-                                                        ||
+                                                            ||
                                                             (
-                                                                x.CatId != "CLINKER"
+                                                                (x.DriverUserName ?? "") != ""
                                                                 &&
                                                                 x.Step == (int)OrderStep.DA_CAN_RA
                                                             )
