@@ -323,9 +323,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                             )
                                                         ||
                                                             (
-                                                                // TODO for test
-                                                                //(x.DriverUserName ?? "") != ""
-                                                                //&&
+                                                                (x.DriverUserName ?? "") != ""
+                                                                &&
+                                                                x.Step >= (int)OrderStep.DA_NHAN_DON
+                                                                &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
                                                         )

@@ -631,10 +631,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 )
                 ||
                 (
-                    order.Step < (int)OrderStep.DA_CAN_VAO
-                    // TODO for test
-                    //order.Step == (int)OrderStep.DA_NHAN_DON
-                    //&& (order.DriverUserName ?? "") != ""
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
                 )
                 )
             { 
