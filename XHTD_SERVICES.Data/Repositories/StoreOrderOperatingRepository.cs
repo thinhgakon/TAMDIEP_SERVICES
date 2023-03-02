@@ -375,8 +375,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                 &&
                                                                 (
                                                                     x.Step >= (int)OrderStep.DA_CAN_VAO
-                                                                    ||
-                                                                    x.Step <= (int)OrderStep.DA_CAN_VAO
+                                                                    &&
+                                                                    x.Step <= (int)OrderStep.DA_CAN_RA
                                                                 )
                                                             )
                                                         ||
