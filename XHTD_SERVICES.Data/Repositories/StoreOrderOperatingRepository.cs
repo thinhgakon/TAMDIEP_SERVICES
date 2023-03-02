@@ -405,9 +405,11 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
-                                                        ||
+                                                            ||
                                                             (
                                                                 (x.DriverUserName ?? "") != ""
+                                                                &&
+                                                                x.Step >= (int)OrderStep.DA_NHAN_DON
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
