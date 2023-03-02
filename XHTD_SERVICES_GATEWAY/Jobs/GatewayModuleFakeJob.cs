@@ -197,18 +197,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public void AuthenticateGatewayModule()
         {
-            /*
-             * 1. Xác định xe vào hay ra cổng theo gia tri door từ C3-400
-             * 2. Loại bỏ các cardNoCurrent đã, đang xử lý (đã check trước đó)
-             * 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-             * 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-             * 5. Cập nhật đơn hàng: Step
-             * 6. Bật đèn xanh giao thông
-             * 7. Mở barrier
-             * 8. Ghi log thiết bị
-             * 9. Bắn tín hiệu thông báo
-             */
-
             // 1. Connect Device
             while (!DeviceConnected)
             {
