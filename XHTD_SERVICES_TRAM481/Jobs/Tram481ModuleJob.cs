@@ -2,28 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
-using log4net;
+using Autofac;
+using System.Runtime.InteropServices;
+using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_TRAM481.Models.Response;
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Runtime.InteropServices;
-using XHTD_SERVICES.Device.PLCM221;
-using XHTD_SERVICES.Device;
-using XHTD_SERVICES.Data.Entities;
-using Microsoft.AspNetCore.SignalR.Client;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Data.Common;
-using System.Threading;
-using XHTD_SERVICES_TRAM481.Devices;
-using Autofac;
-using XHTD_SERVICES_TRAM481.Models.Response;
 using XHTD_SERVICES_TRAM481.Hubs;
-using XHTD_SERVICES_TRAM481.Business;
 using XHTD_SERVICES_TRAM481.Devices;
-using XHTD_SERVICES.Data.Models.Values;
+using XHTD_SERVICES_TRAM481.Business;
 
 namespace XHTD_SERVICES_TRAM481.Jobs
 {

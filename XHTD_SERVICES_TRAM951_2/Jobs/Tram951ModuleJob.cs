@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
+using Autofac;
+using System.Runtime.InteropServices;
+using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_TRAM951_2.Models.Response;
-using System.Runtime.InteropServices;
-using XHTD_SERVICES.Device.PLCM221;
-using XHTD_SERVICES.Device;
-using XHTD_SERVICES.Data.Entities;
-using XHTD_SERVICES.Data.Common;
-using System.Threading;
 using XHTD_SERVICES_TRAM951_2.Hubs;
-using Autofac;
-using XHTD_SERVICES_TRAM951_2.Business;
 using XHTD_SERVICES_TRAM951_2.Devices;
-using XHTD_SERVICES.Data.Models.Values;
+using XHTD_SERVICES_TRAM951_2.Business;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
