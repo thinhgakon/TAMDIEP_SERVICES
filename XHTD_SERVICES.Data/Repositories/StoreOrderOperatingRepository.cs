@@ -370,67 +370,6 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceTram951ByCardNo(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                //var order = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
-                //                            .OrderByDescending(x => x.Id)
-                //                            .FirstOrDefaultAsync();
-
-                // TODO for test
-
-                var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && x.Step < (int)OrderStep.DA_CAN_VAO)
-                                            .OrderByDescending(x => x.Id)
-                                            .FirstOrDefaultAsync();
-
-                return order;
-            }
-        }
-
-        public async Task<List<tblStoreOrderOperating>> GetOrdersEntraceTram951ByCardNoReceiving(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
-                                            .ToListAsync();
-                return orders;
-            }
-        }
-
-        public async Task<tblStoreOrderOperating> GetCurrentOrderExitTram951ByCardNo(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                //var order = await dbContext.tblStoreOrderOperatings
-                //                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
-                //                            .OrderByDescending(x => x.Id)
-                //                            .FirstOrDefaultAsync();
-
-                // TODO for test
-                var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && x.Step > (int)OrderStep.DA_CAN_VAO && x.Step < (int)OrderStep.DA_CAN_RA)
-                                            .OrderByDescending(x => x.Id)
-                                            .FirstOrDefaultAsync();
-
-                return order;
-            }
-        }
-
-        public async Task<List<tblStoreOrderOperating>> GetOrdersExitTram951ByCardNoReceiving(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_LAY_HANG)
-                                            .ToListAsync();
-                return orders;
-            }
-        }
-
         public async Task<bool> UpdateOrderEntraceGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
