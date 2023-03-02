@@ -74,6 +74,10 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> WeightInTime { get; set; }
         public Nullable<int> WeightOut { get; set; }
         public Nullable<System.DateTime> WeightOutTime { get; set; }
+        public Nullable<int> WeightInAuto { get; set; }
+        public Nullable<System.DateTime> WeightInTimeAuto { get; set; }
+        public Nullable<int> WeightOutAuto { get; set; }
+        public Nullable<System.DateTime> WeightOutTimeAuto { get; set; }
         public string NoteFinish { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }

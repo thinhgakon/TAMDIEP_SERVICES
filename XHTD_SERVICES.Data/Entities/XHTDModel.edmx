@@ -449,6 +449,10 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="WeightInTime" Type="datetime" />
           <Property Name="WeightOut" Type="int" />
           <Property Name="WeightOutTime" Type="datetime" />
+          <Property Name="WeightInAuto" Type="int" />
+          <Property Name="WeightInTimeAuto" Type="datetime" />
+          <Property Name="WeightOutAuto" Type="int" />
+          <Property Name="WeightOutTimeAuto" Type="datetime" />
           <Property Name="NoteFinish" Type="nvarchar" MaxLength="500" />
           <Property Name="Longitude" Type="nvarchar" MaxLength="50" />
           <Property Name="Latitude" Type="nvarchar" MaxLength="50" />
@@ -1089,6 +1093,10 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="WeightInTime" Type="DateTime" Precision="3" />
           <Property Name="WeightOut" Type="Int32" />
           <Property Name="WeightOutTime" Type="DateTime" Precision="3" />
+          <Property Name="WeightInAuto" Type="Int32" />
+          <Property Name="WeightInTimeAuto" Type="DateTime" Precision="3" />
+          <Property Name="WeightOutAuto" Type="Int32" />
+          <Property Name="WeightOutTimeAuto" Type="DateTime" Precision="3" />
           <Property Name="NoteFinish" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Longitude" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Latitude" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -1739,6 +1747,10 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="WeightInTime" ColumnName="WeightInTime" />
                 <ScalarProperty Name="WeightOut" ColumnName="WeightOut" />
                 <ScalarProperty Name="WeightOutTime" ColumnName="WeightOutTime" />
+                <ScalarProperty Name="WeightInAuto" ColumnName="WeightInAuto" />
+                <ScalarProperty Name="WeightInTimeAuto" ColumnName="WeightInTimeAuto" />
+                <ScalarProperty Name="WeightOutAuto" ColumnName="WeightOutAuto" />
+                <ScalarProperty Name="WeightOutTimeAuto" ColumnName="WeightOutTimeAuto" />
                 <ScalarProperty Name="NoteFinish" ColumnName="NoteFinish" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
