@@ -182,11 +182,17 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
-                                                && x.Step < (int)OrderStep.DA_CAN_VAO);
+                                                && 
+                                                (
+                                                    x.Step < (int)OrderStep.DA_CAN_VAO
+                                                    ||
+                                                    x.WeightIn == null
+                                                )
+                                            );
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {orderId}: weightIn {order.WeightIn} ==>> {weightIn * 1000}");
+                    log.Info($@"===== Update Receiving Order {orderId}: weightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
@@ -237,11 +243,17 @@ namespace XHTD_SERVICES.Data.Repositories
                 if(timeOutDate > DateTime.Now.AddMinutes(-30)) {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && x.Step < (int)OrderStep.DA_CAN_RA);
+                                                    && 
+                                                    (
+                                                        x.Step < (int)OrderStep.DA_CAN_RA
+                                                        ||
+                                                        x.WeightOut == null
+                                                    )
+                                               );
 
                     if (order != null)
                     {
-                        log.Info($@"===== Update Received Order {orderId}: WeightOut {order.WeightOut} ==>> {weightOut * 1000}");
+                        log.Info($@"===== Update Received Order {orderId}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.Confirm7 = 1;
                         order.TimeConfirm7 = timeOutDate;
