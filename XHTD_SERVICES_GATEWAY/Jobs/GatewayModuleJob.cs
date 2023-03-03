@@ -413,7 +413,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("IN");
 
-                                            Thread.Sleep(5000);
+                                            Thread.Sleep(3500);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("IN");
@@ -452,7 +452,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("OUT");
 
-                                            Thread.Sleep(5000);
+                                            Thread.Sleep(3500);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("OUT");
