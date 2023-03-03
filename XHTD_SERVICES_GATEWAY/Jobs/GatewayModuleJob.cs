@@ -411,7 +411,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            //isSuccessOpenBarrier = OpenBarrier("IN");
+                                            isSuccessOpenBarrier = OpenBarrier("IN");
 
                                             Thread.Sleep(5000);
 
@@ -450,7 +450,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isUpdatedOrder)
                                         {
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            //isSuccessOpenBarrier = OpenBarrier("OUT");
+                                            isSuccessOpenBarrier = OpenBarrier("OUT");
 
                                             Thread.Sleep(5000);
 
