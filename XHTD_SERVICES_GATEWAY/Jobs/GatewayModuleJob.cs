@@ -416,12 +416,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             Thread.Sleep(3500);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                                            TurnOnGreenTrafficLight("IN");
+                                            if(TurnOnGreenTrafficLight("IN"))
+                                            {
+                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                                            }
+                                            else
+                                            {
+                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                                            }
 
                                             Thread.Sleep(10000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                                            TurnOnRedTrafficLight("IN");
+                                            if(TurnOnRedTrafficLight("IN"))
+                                            {
+                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                                            }
+                                            else
+                                            {
+                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                                            }
                                         }
                                         else
                                         {
@@ -455,12 +469,26 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             Thread.Sleep(3500);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                                            TurnOnGreenTrafficLight("OUT");
+                                            if(TurnOnGreenTrafficLight("OUT"))
+                                            {
+                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                                            }
+                                            else
+                                            {
+                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                                            }
 
                                             Thread.Sleep(10000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                                            TurnOnRedTrafficLight("OUT");
+                                            if(TurnOnRedTrafficLight("OUT"))
+                                            {
+                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                                            }
+                                            else
+                                            {
+                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                                            }
                                         }
                                         else
                                         {
@@ -567,6 +595,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 return false;
             }
 
+            _gatewayLogger.LogInfo($"7.1. IP đèn: {ipAddress}");
+
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
@@ -580,6 +610,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 return false;
             }
+
+            _gatewayLogger.LogInfo($"8.1. IP đèn: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 
