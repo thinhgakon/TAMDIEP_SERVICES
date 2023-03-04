@@ -702,28 +702,45 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu RA: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (
-                (
-                    order.CatId == "CLINKER"
-                    && order.Step >= (int)OrderStep.DA_CAN_VAO
+            if (order.CatId == "CLINKER")
+            {
+                if (
+                    order.Step >= (int)OrderStep.DA_CAN_VAO
                     && order.Step <= (int)OrderStep.DA_CAN_RA
-                )
-                ||
-                (
-                    (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
-                    && order.Step == (int)OrderStep.DA_CAN_RA
-                )
-                ||
-                (
+                    )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            {
+                if (order.Step == (int)OrderStep.DA_CAN_RA)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (
                     order.Step == (int)OrderStep.DA_CAN_RA
                     && (order.DriverUserName ?? "") != ""
-                )
-                )
-            {
-                return true;
+                    )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         public void SendRFIDInfo(bool isLuongVao, string cardNo)
