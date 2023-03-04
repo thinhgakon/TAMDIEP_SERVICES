@@ -12,12 +12,6 @@ namespace XHTD_SERVICES_GATEWAY
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-
-        public static bool IsLockingEntraceGateway = false;
-        public static bool IsLockingExitGateway = false;
-        public static DateTime? TimeToLockEntraceGateway = null;
-        public static DateTime? TimeToLockExitGateway = null;
-
         static void Main()
         {
             ServiceBase[] ServicesToRun;
