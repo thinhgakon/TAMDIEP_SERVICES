@@ -312,11 +312,47 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         inout = "IN";
                                         _gatewayLogger.LogInfo($"1. Xe VAO cong");
+
+                                        // Nếu cong vao dang xu ly xe khac thì bỏ qua RFID hiện tại
+                                        if (Program.IsLockingEntraceGateway)
+                                        {
+                                            var timeToRelease = DateTime.Now.AddMinutes(-5);
+                                            if (Program.TimeToLockEntraceGateway != null && Program.TimeToLockEntraceGateway > timeToRelease)
+                                            {
+                                                _gatewayLogger.LogInfo($"== Cong VAO dang xu ly don hang khac => Ket thuc ==");
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                // Giải phóng cổng khi bị giữ quá 5 phút
+                                                _gatewayLogger.LogInfo($"== Giai phong cong VAO dang xu ly khi bi giu qua 5 phut ==");
+                                                Program.IsLockingEntraceGateway = false;
+                                                Program.TimeToLockEntraceGateway = null;
+                                            }
+                                        }
                                     }
                                     else
                                     {
                                         inout = "OUT";
                                         _gatewayLogger.LogInfo($"1. Xe RA cong");
+
+                                        // Nếu cong ra dang xu ly xe khac thì bỏ qua RFID hiện tại
+                                        if (Program.IsLockingExitGateway)
+                                        {
+                                            var timeToRelease = DateTime.Now.AddMinutes(-5);
+                                            if (Program.TimeToLockExitGateway != null && Program.TimeToLockExitGateway > timeToRelease)
+                                            {
+                                                _gatewayLogger.LogInfo($"== Cong RA dang xu ly don hang khac => Ket thuc ==");
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                // Giải phóng cổng khi bị giữ quá 5 phút
+                                                _gatewayLogger.LogInfo($"== Giai phong cong RA dang xu ly khi bi giu qua 5 phut ==");
+                                                Program.IsLockingExitGateway = false;
+                                                Program.TimeToLockExitGateway = null;
+                                            }
+                                        }
                                     }
 
                                     _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
@@ -376,10 +412,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isLuongVao)
                                         {
                                             tmpCardNoLst_In.Add(newCardNoLog);
+
+                                            // Khóa đang xử lý cổng vào
+                                            Program.IsLockingEntraceGateway = true;
+                                            Program.TimeToLockEntraceGateway = DateTime.Now;
+
+                                            _gatewayLogger.LogInfo($"Khoa cong chieu VAO de xu ly don hang luc {Program.TimeToLockEntraceGateway}");
                                         }
                                         else if (isLuongRa)
                                         {
                                             tmpCardNoLst_Out.Add(newCardNoLog);
+
+                                            // Khóa đang xử lý cổng ra
+                                            Program.IsLockingExitGateway = true;
+                                            Program.TimeToLockExitGateway = DateTime.Now;
+
+                                            _gatewayLogger.LogInfo($"Khoa cong chieu RA de xu ly don hang luc {Program.TimeToLockExitGateway}");
                                         }
                                     }
 
@@ -427,6 +475,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         {
                                             _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
                                         }
+
+                                        // Giai phong cong vao
+                                        Program.IsLockingEntraceGateway = false;
+                                        Program.TimeToLockEntraceGateway = null;
+                                        _gatewayLogger.LogInfo($"Giai phong cong VAO luc {DateTime.Now}");
                                     }
                                     else if (isLuongRa)
                                     {
@@ -466,6 +519,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         {
                                             _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
                                         }
+
+                                        // Giai phong cong ra
+                                        Program.IsLockingExitGateway = false;
+                                        Program.TimeToLockExitGateway = null;
+                                        _gatewayLogger.LogInfo($"Giai phong cong RA luc {DateTime.Now}");
                                     }
 
                                     if (isUpdatedOrder)
