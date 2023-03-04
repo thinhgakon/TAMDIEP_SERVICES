@@ -399,7 +399,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
-                                                _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
+                                                _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
                                             }
                                         }
                                         else
@@ -438,7 +438,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
-                                                _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái ra cổng");
+                                                _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) => Đã xác thực trạng thái ra cổng");
                                             }
                                         }
                                         else
@@ -616,8 +616,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             if (order == null)
             {
+                _gatewayLogger.LogInfo($"4.0. Don hang chieu VAO: order = null");
                 return false;
             }
+
+            _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu VAO: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
             if (
                 (
@@ -646,8 +649,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             if (order == null)
             {
+                _gatewayLogger.LogInfo($"4.0. Don hang chieu RA: order = null");
                 return false;
             }
+
+            _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu RA: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
             if (
                 (
