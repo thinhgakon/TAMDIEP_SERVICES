@@ -654,27 +654,42 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu VAO: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (
-                (
-                    order.CatId == "CLINKER"
-                    && order.Step < (int)OrderStep.DA_CAN_VAO
-                )
-                ||
-                (
-                    (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
-                    && order.Step < (int)OrderStep.DA_CAN_VAO
-                )
-                ||
-                (
+            if(order.CatId == "CLINKER")
+            {
+                if(order.Step < (int)OrderStep.DA_CAN_VAO)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if(order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (
                     order.Step == (int)OrderStep.DA_NHAN_DON
                     && (order.DriverUserName ?? "") != ""
-                )
-                )
-            { 
-                return true; 
+                    )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-
-            return false;
         }
 
         public bool IsValidOrderExitGateway(tblStoreOrderOperating order)

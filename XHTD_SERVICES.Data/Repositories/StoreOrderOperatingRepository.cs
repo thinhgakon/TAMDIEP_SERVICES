@@ -289,17 +289,16 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
+                                                     && x.IsVoiced == false
                                                      && (
                                                             (
                                                                 (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
-                                                        ||
+                                                            ||
                                                             (
-                                                                (x.DriverUserName ?? "") != ""
-                                                                &&
-                                                                x.Step >= (int)OrderStep.DA_NHAN_DON
+                                                                (x.CatId != "CLINKER" && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
