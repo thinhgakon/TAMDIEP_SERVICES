@@ -418,7 +418,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("IN");
 
-                                            Thread.Sleep(15000);
+                                            Thread.Sleep(10000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             TurnOnRedTrafficLight("IN");
@@ -457,7 +457,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             TurnOnGreenTrafficLight("OUT");
 
-                                            Thread.Sleep(15000);
+                                            Thread.Sleep(10000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             TurnOnRedTrafficLight("OUT");
