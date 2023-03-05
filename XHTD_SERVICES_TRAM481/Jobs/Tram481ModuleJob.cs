@@ -266,8 +266,9 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                                     // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                                     var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(cardNoCurrent);
+                                    var isValidCardNo = IsValidOrderScaleStation(currentOrder);
 
-                                    if (currentOrder == null)
+                                    if (isValidCardNo == false)
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
@@ -379,6 +380,57 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                 h21 = IntPtr.Zero;
 
                 AuthenticateScaleStationModule();
+            }
+        }
+
+        public bool IsValidOrderScaleStation(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.LogInfo($"4.0. Don hang tai can: order = null");
+                return false;
+            }
+
+            _logger.LogInfo($"4.0. Kiem tra don hang tai can: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if (order.CatId == "CLINKER")
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (
+                    order.Step >= (int)OrderStep.DA_NHAN_DON
+                    &&
+                    order.Step < (int)OrderStep.DA_CAN_RA
+                    &&
+                    (order.DriverUserName ?? "") != ""
+                  )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
     }

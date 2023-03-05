@@ -311,8 +311,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                             // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
                             var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(cardNoCurrent);
+                            var isValidCardNo = IsValidOrderScaleStation(currentOrder);
 
-                            if (currentOrder == null)
+                            if (isValidCardNo == false)
                             {
                                 _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
@@ -404,34 +405,55 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
         }
 
-        public string GetTrafficLightIpAddress(string code)
+        public bool IsValidOrderScaleStation(tblStoreOrderOperating order)
         {
-            var ipAddress = "";
-
-            if (code == ScaleCode.CODE_SCALE_1)
+            if (order == null)
             {
-                ipAddress = trafficLightIn1?.IpAddress;
-            }
-            else if (code == ScaleCode.CODE_SCALE_2)
-            {
-                ipAddress = trafficLightIn2?.IpAddress;
-            }
-
-            return ipAddress;
-        }
-
-        public bool TurnOnRedTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
+                _logger.LogInfo($"4.0. Don hang tai can: order = null");
                 return false;
             }
 
-            _trafficLight.Connect(ipAddress);
+            _logger.LogInfo($"4.0. Kiem tra don hang tai can: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            return _trafficLight.TurnOffGreenOnRed();
+            if (order.CatId == "CLINKER")
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (
+                    order.Step >= (int)OrderStep.DA_NHAN_DON
+                    &&
+                    order.Step < (int)OrderStep.DA_CAN_RA
+                    &&
+                    (order.DriverUserName ?? "") != ""
+                  )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }
