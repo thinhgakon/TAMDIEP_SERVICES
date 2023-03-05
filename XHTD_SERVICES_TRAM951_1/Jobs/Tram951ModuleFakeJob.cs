@@ -64,23 +64,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice
-            c3400,
-            rfidIn11,
-            rfidIn12,
-            rfidIn21,
-            rfidIn22,
-            m221,
-            barrierIn1,
-            barrierIn2,
-            barrierOut1,
-            barrierOut2,
-            trafficLightIn1,
-            trafficLightIn2,
-            sensorIn1,
-            sensorIn2,
-            sensorOut1,
-            sensorOut2;
+        private tblCategoriesDevice c3400;
 
         private IHubProxy HubProxy { get; set; }
 
@@ -183,11 +167,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             var devices = await _categoriesDevicesRepository.GetDevices("951");
 
             c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
-
-            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-1");
-            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-IN-2");
-            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-1");
-            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400.RFID-OUT-2");
         }
 
         public void AuthenticateScaleStationModule()

@@ -51,12 +51,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice
-            c3400,
-            rfidIn11,
-            rfidIn12,
-            rfidIn21,
-            rfidIn22;
+        private tblCategoriesDevice c3400;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -110,11 +105,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             var devices = await _categoriesDevicesRepository.GetDevices("951");
 
             c3400 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400");
-
-            rfidIn11 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-1");
-            rfidIn12 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-IN-2");
-            rfidIn21 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-1");
-            rfidIn22 = devices.FirstOrDefault(x => x.Code == "951-2.C3-400.RFID-OUT-2");
         }
 
         public void AuthenticateScaleStationModule()
