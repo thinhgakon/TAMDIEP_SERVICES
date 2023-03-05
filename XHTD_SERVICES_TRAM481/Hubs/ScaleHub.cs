@@ -168,14 +168,6 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                         _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
-                        if (isLongVehicle)
-                        {
-                            _logger.Info($"{scaleInfo.Vehicle} la long vehicle => Khong dong mo barrier");
-                        }
-                        else
-                        {
-                            _logger.Info($"{scaleInfo.Vehicle} khong phai la long vehicle");
-                        }
 
                         // Đang cân vào
                         if ((bool)scaleInfo.ScaleIn)
@@ -184,12 +176,21 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             _logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
                             await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
-                            // 4. Đóng barrier
-                            //logger.Info($"4.1. Dong barrier IN");
-                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                            //Thread.Sleep(1000);
-                            //logger.Info($"4.2. Dong barrier OUT");
-                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                            if (isLongVehicle)
+                            {
+                                _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+                            }
+                            else
+                            {
+                                _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
+
+                                // 4. Đóng barrier
+                                //logger.Info($"4.1. Dong barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"4.2. Dong barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                            }
 
                             // 5. Gọi iERP API lưu giá trị cân
                             _logger.Info($"5. Goi iERP API luu gia tri can");
@@ -202,12 +203,22 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 Thread.Sleep(7000);
 
-                                // 6. Mở barrier
-                                //logger.Info($"6.1. Mo barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                //Thread.Sleep(1000);
-                                //logger.Info($"6.2. Mo barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                if (isLongVehicle)
+                                {
+                                    _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+                                }
+                                else
+                                {
+                                    _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
+
+                                    // 6. Mở barrier
+                                    //logger.Info($"6.1. Mo barrier IN");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                    //Thread.Sleep(1000);
+                                    //logger.Info($"6.2. Mo barrier OUT");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                }
+
 
                                 Thread.Sleep(3500);
 
@@ -255,12 +266,21 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                         // Đang cân ra
                         else if ((bool)scaleInfo.ScaleOut)
                         {
-                            // 3. Đóng barrier
-                            //logger.Info($"3.1. Dong barrier IN");
-                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                            //Thread.Sleep(1000);
-                            //logger.Info($"3.2. Dong barrier OUT");
-                            //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                            if (isLongVehicle)
+                            {
+                                _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+                            }
+                            else
+                            {
+                                _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
+
+                                // 3. Đóng barrier
+                                //logger.Info($"3.1. Dong barrier IN");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                //Thread.Sleep(1000);
+                                //logger.Info($"3.2. Dong barrier OUT");
+                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                            }
 
                             // 4. Gọi iERP API lưu giá trị cân
                             _logger.Info($"4. Goi iERP API luu gia tri can");
@@ -273,12 +293,21 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 Thread.Sleep(7000);
 
-                                // 5. Mở barrier
-                                //logger.Info($"5.1. Mo barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                //Thread.Sleep(1000);
-                                //logger.Info($"5.2. Mo barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                if (isLongVehicle)
+                                {
+                                    _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+                                }
+                                else
+                                {
+                                    _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
+
+                                    // 5. Mở barrier
+                                    //logger.Info($"5.1. Mo barrier IN");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                    //Thread.Sleep(1000);
+                                    //logger.Info($"5.2. Mo barrier OUT");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                }
 
                                 Thread.Sleep(3500);
 
