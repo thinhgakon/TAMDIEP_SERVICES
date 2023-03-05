@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Common;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM481.Devices
 {
     public class TrafficLightControl
     {
+        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         protected readonly TCPTrafficLight _trafficLight;
 
         protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_481_DGT_IN;
@@ -48,6 +51,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
         {
             var ipAddress = GetIpAddress(scaleCode);
 
+            _logger.Info($"IP đèn: {ipAddress}");
+
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
@@ -56,6 +61,8 @@ namespace XHTD_SERVICES_TRAM481.Devices
         public bool TurnOnRedTrafficLight(string scaleCode)
         {
             var ipAddress = GetIpAddress(scaleCode);
+
+            _logger.Info($"IP đèn: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 

@@ -305,11 +305,27 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // 5. Bat den do
-                                            _logger.LogInfo($@"5.1. Bat den do chieu vao");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
+                                            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+                                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thành công");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thất bại");
+                                            }
+
                                             Thread.Sleep(500);
-                                            _logger.LogInfo($@"5.2. Bat den do chieu ra");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
+
+                                            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+                                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thành công");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thất bại");
+                                            }
 
                                             // 6. Đánh dấu trạng thái đang cân
                                             _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
@@ -329,11 +345,27 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                                             // 5. Bat den do
-                                            _logger.LogInfo($@"5.1. Bat den do chieu vao");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE);
+                                            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+                                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thành công");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thất bại");
+                                            }
+
                                             Thread.Sleep(500);
-                                            _logger.LogInfo($@"5.2. Bat den do chieu ra");
-                                            DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE);
+
+                                            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+                                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thành công");
+                                            }
+                                            else
+                                            {
+                                                _logger.LogInfo($@"Bật đèn thất bại");
+                                            }
 
                                             // 6. Đánh dấu trạng thái đang cân
                                             _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");

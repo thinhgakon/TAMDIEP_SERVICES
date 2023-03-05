@@ -12,7 +12,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 {
     public class TrafficLightControl
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         protected readonly TCPTrafficLight _trafficLight;
 
@@ -51,6 +51,8 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
         {
             var ipAddress = GetIpAddress(scaleCode);
 
+            _logger.Info($"IP đèn: {ipAddress}");
+
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOnGreenOffRed();
@@ -59,6 +61,8 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
         public bool TurnOnRedTrafficLight(string scaleCode)
         {
             var ipAddress = GetIpAddress(scaleCode);
+
+            _logger.Info($"IP đèn: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 
