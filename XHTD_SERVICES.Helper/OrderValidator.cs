@@ -147,11 +147,11 @@ namespace XHTD_SERVICES.Helper
             else
             {
                 if (
+                    (order.DriverUserName ?? "") != ""
+                    &&
                     order.Step >= (int)OrderStep.DA_NHAN_DON
                     &&
                     order.Step < (int)OrderStep.DA_CAN_RA
-                    &&
-                    (order.DriverUserName ?? "") != ""
                   )
                 {
                     return true;
