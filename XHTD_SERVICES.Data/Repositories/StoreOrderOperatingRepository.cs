@@ -368,46 +368,6 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateOrderEntraceGateway(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    string cancelTime = DateTime.Now.ToString();
-
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_NHAN_DON)
-                                                .ToListAsync();
-
-                    if (orders == null || orders.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    foreach (var order in orders)
-                    {
-                        order.Confirm1 = 1;
-                        order.Confirm2 = 1;
-                        order.TimeConfirm2 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_VAO_CONG;
-                        order.IndexOrder = 0;
-                        order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {cancelTime} ";
-                    }
-
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
-                    return false;
-                }
-            }
-        }
-
         public async Task<bool> UpdateOrderExitGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -528,61 +488,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
                     Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
-                    return false;
-                }
-            }
-        }
-
-        public async Task<bool> UpdateOrderConfirm2(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    string currentTime = DateTime.Now.ToString();
-
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
-                                                     && (
-                                                            (
-                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_VAO
-                                                            )
-                                                        ||
-                                                            (
-                                                                (x.DriverUserName ?? "") != ""
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_VAO
-                                                            )
-                                                        )
-                                                     )
-                                            .ToListAsync();
-
-                    if (orders == null || orders.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    foreach (var order in orders)
-                    {
-                        order.Confirm1 = 1;
-                        order.TimeConfirm1 = order.TimeConfirm1 ?? DateTime.Now;
-                        order.Confirm2 = 1;
-                        order.TimeConfirm2 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_VAO_CONG;
-                        order.IndexOrder = 0;
-                        order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {currentTime} ";
-                    }
-
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
                     return false;
                 }
             }
