@@ -1,12 +1,8 @@
 ﻿using Autofac;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES.Device;
 using XHTD_SERVICES_TRAM951_1.Models.Response;
 using XHTD_SERVICES_TRAM951_1.Hubs;
 using log4net;
@@ -71,18 +67,21 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
-            if (CheckToleranceLimit(order, weight))
-            {
-                // vi phạm độ lệch khối lượng
-                logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
-
-                new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
-
-                return new DesicionScaleResponse
+            // Chỉ kiểm tra vi phạm độ lệch khối lượng với xi măng bao
+            if (order.CatId == "XI_MANG_BAO") {
+                if (CheckToleranceLimit(order, weight))
                 {
-                    Code = "02",
-                    Message = "Vượt quá 1% dung sai cho phép"
-                };
+                    // vi phạm độ lệch khối lượng
+                    logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
+
+                    new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
+
+                    return new DesicionScaleResponse
+                    {
+                        Code = "02",
+                        Message = "Vượt quá 1% dung sai cho phép"
+                    };
+                }
             }
 
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleOut(deliveryCode, weight);
