@@ -15,7 +15,6 @@ using XHTD_SERVICES.Helper;
 using Microsoft.AspNet.SignalR.Client;
 using System.Threading;
 using XHTD_SERVICES.Data.Common;
-using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -347,13 +346,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(cardNoCurrent);
 
-                                        isValidCardNo = IsValidOrderEntraceGateway(currentOrder);
+                                        isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
                                     }
                                     else if (isLuongRa)
                                     {
                                         currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(cardNoCurrent);
 
-                                        isValidCardNo = IsValidOrderExitGateway(currentOrder);
+                                        isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
                                     }
 
                                     if (isValidCardNo == false)
@@ -641,105 +640,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             catch (Exception ex)
             {
                 _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
-            }
-        }
-
-        public bool IsValidOrderEntraceGateway(tblStoreOrderOperating order)
-        {
-            if (order == null)
-            {
-                _gatewayLogger.LogInfo($"4.0. Don hang chieu VAO: order = null");
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu VAO: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
-
-            if(order.CatId == "CLINKER")
-            {
-                if(order.Step < (int)OrderStep.DA_CAN_VAO)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if(order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
-            {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                if (
-                    order.Step == (int)OrderStep.DA_NHAN_DON
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool IsValidOrderExitGateway(tblStoreOrderOperating order)
-        {
-            if (order == null)
-            {
-                _gatewayLogger.LogInfo($"4.0. Don hang chieu RA: order = null");
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"4.0. Kiem tra don hang chieu RA: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
-
-            if (order.CatId == "CLINKER")
-            {
-                if (
-                    order.Step >= (int)OrderStep.DA_CAN_VAO
-                    && order.Step <= (int)OrderStep.DA_CAN_RA
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
-            {
-                if (order.Step == (int)OrderStep.DA_CAN_RA)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                if (
-                    order.Step == (int)OrderStep.DA_CAN_RA
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
         }
 

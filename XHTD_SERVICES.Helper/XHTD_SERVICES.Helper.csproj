@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLogger.cs" />
+    <Compile Include="OrderValidator.cs" />
     <Compile Include="Calculator.cs" />
     <Compile Include="HttpRequest.cs" />
     <Compile Include="LedHelper.cs" />
@@ -89,6 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XHTD_SERVICES.Data\XHTD_SERVICES.Data.csproj">
+      <Project>{ee357022-f104-42f0-bfbc-a5c4e9791300}</Project>
+      <Name>XHTD_SERVICES.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
