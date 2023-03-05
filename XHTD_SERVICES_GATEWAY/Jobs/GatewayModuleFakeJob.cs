@@ -374,7 +374,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                             if (isLuongVao)
                             {
-                                if (currentOrder.CatId != "CLINKER"
+                                if (currentOrder.CatId != OrderCatIdCode.CLINKER
                                     && currentOrder.TypeXK != "JUMBO"
                                     && currentOrder.TypeXK != "SLING")
                                 {
@@ -413,7 +413,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             }
                             else if (isLuongRa)
                             {
-                                if (currentOrder.CatId != "CLINKER"
+                                if (currentOrder.CatId != OrderCatIdCode.CLINKER
                                     && currentOrder.TypeXK != "JUMBO"
                                     && currentOrder.TypeXK != "SLING")
                                 {

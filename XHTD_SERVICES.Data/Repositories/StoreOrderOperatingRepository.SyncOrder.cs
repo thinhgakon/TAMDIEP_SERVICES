@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using XHTD_SERVICES.Data.Models.Values;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -25,13 +26,13 @@ namespace XHTD_SERVICES.Data.Repositories
                 string productNameUpper = websaleOrder.productName.ToUpper();
                 string itemCategory = websaleOrder.itemCategory;
 
-                if (itemCategory == "XI_MANG_XA")
+                if (itemCategory == OrderCatIdCode.XI_MANG_XA)
                 {
                     typeProduct = "ROI";
                 }
-                else if (itemCategory == "CLINKER")
+                else if (itemCategory == OrderCatIdCode.CLINKER)
                 {
-                    typeProduct = "CLINKER";
+                    typeProduct = OrderCatIdCode.CLINKER;
                 }
                 else
                 {

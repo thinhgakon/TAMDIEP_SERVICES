@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_TRAM481.Models.Response;
 using XHTD_SERVICES_TRAM481.Hubs;
 using log4net;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_TRAM481.Business
 {
@@ -68,7 +69,7 @@ namespace XHTD_SERVICES_TRAM481.Business
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
             // Chỉ kiểm tra vi phạm độ lệch khối lượng với xi măng bao
-            if (order.CatId == "XI_MANG_BAO")
+            if (order.CatId == OrderCatIdCode.XI_MANG_BAO)
             {
                 if (CheckToleranceLimit(order, weight))
                 {

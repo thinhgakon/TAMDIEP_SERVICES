@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Values;
 using log4net;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES.Helper
 {
@@ -23,7 +24,7 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang chieu VAO: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == "CLINKER")
+            if (order.CatId == OrderCatIdCode.CLINKER)
             {
                 if (order.Step < (int)OrderStep.DA_CAN_VAO)
                 {
@@ -71,7 +72,7 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang chieu RA: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == "CLINKER")
+            if (order.CatId == OrderCatIdCode.CLINKER)
             {
                 if (
                     order.Step >= (int)OrderStep.DA_CAN_VAO
@@ -122,7 +123,7 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang tai can: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}, WeightIn = {order.WeightIn}, SumNumber = {order.SumNumber}");
 
-            if (order.CatId == "CLINKER")
+            if (order.CatId == OrderCatIdCode.CLINKER)
             {
                 if (order.Step < (int)OrderStep.DA_CAN_RA)
                 {

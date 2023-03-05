@@ -280,13 +280,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
-                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != "CLINKER" && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
@@ -308,13 +308,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
-                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != "CLINKER" && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
@@ -421,13 +421,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                         && (
                                                             (
-                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != "CLINKER" && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
@@ -868,7 +868,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_XA"
+                                                && x.CatId == OrderCatIdCode.XI_MANG_XA
                                                 && x.IsVoiced == false
                                                 && x.IndexOrder > 0
                                     )
@@ -884,7 +884,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_XA"
+                                                && x.CatId == OrderCatIdCode.XI_MANG_XA
                                                 && x.IsVoiced == false
                                                 //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
                                                 && (x.IndexOrder == null || x.IndexOrder == 0)
@@ -901,7 +901,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.CatId == OrderCatIdCode.XI_MANG_BAO
                                                 && x.IsVoiced == false
                                                 && x.IndexOrder > 0
                                     )
@@ -917,7 +917,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.CatId == OrderCatIdCode.XI_MANG_BAO
                                                 && x.IsVoiced == false
                                                 //&& x.TimeConfirm3 < DateTime.Now.AddMinutes(-2)
                                                 && (x.IndexOrder == null || x.IndexOrder == 0)
@@ -981,7 +981,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == "XI_MANG_BAO"
+                                                && x.CatId == OrderCatIdCode.XI_MANG_BAO
                                                 && x.TypeXK != "JUMBO"
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
@@ -1006,7 +1006,11 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && (x.CatId == "XI_MANG_XA" || (x.CatId == "XI_MANG_BAO" && x.TypeXK == "JUMBO")) 
+                                                && (
+                                                    x.CatId == OrderCatIdCode.XI_MANG_XA 
+                                                    || 
+                                                    (x.CatId == OrderCatIdCode.XI_MANG_BAO && x.TypeXK == "JUMBO")
+                                                    )
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
