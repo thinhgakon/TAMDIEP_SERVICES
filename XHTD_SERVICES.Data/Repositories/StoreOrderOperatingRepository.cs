@@ -270,6 +270,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        // Cổng bảo vệ
         public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceGateway(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -326,36 +327,6 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<tblStoreOrderOperating> GetCurrentOrderScaleStation(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
-                                                        && (
-                                                            (
-                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                            ||
-                                                            (
-                                                                (x.DriverUserName ?? "") != ""
-                                                                &&
-                                                                x.Step >= (int)OrderStep.DA_NHAN_DON
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                        )
-                                                   )
-                                            .OrderByDescending(x => x.Step)
-                                            .FirstOrDefaultAsync();
-
-                return orders;
-            }
-        }
-
-        // Cổng bảo vệ
         // Xác thực ra cổng
         public async Task<bool> UpdateOrderConfirm8(string cardNo)
         {
@@ -440,7 +411,36 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        // Trạm 951
+        // Trạm cân
+        public async Task<tblStoreOrderOperating> GetCurrentOrderScaleStation(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                        && (
+                                                            (
+                                                                (x.CatId == "CLINKER" || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                            ||
+                                                            (
+                                                                (x.DriverUserName ?? "") != ""
+                                                                &&
+                                                                x.Step >= (int)OrderStep.DA_NHAN_DON
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                        )
+                                                   )
+                                            .OrderByDescending(x => x.Step)
+                                            .FirstOrDefaultAsync();
+
+                return orders;
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm3(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
