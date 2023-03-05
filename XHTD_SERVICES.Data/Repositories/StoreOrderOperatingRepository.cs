@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Globalization;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
-using XHTD_SERVICES.Data.Models.Response;
-using System.Web.UI.WebControls;
 using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES.Data.Repositories
@@ -231,15 +227,6 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersSortByIndex(int quantity)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                var orders = await dbContext.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_CAN_VAO && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(quantity).ToListAsync();
-                return orders;
-            }
-        }
-
         public List<string> GetCurrentOrdersToCallInTrough()
         {
             using (var dbContext = new XHTD_Entities())
@@ -365,46 +352,6 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .FirstOrDefaultAsync();
 
                 return orders;
-            }
-        }
-
-        public async Task<bool> UpdateOrderExitGateway(string cardNo)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    string cancelTime = DateTime.Now.ToString();
-
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_CAN_RA)
-                                                .ToListAsync();
-
-                    if (orders == null || orders.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    foreach (var order in orders)
-                    {
-                        order.Confirm8 = 1;
-                        order.TimeConfirm8 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_HOAN_THANH;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {cancelTime} ";
-
-                        Console.WriteLine($@"Xác thực ra cổng {cardNo}");
-                        log.Info($@"Xác thực ra cổng {cardNo}");
-                    }
-
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực ra cổng {cardNo} Error: " + ex.Message);
-                    return false;
-                }
             }
         }
 
