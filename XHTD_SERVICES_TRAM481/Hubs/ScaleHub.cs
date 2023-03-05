@@ -219,7 +219,6 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                     //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
                                 }
 
-
                                 Thread.Sleep(3500);
 
                                 // 8. Update giá trị cân của đơn hàng
