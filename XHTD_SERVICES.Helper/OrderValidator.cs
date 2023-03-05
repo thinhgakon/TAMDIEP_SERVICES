@@ -35,7 +35,7 @@ namespace XHTD_SERVICES.Helper
                     return false;
                 }
             }
-            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
                 if (order.Step < (int)OrderStep.DA_CAN_VAO)
                 {
@@ -86,7 +86,7 @@ namespace XHTD_SERVICES.Helper
                     return false;
                 }
             }
-            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
                 if (order.Step == (int)OrderStep.DA_CAN_RA)
                 {
@@ -134,7 +134,7 @@ namespace XHTD_SERVICES.Helper
                     return false;
                 }
             }
-            else if (order.TypeXK == "JUMBO" || order.TypeXK == "SLING")
+            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
                 if (order.Step < (int)OrderStep.DA_CAN_RA)
                 {

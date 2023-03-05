@@ -55,13 +55,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     }
 
                     // Type XK
-                    if (productNameUpper.Contains("JUMBO"))
+                    if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
-                        typeXK = "JUMBO";
+                        typeXK = OrderTypeXKCode.JUMBO;
                     }
-                    else if (productNameUpper.Contains("SLING"))
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING))
                     {
-                        typeXK = "SLING";
+                        typeXK = OrderTypeXKCode.SLING;
                     }
                 }
 

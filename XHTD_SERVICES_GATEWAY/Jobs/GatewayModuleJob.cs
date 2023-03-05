@@ -391,8 +391,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     if (isLuongVao)
                                     {
                                         if (currentOrder.CatId != OrderCatIdCode.CLINKER
-                                            && currentOrder.TypeXK != "JUMBO" 
-                                            && currentOrder.TypeXK != "SLING")
+                                            && currentOrder.TypeXK != OrderTypeXKCode.JUMBO 
+                                            && currentOrder.TypeXK != OrderTypeXKCode.SLING)
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
 
@@ -444,8 +444,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     else if (isLuongRa)
                                     {
                                         if (currentOrder.CatId != OrderCatIdCode.CLINKER
-                                            && currentOrder.TypeXK != "JUMBO"
-                                            && currentOrder.TypeXK != "SLING")
+                                            && currentOrder.TypeXK != OrderTypeXKCode.JUMBO
+                                            && currentOrder.TypeXK != OrderTypeXKCode.SLING)
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8(cardNoCurrent);
 

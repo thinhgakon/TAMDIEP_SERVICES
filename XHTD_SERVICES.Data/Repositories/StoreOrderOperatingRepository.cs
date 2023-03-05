@@ -280,13 +280,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
@@ -308,13 +308,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step <= (int)OrderStep.DA_CAN_RA
                                                             )
@@ -421,13 +421,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                         && (
                                                             (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == "JUMBO" || x.TypeXK == "SLING")
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
                                                             ||
                                                             (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != "JUMBO" && x.TypeXK != "SLING")
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
                                                                 &&
                                                                 x.Step < (int)OrderStep.DA_CAN_RA
                                                             )
@@ -982,7 +982,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == OrderCatIdCode.XI_MANG_BAO
-                                                && x.TypeXK != "JUMBO"
+                                                && x.TypeXK != OrderTypeXKCode.JUMBO
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
@@ -1009,7 +1009,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                 && (
                                                     x.CatId == OrderCatIdCode.XI_MANG_XA 
                                                     || 
-                                                    (x.CatId == OrderCatIdCode.XI_MANG_BAO && x.TypeXK == "JUMBO")
+                                                    (x.CatId == OrderCatIdCode.XI_MANG_BAO && x.TypeXK == OrderTypeXKCode.JUMBO)
                                                     )
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
