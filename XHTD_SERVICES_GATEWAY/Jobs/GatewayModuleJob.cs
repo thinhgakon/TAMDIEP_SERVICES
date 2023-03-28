@@ -412,7 +412,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("IN");
 
-                                            Thread.Sleep(3500);
+                                            Thread.Sleep(3000);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             if(TurnOnGreenTrafficLight("IN"))
@@ -424,7 +424,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                             }
 
-                                            Thread.Sleep(10000);
+                                            Thread.Sleep(7000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             if(TurnOnRedTrafficLight("IN"))
@@ -465,7 +465,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             _gatewayLogger.LogInfo($"6. Mở barrier");
                                             isSuccessOpenBarrier = OpenBarrier("OUT");
 
-                                            Thread.Sleep(3500);
+                                            Thread.Sleep(3000);
 
                                             _gatewayLogger.LogInfo($"7. Bật đèn xanh");
                                             if(TurnOnGreenTrafficLight("OUT"))
@@ -477,7 +477,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                             }
 
-                                            Thread.Sleep(10000);
+                                            Thread.Sleep(7000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             if(TurnOnRedTrafficLight("OUT"))
