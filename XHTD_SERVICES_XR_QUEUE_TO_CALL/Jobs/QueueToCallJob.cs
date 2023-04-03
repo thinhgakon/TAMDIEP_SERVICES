@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Quartz;
+using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
@@ -16,6 +17,10 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
         protected readonly QueueToCallLogger _queueToCallLogger;
 
         private static string CODE_MACHINE_MAIN = "10";
+
+        private static string CODE_MACHINE_9 = "9";
+
+        private static string CODE_MACHINE_10 = "10";
 
         public QueueToCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -51,6 +56,7 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
             var orders = await _storeOrderOperatingRepository.GetXiMangRoiOrdersAddToQueueToCall();
             if (orders == null || orders.Count == 0)
             {
+                _queueToCallLogger.LogInfo($"Khong co don hang nao de them vao hang doi");
                 return;
             }
 
@@ -66,8 +72,17 @@ namespace XHTD_SERVICES_XR_QUEUE_TO_CALL.Jobs
                 var sumNumber = (decimal)order.SumNumber;
                 var typeProduct = order.TypeProduct;
 
-                // Mặc định luôn đẩy vào máng 10
-                var machineCode = CODE_MACHINE_MAIN;
+                // Đẩy tối đa 02 xe vào máng 10, còn lại đẩy vào máng 9
+                var machineCode = CODE_MACHINE_10;
+
+                var numberOrderInQueueMachine10 = _callToTroughRepository.GetNumberOrderInQueue(CODE_MACHINE_10);
+
+                _queueToCallLogger.LogInfo($"Hien tai co {numberOrderInQueueMachine10} order dang cho tai machine 10");
+
+                if (numberOrderInQueueMachine10 >= 2)
+                {
+                    machineCode = CODE_MACHINE_9;
+                }
 
                 _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 

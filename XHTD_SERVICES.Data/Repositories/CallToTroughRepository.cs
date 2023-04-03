@@ -22,6 +22,14 @@ namespace XHTD_SERVICES.Data.Repositories
         {
         }
 
+        public int GetNumberOrderInQueue(string machineCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                return dbContext.tblCallToTroughs.Where(x => x.Machine == machineCode && x.IsDone == false).Count();
+            }
+        }
+
         public bool IsInProgress(int orderId)
         {
             using (var dbContext = new XHTD_Entities())
