@@ -370,7 +370,7 @@ namespace XHTD_SERVICES.Data.Repositories
         }
 
         // Xác thực vào cổng
-        public async Task<bool> UpdateOrderConfirm2ByDeliveryCode(string deliveryCode)
+        public async Task<bool> UpdateOrderConfirm2(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
