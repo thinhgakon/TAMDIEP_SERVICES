@@ -16,6 +16,8 @@ namespace XHTD_SERVICES_TRAM481
         public static List<int> scaleValues = new List<int>();
         public static bool IsScalling = false;
         public static bool IsLockingScale = false;
+        public static bool IsSensorActive = false;
+        public static bool IsBarrierActive = false;
 
         static void Main()
         {

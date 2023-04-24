@@ -33,6 +33,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
         protected readonly ScaleOperatingRepository _scaleOperatingRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly Logger _logger;
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_481;
@@ -42,6 +44,14 @@ namespace XHTD_SERVICES_TRAM481.Jobs
         protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_481_DGT_OUT;
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_481_STATUS";
+
+        protected const string SERVICE_ACTIVE_CODE = "TRAM481_ACTIVE";
+
+        protected const string SERVICE_SENSOR_ACTIVE_CODE = "TRAM481_SENSOR_ACTIVE";
+
+        protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM481_BARRIER_ACTIVE";
+
+        private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -69,6 +79,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
+            SystemParameterRepository systemParameterRepository,
             Logger logger
             )
         {
@@ -78,6 +89,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _vehicleRepository = vehicleRepository;
             _scaleOperatingRepository = scaleOperatingRepository;
+            _systemParameterRepository = systemParameterRepository;
             _logger = logger;
         }
 
@@ -90,6 +102,15 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
             await Task.Run(async () =>
             {
+                // Get System Parameters
+                await LoadSystemParameters();
+
+                if (!isActiveService)
+                {
+                    _logger.LogInfo("Service đang tắt");
+                    return;
+                }
+
                 _logger.LogInfo("Start tram481 service");
                 _logger.LogInfo("----------------------------");
 
@@ -98,6 +119,42 @@ namespace XHTD_SERVICES_TRAM481.Jobs
 
                 AuthenticateScaleStationModule();
             });
+        }
+
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+            var sensorActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_SENSOR_ACTIVE_CODE);
+            var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
+            else
+            {
+                isActiveService = true;
+            }
+
+            if (sensorActiveParameter == null || sensorActiveParameter.Value == "0")
+            {
+                Program.IsSensorActive = false;
+            }
+            else
+            {
+                Program.IsSensorActive = true;
+            }
+
+            if (barrierActiveParameter == null || barrierActiveParameter.Value == "0")
+            {
+                Program.IsBarrierActive = false;
+            }
+            else
+            {
+                Program.IsBarrierActive = true;
+            }
         }
 
         public async Task LoadDevicesInfo()
