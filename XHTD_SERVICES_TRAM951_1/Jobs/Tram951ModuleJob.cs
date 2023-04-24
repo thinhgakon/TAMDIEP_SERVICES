@@ -49,6 +49,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected const string SERVICE_SENSOR_ACTIVE_CODE = "TRAM951_1_SENSOR_ACTIVE";
 
+        protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_1_BARRIER_ACTIVE";
+
         private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -125,6 +127,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var sensorActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_SENSOR_ACTIVE_CODE);
+            var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -142,6 +145,15 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             else
             {
                 Program.IsSensorActive = true;
+            }
+
+            if (barrierActiveParameter == null || barrierActiveParameter.Value == "0")
+            {
+                Program.IsBarrierActive = false;
+            }
+            else
+            {
+                Program.IsBarrierActive = true;
             }
         }
 

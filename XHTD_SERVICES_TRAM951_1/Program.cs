@@ -17,6 +17,7 @@ namespace XHTD_SERVICES_TRAM951_1
         public static bool IsScalling = false;
         public static bool IsLockingScale = false;
         public static bool IsSensorActive = false;
+        public static bool IsBarrierActive = false;
 
         static void Main()
         {
