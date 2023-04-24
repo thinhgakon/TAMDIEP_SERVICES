@@ -69,6 +69,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9511ScaleInfo(time, value);
+            //ReadDataScale(time, value);
         }
 
         public void Send9512ScaleInfo(DateTime time, string value)
@@ -179,6 +180,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             if (isLongVehicle)
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+
+                                SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
@@ -206,6 +209,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 if (isLongVehicle)
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+
+                                    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
@@ -268,6 +273,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             if (isLongVehicle)
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+
+                                SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
@@ -295,6 +302,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 if (isLongVehicle)
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+
+                                    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
