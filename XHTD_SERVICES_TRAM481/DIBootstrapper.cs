@@ -27,6 +27,7 @@ namespace XHTD_SERVICES_TRAM481
             builder.RegisterType<VehicleRepository>().AsSelf();
             builder.RegisterType<LongVehicleRepository>().AsSelf();
             builder.RegisterType<ScaleOperatingRepository>().AsSelf();
+            builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<PLCBarrier>().AsSelf();
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Sensor>().AsSelf();
@@ -40,7 +41,10 @@ namespace XHTD_SERVICES_TRAM481
             builder.RegisterType<ScaleBusiness>().AsSelf();
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
             builder.RegisterType<WeightBusiness>().AsSelf();
+            builder.RegisterType<StepBusiness>().AsSelf();
             builder.RegisterType<IndexOrderBusiness>().AsSelf();
+            builder.RegisterType<DesicionScaleBusiness>().AsSelf();
+            builder.RegisterType<ScaleApiLib>().AsSelf();
             builder.RegisterType<VehicleBusiness>().AsSelf();
 
             RegisterScheduler(builder);
