@@ -112,20 +112,23 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
-            if (!Program.IsLockingScale)
+            if (Program.IsSensorActive)
             {
-                var isInValidSensor = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale();
-                if (isInValidSensor)
+                if (!Program.IsLockingScale)
                 {
-                    SendSensor(SCALE_CODE, "1");
+                    var isInValidSensor = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale();
+                    if (isInValidSensor)
+                    {
+                        SendSensor(SCALE_CODE, "1");
 
-                    Program.scaleValues.Clear();
+                        Program.scaleValues.Clear();
 
-                    return;
-                }
-                else
-                {
-                    SendSensor(SCALE_CODE, "0");
+                        return;
+                    }
+                    else
+                    {
+                        SendSensor(SCALE_CODE, "0");
+                    }
                 }
             }
 
