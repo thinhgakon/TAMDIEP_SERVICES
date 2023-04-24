@@ -440,7 +440,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateOrderConfirm3(string cardNo)
+        public async Task<bool> UpdateOrderConfirm3ByDeliveryCode(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -448,34 +448,33 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     string cancelTime = DateTime.Now.ToString();
 
-                    var orders = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.CardNo == cardNo && x.Step == (int)OrderStep.DA_VAO_CONG)
-                                                .ToListAsync();
+                    var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.DeliveryCode == deliveryCode
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     )
+                                            .FirstOrDefaultAsync();
 
-                    if (orders == null || orders.Count == 0)
+                    if (order == null)
                     {
                         return false;
                     }
 
-                    foreach (var order in orders)
-                    {
-                        order.Confirm2 = 1;
-                        order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
-                        order.Confirm3 = 1;
-                        order.TimeConfirm3 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_CAN_VAO;
-                        order.IndexOrder = 0;
-                        order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime} ";
-                    }
+                    order.Confirm2 = 1;
+                    order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
+                    order.Confirm3 = 1;
+                    order.TimeConfirm3 = DateTime.Now;
+                    order.Step = (int)OrderStep.DA_CAN_VAO;
+                    order.IndexOrder = 0;
+                    order.CountReindex = 0;
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime} ";
 
                     await dbContext.SaveChangesAsync();
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cân vào {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào {cardNo} Error: " + ex.Message);
+                    log.Error($@"Cân vào {deliveryCode} Error: " + ex.Message);
+                    Console.WriteLine($@"Cân vào {deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
