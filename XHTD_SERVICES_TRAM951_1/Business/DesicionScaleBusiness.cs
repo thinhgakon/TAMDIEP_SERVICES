@@ -69,13 +69,16 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
             // Chỉ kiểm tra vi phạm độ lệch khối lượng với xi măng bao
-            if (order.CatId == OrderCatIdCode.XI_MANG_BAO) {
+            if (order.CatId == OrderCatIdCode.XI_MANG_BAO) 
+            {
                 if (CheckToleranceLimit(order, weight))
                 {
                     // vi phạm độ lệch khối lượng
                     logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
 
                     new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
+
+                    new ScaleHub().SendMessage("Notification", $"Vượt quá 1% dung sai cân cho phép. Vui lòng xử lý thủ công");
 
                     return new DesicionScaleResponse
                     {

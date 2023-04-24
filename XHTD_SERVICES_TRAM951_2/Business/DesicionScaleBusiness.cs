@@ -78,6 +78,8 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
                     new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
 
+                    new ScaleHub().SendMessage("Notification", $"Vượt quá 1% dung sai cân cho phép. Vui lòng xử lý thủ công");
+
                     return new DesicionScaleResponse
                     {
                         Code = "02",
