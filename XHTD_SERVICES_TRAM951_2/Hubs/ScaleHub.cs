@@ -190,15 +190,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
 
-                                // 4. Đóng barrier
-                                //_logger.Info($"4.1. Dong barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                //Thread.Sleep(1000);
-                                //_logger.Info($"4.2. Dong barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
-
                                 if (Program.IsBarrierActive)
                                 {
+                                    // 4. Đóng barrier
                                     _logger.Info($"4.1. Dong barrier IN");
                                     //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
                                     Thread.Sleep(1000);
@@ -232,15 +226,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
 
-                                    // 6. Mở barrier
-                                    //_logger.Info($"6.1. Mo barrier IN");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //Thread.Sleep(1000);
-                                    //_logger.Info($"6.2. Mo barrier OUT");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-
                                     if (Program.IsBarrierActive)
                                     {
+                                        // 6. Mở barrier
                                         _logger.Info($"6.1. Mo barrier IN");
                                         //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
                                         Thread.Sleep(1000);
@@ -312,15 +300,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
 
-                                // 3. Đóng barrier
-                                //_logger.Info($"3.1. Dong barrier IN");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                //Thread.Sleep(1000);
-                                //_logger.Info($"3.2. Dong barrier OUT");
-                                //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
-
                                 if (Program.IsBarrierActive)
                                 {
+                                    // 3. Đóng barrier
                                     _logger.Info($"3.1. Dong barrier IN");
                                     //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
                                     Thread.Sleep(1000);
@@ -354,15 +336,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
 
-                                    // 5. Mở barrier
-                                    //_logger.Info($"5.1. Mo barrier IN");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //Thread.Sleep(1000);
-                                    //_logger.Info($"5.2. Mo barrier OUT");
-                                    //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-
                                     if (Program.IsBarrierActive)
                                     {
+                                        // 5. Mở barrier
                                         _logger.Info($"5.1. Mo barrier IN");
                                         //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
                                         Thread.Sleep(1000);
