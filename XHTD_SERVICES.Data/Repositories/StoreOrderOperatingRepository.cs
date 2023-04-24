@@ -496,8 +496,11 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order == null)
                     {
+                        log.Info($@"Khong ton tai deliveryCode={deliveryCode} voi step < 7");
                         return false;
                     }
+
+                    log.Info($@"UpdateOrderConfirm7 deliveryCode={deliveryCode} with step={order.Step}");
 
                     order.Confirm7 = 1;
                     order.TimeConfirm7 = DateTime.Now;
@@ -543,7 +546,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.WeightInTimeAuto = DateTime.Now;
 
                     order.IsScaleAuto = true;
-                    order.Step = (int)OrderStep.DA_CAN_VAO;
+                    //order.Step = (int)OrderStep.DA_CAN_VAO;
 
                     await dbContext.SaveChangesAsync();
                     return true;
@@ -583,7 +586,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.WeightOutTimeAuto = DateTime.Now;
 
                     order.IsScaleAuto = true;
-                    order.Step = (int)OrderStep.DA_CAN_RA;
+                    //order.Step = (int)OrderStep.DA_CAN_RA;
 
                     await dbContext.SaveChangesAsync();
                     return true;
