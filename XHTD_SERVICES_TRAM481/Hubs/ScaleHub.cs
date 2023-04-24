@@ -182,6 +182,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             if (isLongVehicle)
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+
+                                SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
@@ -216,6 +218,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 if (isLongVehicle)
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+
+                                    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
@@ -240,8 +244,11 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 8. Update giá trị cân của đơn hàng
                                 _logger.Info($"8. Update gia tri can vao");
-                                // TODO: update trạng thái đơn hàng đã cân vào
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                // 9. Update trạng thái đơn hàng đã cân vào
+                                _logger.Info($"9. Update trạng thái cân vào");
+                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
                             }
                             else
                             {
@@ -285,6 +292,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             if (isLongVehicle)
                             {
                                 _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+
+                                SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
@@ -319,6 +328,8 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                 if (isLongVehicle)
                                 {
                                     _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+
+                                    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
@@ -343,8 +354,11 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 // 7. Update giá trị cân của đơn hàng
                                 _logger.Info($"7. Update gia tri can ra");
-                                // TODO: update trạng thái đơn hàng đã cân ra
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                // 8. Update trạng thái đơn hàng đã cân ra
+                                _logger.Info($"8. Update trạng thái cân ra");
+                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
                             }
                             else
                             {
