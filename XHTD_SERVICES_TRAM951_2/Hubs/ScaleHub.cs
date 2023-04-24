@@ -196,6 +196,19 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 //Thread.Sleep(1000);
                                 //_logger.Info($"4.2. Dong barrier OUT");
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+
+                                if (Program.IsBarrierActive)
+                                {
+                                    _logger.Info($"4.1. Dong barrier IN");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                    Thread.Sleep(1000);
+                                    _logger.Info($"4.2. Dong barrier OUT");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                                }
+                                else
+                                {
+                                    _logger.Info($"4. Cau hinh barrier dang TAT");
+                                }
                             }
 
                             // 5. Gọi iERP API lưu giá trị cân
@@ -225,6 +238,19 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     //Thread.Sleep(1000);
                                     //_logger.Info($"6.2. Mo barrier OUT");
                                     //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+                                    if (Program.IsBarrierActive)
+                                    {
+                                        _logger.Info($"6.1. Mo barrier IN");
+                                        //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                        Thread.Sleep(1000);
+                                        _logger.Info($"6.2. Mo barrier OUT");
+                                        //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                    }
+                                    else
+                                    {
+                                        _logger.Info($"4. Cau hinh barrier dang TAT");
+                                    }
                                 }
 
                                 Thread.Sleep(3500);
@@ -289,6 +315,19 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 //Thread.Sleep(1000);
                                 //_logger.Info($"3.2. Dong barrier OUT");
                                 //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+
+                                if (Program.IsBarrierActive)
+                                {
+                                    _logger.Info($"3.1. Dong barrier IN");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
+                                    Thread.Sleep(1000);
+                                    _logger.Info($"3.2. Dong barrier OUT");
+                                    //DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
+                                }
+                                else
+                                {
+                                    _logger.Info($"4. Cau hinh barrier dang TAT");
+                                }
                             }
 
                             // 4. Gọi iERP API lưu giá trị cân
@@ -318,6 +357,19 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     //Thread.Sleep(1000);
                                     //_logger.Info($"5.2. Mo barrier OUT");
                                     //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+                                    if (Program.IsBarrierActive)
+                                    {
+                                        _logger.Info($"5.1. Mo barrier IN");
+                                        //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+                                        Thread.Sleep(1000);
+                                        _logger.Info($"5.2. Mo barrier OUT");
+                                        //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+                                    }
+                                    else
+                                    {
+                                        _logger.Info($"4. Cau hinh barrier dang TAT");
+                                    }
                                 }
 
                                 Thread.Sleep(3500);
