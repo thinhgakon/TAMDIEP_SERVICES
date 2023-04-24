@@ -33,6 +33,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly ScaleOperatingRepository _scaleOperatingRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly Logger _logger;
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
@@ -42,6 +44,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
+
+        protected const string SERVICE_ACTIVE_CODE = "TRAM951_2_ACTIVE";
+
+        private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -69,6 +75,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
+            SystemParameterRepository systemParameterRepository,
             Logger logger
             )
         {
@@ -78,6 +85,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _vehicleRepository = vehicleRepository;
             _scaleOperatingRepository = scaleOperatingRepository;
+            _systemParameterRepository = systemParameterRepository;
             _logger = logger;
         }
 
@@ -90,6 +98,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
             await Task.Run(async () =>
             {
+                // Get System Parameters
+                await LoadSystemParameters();
+
+                if (!isActiveService)
+                {
+                    _logger.LogInfo("Service đang tắt");
+                    return;
+                }
+
                 _logger.LogInfo("Start tram951 2 service");
                 _logger.LogInfo("----------------------------");
 
@@ -98,6 +115,22 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                 AuthenticateScaleStationModule();
             });
+        }
+
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
+            else
+            {
+                isActiveService = true;
+            }
         }
 
         public async Task LoadDevicesInfo()
