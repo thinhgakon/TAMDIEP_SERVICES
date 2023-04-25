@@ -254,7 +254,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order != null)
                     {
-                        log.Info($@"===== Update Received Order {orderId}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
+                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOut}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.Confirm7 = 1;
                         order.TimeConfirm7 = timeOutDate;
