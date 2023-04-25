@@ -271,7 +271,6 @@
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Hubs\ScaleHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
-    <Compile Include="Jobs\Tram481ModuleFakeJob.cs" />
     <Compile Include="Jobs\Tram481ModuleJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
