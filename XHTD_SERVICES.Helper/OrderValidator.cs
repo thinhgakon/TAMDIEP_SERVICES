@@ -22,7 +22,7 @@ namespace XHTD_SERVICES.Helper
                 return false;
             }
 
-            _logger.Info($"4.0. Kiem tra don hang chieu VAO: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
@@ -70,7 +70,7 @@ namespace XHTD_SERVICES.Helper
                 return false;
             }
 
-            _logger.Info($"4.0. Kiem tra don hang chieu RA: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            _logger.Info($"4.0. Kiem tra don hang chieu RA: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
