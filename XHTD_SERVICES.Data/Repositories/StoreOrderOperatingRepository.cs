@@ -978,7 +978,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Select(x => x.DeliveryCode)
                                     .ToListAsync();
 
-                var timeToAdd = DateTime.Now.AddMinutes(-2);
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
@@ -1003,7 +1003,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Select(x => x.DeliveryCode)
                                     .ToListAsync();
 
-                var timeToAdd = DateTime.Now.AddMinutes(-2);
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
