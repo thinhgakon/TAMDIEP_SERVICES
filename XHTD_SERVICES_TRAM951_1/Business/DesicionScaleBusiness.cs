@@ -118,7 +118,7 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             {
                 var tolerance = (weight - order.WeightIn - order.SumNumber * 1000) / (order.SumNumber * 1000);
                 tolerance = tolerance < 0 ? (-1) * tolerance : tolerance;
-                isCheck = (double)tolerance > 0.01 ? true : false;
+                isCheck = (double)tolerance > 0.02 ? true : false;
             }
             catch (Exception ex)
             {
