@@ -680,43 +680,6 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> ReindexToTrough(int orderId)
-        {
-            // TODO: xếp lại lốt là giá trị lớn nhất cần xét theo type product
-            using (var dbContext = new XHTD_Entities())
-            {
-                bool isUpdated = false;
-
-                try
-                {
-                    var itemToCall = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
-                    if (itemToCall != null)
-                    {
-                        var oldIndexOrder = itemToCall.IndexOrder;
-                        var newIndexOrder = oldIndexOrder + 2;
-
-                        itemToCall.CountReindex++;
-                        itemToCall.IndexOrder = newIndexOrder;
-                        itemToCall.Step = (int)OrderStep.DA_CAN_VAO;
-                        itemToCall.LogProcessOrder = $@"{itemToCall.LogProcessOrder} # Quá 5 phút sau lần gọi cuối cùng mà xe không vào, cập nhật lúc {DateTime.Now}, lốt cũ: {oldIndexOrder}, lốt mới: {newIndexOrder}";
-
-                        await dbContext.SaveChangesAsync();
-
-                        isUpdated = true;
-                    }
-
-                    return isUpdated;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"UpdateWhenOverCountTry Error: " + ex.Message);
-                    Console.WriteLine($@"UpdateWhenOverCountTry Error: " + ex.Message);
-
-                    return isUpdated;
-                }
-            }
-        }
-
         public async Task<bool> UpdateWhenOverCountReindex(int orderId)
         {
             using (var dbContext = new XHTD_Entities())
