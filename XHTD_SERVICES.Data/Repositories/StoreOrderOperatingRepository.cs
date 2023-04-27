@@ -480,6 +480,47 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateOrderConfirm3ByCardNo(string cardNo)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                     && x.Step == (int)OrderStep.DA_CAN_RA
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm7ByDeliveryCode(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
@@ -555,6 +596,47 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
                     Console.WriteLine($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateWeightInByCardNo(string cardNo, int weightIn)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.CardNo == cardNo
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
                     return false;
                 }
             }
