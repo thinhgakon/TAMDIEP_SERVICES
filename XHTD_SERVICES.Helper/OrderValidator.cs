@@ -121,7 +121,7 @@ namespace XHTD_SERVICES.Helper
                 return false;
             }
 
-            _logger.Info($"4.0. Kiem tra don hang tai can: CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}, WeightIn = {order.WeightIn}, SumNumber = {order.SumNumber}");
+            _logger.Info($"4.0. Kiem tra don hang tai can: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}, WeightIn = {order.WeightIn}, SumNumber = {order.SumNumber}");
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
