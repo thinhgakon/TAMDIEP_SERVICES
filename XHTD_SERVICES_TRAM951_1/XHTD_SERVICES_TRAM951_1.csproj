@@ -260,6 +260,7 @@
     <Compile Include="Business\DesicionScaleBusiness.cs" />
     <Compile Include="Business\IndexOrderBusiness.cs" />
     <Compile Include="Business\ScaleApiLib.cs" />
+    <Compile Include="Business\OrderBusiness.cs" />
     <Compile Include="Business\VehicleBusiness.cs" />
     <Compile Include="Business\ScaleBusiness.cs" />
     <Compile Include="Business\UnladenWeightBusiness.cs" />
