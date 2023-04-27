@@ -264,17 +264,11 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     _logger.Info($"8.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
                                     _logger.Info($"8.2. Update gia tri can vao");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
                                     _logger.Info($"8.3. Update trạng thái cân vào");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
                                 }
-
-                                // 8. Update giá trị cân của đơn hàng
-                                _logger.Info($"8. Update gia tri can vao");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
-
-                                // 9. Update trạng thái đơn hàng đã cân vào
-                                _logger.Info($"9. Update trạng thái cân vào");
-                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
                             }
                             else
                             {
