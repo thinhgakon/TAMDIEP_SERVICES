@@ -490,7 +490,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
-                                                     && x.Step == (int)OrderStep.DA_CAN_RA
+                                                     && x.IsVoiced == false
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     && 
+                                                     (
+                                                        x.CatId == OrderCatIdCode.CLINKER 
+                                                        || x.TypeXK == OrderTypeXKCode.JUMBO 
+                                                        || x.TypeXK == OrderTypeXKCode.SLING
+                                                     )
                                                     )
                                             .ToListAsync();
 
@@ -501,12 +508,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm8 = 1;
-                        order.TimeConfirm8 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.Confirm2 = 1;
+                        order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
+                        order.Confirm3 = 1;
+                        order.TimeConfirm3 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {currentTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -514,8 +523,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    log.Error($@"Xác thực cân vào {cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Xác thực cân vào {cardNo} error: " + ex.Message);
                     return false;
                 }
             }
