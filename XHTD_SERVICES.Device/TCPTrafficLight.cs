@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
+using log4net;
 
 namespace XHTD_SERVICES.Device
 {
     public class TCPTrafficLight
     {
+        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
 
@@ -54,6 +57,7 @@ namespace XHTD_SERVICES.Device
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                _logger.Error($@"Loi bat den XANH: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
                 return false;
             }
         }
@@ -86,6 +90,7 @@ namespace XHTD_SERVICES.Device
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
+                _logger.Error($@"Loi bat den DO: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
                 return false;
             }
         }
