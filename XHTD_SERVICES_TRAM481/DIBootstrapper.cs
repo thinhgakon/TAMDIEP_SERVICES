@@ -42,6 +42,7 @@ namespace XHTD_SERVICES_TRAM481
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
             builder.RegisterType<WeightBusiness>().AsSelf();
             builder.RegisterType<StepBusiness>().AsSelf();
+            builder.RegisterType<OrderBusiness>().AsSelf();
             builder.RegisterType<IndexOrderBusiness>().AsSelf();
             builder.RegisterType<DesicionScaleBusiness>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
