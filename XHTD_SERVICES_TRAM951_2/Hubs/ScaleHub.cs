@@ -243,13 +243,33 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 Thread.Sleep(3500);
 
-                                // 8. Update giá trị cân của đơn hàng
-                                _logger.Info($"8. Update gia tri can vao");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
+                                _logger.Info($"8. Update gia tri can va trang thai Can vao");
 
-                                // 9. Update trạng thái đơn hàng đã cân vào
-                                _logger.Info($"9. Update trạng thái cân vào");
-                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+                                // TODO: lấy thông tin đơn hàng
+                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
+
+                                if (currentOrder.CatId == OrderCatIdCode.CLINKER
+                                 || currentOrder.TypeXK == OrderTypeXKCode.JUMBO
+                                 || currentOrder.TypeXK == OrderTypeXKCode.SLING)
+                                {
+                                    _logger.Info($"8.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+
+                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo card no");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByCardNo(scaleInfo.CardNo, currentScaleValue);
+
+                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo card no");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByCardNo(scaleInfo.CardNo);
+                                }
+                                else
+                                {
+                                    _logger.Info($"8.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+
+                                    _logger.Info($"8.2. Update gia tri can vao");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                    _logger.Info($"8.3. Update trạng thái cân vào");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+                                }
                             }
                             else
                             {
