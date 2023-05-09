@@ -269,7 +269,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         tmpInvalidCardNoLst.RemoveRange(0, 3); 
                                     }
 
-                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-1)))
+                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
                                     {
                                         //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
                                         continue;
