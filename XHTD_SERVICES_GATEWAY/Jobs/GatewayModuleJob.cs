@@ -424,7 +424,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                             }
 
-                                            Thread.Sleep(7000);
+                                            Thread.Sleep(15000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             if(TurnOnRedTrafficLight("IN"))
@@ -477,7 +477,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                             }
 
-                                            Thread.Sleep(7000);
+                                            Thread.Sleep(15000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             if(TurnOnRedTrafficLight("OUT"))
@@ -557,7 +557,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                Thread.Sleep(100);
+                Thread.Sleep(500);
 
                 _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
