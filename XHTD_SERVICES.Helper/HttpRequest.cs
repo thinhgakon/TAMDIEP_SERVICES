@@ -98,30 +98,6 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        //public static IRestResponse SendDMSMsg(string token, string messageContent)
-        //{
-        //    var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
-
-        //    var requestData = new SendMsgRequest
-        //    {
-        //        messageContent = messageContent,
-        //    };
-
-        //    var client = new RestClient(apiUrl["SendMsg"]);
-        //    var request = new RestRequest();
-
-        //    request.Method = Method.POST;
-        //    request.AddJsonBody(requestData);
-        //    request.AddHeader("Authorization", "Bearer " + token);
-        //    request.AddHeader("Accept", "application/json");
-        //    request.AddHeader("Content-Type", "application/json");
-        //    request.RequestFormat = DataFormat.Json;
-
-        //    IRestResponse response = client.Execute(request);
-
-        //    return response;
-        //}
-
         public static IRestResponse SendDMSMsg(string token, SendMsgRequest messenge)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
