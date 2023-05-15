@@ -184,14 +184,54 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static bool UpdateWeightInWebSale()
+        public static IRestResponse UpdateWeightInWebSale(string token, string deliveryCode, double weight)
         {
-            return true;
+            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+
+            var requestData = new UpdateWeightRequest
+            {
+                deliveryCode = deliveryCode,
+                weight = weight,
+            };
+
+            var client = new RestClient(apiUrl["UpdateWeightIn"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
         }
 
-        public static bool UpdateWeightOutWebSale()
+        public static IRestResponse UpdateWeightOutWebSale(string token, string deliveryCode, double weight)
         {
-            return true;
+            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+
+            var requestData = new UpdateWeightRequest
+            {
+                deliveryCode = deliveryCode,
+                weight = weight,
+            };
+
+            var client = new RestClient(apiUrl["UpdateWeightOut"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
         }
     }
 }
