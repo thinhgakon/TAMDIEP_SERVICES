@@ -186,7 +186,7 @@ namespace XHTD_SERVICES.Helper
 
         public static IRestResponse UpdateWeightInWebSale(string token, string deliveryCode, double weight)
         {
-            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+            var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
 
             var requestData = new UpdateWeightRequest
             {
@@ -211,7 +211,7 @@ namespace XHTD_SERVICES.Helper
 
         public static IRestResponse UpdateWeightOutWebSale(string token, string deliveryCode, double weight)
         {
-            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+            var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
 
             var requestData = new UpdateWeightRequest
             {
