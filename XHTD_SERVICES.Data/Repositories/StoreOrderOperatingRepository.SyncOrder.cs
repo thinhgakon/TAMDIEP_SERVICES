@@ -131,9 +131,9 @@ namespace XHTD_SERVICES.Data.Repositories
                                                 && x.IsVoiced == false
                                                 && x.Step < (int)OrderStep.DA_CAN_VAO
                                                 );
-                    if(order != null)
+                    if (order != null)
                     {
-                        if(lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
+                        if (lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
                         {
                             return false;
                         }
@@ -183,7 +183,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
-                                                && 
+                                                &&
                                                 (
                                                     x.Step < (int)OrderStep.DA_CAN_VAO
                                                     ||
@@ -193,7 +193,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {orderId}: weightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
+                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeIn}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
@@ -221,7 +221,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Receiving Order {orderId} Error: " + ex.Message + " ====== " + ex.StackTrace + "=============="+ ex.InnerException);
+                log.Error($@"=========================== Update Receiving Order {orderId} Error: " + ex.Message + " ====== " + ex.StackTrace + "==============" + ex.InnerException);
                 Console.WriteLine($@"Update Receiving Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
@@ -241,10 +241,11 @@ namespace XHTD_SERVICES.Data.Repositories
                 DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
-                if(timeOutDate > DateTime.Now.AddMinutes(-30)) {
+                if (timeOutDate > DateTime.Now.AddMinutes(-30))
+                {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && 
+                                                    &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_CAN_RA
                                                         ||
@@ -327,7 +328,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message + " ============ " + ex.StackTrace  + " ==== " + ex.InnerException);
+                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message + " ============ " + ex.StackTrace + " ==== " + ex.InnerException);
                 Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
 
                 return isSynced;
