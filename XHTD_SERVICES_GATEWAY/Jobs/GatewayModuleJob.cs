@@ -355,7 +355,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
                                     }
 
-                                    if (isValidCardNo == false)
+                                    if (currentOrder == null)
+                                    {
+                                        _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không có đơn hàng");
+
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                        tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                                        continue;
+                                    }
+                                    else if (isValidCardNo == false)
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
