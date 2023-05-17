@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 using XHTD_SERVICES_TRAM951_1.Models.Response;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_TRAM951_1.Business
 {
@@ -11,18 +8,42 @@ namespace XHTD_SERVICES_TRAM951_1.Business
     {
         public DesicionScaleResponse ScaleIn(string deliveryCode, int weight)
         {
-            var response = new DesicionScaleResponse();
-            response.Code = "01";
-            response.Message = "Cân vào thành công";
+            var strToken = HttpRequest.GetScaleToken();
+
+            var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, "045210-23", 100);
+
+            if (updateResponse.StatusDescription.Equals("Unauthorized"))
+            {
+                var unauthorizedResponse = new DesicionScaleResponse();
+                unauthorizedResponse.Code = "02";
+                unauthorizedResponse.Message = "Xác thực API cân WebSale không thành công";
+                return unauthorizedResponse;
+            }
+
+            var updateResponseContent = updateResponse.Content;
+
+            var response = JsonConvert.DeserializeObject<DesicionScaleResponse>(updateResponseContent);
 
             return response;
         }
 
         public DesicionScaleResponse ScaleOut(string deliveryCode, int weight)
         {
-            var response = new DesicionScaleResponse();
-            response.Code = "01";
-            response.Message = "Cân ra thành công";
+            var strToken = HttpRequest.GetScaleToken();
+
+            var updateResponse = HttpRequest.UpdateWeightOutWebSale(strToken, deliveryCode, weight);
+
+            if (updateResponse.StatusDescription.Equals("Unauthorized"))
+            {
+                var unauthorizedResponse = new DesicionScaleResponse();
+                unauthorizedResponse.Code = "02";
+                unauthorizedResponse.Message = "Xác thực API cân WebSale không thành công";
+                return unauthorizedResponse;
+            }
+
+            var updateResponseContent = updateResponse.Content;
+
+            var response = JsonConvert.DeserializeObject<DesicionScaleResponse>(updateResponseContent);
 
             return response;
         }
