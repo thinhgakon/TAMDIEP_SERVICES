@@ -119,8 +119,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
                     await _appDbContext.SaveChangesAsync();
 
-                    Console.WriteLine($@"Inserted order {websaleOrder.id}");
-                    log.Info($@"Inserted order {websaleOrder.id}");
+                    Console.WriteLine($@"Inserted order orderId={websaleOrder.id} createDate={websaleOrder.createDate} lúc {syncTime}");
+                    log.Info($@"Inserted order orderId={websaleOrder.id} createDate={websaleOrder.createDate} lúc {syncTime}");
 
                     isSynced = true;
                 }
