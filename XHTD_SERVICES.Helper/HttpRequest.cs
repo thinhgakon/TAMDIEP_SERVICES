@@ -9,6 +9,7 @@ using System.Configuration;
 using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Helper.Models.Response;
 using RestSharp;
+using Newtonsoft.Json;
 
 namespace XHTD_SERVICES.Helper
 {
@@ -46,7 +47,7 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse GetScaleToken()
+        public static string GetScaleToken()
         {
             var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
             var account = ConfigurationManager.GetSection("API_Scale/Account") as NameValueCollection;
@@ -75,7 +76,12 @@ namespace XHTD_SERVICES.Helper
 
             IRestResponse response = client.Execute(request);
 
-            return response;
+            var content = response.Content;
+
+            var responseData = JsonConvert.DeserializeObject<GetTokenResponse>(content);
+            var strToken = responseData.access_token;
+
+            return strToken;
         }
 
         public static IRestResponse GetWebsaleOrder(string token, int numberHoursSearchOrder)
