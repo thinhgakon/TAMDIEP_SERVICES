@@ -273,7 +273,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             else
                             {
                                 // Lưu giá trị cân thất bại
-                                _logger.Info($"Lưu giá trị cân thất bại");
+                                _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
                             }
 
                             // 7. Bật đèn xanh
@@ -383,7 +383,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                             else
                             {
                                 // Lưu giá trị cân thất bại
-                                _logger.Info($"Lưu giá trị cân thất bại: {scaleInfoResult.Message}");
+                                _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
                             }
 
                             // 6. Bật đèn xanh
