@@ -199,7 +199,11 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
-                    order.Step = (int)OrderStep.DA_CAN_VAO;
+
+                    if(order.Step < (int)OrderStep.DA_CAN_VAO) { 
+                        order.Step = (int)OrderStep.DA_CAN_VAO;
+                    }
+
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
 
@@ -258,8 +262,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         log.Info($@"===== Update Received Order {orderId} timeOut={timeOut} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.Confirm7 = 1;
-                        order.TimeConfirm7 = timeOutDate;
-                        order.Step = (int)OrderStep.DA_CAN_RA;
+                        order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+
+                        if (order.Step < (int)OrderStep.DA_CAN_RA)
+                        {
+                            order.Step = (int)OrderStep.DA_CAN_RA;
+                        }
+
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
 
