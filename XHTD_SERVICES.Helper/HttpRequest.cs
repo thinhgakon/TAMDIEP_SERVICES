@@ -143,7 +143,7 @@ namespace XHTD_SERVICES.Helper
 
             var requestData = new SearchOrderRequest
             {
-                from = DateTime.Now.AddMinutes(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy HH:mm:ss"),
+                from = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy HH:mm:ss"),
                 to = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
             };
 
