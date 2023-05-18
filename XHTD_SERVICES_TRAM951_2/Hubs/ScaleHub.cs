@@ -206,7 +206,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             }
 
                             // 5. Gọi iERP API lưu giá trị cân
-                            _logger.Info($"5. Goi iERP API luu gia tri can");
+                            _logger.Info($"5. Goi iERP API luu gia tri can: DeliveryCode={scaleInfo.DeliveryCode} weight={currentScaleValue}");
                             var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
 
                             if (scaleInfoResult.Code == "01")
@@ -336,7 +336,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             }
 
                             // 4. Gọi iERP API lưu giá trị cân
-                            _logger.Info($"4. Goi iERP API luu gia tri can");
+                            _logger.Info($"4. Goi iERP API luu gia tri can: DeliveryCode={scaleInfo.DeliveryCode} weight={currentScaleValue}");
                             var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
 
                             if (scaleInfoResult.Code == "01")

@@ -10,11 +10,14 @@ using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Helper.Models.Response;
 using RestSharp;
 using Newtonsoft.Json;
+using log4net;
 
 namespace XHTD_SERVICES.Helper
 {
     public static class HttpRequest
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(HttpRequest));
+
         public static IRestResponse GetWebsaleToken()
         {
             var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
@@ -192,6 +195,8 @@ namespace XHTD_SERVICES.Helper
 
         public static IRestResponse UpdateWeightInWebSale(string token, string deliveryCode, double weight)
         {
+            logger.Info($"UpdateWeightInWebSale API: deliveryCode={deliveryCode} weight={weight}");
+
             var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
 
             var requestData = new UpdateWeightRequest
@@ -217,6 +222,8 @@ namespace XHTD_SERVICES.Helper
 
         public static IRestResponse UpdateWeightOutWebSale(string token, string deliveryCode, double weight)
         {
+            logger.Info($"UpdateWeightOutWebSale API: deliveryCode={deliveryCode} weight={weight}");
+
             var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
 
             var requestData = new UpdateWeightRequest

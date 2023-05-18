@@ -29,6 +29,7 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
+            logger.Info($"MakeDecisionScaleIn: deliveryCode={deliveryCode} weight={weight}");
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
@@ -60,6 +61,7 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
         {
+            logger.Info($"MakeDecisionScaleOut: deliveryCode={deliveryCode} weight={weight}");
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",

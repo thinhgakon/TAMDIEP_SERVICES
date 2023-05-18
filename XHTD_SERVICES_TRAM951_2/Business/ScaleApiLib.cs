@@ -1,13 +1,18 @@
 ﻿using Newtonsoft.Json;
 using XHTD_SERVICES_TRAM951_2.Models.Response;
 using XHTD_SERVICES.Helper;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_2.Business
 {
     public class ScaleApiLib
     {
+        private static readonly ILog logger = LogManager.GetLogger(typeof(ScaleApiLib));
+
         public DesicionScaleResponse ScaleIn(string deliveryCode, int weight)
         {
+            logger.Info($"ScaleIn API: deliveryCode={deliveryCode} weight={weight}");
+
             var strToken = HttpRequest.GetScaleToken();
 
             var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, "045210-23", 100);
@@ -29,6 +34,8 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public DesicionScaleResponse ScaleOut(string deliveryCode, int weight)
         {
+            logger.Info($"ScaleOut API: deliveryCode={deliveryCode} weight={weight}");
+
             var strToken = HttpRequest.GetScaleToken();
 
             var updateResponse = HttpRequest.UpdateWeightOutWebSale(strToken, deliveryCode, weight);
