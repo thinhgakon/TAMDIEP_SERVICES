@@ -35,7 +35,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected const string SERVICE_ACTIVE_CODE = "SYNC_ORDER_ACTIVE";
 
-        protected const string SYNC_ORDER_HOURS = "SYNC_ORDER_HOURS";
+        protected const string SYNC_ORDER_HOURS = "SYNC_BOOKED_ORDER_MINUTES";
 
         private static bool isActiveService = true;
 
