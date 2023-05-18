@@ -36,6 +36,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            // Đồng bộ đơn hàng
+            IJobDetail syncBookedOrderJob = JobBuilder.Create<SyncBookedOrderJob>().Build();
+            ITrigger syncBookedOrderTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Order_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(syncBookedOrderJob, syncBookedOrderTrigger);
         }
     }
 }
