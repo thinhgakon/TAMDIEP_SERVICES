@@ -10,7 +10,7 @@ namespace XHTD_SERVICES_TRAM951_1.Business
         {
             var strToken = HttpRequest.GetScaleToken();
 
-            var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, "045210-23", 100);
+            var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, deliveryCode, weight);
 
             if (updateResponse.StatusDescription.Equals("Unauthorized"))
             {
