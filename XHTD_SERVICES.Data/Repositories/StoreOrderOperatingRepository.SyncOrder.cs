@@ -169,6 +169,66 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> ChangedAsync(OrderItemResponse websaleOrder)
+        {
+            bool isSynced = false;
+
+            var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+            try
+            {
+                var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
+                var cardNo = rfidItem?.Code ?? null;
+
+                var lastUpdatedDateString = websaleOrder?.lastUpdatedDate;
+                DateTime lastUpdatedDate = DateTime.ParseExact(lastUpdatedDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+                if (CheckExist(websaleOrder.id))
+                {
+                    var order = _appDbContext.tblStoreOrderOperatings
+                            .FirstOrDefault(x => x.OrderId == websaleOrder.id
+                                                && x.IsVoiced == false
+                                                && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                );
+                    if (order != null)
+                    {
+                        if (lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
+                        {
+                            return false;
+                        }
+
+                        if (order.UpdateDay == null || order.UpdateDay < lastUpdatedDate)
+                        {
+                            log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
+
+                            order.Vehicle = vehicleCode;
+                            order.DriverName = websaleOrder.driverName;
+                            order.CardNo = cardNo;
+                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            order.UpdateDay = lastUpdatedDate;
+
+                            order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
+                            order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
+
+                            await _appDbContext.SaveChangesAsync();
+
+                            log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
+                        }
+                    }
+                }
+
+                return isSynced;
+            }
+            catch (Exception ex)
+            {
+                log.Error("=========================== CreateAsync Error: " + ex.Message + " ========== " + ex.StackTrace + " === " + ex.InnerException); ;
+                Console.WriteLine("CreateAsync Error: " + ex.Message);
+
+                return isSynced;
+            }
+        }
+
         public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull)
         {
             bool isSynced = false;
