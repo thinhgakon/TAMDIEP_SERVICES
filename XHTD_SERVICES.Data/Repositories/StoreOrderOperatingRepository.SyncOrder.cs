@@ -193,7 +193,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeIn}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
+                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeIn} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
@@ -255,7 +255,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order != null)
                     {
-                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOut}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
+                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOut} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.Confirm7 = 1;
                         order.TimeConfirm7 = timeOutDate;
