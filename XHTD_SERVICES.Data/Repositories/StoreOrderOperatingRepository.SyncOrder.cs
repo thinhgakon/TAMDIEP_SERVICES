@@ -17,7 +17,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
-            var syncTime = DateTime.Now.ToString();
+            var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
             try
             {
@@ -173,7 +173,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
-            var syncTime = DateTime.Now.ToString();
+            var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
             var weightIn = Double.Parse(loadweightnull);
 
@@ -236,7 +236,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             bool isSynced = false;
 
-            var syncTime = DateTime.Now.ToString();
+            var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
             var weightOut = Double.Parse(loadweightfull);
 

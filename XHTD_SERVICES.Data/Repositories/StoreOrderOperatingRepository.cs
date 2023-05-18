@@ -141,6 +141,8 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 bool isUpdated = false;
 
+                var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
                 try
                 {
                     var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.Step < (int)OrderStep.DA_CAN_RA);
@@ -158,7 +160,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.Confirm6 = 1;
                         order.TimeConfirm6 = DateTime.Now;
-                        order.LogProcessOrder = order.LogProcessOrder + $@" #Xuất hàng xong lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
+                        order.LogProcessOrder = order.LogProcessOrder + $@" #Xuất hàng xong lúc {syncTime};";
                     }
                     else if (step == (int)OrderStep.DANG_LAY_HANG)
                     {
@@ -376,7 +378,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
@@ -396,7 +398,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_VAO_CONG;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực vào cổng lúc {currentTime} ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng lúc {currentTime} ";
 
                     await dbContext.SaveChangesAsync();
                     return true;
@@ -536,7 +538,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string cancelTime = DateTime.Now.ToString();
+                    string syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
@@ -557,7 +559,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_CAN_RA;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {cancelTime} ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {syncTime};";
 
                     await dbContext.SaveChangesAsync();
                     return true;
