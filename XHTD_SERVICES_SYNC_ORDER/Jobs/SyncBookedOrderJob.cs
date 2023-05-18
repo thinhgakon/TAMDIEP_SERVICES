@@ -104,7 +104,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo("Start process Sync Order service");
+            _syncOrderLogger.LogInfo("Start process Sync Booked Order service");
 
             GetToken();
 
