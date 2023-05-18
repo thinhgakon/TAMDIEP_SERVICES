@@ -104,7 +104,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo("Start process Sync In Progress Order service");
+            _syncOrderLogger.LogInfo($"Start Sync In Progress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
             GetToken();
 
@@ -143,6 +143,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     null
                 );
             }
+
+            _syncOrderLogger.LogInfo($"Done Sync In Progress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
 
         public void GetToken()
