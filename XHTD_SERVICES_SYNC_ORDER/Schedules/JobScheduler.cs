@@ -37,7 +37,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Schedules
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
-            // Đồng bộ đơn hàng
+            // Đồng bộ đơn hàng booked
             IJobDetail syncBookedOrderJob = JobBuilder.Create<SyncBookedOrderJob>().Build();
             ITrigger syncBookedOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
