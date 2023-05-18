@@ -112,6 +112,56 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse GetWebsaleOrderByCreated(string token, int numberHoursSearchOrder)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+
+            var requestData = new SearchOrderRequest
+            {
+                from = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy"),
+                to = DateTime.Now.ToString("dd/MM/yyyy"),
+            };
+
+            var client = new RestClient(apiUrl["SearchOrderByCreated"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse GetWebsaleOrderByUpdated(string token, int numberHoursSearchOrder)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_WebSale/Url") as NameValueCollection;
+
+            var requestData = new SearchOrderRequest
+            {
+                from = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy"),
+                to = DateTime.Now.ToString("dd/MM/yyyy"),
+            };
+
+            var client = new RestClient(apiUrl["SearchOrderByUpdated"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static IRestResponse GetDMSToken()
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;

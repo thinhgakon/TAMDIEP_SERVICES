@@ -164,7 +164,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public List<OrderItemResponse> GetWebsaleOrder()
         {
-            IRestResponse response = HttpRequest.GetWebsaleOrder(strToken, numberHoursSearchOrder);
+            IRestResponse response = HttpRequest.GetWebsaleOrderByCreated(strToken, numberHoursSearchOrder);
             var content = response.Content;
 
             if (response.StatusDescription.Equals("Unauthorized"))
