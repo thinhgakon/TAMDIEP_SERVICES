@@ -200,17 +200,18 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     break;
             }
 
-            if (stateId == (int)OrderState.DA_DAT_HANG)
-            {
-                isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+            //if (stateId == (int)OrderState.DA_DAT_HANG)
+            //{
+            //    isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
 
-                if (isSynced)
-                {
-                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                    await _vehicleRepository.CreateAsync(vehicleCode);
-                }
-            }
-            else if (stateId == (int)OrderState.DANG_LAY_HANG)
+            //    if (isSynced)
+            //    {
+            //        var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+            //        await _vehicleRepository.CreateAsync(vehicleCode);
+            //    }
+            //}
+            //else 
+            if (stateId == (int)OrderState.DANG_LAY_HANG)
             {
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
