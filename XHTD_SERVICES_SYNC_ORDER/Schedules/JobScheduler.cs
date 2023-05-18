@@ -27,15 +27,15 @@ namespace XHTD_SERVICES_SYNC_ORDER.Schedules
             await _scheduler.Start();
 
             // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<SyncOrderJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            IJobDetail syncInProgressOrderJob = JobBuilder.Create<SyncInProgressOrderJob>().Build();
+            ITrigger syncInProgressOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+            await _scheduler.ScheduleJob(syncInProgressOrderJob, syncInProgressOrderTrigger);
 
             // Đồng bộ đơn hàng booked
             IJobDetail syncBookedOrderJob = JobBuilder.Create<SyncBookedOrderJob>().Build();
