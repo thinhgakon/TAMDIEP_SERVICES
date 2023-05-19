@@ -273,6 +273,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             }
                             else
                             {
+                                Thread.Sleep(7000);
+
                                 // Lưu giá trị cân thất bại
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
                             }
@@ -383,6 +385,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             }
                             else
                             {
+                                Thread.Sleep(7000);
+
                                 // Lưu giá trị cân thất bại
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
                             }
