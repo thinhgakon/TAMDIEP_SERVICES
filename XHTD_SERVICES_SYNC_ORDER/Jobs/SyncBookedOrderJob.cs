@@ -127,23 +127,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
             }
 
-            if (isChanged)
-            {
-                _notification.SendNotification(
-                    "SYNC_ORDER",
-                    null,
-                    1,
-                    "Đồng bộ đơn hàng thành công",
-                    0,
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null
-                );
-            }
-
             _syncOrderLogger.LogInfo($"Done Sync Booked Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
 

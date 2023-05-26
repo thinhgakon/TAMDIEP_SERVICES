@@ -126,23 +126,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     if (!isChanged) isChanged = isSynced;
                 }
             }
-
-            if (isChanged)
-            {
-                _notification.SendNotification(
-                    "SYNC_ORDER",
-                    null,
-                    1,
-                    "Đồng bộ đơn hàng thành công",
-                    0,
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null
-                );
-            }
         }
 
         public void GetToken()
