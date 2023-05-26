@@ -173,6 +173,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                         var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
 
+                        var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
                         // Đang cân vào
                         if ((bool)scaleInfo.ScaleIn)
                         {
@@ -268,6 +270,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                     _logger.Info($"8.3. Update trạng thái cân vào");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+
+                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification("khoanv", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                 }
                             }
                             else
@@ -381,6 +385,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // 8. Update trạng thái đơn hàng đã cân ra
                                 _logger.Info($"8. Update trạng thái cân ra");
                                 await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
+
+                                DIBootstrapper.Init().Resolve<Notification>().SendInforNotification("khoanv", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
                             }
                             else
                             {

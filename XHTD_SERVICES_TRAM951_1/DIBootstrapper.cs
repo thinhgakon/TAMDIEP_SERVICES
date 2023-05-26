@@ -10,6 +10,7 @@ using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Business;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_TRAM951_1
 {
@@ -47,6 +48,7 @@ namespace XHTD_SERVICES_TRAM951_1
             builder.RegisterType<DesicionScaleBusiness>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
             builder.RegisterType<VehicleBusiness>().AsSelf();
+            builder.RegisterType<Notification>().AsSelf();
 
             RegisterScheduler(builder);
 
