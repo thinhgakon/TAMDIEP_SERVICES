@@ -127,7 +127,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
             }
 
-            _syncOrderLogger.LogInfo($"Done Sync Booked Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            //_syncOrderLogger.LogInfo($"Done Sync Booked Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
         }
 
         public void GetToken()
