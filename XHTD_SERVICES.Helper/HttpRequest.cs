@@ -218,13 +218,13 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse SendInforNotification(string sender, string receiver, string message)
+        public static IRestResponse SendInforNotification(string receiver, string message)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
 
             var requestData = new SendInforNotificationRequest
             {
-                UserNameSender = sender,
+                UserNameSender = apiUrl["UserNameSender"],
                 UserNameReceiver = receiver,
                 ContentMessage = message,
             };

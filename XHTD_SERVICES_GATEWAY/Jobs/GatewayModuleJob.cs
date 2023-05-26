@@ -399,6 +399,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isUpdatedOrder = false;
                                     bool isSuccessOpenBarrier = true;
 
+                                    var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
                                     if (isLuongVao)
                                     {
                                         if (currentOrder.CatId != OrderCatIdCode.CLINKER
@@ -409,6 +411,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
+                                                SendInfoNotification("khoanv", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
+
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
                                             }
                                         }
@@ -680,6 +684,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
                 }
+            }
+        }
+
+        public void SendInfoNotification(string receiver, string message)
+        {
+            try
+            {
+                _notification.SendInforNotification(receiver, message);
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

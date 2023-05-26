@@ -64,5 +64,11 @@ namespace XHTD_SERVICES.Helper
 
             SendMsg(notification);
         }
+
+        // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
+        public void SendInforNotification(string receiver, string message)
+        {
+            HttpRequest.SendInforNotification(receiver, message);
+        }
     }
 }
