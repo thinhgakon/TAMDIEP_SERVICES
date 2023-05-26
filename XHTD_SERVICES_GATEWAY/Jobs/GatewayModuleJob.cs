@@ -466,6 +466,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
+                                                SendInfoNotification("khoanv", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
+
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) => Đã xác thực trạng thái ra cổng");
                                             }
                                         }
