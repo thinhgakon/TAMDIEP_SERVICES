@@ -35,6 +35,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
+        protected readonly Notification _notification;
+
         protected readonly Logger _logger;
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
@@ -80,6 +82,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             VehicleRepository vehicleRepository,
             ScaleOperatingRepository scaleOperatingRepository,
             SystemParameterRepository systemParameterRepository,
+            Notification notification,
             Logger logger
             )
         {
@@ -90,6 +93,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             _vehicleRepository = vehicleRepository;
             _scaleOperatingRepository = scaleOperatingRepository;
             _systemParameterRepository = systemParameterRepository;
+            _notification = notification;
             _logger = logger;
         }
 
@@ -236,6 +240,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     var cardNoCurrent = tmp[2]?.ToString();
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
+
+                                    // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
+                                    SendRFIDInfo(cardNoCurrent, doorCurrent);
 
                                     // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
@@ -460,6 +467,32 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 h21 = IntPtr.Zero;
 
                 AuthenticateScaleStationModule();
+            }
+        }
+
+        public void SendRFIDInfo(string cardNo, string door)
+        {
+            try
+            {
+                _notification.SendNotification(
+                    "TRAM951_2_RFID",
+                    null,
+                    1,
+                    cardNo,
+                    Int32.Parse(door),
+                    null,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null
+                );
+
+                _logger.LogInfo($"Sent  RFID to app: {cardNo}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
