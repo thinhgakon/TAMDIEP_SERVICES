@@ -34,7 +34,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             }
             catch(Exception ex)
             {
-                logger.Info($"Server running error {ex.StackTrace} ------------ {ex.Message}");
+                logger.Info($"Server running error: {ex.StackTrace} ------------ {ex.InnerException} ------------ {ex.Message}");
             }
         }
 
