@@ -45,6 +45,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
 
+        protected readonly string SCALE_SIGNALR_RFID_CODE = "TRAM951_2_RFID";
+
         protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
 
         protected const string SERVICE_ACTIVE_CODE = "TRAM951_2_ACTIVE";
@@ -475,7 +477,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             try
             {
                 _notification.SendNotification(
-                    "TRAM951_2_RFID",
+                    SCALE_SIGNALR_RFID_CODE,
                     null,
                     1,
                     cardNo,
