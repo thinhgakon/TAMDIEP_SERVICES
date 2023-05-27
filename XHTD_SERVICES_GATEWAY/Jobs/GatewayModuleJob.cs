@@ -662,9 +662,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public void SendRFIDInfo(bool isLuongVao, string cardNo)
         {
-            if (isLuongVao)
+            try
             {
-                try
+                if (isLuongVao)
                 {
                     _notification.SendNotification(
                         "GATE_WAY_RFID",
@@ -680,12 +680,30 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         null
                     );
 
-                    //_gatewayLogger.LogInfo($"Sent notification to DMS: {cardNo}");
+                    _gatewayLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
                 }
-                catch (Exception ex)
+                else
                 {
-                    _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                    _notification.SendNotification(
+                       "GATE_WAY_OUT_RFID",
+                       null,
+                       1,
+                       cardNo,
+                       1,
+                       null,
+                       null,
+                       0,
+                       null,
+                       null,
+                       null
+                   );
+
+                    _gatewayLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
                 }
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
