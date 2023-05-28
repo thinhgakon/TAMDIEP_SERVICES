@@ -256,11 +256,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 {
                                     _logger.Info($"8.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo card no");
-                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByCardNo(scaleInfo.CardNo, currentScaleValue);
+                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo vehicle code");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
 
-                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo card no");
-                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByCardNo(scaleInfo.CardNo);
+                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                 }
                                 else
                                 {
