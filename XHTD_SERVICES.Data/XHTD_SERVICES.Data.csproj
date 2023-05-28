@@ -184,6 +184,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\CallToTroughRepository.cs" />
     <Compile Include="Repositories\MachineRepository .cs" />
+    <Compile Include="Repositories\StoreOrderOperatingRepository.Led.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Scale.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Gateway.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Common.cs" />
