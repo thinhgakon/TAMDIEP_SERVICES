@@ -76,7 +76,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân vào {deliveryCode} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào {deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
@@ -175,7 +174,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Xác thực cân vào {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực cân vào {cardNo} error: " + ex.Message);
                     return false;
                 }
             }
@@ -216,7 +214,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân ra {deliveryCode} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân ra {deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
@@ -255,7 +252,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
@@ -305,8 +301,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cân vào cardNo={cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào cardNo={cardNo} error: " + ex.Message);
+                    log.Error($@"Cân vào vehicle={vehicleCode} error: " + ex.Message);
                     return false;
                 }
             }
@@ -357,7 +352,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân vào cardNo={cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào cardNo={cardNo} error: " + ex.Message);
                     return false;
                 }
             }
@@ -397,7 +391,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân ra deliveryCode={deliveryCode} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân ra deliveryCode={deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
@@ -436,7 +429,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân vào {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân vào {cardNo} Error: " + ex.Message);
                     return false;
                 }
             }
@@ -467,7 +459,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightOut = weightOut;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân ra lúc {cancelTime} ";
 
-                        Console.WriteLine($@"Cân ra {cardNo}");
                         log.Info($@"Cân ra {cardNo}");
                     }
 
@@ -477,7 +468,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân ra {cardNo} Error: " + ex.Message);
-                    Console.WriteLine($@"Cân ra {cardNo} Error: " + ex.Message);
                     return false;
                 }
             }
