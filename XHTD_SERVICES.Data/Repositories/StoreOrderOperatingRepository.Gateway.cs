@@ -77,7 +77,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
@@ -105,8 +105,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    log.Error($@"Xác thực ra cổng VehicleCode={vehicleCode} error: " + ex.Message);
                     return false;
                 }
             }
@@ -118,7 +117,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
@@ -146,8 +145,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    log.Error($@"Xác thực ra cổng CardNo={cardNo} error: " + ex.Message);
                     return false;
                 }
             }
@@ -189,7 +187,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
