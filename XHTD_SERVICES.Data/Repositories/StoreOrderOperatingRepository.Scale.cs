@@ -14,12 +14,12 @@ namespace XHTD_SERVICES.Data.Repositories
     public partial class StoreOrderOperatingRepository
     {
         // Trạm cân
-        public async Task<tblStoreOrderOperating> GetCurrentOrderScaleStation(string cardNo)
+        public async Task<tblStoreOrderOperating> GetCurrentOrderScaleStation(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
+                                            .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
                                                         && (
                                                             (
