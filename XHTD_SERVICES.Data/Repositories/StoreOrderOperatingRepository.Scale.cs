@@ -82,6 +82,55 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateOrderConfirm3ByVehicleCode(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     &&
+                                                     (
+                                                        x.CatId == OrderCatIdCode.CLINKER
+                                                        || x.TypeXK == OrderTypeXKCode.JUMBO
+                                                        || x.TypeXK == OrderTypeXKCode.SLING
+                                                     )
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm2 = 1;
+                        order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
+                        order.Confirm3 = 1;
+                        order.TimeConfirm3 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_CAN_VAO;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực cân vào {vehicleCode} error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm3ByCardNo(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
@@ -207,6 +256,57 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
                     Console.WriteLine($@"Cân vào deliveryCode={deliveryCode} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateWeightInByVehicleCode(string vehicleCode, int weightIn)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString();
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     && x.WeightIn == null
+                                                     &&
+                                                     (
+                                                        x.CatId == OrderCatIdCode.CLINKER
+                                                        || x.TypeXK == OrderTypeXKCode.JUMBO
+                                                        || x.TypeXK == OrderTypeXKCode.SLING
+                                                     )
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        //order.WeightIn = weightIn;
+
+                        // TODO for test
+                        order.WeightInAuto = weightIn;
+                        order.WeightInTimeAuto = DateTime.Now;
+
+                        order.IsScaleAuto = true;
+                        //order.Step = (int)OrderStep.DA_CAN_VAO;
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cân vào cardNo={cardNo} error: " + ex.Message);
+                    Console.WriteLine($@"Cân vào cardNo={cardNo} error: " + ex.Message);
                     return false;
                 }
             }
