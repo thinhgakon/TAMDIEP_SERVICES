@@ -321,10 +321,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                                     // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                    bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
-                                    if (isValid)
+                                    string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+
+                                    if (!String.IsNullOrEmpty(vehicleCodeCurrent))
                                     {
-                                        _gatewayLogger.LogInfo($"3. Tag hop le");
+                                        _gatewayLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
                                     }
                                     else
                                     {
@@ -344,13 +345,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                     if (isLuongVao)
                                     {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(cardNoCurrent);
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
 
                                         isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
                                     }
                                     else if (isLuongRa)
                                     {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(cardNoCurrent);
+                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(vehicleCodeCurrent);
 
                                         isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
                                     }
@@ -462,7 +463,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                             && currentOrder.TypeXK != OrderTypeXKCode.JUMBO
                                             && currentOrder.TypeXK != OrderTypeXKCode.SLING)
                                         {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByCardNo(cardNoCurrent);
+                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
 
                                             if (isUpdatedOrder)
                                             {
