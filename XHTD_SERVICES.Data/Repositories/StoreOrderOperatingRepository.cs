@@ -11,34 +11,8 @@ using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
-    public partial class StoreOrderOperatingRepository : BaseRepository <tblStoreOrderOperating>
+    public partial class StoreOrderOperatingRepository
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        public StoreOrderOperatingRepository(XHTD_Entities appDbContext) : base(appDbContext)
-        {
-        }
-
-        public bool CheckExist(int? orderId)
-        {
-            var orderExist = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId);
-            if (orderExist != null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<tblStoreOrderOperating> GetDetail(string deliveryCode)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
-
-                return order;
-            }
-        }
-
         public async Task<bool> UpdateTroughLine(string deliveryCode, string throughCode)
         {
             using (var dbContext = new XHTD_Entities())
