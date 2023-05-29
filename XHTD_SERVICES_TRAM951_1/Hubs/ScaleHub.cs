@@ -42,9 +42,9 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
         }
 
-        public void SendNotificationCBV(int status, string inout, string cardNo, string message)
+        public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
-            Clients.All.SendNotificationCBV(status, inout, cardNo, message);
+            Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
         }
 
         public void SendSensor(string sensorCode, string status)
