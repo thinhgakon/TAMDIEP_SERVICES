@@ -14,12 +14,12 @@ namespace XHTD_SERVICES.Data.Repositories
     public partial class StoreOrderOperatingRepository
     {
         // Cổng bảo vệ
-        public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceGateway(string cardNo)
+        public async Task<tblStoreOrderOperating> GetCurrentOrderEntraceGateway(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
+                                            .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
@@ -42,12 +42,12 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<tblStoreOrderOperating> GetCurrentOrderExitGateway(string cardNo)
+        public async Task<tblStoreOrderOperating> GetCurrentOrderExitGateway(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 var order = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.CardNo == cardNo
+                                            .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
                                                      && (
                                                             (
@@ -71,13 +71,53 @@ namespace XHTD_SERVICES.Data.Repositories
         }
 
         // Xác thực ra cổng
+        public async Task<bool> UpdateOrderConfirm8ByVehicleCode(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.Step == (int)OrderStep.DA_CAN_RA
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm8 = 1;
+                        order.TimeConfirm8 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực ra cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực ra cổng VehicleCode={vehicleCode} error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm8ByCardNo(string cardNo)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
@@ -105,8 +145,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Xác thực vào cổng {cardNo} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng {cardNo} Error: " + ex.Message);
+                    log.Error($@"Xác thực ra cổng CardNo={cardNo} error: " + ex.Message);
                     return false;
                 }
             }
@@ -148,7 +187,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
-                    Console.WriteLine($@"Xác thực vào cổng DeliveryCode={deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }

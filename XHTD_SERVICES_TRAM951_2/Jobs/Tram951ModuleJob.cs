@@ -303,10 +303,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
 
                                     // 1. Kiểm tra cardNoCurrent hợp lệ
-                                    bool isValid = _rfidRepository.CheckValidCode(cardNoCurrent);
-                                    if (isValid)
+                                    string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+                                    if (!String.IsNullOrEmpty(vehicleCodeCurrent))
                                     {
-                                        _logger.LogInfo($"1. Tag hop le");
+                                        _logger.LogInfo($"1. Tag hop le: vehicle={vehicleCodeCurrent}");
                                     }
                                     else
                                     {
@@ -322,7 +322,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     }
 
                                     // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(cardNoCurrent);
+                                    var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
                                     var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
 
                                     if (isValidCardNo == false)

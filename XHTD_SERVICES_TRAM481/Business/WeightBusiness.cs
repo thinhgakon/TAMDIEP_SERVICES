@@ -28,6 +28,11 @@ namespace XHTD_SERVICES_TRAM481.Business
             await _storeOrderOperatingRepository.UpdateWeightInByCardNo(cardNo, weightIn);
         }
 
+        public async Task UpdateWeightInByVehicleCode(string vehicleCode, int weightIn)
+        {
+            await _storeOrderOperatingRepository.UpdateWeightInByVehicleCode(vehicleCode, weightIn);
+        }
+
         public async Task UpdateWeightOut(string deliveryCode, int weightOut)
         {
             await _storeOrderOperatingRepository.UpdateWeightOut(deliveryCode, weightOut);
