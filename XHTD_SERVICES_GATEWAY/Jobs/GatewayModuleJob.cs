@@ -360,7 +360,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không có đơn hàng");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -371,7 +371,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     {
                                         _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -380,7 +380,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else
                                     {
-                                        await SendNotificationCBV(1, inout, cardNoCurrent, "Phương tiện có đơn hàng hợp lệ");
+                                        await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -645,13 +645,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        private async Task SendNotificationCBV(int status, string inout, string cardNo, string message)
+        private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
             try
             {
                 await StartIfNeededAsync();
 
-                HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message).Wait();
+                HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message, deliveryCode).Wait();
 
                 _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
             }
