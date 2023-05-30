@@ -213,6 +213,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             if (scaleInfoResult.Code == "01")
                             {
                                 // Lưu giá trị cân thành công
+                                SendMessage("Notification", $"Lưu giá trị cân thành công!");
+
                                 _logger.Info($"Lưu giá trị cân thành công");
 
                                 Thread.Sleep(7000);
@@ -276,10 +278,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             }
                             else
                             {
-                                Thread.Sleep(7000);
-
                                 // Lưu giá trị cân thất bại
+                                SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+
+                                Thread.Sleep(7000);
                             }
 
                             // 7. Bật đèn xanh
@@ -347,6 +351,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             if (scaleInfoResult.Code == "01")
                             {
                                 // Lưu giá trị cân thành công
+                                SendMessage("Notification", $"Lưu giá trị cân thành công!");
+
                                 _logger.Info($"Lưu giá trị cân thành công");
 
                                 Thread.Sleep(7000);
@@ -390,10 +396,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             }
                             else
                             {
-                                Thread.Sleep(7000);
-
                                 // Lưu giá trị cân thất bại
+                                SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+
+                                Thread.Sleep(7000);
                             }
 
                             // 6. Bật đèn xanh
