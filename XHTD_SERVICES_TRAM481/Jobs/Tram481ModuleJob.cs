@@ -329,8 +329,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                                        new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} không có đơn hàng");
-                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không có đơn hàng");
+                                        new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -341,8 +341,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
-                                        new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -351,8 +351,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                     }
                                     else
                                     {
-                                        new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpCardNoLst.Add(newCardNoLog);
