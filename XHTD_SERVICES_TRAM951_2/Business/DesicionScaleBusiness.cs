@@ -29,7 +29,6 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
-            logger.Info($"MakeDecisionScaleIn: deliveryCode={deliveryCode} weight={weight}");
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
@@ -38,20 +37,20 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleIn(deliveryCode, weight);
 
-            if (response.Code == "01")
-            {
-                // Gọi API lưu thành công
-                logger.Info($"Scale_Send_Successed: {response.Message}");
+            //if (response.Code == "01")
+            //{
+            //    // Gọi API lưu thành công
+            //    logger.Info($"Scale_Send_Successed: {response.Message}");
 
-                new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
-            }
-            else
-            {
-                // Gọi API lưu thất bại
-                logger.Info($"Scale_Send_Failed: {response.Message}");
+            //    new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
+            //}
+            //else
+            //{
+            //    // Gọi API lưu thất bại
+            //    logger.Info($"Scale_Send_Failed: {response.Message}");
 
-                new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
-            }
+            //    new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
+            //}
 
             resultResponse.Code = response.Code;
             resultResponse.Message = response.Message;
@@ -61,7 +60,6 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
         {
-            logger.Info($"MakeDecisionScaleOut: deliveryCode={deliveryCode} weight={weight}");
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
@@ -71,41 +69,41 @@ namespace XHTD_SERVICES_TRAM951_2.Business
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
             // Chỉ kiểm tra vi phạm độ lệch khối lượng với xi măng bao
-            if (order.CatId == OrderCatIdCode.XI_MANG_BAO)
-            {
-                if (CheckToleranceLimit(order, weight))
-                {
-                    // vi phạm độ lệch khối lượng
-                    logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
+            //if (order.CatId == OrderCatIdCode.XI_MANG_BAO)
+            //{
+            //    if (CheckToleranceLimit(order, weight))
+            //    {
+            //        // vi phạm độ lệch khối lượng
+            //        logger.Info($"Scale_Send_Failed: Vượt quá 1% dung sai cho phép");
 
-                    new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
+            //        new ScaleHub().SendMessage("Scale_Send_Failed", $"Vượt quá 1% dung sai cho phép");
 
-                    new ScaleHub().SendMessage("Notification", $"Vượt quá 1% dung sai cân cho phép. Vui lòng xử lý thủ công");
+            //        new ScaleHub().SendMessage("Notification", $"Vượt quá 1% dung sai cân cho phép. Vui lòng xử lý thủ công");
 
-                    return new DesicionScaleResponse
-                    {
-                        Code = "02",
-                        Message = "Vượt quá 1% dung sai cho phép"
-                    };
-                }
-            }
+            //        return new DesicionScaleResponse
+            //        {
+            //            Code = "02",
+            //            Message = "Vượt quá 1% dung sai cho phép"
+            //        };
+            //    }
+            //}
 
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleOut(deliveryCode, weight);
 
-            if (response.Code == "01")
-            {
-                // Gọi API lưu thành công
-                logger.Info($"Scale_Send_Successed: {response.Message}");
+            //if (response.Code == "01")
+            //{
+            //    // Gọi API lưu thành công
+            //    logger.Info($"Scale_Send_Successed: {response.Message}");
 
-                new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
-            }
-            else
-            {
-                // Gọi API lưu thất bại
-                logger.Info($"Scale_Send_Failed: {response.Message}");
+            //    new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
+            //}
+            //else
+            //{
+            //    // Gọi API lưu thất bại
+            //    logger.Info($"Scale_Send_Failed: {response.Message}");
 
-                new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
-            }
+            //    new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
+            //}
 
             resultResponse.Code = response.Code;
             resultResponse.Message = response.Message;
