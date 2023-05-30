@@ -47,6 +47,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly string SCALE_SIGNALR_RFID_CODE = "TRAM951_2_RFID";
 
+        protected readonly string SCALE_DELIVERY_CODE = "TRAM951_2_DELIVERY_CODE";
+
         protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
 
         protected const string SERVICE_ACTIVE_CODE = "TRAM951_2_ACTIVE";
@@ -343,6 +345,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                                         new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -353,6 +356,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                     {
                                         new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                                        new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpCardNoLst.Add(newCardNoLog);
