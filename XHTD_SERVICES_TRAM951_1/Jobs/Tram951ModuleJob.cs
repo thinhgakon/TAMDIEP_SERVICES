@@ -325,7 +325,19 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
                                     var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
 
-                                    if (isValidCardNo == false)
+                                    if (currentOrder == null)
+                                    {
+                                        _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
+
+                                        new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} không có đơn hàng");
+                                        new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không có đơn hàng");
+
+                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                                        tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                                        continue;
+                                    }
+                                    else if (isValidCardNo == false)
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
