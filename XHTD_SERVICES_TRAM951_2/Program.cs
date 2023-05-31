@@ -16,6 +16,8 @@ namespace XHTD_SERVICES_TRAM951_2
         public static List<int> scaleValues = new List<int>();
         public static bool IsScalling = false;
         public static bool IsLockingScale = false;
+        public static string InProgressDeliveryCode = null;
+        public static string InProgressVehicleCode = null;
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
 

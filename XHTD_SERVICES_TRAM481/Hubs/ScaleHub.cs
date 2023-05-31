@@ -29,6 +29,10 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
         protected readonly string SCALE_BALANCE = "SCALE_481_BALANCE";
 
+        protected readonly string SCALE_DELIVERY_CODE = "TRAM481_DELIVERY_CODE";
+
+        protected readonly string VEHICLE_STATUS = "VEHICLE_481_STATUS";
+
         public void SendMessage(string name, string message)
         {
             try
@@ -104,6 +108,9 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             if (Program.IsScalling)
             {
                 SendMessage($"{SCALE_STATUS}", $"Đang cân tự động");
+
+                SendMessage($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
+                SendMessage($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
             }
             else
             {

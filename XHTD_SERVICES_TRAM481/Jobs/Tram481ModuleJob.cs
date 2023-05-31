@@ -301,6 +301,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
 
                                             Program.IsScalling = false;
+                                            Program.InProgressDeliveryCode = null;
+                                            Program.InProgressVehicleCode = null;
                                         }
                                     }
 
@@ -412,6 +414,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             // 6. Đánh dấu trạng thái đang cân
                                             _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
+                                            Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
+                                            Program.InProgressVehicleCode = currentOrder.Vehicle;
                                         }
                                         else
                                         {
@@ -452,6 +456,8 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                                             // 6. Đánh dấu trạng thái đang cân
                                             _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
                                             Program.IsScalling = true;
+                                            Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
+                                            Program.InProgressVehicleCode = currentOrder.Vehicle;
                                         }
                                         else
                                         {
