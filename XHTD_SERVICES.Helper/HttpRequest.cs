@@ -296,5 +296,31 @@ namespace XHTD_SERVICES.Helper
 
             return response;
         }
+
+        public static IRestResponse SaleOrderWebSale(string token, string deliveryCode)
+        {
+            logger.Info($"SaleOrderWebSale API: deliveryCode={deliveryCode}");
+
+            var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
+
+            var requestData = new UpdateWeightRequest
+            {
+                deliveryCode = deliveryCode,
+            };
+
+            var client = new RestClient($"{apiUrl["SaleOrder"]}/{deliveryCode}");
+            var request = new RestRequest();
+
+            request.Method = Method.PUT;
+            //request.AddJsonBody(requestData);
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
     }
 }
