@@ -73,7 +73,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9511ScaleInfo(time, value);
-            //ReadDataScale(time, value);
         }
 
         public void Send9512ScaleInfo(DateTime time, string value)
@@ -117,6 +116,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             {
                 SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                 SendMessage($"{SCALE_BALANCE}", "");
+                SendMessage("Notification", "");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân

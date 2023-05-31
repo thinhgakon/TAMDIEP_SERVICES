@@ -116,6 +116,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
             {
                 SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                 SendMessage($"{SCALE_BALANCE}", "");
+                SendMessage("Notification", "");
             }
 
             // TODO: kiểm tra vi phạm cảm biến cân
