@@ -243,7 +243,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.WeightInAuto = weightIn;
                     order.WeightInTimeAuto = DateTime.Now;
 
-                    order.IsScaleAuto = true;
+                    //order.IsScaleAuto = true;
                     //order.Step = (int)OrderStep.DA_CAN_VAO;
 
                     await dbContext.SaveChangesAsync();
@@ -292,7 +292,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightInAuto = weightIn;
                         order.WeightInTimeAuto = DateTime.Now;
 
-                        order.IsScaleAuto = true;
+                        //order.IsScaleAuto = true;
                         //order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
@@ -342,7 +342,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightInAuto = weightIn;
                         order.WeightInTimeAuto = DateTime.Now;
 
-                        order.IsScaleAuto = true;
+                        //order.IsScaleAuto = true;
                         //order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
