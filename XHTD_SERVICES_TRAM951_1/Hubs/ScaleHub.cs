@@ -213,7 +213,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             if (scaleInfoResult.Code == "01")
                             {
                                 // Lưu giá trị cân thành công
-                                SendMessage("Notification", $"Lưu giá trị cân thành công!");
+                                SendMessage("Notification", $"{scaleInfoResult.Message}");
 
                                 _logger.Info($"Lưu giá trị cân thành công");
 
@@ -351,7 +351,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             if (scaleInfoResult.Code == "01")
                             {
                                 // Lưu giá trị cân thành công
-                                SendMessage("Notification", $"Lưu giá trị cân thành công!");
+                                SendMessage("Notification", $"{scaleInfoResult.Message}");
 
                                 _logger.Info($"Lưu giá trị cân thành công");
 
