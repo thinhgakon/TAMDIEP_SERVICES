@@ -15,6 +15,8 @@ using XHTD_SERVICES.Helper;
 using Microsoft.AspNet.SignalR.Client;
 using System.Threading;
 using XHTD_SERVICES.Data.Common;
+using Autofac;
+using XHTD_SERVICES_GATEWAY.Business;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -415,6 +417,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 SendInfoNotification("khoanv", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
 
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
+
+                                                try { 
+                                                    var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
+                                                    _gatewayLogger.LogInfo($"5.1. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _gatewayLogger.LogInfo($"5.1. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                                                }
                                             }
                                         }
                                         else
