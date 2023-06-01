@@ -216,9 +216,35 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 await _callToTroughRepository.UpdateWhenHuyDon(websaleOrder.deliveryCode);
 
                 isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
+
+                if (isSynced)
+                {
+                    // Gửi notification đơn bị hủy đến app lái xe
+                    var canceledOrder = await _storeOrderOperatingRepository.GetDetail(websaleOrder.deliveryCode);
+                    if (canceledOrder != null && !String.IsNullOrEmpty(canceledOrder.DriverUserName))
+                    {
+                        var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                        SendInfoNotification("chungds", $"{websaleOrder.deliveryCode} {canceledOrder.DriverUserName} đã bị hủy lúc {currentTime}");
+                    }
+                }
             }
 
             return isSynced;
+        }
+
+        public void SendInfoNotification(string receiver, string message)
+        {
+            try
+            {
+                _notification.SendInforNotification(receiver, message);
+
+                _syncOrderLogger.LogInfo($"SendInforNotification success: {message}");
+            }
+            catch (Exception ex)
+            {
+                _syncOrderLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
         }
     }
 }
