@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
 using log4net;
+using System.Threading;
 
 namespace XHTD_SERVICES.Device
 {
@@ -31,68 +32,92 @@ namespace XHTD_SERVICES.Device
 
         public bool TurnOnGreenOffRed()
         {
-            try
+            var isSuccessed = false;
+            int count = 0;
+
+            while (!isSuccessed && count < 6)
             {
-                TcpClient client = new TcpClient();
+                count++;
+                try
+                {
+                    _logger.Error($@"Bat den xanh: count={count}");
+                    TcpClient client = new TcpClient();
 
-                // 1. connect
-                client.Connect($"{this.IpAddress}", PORT_NUMBER);
-                Stream stream = client.GetStream();
+                    // 1. connect
+                    client.Connect($"{this.IpAddress}", PORT_NUMBER);
+                    Stream stream = client.GetStream();
 
-                // 2. send 1
-                byte[] data1 = encoding.GetBytes($"{ONGREENOFFRED}");
+                    // 2. send 1
+                    byte[] data1 = encoding.GetBytes($"{ONGREENOFFRED}");
 
-                stream.Write(data1, 0, data1.Length);
+                    stream.Write(data1, 0, data1.Length);
 
-                // 3. receive 1
-                data1 = new byte[BUFFER_SIZE];
-                stream.Read(data1, 0, BUFFER_SIZE);
+                    // 3. receive 1
+                    data1 = new byte[BUFFER_SIZE];
+                    stream.Read(data1, 0, BUFFER_SIZE);
 
-                // 5. Close
-                stream.Close();
-                client.Close();
+                    // 5. Close
+                    stream.Close();
+                    client.Close();
 
-                return true;
+                    isSuccessed = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    _logger.Error($@"Loi bat den XANH count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    //return false;
+
+                    Thread.Sleep(1000);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                _logger.Error($@"Loi bat den XANH: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                return false;
-            }
+
+            return isSuccessed;
         }
 
         public bool TurnOffGreenOnRed()
         {
-            try
+            var isSuccessed = false;
+            int count = 0;
+
+            while (!isSuccessed && count < 6)
             {
-                TcpClient client = new TcpClient();
+                count++;
+                try
+                {
+                    _logger.Error($@"Bat den do: count={count}");
 
-                // 1. connect
-                client.Connect($"{this.IpAddress}", PORT_NUMBER);
-                Stream stream = client.GetStream();
+                    TcpClient client = new TcpClient();
 
-                // 2. send 1
-                byte[] data1 = encoding.GetBytes($"{OFFGREENONRED}");
+                    // 1. connect
+                    client.Connect($"{this.IpAddress}", PORT_NUMBER);
+                    Stream stream = client.GetStream();
 
-                stream.Write(data1, 0, data1.Length);
+                    // 2. send 1
+                    byte[] data1 = encoding.GetBytes($"{OFFGREENONRED}");
 
-                // 3. receive 1
-                data1 = new byte[BUFFER_SIZE];
-                stream.Read(data1, 0, BUFFER_SIZE);
+                    stream.Write(data1, 0, data1.Length);
 
-                // 5. Close
-                stream.Close();
-                client.Close();
+                    // 3. receive 1
+                    data1 = new byte[BUFFER_SIZE];
+                    stream.Read(data1, 0, BUFFER_SIZE);
 
-                return true;
+                    // 5. Close
+                    stream.Close();
+                    client.Close();
+
+                    isSuccessed = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    _logger.Error($@"Loi bat den DO count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    //return false;
+
+                    Thread.Sleep(1000);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                _logger.Error($@"Loi bat den DO: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                return false;
-            }
+            return isSuccessed;
         }
 
         public bool TurnOffGreenOffRed()
