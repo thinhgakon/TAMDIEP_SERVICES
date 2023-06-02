@@ -299,7 +299,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     _logger.Info($"8.3. Update trạng thái cân vào");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
 
-                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification("khoanv", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
+                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                 }
                             }
                             else
@@ -390,6 +390,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 // 6. Bật đèn xanh
                                 TurnOnGreenTrafficLight();
 
+                                // TODO: lấy thông tin đơn hàng
+                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
+
                                 // 7. Update giá trị cân của đơn hàng
                                 _logger.Info($"7. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
@@ -398,7 +401,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 _logger.Info($"8. Update trạng thái cân ra");
                                 await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
 
-                                DIBootstrapper.Init().Resolve<Notification>().SendInforNotification("khoanv", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
+                                DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
                             }
                             else
                             {
