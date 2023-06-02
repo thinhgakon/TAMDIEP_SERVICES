@@ -432,6 +432,29 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 Thread.Sleep(3500);
 
+                                // 6. Bật đèn xanh
+                                _logger.Info($"6.1. Bat den xanh chieu vao");
+                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
+                                {
+                                    _logger.Info($@"Bật đèn thành công");
+                                }
+                                else
+                                {
+                                    _logger.Info($@"Bật đèn thất bại");
+                                }
+
+                                Thread.Sleep(500);
+
+                                _logger.Info($"6.2. Bat den xanh chieu ra");
+                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
+                                {
+                                    _logger.Info($@"Bật đèn thành công");
+                                }
+                                else
+                                {
+                                    _logger.Info($@"Bật đèn thất bại");
+                                }
+
                                 // 7. Update giá trị cân của đơn hàng
                                 _logger.Info($"7. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
@@ -450,29 +473,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                 Thread.Sleep(7000);
-                            }
-
-                            // 6. Bật đèn xanh
-                            _logger.Info($"6.1. Bat den xanh chieu vao");
-                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
-                            }
-
-                            Thread.Sleep(500);
-
-                            _logger.Info($"6.2. Bat den xanh chieu ra");
-                            if(DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
                             }
 
                             // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
