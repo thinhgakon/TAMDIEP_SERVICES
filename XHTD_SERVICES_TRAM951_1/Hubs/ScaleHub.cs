@@ -58,33 +58,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
             DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-            _logger.Info($"open barrier: {name}");
-
-            _logger.Info($"7.1. Bat thủ công den xanh chieu vao");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-            {
-                SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
-                _logger.Info($@"Bật thành công");
-            }
-            else
-            {
-                SendMessage("Notification", $"Bật đèn xanh chiều vào thất bại");
-                _logger.Info($@"Bật thất bại");
-            }
-
-            Thread.Sleep(500);
-
-            _logger.Info($"7.2. Bat thủ công den xanh chieu ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-            {
-                SendMessage("Notification", $"Bật đèn xanh chiều ra thành công");
-                _logger.Info($@"Bật thành công");
-            }
-            else
-            {
-                SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
-                _logger.Info($@"Bật thất bại");
-            }
+            TurnOnGreenTrafficLight(true);
         }
 
         public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
@@ -295,27 +269,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 Thread.Sleep(3500);
 
                                 // 7. Bật đèn xanh
-                                _logger.Info($"7.1. Bat den xanh chieu vao");
-                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-                                {
-                                    _logger.Info($@"Bật đèn thành công");
-                                }
-                                else
-                                {
-                                    _logger.Info($@"Bật đèn thất bại");
-                                }
-
-                                Thread.Sleep(500);
-
-                                _logger.Info($"7.2. Bat den xanh chieu ra");
-                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-                                {
-                                    _logger.Info($@"Bật đèn thành công");
-                                }
-                                else
-                                {
-                                    _logger.Info($@"Bật đèn thất bại");
-                                }
+                                TurnOnGreenTrafficLight();
 
                                 _logger.Info($"8. Update gia tri can va trang thai Can vao");
 
@@ -433,27 +387,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 Thread.Sleep(3500);
 
                                 // 6. Bật đèn xanh
-                                _logger.Info($"6.1. Bat den xanh chieu vao");
-                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-                                {
-                                    _logger.Info($@"Bật đèn thành công");
-                                }
-                                else
-                                {
-                                    _logger.Info($@"Bật đèn thất bại");
-                                }
-
-                                Thread.Sleep(500);
-
-                                _logger.Info($"6.2. Bat den xanh chieu ra");
-                                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-                                {
-                                    _logger.Info($@"Bật đèn thành công");
-                                }
-                                else
-                                {
-                                    _logger.Info($@"Bật đèn thất bại");
-                                }
+                                TurnOnGreenTrafficLight();
 
                                 // 7. Update giá trị cân của đơn hàng
                                 _logger.Info($"7. Update gia tri can ra");
@@ -491,6 +425,46 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 {
                     Program.scaleValues.Clear();
                 }
+            }
+        }
+
+        public void TurnOnGreenTrafficLight(bool isHasNotification = false)
+        {
+            _logger.Info($"7.1. Bat thủ công den xanh chieu vao");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                if (isHasNotification) { 
+                    SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
+                }
+                _logger.Info($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều vào thất bại");
+                }
+                _logger.Info($@"Bật thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            _logger.Info($"7.2. Bat thủ công den xanh chieu ra");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều ra thành công");
+                }
+                _logger.Info($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
+                }
+                _logger.Info($@"Bật thất bại");
             }
         }
     }
