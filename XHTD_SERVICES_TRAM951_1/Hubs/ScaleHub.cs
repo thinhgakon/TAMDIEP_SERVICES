@@ -223,7 +223,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     _logger.Info($"4.2. Dong barrier OUT");
                                     DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
                                 }
-                                else {
+                                else 
+                                {
                                     _logger.Info($"4. Cau hinh barrier dang TAT");
                                 }
                             }
@@ -433,7 +434,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             _logger.Info($"7.1. Bat thủ công den xanh chieu vao");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
             {
-                if (isHasNotification) { 
+                if (isHasNotification) 
+                { 
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
                 }
                 _logger.Info($@"Bật thành công");

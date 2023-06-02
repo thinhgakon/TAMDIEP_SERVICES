@@ -46,6 +46,21 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             }
         }
 
+        public void OpenManualBarrier(string name)
+        {
+            _logger.Info($"6.1. Mo thủ công barrier IN");
+            SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
+            DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+
+            Thread.Sleep(1000);
+
+            _logger.Info($"6.2. Mo thủ công barrier OUT");
+            SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
+            DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+
+            TurnOnGreenTrafficLight(true);
+        }
+
         public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
             Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
@@ -254,6 +269,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 Thread.Sleep(3500);
 
+                                // 7. Bật đèn xanh
+                                TurnOnGreenTrafficLight();
+
                                 _logger.Info($"8. Update gia tri can va trang thai Can vao");
 
                                 // TODO: lấy thông tin đơn hàng
@@ -292,29 +310,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                 Thread.Sleep(7000);
-                            }
-
-                            // 7. Bật đèn xanh
-                            _logger.Info($"7.1. Bat den xanh chieu vao");
-                            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
-                            }
-
-                            Thread.Sleep(500);
-
-                            _logger.Info($"7.2. Bat den xanh chieu ra");
-                            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
                             }
 
                             // 9. Giải phóng cân
@@ -392,6 +387,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 Thread.Sleep(3500);
 
+                                // 6. Bật đèn xanh
+                                TurnOnGreenTrafficLight();
+
                                 // 7. Update giá trị cân của đơn hàng
                                 _logger.Info($"7. Update gia tri can ra");
                                 await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
@@ -412,29 +410,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 Thread.Sleep(7000);
                             }
 
-                            // 6. Bật đèn xanh
-                            _logger.Info($"6.1. Bat den xanh chieu vao");
-                            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
-                            }
-
-                            Thread.Sleep(500);
-
-                            _logger.Info($"6.2. Bat den xanh chieu ra");
-                            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
-                            {
-                                _logger.Info($@"Bật đèn thành công");
-                            }
-                            else
-                            {
-                                _logger.Info($@"Bật đèn thất bại");
-                            }
-
                             // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
                             _logger.Info($"8. Giai phong can {SCALE_CODE}");
                             Program.IsScalling = false;
@@ -451,6 +426,47 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 {
                     Program.scaleValues.Clear();
                 }
+            }
+        }
+
+        public void TurnOnGreenTrafficLight(bool isHasNotification = false)
+        {
+            _logger.Info($"7.1. Bat thủ công den xanh chieu vao");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
+                }
+                _logger.Info($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều vào thất bại");
+                }
+                _logger.Info($@"Bật thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            _logger.Info($"7.2. Bat thủ công den xanh chieu ra");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều ra thành công");
+                }
+                _logger.Info($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
+                }
+                _logger.Info($@"Bật thất bại");
             }
         }
     }
