@@ -171,7 +171,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    order.Confirm1 = 1;
                     order.TimeConfirm1 = order.TimeConfirm1 ?? DateTime.Now;
                     order.Confirm2 = 1;
                     order.TimeConfirm2 = DateTime.Now;
