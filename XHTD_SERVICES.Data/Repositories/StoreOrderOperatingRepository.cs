@@ -143,8 +143,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         }
                     }
 
-                    order.Confirm5 = 1;
-
                     order.Step = step;
 
                     await dbContext.SaveChangesAsync();
