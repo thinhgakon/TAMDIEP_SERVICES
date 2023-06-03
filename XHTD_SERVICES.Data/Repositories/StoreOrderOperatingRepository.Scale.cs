@@ -195,7 +195,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     log.Info($@"UpdateOrderConfirm7 deliveryCode={deliveryCode} with step={order.Step}");
 
-                    order.Confirm7 = 1;
+                    order.Confirm7 = (int)ConfirmType.RFID;
                     order.TimeConfirm7 = DateTime.Now;
                     order.Step = (int)OrderStep.DA_CAN_RA;
                     order.IndexOrder = 0;
@@ -447,7 +447,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm7 = 1;
+                        order.Confirm7 = (int)ConfirmType.RFID;
                         order.TimeConfirm7 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_RA;
                         order.WeightOut = weightOut;

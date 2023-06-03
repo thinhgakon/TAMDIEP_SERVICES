@@ -318,7 +318,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         log.Info($@"===== Update Received Order {orderId} timeOut={timeOut} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
-                        order.Confirm7 = 1;
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
                         if (order.Step < (int)OrderStep.DA_CAN_RA)
