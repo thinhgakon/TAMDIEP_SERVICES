@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
+using XHTD_SERVICES_GATEWAY.Hubs;
 using XHTD_SERVICES_GATEWAY.Schedules;
 
 namespace XHTD_SERVICES_GATEWAY
@@ -19,6 +20,8 @@ namespace XHTD_SERVICES_GATEWAY
             log.Info("OnStart service GATEWAY");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
+
+            new SignalRService().OnStart(null);
         }
 
         protected override void OnStop()
