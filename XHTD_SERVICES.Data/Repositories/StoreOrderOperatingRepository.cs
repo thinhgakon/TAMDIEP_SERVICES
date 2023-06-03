@@ -144,7 +144,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         }
                     }
 
-                    order.Confirm3 = 1;
                     order.Confirm4 = 1;
                     order.Confirm5 = 1;
 

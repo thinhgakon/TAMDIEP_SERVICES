@@ -61,7 +61,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    order.Confirm3 = 1;
+                    order.Confirm3 = (int)ConfirmType.RFID;
                     order.TimeConfirm3 = DateTime.Now;
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
@@ -107,7 +107,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm3 = 1;
+                        order.Confirm3 = (int)ConfirmType.RFID;
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.IndexOrder = 0;
@@ -154,7 +154,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm3 = 1;
+                        order.Confirm3 = (int)ConfirmType.RFID;
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.IndexOrder = 0;
@@ -409,7 +409,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm3 = 1;
+                        order.Confirm3 = (int)ConfirmType.RFID;
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.WeightIn = weightIn;
