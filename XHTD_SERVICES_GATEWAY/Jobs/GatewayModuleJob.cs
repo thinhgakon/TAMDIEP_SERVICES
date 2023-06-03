@@ -17,6 +17,7 @@ using System.Threading;
 using XHTD_SERVICES.Data.Common;
 using Autofac;
 using XHTD_SERVICES_GATEWAY.Business;
+using XHTD_SERVICES_GATEWAY.Hubs;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -658,18 +659,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
-            try
-            {
-                await StartIfNeededAsync();
+            new GatewayHub().SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+            //try
+            //{
+            //    await StartIfNeededAsync();
 
-                HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message, deliveryCode).Wait();
+            //    HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message, deliveryCode).Wait();
 
-                _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
-            }
+            //    _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
+            //}
         }
 
         public void SendRFIDInfo(bool isLuongVao, string cardNo)

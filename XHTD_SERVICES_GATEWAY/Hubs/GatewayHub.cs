@@ -33,7 +33,16 @@ namespace XHTD_SERVICES_GATEWAY.Hubs
 
         public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
-            Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+            try
+            {
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
+                broadcast.Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            //Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
         }
     }
 }
