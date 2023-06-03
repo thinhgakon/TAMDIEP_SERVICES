@@ -100,6 +100,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         Confirm6 = 0,
                         Confirm7 = 0,
                         Confirm8 = 0,
+                        Confirm9 = 0,
                         MoocCode = websaleOrder.moocCode,
                         LocationCode = websaleOrder.locationCode,
                         TransportMethodId = websaleOrder.transportMethodId,
@@ -371,7 +372,6 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     && x.Step < (int)OrderStep.DA_GIAO_HANG);
                     if (order != null)
                     {
-                        order.Confirm9 = 1;
                         order.TimeConfirm9 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_GIAO_HANG;
                         order.IndexOrder = 0;

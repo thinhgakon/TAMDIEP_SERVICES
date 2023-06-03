@@ -309,7 +309,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (order != null)
                     {
                         order.Step = (int)OrderStep.DA_GIAO_HANG;
-                        order.Confirm9 = 1;
                         order.TimeConfirm9 = DateTime.Now;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Tự động hoàn thành lúc {completeTime} ";
 
