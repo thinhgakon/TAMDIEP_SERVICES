@@ -88,7 +88,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         order.Step = (int)OrderStep.DANG_GOI_XE;
                         //order.CountReindex = 0;
-                        order.Confirm4 = 1;
                         order.TimeConfirm4 = DateTime.Now;
                         order.LogProcessOrder = order.LogProcessOrder + $@" #Đưa vào hàng đợi mời xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} ";
 
@@ -144,7 +143,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         }
                     }
 
-                    order.Confirm4 = 1;
                     order.Confirm5 = 1;
 
                     order.Step = step;
