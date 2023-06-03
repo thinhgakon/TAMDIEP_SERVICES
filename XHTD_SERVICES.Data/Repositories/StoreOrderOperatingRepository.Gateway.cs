@@ -92,7 +92,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm8 = 1;
+                        order.Confirm8 = (int)ConfirmType.RFID;
                         order.TimeConfirm8 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
                         order.IndexOrder = 0;
@@ -132,7 +132,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm8 = 1;
+                        order.Confirm8 = (int)ConfirmType.RFID;
                         order.TimeConfirm8 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
                         order.IndexOrder = 0;

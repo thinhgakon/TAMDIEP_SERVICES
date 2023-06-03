@@ -349,7 +349,6 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     && x.Step < (int)OrderStep.DA_HOAN_THANH);
                     if (order != null)
                     {
-                        order.Confirm8 = 1;
                         order.TimeConfirm8 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_HOAN_THANH;
                         order.IndexOrder = 0;
