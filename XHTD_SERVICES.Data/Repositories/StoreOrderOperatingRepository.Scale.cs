@@ -61,8 +61,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    order.Confirm2 = 1;
-                    order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
                     order.TimeConfirm3 = DateTime.Now;
                     order.Step = (int)OrderStep.DA_CAN_VAO;
@@ -109,8 +107,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm2 = 1;
-                        order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                         order.Confirm3 = 1;
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;
@@ -158,8 +154,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        order.Confirm2 = 1;
-                        order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                         order.Confirm3 = 1;
                         order.TimeConfirm3 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_CAN_VAO;

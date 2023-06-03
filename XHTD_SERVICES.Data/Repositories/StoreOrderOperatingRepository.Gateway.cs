@@ -171,8 +171,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    order.TimeConfirm1 = order.TimeConfirm1 ?? DateTime.Now;
-                    order.Confirm2 = 1;
+                    order.Confirm2 = (int)ConfirmType.RFID;
                     order.TimeConfirm2 = DateTime.Now;
                     order.Step = (int)OrderStep.DA_VAO_CONG;
                     order.IndexOrder = 0;

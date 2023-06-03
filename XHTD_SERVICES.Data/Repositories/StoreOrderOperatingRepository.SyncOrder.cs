@@ -255,8 +255,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Info($@"===== Update Receiving Order {orderId} timeIn={timeIn} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
-                    order.Confirm2 = 1;
-                    order.TimeConfirm2 = order.TimeConfirm2 ?? DateTime.Now;
                     order.Confirm3 = 1;
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
