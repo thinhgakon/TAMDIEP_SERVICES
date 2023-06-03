@@ -131,7 +131,6 @@ namespace XHTD_SERVICES.Data.Repositories
                             return true;
                         }
 
-                        order.Confirm6 = 1;
                         order.TimeConfirm6 = DateTime.Now;
                         order.LogProcessOrder = order.LogProcessOrder + $@" #Xuất hàng xong lúc {syncTime};";
                     }
