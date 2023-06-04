@@ -512,7 +512,7 @@ namespace XHTD_SERVICES_TRAM481.Jobs
                     null
                 );
 
-                _logger.LogInfo($"Sent  RFID to app: {cardNo}");
+                //_logger.LogInfo($"Sent  RFID to app: {cardNo}");
             }
             catch (Exception ex)
             {

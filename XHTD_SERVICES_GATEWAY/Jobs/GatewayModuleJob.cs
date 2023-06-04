@@ -694,7 +694,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         null
                     );
 
-                    _gatewayLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
+                    //_gatewayLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
                 }
                 else
                 {
@@ -712,7 +712,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                        null
                    );
 
-                    _gatewayLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
+                    //_gatewayLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
                 }
             }
             catch (Exception ex)
