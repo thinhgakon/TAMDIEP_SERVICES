@@ -583,18 +583,34 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
                 int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-                _barrier.ConnectPLC(m221.IpAddress);
+                M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
 
-                _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                if (isConnected == M221Result.SUCCESS)
+                {
+                    Thread.Sleep(500);
 
-                Thread.Sleep(500);
+                    _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                    Thread.Sleep(500);
 
-                return true;
+                    _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+
+                    Thread.Sleep(500);
+
+                    _barrier.Close();
+
+                    _gatewayLogger.LogWarn("OpenBarrier thanh cong");
+
+                    return true;
+                }
+                else {
+                    _gatewayLogger.LogWarn("OpenBarrier: Ket noi PLC khong thanh cong");
+                    return false; 
+                }
             }
             catch (Exception ex)
             {
+                _gatewayLogger.LogInfo($"OpenBarrier Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
                 return false;
             }
         }
