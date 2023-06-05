@@ -256,6 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\ScaleApiLib.cs" />
+    <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="GatewayLogger.cs" />
     <Compile Include="Hubs\GatewayHub.cs" />
