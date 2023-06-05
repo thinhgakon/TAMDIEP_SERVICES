@@ -44,5 +44,15 @@ namespace XHTD_SERVICES_GATEWAY.Hubs
             }
             //Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
         }
+
+        public void OpenManualBarrierIn(string name)
+        {
+            
+        }
+
+        public void OpenManualBarrierOut(string name)
+        {
+
+        }
     }
 }
