@@ -10,6 +10,7 @@ using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_GATEWAY.Business;
+using XHTD_SERVICES_GATEWAY.Devices;
 
 namespace XHTD_SERVICES_GATEWAY
 {
@@ -31,6 +32,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<GatewayLogger>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
+            builder.RegisterType<BarrierControl>().AsSelf();
 
             RegisterScheduler(builder);
 

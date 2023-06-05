@@ -11,6 +11,7 @@ using XHTD_SERVICES.Data.Common;
 using Autofac;
 using XHTD_SERVICES_GATEWAY.Business;
 using System.Threading;
+using XHTD_SERVICES_GATEWAY.Devices;
 
 namespace XHTD_SERVICES_GATEWAY.Hubs
 {
@@ -47,12 +48,14 @@ namespace XHTD_SERVICES_GATEWAY.Hubs
 
         public void OpenManualBarrierIn(string name)
         {
-            
+            _logger.Info("Open Manua lBarrier In");
+            //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
         }
 
         public void OpenManualBarrierOut(string name)
         {
-
+            _logger.Info("Open Manua lBarrier Out");
+            //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
         }
     }
 }
