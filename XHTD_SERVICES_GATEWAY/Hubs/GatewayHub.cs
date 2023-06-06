@@ -48,14 +48,30 @@ namespace XHTD_SERVICES_GATEWAY.Hubs
 
         public void OpenManualBarrierIn(string name)
         {
-            _logger.Info("Open Manua lBarrier In");
-            //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+            _logger.Info("Open Manual Barrier In");
+            bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+            if (isOpened)
+            {
+                _logger.Info("Mở thành công");
+            }
+            else
+            {
+                _logger.Info("Mở thất bại");
+            }
         }
 
         public void OpenManualBarrierOut(string name)
         {
-            _logger.Info("Open Manua lBarrier Out");
-            //DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+            _logger.Info("Open Manual Barrier Out");
+            bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+            if (isOpened)
+            {
+                _logger.Info("Mở thành công");
+            }
+            else
+            {
+                _logger.Info("Mở thất bại");
+            }
         }
     }
 }
