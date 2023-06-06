@@ -191,7 +191,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             wplayer.URL = VoiceFileInvite;
             wplayer.settings.volume = 100;
             wplayer.controls.play();
-            Thread.Sleep(1500);
+            Thread.Sleep(1200);
             var count = 0;
             foreach (char c in vehicle)
             {
@@ -205,7 +205,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                 }
                 else if (count == 3)
                 {
-                    Thread.Sleep(1200);
+                    Thread.Sleep(1000);
                 }
                 else
                 {
@@ -218,12 +218,12 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
             wplayer.controls.play();
             Thread.Sleep(1200);
 
-            wplayer.URL = $@"{PathAudioLib}/M.wav"; ;
+            wplayer.URL = $@"{PathAudioLib}/M.wav";
             wplayer.settings.volume = 100;
             wplayer.controls.play();
-            Thread.Sleep(500);
+            Thread.Sleep(700);
 
-            wplayer.URL = $@"{PathAudioLib}/{troughCode}.wav"; ;
+            wplayer.URL = $@"{PathAudioLib}/{troughCode}.wav";
             wplayer.settings.volume = 100;
             wplayer.controls.play();
         }
