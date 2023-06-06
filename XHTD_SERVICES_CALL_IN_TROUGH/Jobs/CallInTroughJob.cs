@@ -125,107 +125,122 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
 
         public async Task CallInTrough(string machineCode)
         {
-            _callInTroughLogger.LogInfo($"CallInTrough {machineCode}");
-
-            var isWorkingMachine = await _machineRepository.IsWorkingMachine(machineCode);
-
-            // Khong goi xe vao may dang xuat hang
-            if (isWorkingMachine)
+            try
             {
-                _callInTroughLogger.LogInfo($"May {machineCode} dang xuat hang. Ket thuc");
-                return;
+                _callInTroughLogger.LogInfo($"CallInTrough {machineCode}");
+
+                var isWorkingMachine = await _machineRepository.IsWorkingMachine(machineCode);
+
+                // Khong goi xe vao may dang xuat hang
+                if (isWorkingMachine)
+                {
+                    _callInTroughLogger.LogInfo($"May {machineCode} dang xuat hang. Ket thuc");
+                    return;
+                }
+
+                // Tìm đơn hàng sẽ được gọi
+                var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
+
+                // Khong goi 1 xe qua 3 lan
+                if (itemToCall == null)
+                {
+                    _callInTroughLogger.LogInfo($"Khong co don hang nao dang cho trong mang {machineCode}");
+                    return;
+                }
+
+                if (itemToCall.CountTry >= maxCountTryCall
+                    || itemToCall.CountReindex >= maxCountReindex)
+                {
+                    _callInTroughLogger.LogInfo($"Don hang {itemToCall.DeliveryCode} da qua so lan goi CountTry {itemToCall.CountTry} CountReindex {itemToCall.CountReindex}");
+                    return;
+                }
+
+                _callInTroughLogger.LogInfo($"Tien hanh goi loa deliveryCode {itemToCall.DeliveryCode} vehicle {itemToCall.Vehicle} vao mang {machineCode}");
+
+                // Lấy thông tin đơn hàng
+                var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.DeliveryCode);
+
+                if (order == null)
+                {
+                    return;
+                }
+
+                if (order.Step != (int)OrderStep.DA_GIAO_HANG)
+                {
+                    var vehiceCode = order.Vehicle;
+
+                    // update don hang
+                    var logProcess = $@"#Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                    await _storeOrderOperatingRepository.UpdateLogProcess(order.DeliveryCode, logProcess);
+
+                    // update hang doi: CountTry + 1
+                    await _callToTroughRepository.UpdateWhenCall(itemToCall.Id, vehiceCode);
+
+                    // Thuc hien goi xe
+                    CallBySystem(vehiceCode, machineCode);
+                }
             }
-
-            // Tìm đơn hàng sẽ được gọi
-            var itemToCall = _callToTroughRepository.GetItemToCall(machineCode, maxCountTryCall);
-
-            // Khong goi 1 xe qua 3 lan
-            if (itemToCall == null)
+            catch (Exception ex)
             {
-                _callInTroughLogger.LogInfo($"Khong co don hang nao dang cho trong mang {machineCode}");
-                return;
+                _callInTroughLogger.LogInfo($"CallInTrough error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
-
-            if (itemToCall.CountTry >= maxCountTryCall
-                || itemToCall.CountReindex >= maxCountReindex)
-            {
-                _callInTroughLogger.LogInfo($"Don hang {itemToCall.DeliveryCode} da qua so lan goi CountTry {itemToCall.CountTry} CountReindex {itemToCall.CountReindex}");
-                return;
-            }
-
-            _callInTroughLogger.LogInfo($"Tien hanh goi loa deliveryCode {itemToCall.DeliveryCode} vehicle {itemToCall.Vehicle} vao mang {machineCode}");
-
-            // Lấy thông tin đơn hàng
-            var order = await _storeOrderOperatingRepository.GetDetail(itemToCall.DeliveryCode);
-
-            if(order == null)
-            {
-                return;
-            }
-
-            if(order.Step != (int)OrderStep.DA_GIAO_HANG)
-            {
-                var vehiceCode = order.Vehicle;
-
-                // update don hang
-                var logProcess = $@"#Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
-                await _storeOrderOperatingRepository.UpdateLogProcess(order.DeliveryCode, logProcess);
-
-                // update hang doi: CountTry + 1
-                await _callToTroughRepository.UpdateWhenCall(itemToCall.Id, vehiceCode);
-
-                // Thuc hien goi xe
-                CallBySystem(vehiceCode, machineCode);
-            }
+            
         }
 
         public void CallBySystem(string vehicle, string troughCode)
         {
-            var PathAudioLib = $@"C:/XHTD/ThuVienGoiLoa/AudioNormal";
-
-            string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
-            string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
-            
-            WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
-
-            wplayer.URL = VoiceFileInvite;
-            wplayer.settings.volume = 100;
-            wplayer.controls.play();
-            Thread.Sleep(1200);
-            var count = 0;
-            foreach (char c in vehicle)
+            try
             {
-                count++;
-                wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                var PathAudioLib = $@"C:/XHTD/ThuVienGoiLoa/AudioNormal";
+
+                string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
+                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
+
+                WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
-                if (count < 3)
+                Thread.Sleep(1200);
+                var count = 0;
+                foreach (char c in vehicle)
                 {
-                    Thread.Sleep(700);
+                    count++;
+                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    wplayer.settings.volume = 100;
+                    wplayer.controls.play();
+                    if (count < 3)
+                    {
+                        Thread.Sleep(700);
+                    }
+                    else if (count == 3)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        Thread.Sleep(700);
+                    }
                 }
-                else if (count == 3)
-                {
-                    Thread.Sleep(1000);
-                }
-                else
-                {
-                    Thread.Sleep(700);
-                }
+
+                wplayer.URL = VoiceFileInOut;
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+
+                wplayer.URL = $@"{PathAudioLib}/M.wav";
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                Thread.Sleep(700);
+
+                wplayer.URL = $@"{PathAudioLib}/{troughCode}.wav";
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
             }
-
-            wplayer.URL = VoiceFileInOut;
-            wplayer.settings.volume = 100;
-            wplayer.controls.play();
-            Thread.Sleep(1200);
-
-            wplayer.URL = $@"{PathAudioLib}/M.wav";
-            wplayer.settings.volume = 100;
-            wplayer.controls.play();
-            Thread.Sleep(700);
-
-            wplayer.URL = $@"{PathAudioLib}/{troughCode}.wav";
-            wplayer.settings.volume = 100;
-            wplayer.controls.play();
+            catch (Exception ex)
+            {
+                _callInTroughLogger.LogInfo($"CallBySystem error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
         }
     }
 }
