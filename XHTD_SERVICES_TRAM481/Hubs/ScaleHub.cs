@@ -270,7 +270,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
                                     DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                 }
 
-                                Thread.Sleep(7000);
+                                Thread.Sleep(5000);
 
                                 if (isLongVehicle)
                                 {
@@ -309,7 +309,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
-                                Thread.Sleep(7000);
+                                Thread.Sleep(5000);
                             }
 
                             // 9. Giải phóng cân
@@ -371,7 +371,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
 
-                                Thread.Sleep(7000);
+                                Thread.Sleep(5000);
 
                                 if (isLongVehicle)
                                 {
@@ -410,7 +410,7 @@ namespace XHTD_SERVICES_TRAM481.Hubs
 
                                 _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
-                                Thread.Sleep(7000);
+                                Thread.Sleep(5000);
                             }
 
                             // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
