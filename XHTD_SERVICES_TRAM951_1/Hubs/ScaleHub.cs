@@ -240,6 +240,36 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 _logger.Info($"Lưu giá trị cân thành công");
 
+                                _logger.Info($"8. Update gia tri can va trang thai Can vao");
+
+                                // TODO: lấy thông tin đơn hàng
+                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
+
+                                if (currentOrder.CatId == OrderCatIdCode.CLINKER
+                                 || currentOrder.TypeXK == OrderTypeXKCode.JUMBO
+                                 || currentOrder.TypeXK == OrderTypeXKCode.SLING)
+                                {
+                                    _logger.Info($"8.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+
+                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo vehicle code");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
+
+                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
+                                }
+                                else
+                                {
+                                    _logger.Info($"8.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+
+                                    _logger.Info($"8.2. Update gia tri can vao");
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                    _logger.Info($"8.3. Update trạng thái cân vào");
+                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+
+                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
+                                }
+
                                 Thread.Sleep(7000);
 
                                 if (isLongVehicle)
@@ -271,36 +301,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 7. Bật đèn xanh
                                 TurnOnGreenTrafficLight();
-
-                                _logger.Info($"8. Update gia tri can va trang thai Can vao");
-
-                                // TODO: lấy thông tin đơn hàng
-                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
-
-                                if (currentOrder.CatId == OrderCatIdCode.CLINKER 
-                                 || currentOrder.TypeXK == OrderTypeXKCode.JUMBO 
-                                 || currentOrder.TypeXK == OrderTypeXKCode.SLING)
-                                {
-                                    _logger.Info($"8.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
-
-                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo vehicle code");
-                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
-
-                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
-                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
-                                }
-                                else
-                                {
-                                    _logger.Info($"8.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
-
-                                    _logger.Info($"8.2. Update gia tri can vao");
-                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
-
-                                    _logger.Info($"8.3. Update trạng thái cân vào");
-                                    await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
-
-                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
-                                }
                             }
                             else
                             {
@@ -358,6 +358,19 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 _logger.Info($"Lưu giá trị cân thành công");
 
+                                // TODO: lấy thông tin đơn hàng
+                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
+
+                                // 7. Update giá trị cân của đơn hàng
+                                _logger.Info($"7. Update gia tri can ra");
+                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                // 8. Update trạng thái đơn hàng đã cân ra
+                                _logger.Info($"8. Update trạng thái cân ra");
+                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
+
+                                DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
+
                                 Thread.Sleep(7000);
 
                                 if (isLongVehicle)
@@ -389,19 +402,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 6. Bật đèn xanh
                                 TurnOnGreenTrafficLight();
-
-                                // TODO: lấy thông tin đơn hàng
-                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
-
-                                // 7. Update giá trị cân của đơn hàng
-                                _logger.Info($"7. Update gia tri can ra");
-                                await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
-
-                                // 8. Update trạng thái đơn hàng đã cân ra
-                                _logger.Info($"8. Update trạng thái cân ra");
-                                await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
-
-                                DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
                             }
                             else
                             {
