@@ -579,34 +579,48 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool OpenBarrier(string luong)
         {
+            var isConnectSuccessed = false;
+            int count = 0;
+
             try { 
                 int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
                 int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
-                M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
-
-                if (isConnected == M221Result.SUCCESS)
+                while (!isConnectSuccessed && count < 6)
                 {
-                    Thread.Sleep(500);
+                    count++;
 
-                    _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                    _gatewayLogger.LogInfo($@"OpenBarrier: count={count}");
 
-                    Thread.Sleep(500);
+                    M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
 
-                    _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        Thread.Sleep(500);
 
-                    Thread.Sleep(500);
+                        _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                    _barrier.Close();
+                        Thread.Sleep(500);
 
-                    _gatewayLogger.LogWarn("OpenBarrier thanh cong");
+                        _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
 
-                    return true;
+                        Thread.Sleep(500);
+
+                        _barrier.Close();
+
+                        _gatewayLogger.LogWarn($"OpenBarrier count={count} thanh cong");
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
                 }
-                else {
-                    _gatewayLogger.LogWarn("OpenBarrier: Ket noi PLC khong thanh cong");
-                    return false; 
-                }
+
+                return isConnectSuccessed;
             }
             catch (Exception ex)
             {
