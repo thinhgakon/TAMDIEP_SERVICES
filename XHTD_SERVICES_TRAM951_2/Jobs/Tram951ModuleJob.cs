@@ -265,7 +265,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                         tmpCardNoLst.RemoveRange(0, 3);
                                     }
 
-                                    if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-5)))
+                                    if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
                                     {
                                         //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                                         continue;
