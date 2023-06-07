@@ -165,7 +165,7 @@ namespace XHTD_SERVICES_CALL_IN_TROUGH.Jobs
                     return;
                 }
 
-                if (order.Step != (int)OrderStep.DA_GIAO_HANG)
+                if (order.Step != (int)OrderStep.DA_GIAO_HANG && order.TransportMethodId != (int)TransportMethod.DUONG_THUY)
                 {
                     var vehiceCode = order.Vehicle;
 

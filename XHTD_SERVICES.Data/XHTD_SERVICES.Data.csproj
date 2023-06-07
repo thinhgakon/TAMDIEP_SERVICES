@@ -180,6 +180,7 @@
     <Compile Include="Models\Response\MinQuantityTroughResponse.cs" />
     <Compile Include="Models\Response\OrderToCallInTroughResponse.cs" />
     <Compile Include="Models\Response\SearchOrderResponse.cs" />
+    <Compile Include="Models\Values\TransportMethod.cs" />
     <Compile Include="Models\Values\ConfirmType.cs" />
     <Compile Include="Models\Values\OrderStep.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
