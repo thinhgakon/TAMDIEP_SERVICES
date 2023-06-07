@@ -32,31 +32,46 @@ namespace XHTD_SERVICES_GATEWAY.Devices
         // Barrier chiều vào
         public bool OpenBarrierScaleIn()
         {
+            var isConnectSuccessed = false;
+            int count = 0;
+
             try
             {
-                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
-
-                if (isConnected == M221Result.SUCCESS)
+                while (!isConnectSuccessed && count < 6)
                 {
-                    Thread.Sleep(500);
+                    count++;
 
-                    _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_IN_Q1.ToString()));
-                    Thread.Sleep(500);
-                    _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_IN_Q1.ToString()));
+                    _logger.Info($@"OpenBarrierScaleIn: count={count}");
 
-                    Thread.Sleep(500);
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
 
-                    _barrier.Close();
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        Thread.Sleep(500);
 
-                    _logger.Info("OpenBarrier thanh cong");
+                        _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_IN_Q1.ToString()));
 
-                    return true;
+                        Thread.Sleep(500);
+
+                        _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_IN_Q1.ToString()));
+
+                        Thread.Sleep(500);
+
+                        _barrier.Close();
+
+                        _logger.Info($"OpenBarrier count={count} thanh cong");
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
                 }
-                else
-                {
-                    _logger.Info("OpenBarrier: Ket noi PLC khong thanh cong");
-                    return false;
-                }
+
+                return isConnectSuccessed;
             }
             catch (Exception ex)
             {
@@ -68,31 +83,46 @@ namespace XHTD_SERVICES_GATEWAY.Devices
         // Barrier chiều ra
         public bool OpenBarrierScaleOut()
         {
+            var isConnectSuccessed = false;
+            int count = 0;
+
             try
             {
-                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
-
-                if (isConnected == M221Result.SUCCESS)
+                while (!isConnectSuccessed && count < 6)
                 {
-                    Thread.Sleep(500);
+                    count++;
 
-                    _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_OUT_Q1.ToString()));
-                    Thread.Sleep(500);
-                    _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_OUT_Q1.ToString()));
+                    _logger.Info($@"OpenBarrierScaleOut: count={count}");
 
-                    Thread.Sleep(500);
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
 
-                    _barrier.Close();
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        Thread.Sleep(500);
 
-                    _logger.Info("OpenBarrier thanh cong");
+                        _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_OUT_Q1.ToString()));
 
-                    return true;
+                        Thread.Sleep(500);
+
+                        _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_OUT_Q1.ToString()));
+
+                        Thread.Sleep(500);
+
+                        _barrier.Close();
+
+                        _logger.Info($"OpenBarrier count={count} thanh cong");
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
                 }
-                else
-                {
-                    _logger.Info("OpenBarrier: Ket noi PLC khong thanh cong");
-                    return false;
-                }
+
+                return isConnectSuccessed;
             }
             catch (Exception ex)
             {
