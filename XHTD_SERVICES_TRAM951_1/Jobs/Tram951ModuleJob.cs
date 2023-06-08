@@ -49,6 +49,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly string SCALE_DELIVERY_CODE = "TRAM951_1_DELIVERY_CODE";
 
+        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_1_IS_LOCKING_RFID";
+
         protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
         protected const string SERVICE_ACTIVE_CODE = "TRAM951_1_ACTIVE";
@@ -244,6 +246,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     var cardNoCurrent = tmp[2]?.ToString();
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
+
+                                    if (Program.IsEnabledRfid == false) { 
+                                        new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+                                        continue;
+                                    }
 
                                     // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
                                     SendRFIDInfo(cardNoCurrent, doorCurrent);
