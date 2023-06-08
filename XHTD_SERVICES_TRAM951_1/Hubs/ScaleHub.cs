@@ -39,6 +39,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         protected readonly string LOCKING_RFID_STATUS = "LOCKING_RFID_1_STATUS";
 
+        protected readonly int TIME_TO_READ_RFID = 20;
+
         public void SendMessage(string name, string message)
         {
             try
@@ -131,7 +133,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 Program.IsLockingRfid = false;
             }
 
-            if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-20))
+            if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-1 * TIME_TO_READ_RFID))
             {
                 Program.IsLockingRfid = true;
             }
