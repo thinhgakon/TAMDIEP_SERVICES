@@ -247,8 +247,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
-                                    if (Program.IsEnabledRfid == false) { 
-                                        new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+                                    new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+                                    if (Program.IsEnabledRfid == false) 
+                                    { 
                                         continue;
                                     }
 
