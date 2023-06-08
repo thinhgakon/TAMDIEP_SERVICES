@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         protected readonly string LOCKING_RFID_STATUS = "LOCKING_RFID_1_STATUS";
 
-        protected readonly int TIME_TO_READ_RFID = 20;
+        protected readonly int TIME_TO_READ_RFID = 30;
 
         public void SendMessage(string name, string message)
         {
