@@ -263,6 +263,36 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
+                                    if(isLuongVao)
+                                    {
+                                        if (Program.IsLockingRfidIn) { 
+                                            _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
+
+                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "1");
+
+                                            //continue;
+                                        }
+                                        else
+                                        {
+                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "0");
+                                        }
+                                    }
+
+                                    if (isLuongRa)
+                                    {
+                                        if (Program.IsLockingRfidOut) { 
+                                            _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
+
+                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "1");
+
+                                            //continue;
+                                        }
+                                        else
+                                        {
+                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "0");
+                                        }
+                                    }
+
                                     // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
                                     SendRFIDInfo(isLuongVao, cardNoCurrent);
 
@@ -390,10 +420,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         if (isLuongVao)
                                         {
                                             tmpCardNoLst_In.Add(newCardNoLog);
+
+                                            Program.IsLockingRfidIn = true;
                                         }
                                         else if (isLuongRa)
                                         {
                                             tmpCardNoLst_Out.Add(newCardNoLog);
+
+                                            Program.IsLockingRfidOut = true;
                                         }
                                     }
 
@@ -551,6 +585,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                         {
                                             _gatewayLogger.LogInfo($"9. Mo barrier KHONG thanh cong");
                                         }
+                                    }
+
+                                    if (isLuongVao)
+                                    {
+                                        _gatewayLogger.LogInfo($"10. Giai phong RFID IN");
+
+                                        Program.IsLockingRfidIn = false;
+                                    }
+                                    else if (isLuongRa)
+                                    {
+                                        _gatewayLogger.LogInfo($"10. Giai phong RFID OUT");
+
+                                        Program.IsLockingRfidOut = false;
                                     }
                                 }
                             }

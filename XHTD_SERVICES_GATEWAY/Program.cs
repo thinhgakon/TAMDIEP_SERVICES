@@ -12,6 +12,10 @@ namespace XHTD_SERVICES_GATEWAY
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+
+        public static bool IsLockingRfidIn = false;
+        public static bool IsLockingRfidOut = false;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
