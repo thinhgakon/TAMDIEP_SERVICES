@@ -116,29 +116,37 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             // Check lock RFID
             if(currentScaleValue > ScaleConfig.MIN_WEIGHT_TO_SCALE && Program.IsLockingRfid == false && Program.IsEnabledRfid == false)
             {
+                _logger.Info($"111. currentScaleValue={currentScaleValue} == Program.IsLockingRfid={Program.IsLockingRfid} == Program.IsEnabledRfid={Program.IsEnabledRfid} ");
+
                 Program.IsEnabledRfid = true;
                 Program.EnabledRfidTime = time;
             }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE || Program.IsLockingRfid == true)
             {
+                _logger.Info($"222. currentScaleValue={currentScaleValue} == Program.IsLockingRfid={Program.IsLockingRfid}");
+
                 Program.IsEnabledRfid = false;
                 Program.EnabledRfidTime = null;
             }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE)
             {
+                _logger.Info($"333. currentScaleValue={currentScaleValue}");
+
                 Program.IsLockingRfid = false;
             }
 
-            if (Program.IsEnabledRfid && Program.EnabledRfidTime > time.AddSeconds(-20))
+            if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-20))
             {
+                _logger.Info($"444. IsEnabledRfid={Program.IsEnabledRfid} === Program.EnabledRfidTime={Program.EnabledRfidTime} === time={time}");
+
                 Program.IsLockingRfid = true;
             }
 
             SendMessage($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
 
-            SendMessage($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime.ToString()}");
+            SendMessage($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime}");
 
             SendMessage($"{LOCKING_RFID_STATUS}", $"{Program.IsLockingRfid}");
 
