@@ -364,6 +364,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                         tmpCardNoLst.Add(newCardNoLog);
 
                                         _logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+
+                                        Program.IsLockingRfid = true;
                                     }
 
                                     // 3. Xác định xe vào hay ra

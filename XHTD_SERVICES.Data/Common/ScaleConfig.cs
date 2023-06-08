@@ -12,6 +12,8 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly int MIN_WEIGHT_VEHICLE = 30;
 
+        public static readonly int MIN_WEIGHT_TO_SCALE = 30;
+
         public static readonly int WEIGHT_SAISO = 20;
     }
 }
