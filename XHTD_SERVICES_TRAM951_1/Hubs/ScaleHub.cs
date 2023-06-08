@@ -125,12 +125,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE || Program.IsLockingRfid == true)
             {
                 Program.IsEnabledRfid = false;
-                Program.EnabledRfidTime = null;
             }
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE)
             {
                 Program.IsLockingRfid = false;
+                Program.EnabledRfidTime = null;
             }
 
             if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-1 * TIME_TO_READ_RFID))
