@@ -403,13 +403,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isUpdatedOrder = false;
                                     bool isSuccessOpenBarrier = true;
 
+                                    bool isNormalOrder = currentOrder.CatId != OrderCatIdCode.CLINKER
+                                                      && currentOrder.TypeXK != OrderTypeXKCode.JUMBO
+                                                      && currentOrder.TypeXK != OrderTypeXKCode.SLING;
+
                                     var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                                     if (isLuongVao)
                                     {
-                                        if (currentOrder.CatId != OrderCatIdCode.CLINKER
-                                            && currentOrder.TypeXK != OrderTypeXKCode.JUMBO 
-                                            && currentOrder.TypeXK != OrderTypeXKCode.SLING)
+                                        if (isNormalOrder)
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
 
@@ -471,9 +473,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
                                     else if (isLuongRa)
                                     {
-                                        if (currentOrder.CatId != OrderCatIdCode.CLINKER
-                                            && currentOrder.TypeXK != OrderTypeXKCode.JUMBO
-                                            && currentOrder.TypeXK != OrderTypeXKCode.SLING)
+                                        if (isNormalOrder)
                                         {
                                             isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
 
