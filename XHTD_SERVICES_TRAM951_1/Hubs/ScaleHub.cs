@@ -143,7 +143,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             SendMessage($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime}");
 
             SendMessage($"{LOCKING_RFID_STATUS}", $"{Program.IsLockingRfid}");
-
             // End Check lock RFID
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
