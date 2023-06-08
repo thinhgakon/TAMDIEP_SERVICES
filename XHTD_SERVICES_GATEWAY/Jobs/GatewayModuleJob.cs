@@ -420,15 +420,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
 
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
-
-                                                try { 
-                                                    var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
-                                                    _gatewayLogger.LogInfo($"5.1. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    _gatewayLogger.LogInfo($"5.1. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                                                }
                                             }
                                         }
                                         else
@@ -454,7 +445,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                                 _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                             }
 
-                                            Thread.Sleep(15000);
+                                            if (isNormalOrder)
+                                            {
+                                                try
+                                                {
+                                                    var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
+                                                    _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                                                }
+                                            }
+
+                                            Thread.Sleep(12000);
 
                                             _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
                                             if(TurnOnRedTrafficLight("IN"))
