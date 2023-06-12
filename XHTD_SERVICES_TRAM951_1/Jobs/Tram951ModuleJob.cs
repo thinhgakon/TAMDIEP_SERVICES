@@ -49,6 +49,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly string SCALE_DELIVERY_CODE = "TRAM951_1_DELIVERY_CODE";
 
+        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_1_IS_LOCKING_RFID";
+
         protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
         protected const string SERVICE_ACTIVE_CODE = "TRAM951_1_ACTIVE";
@@ -245,6 +247,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
+                                    new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+                                    if (Program.IsEnabledRfid == false) 
+                                    { 
+                                        continue;
+                                    }
+
                                     // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
                                     SendRFIDInfo(cardNoCurrent, doorCurrent);
 
@@ -316,7 +324,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     {
                                         _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
-                                        //new ScaleHub().SendMessage("Notification", $"RFID {cardNoCurrent} không thuộc hệ thống");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -333,7 +340,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                                        //new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -345,7 +351,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     {
                                         _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
-                                        //new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
 
@@ -356,7 +361,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     }
                                     else
                                     {
-                                        //new ScaleHub().SendMessage("Notification", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                                        Program.IsLockingRfid = true;
+
                                         new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
                                         new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
 

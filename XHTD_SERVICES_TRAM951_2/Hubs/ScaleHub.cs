@@ -33,6 +33,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
 
+        protected readonly string ENABLED_RFID_STATUS = "ENABLED_RFID_2_STATUS";
+
+        protected readonly string ENABLED_RFID_TIME = "ENABLED_RFID_2_TIME";
+
+        protected readonly string LOCKING_RFID_STATUS = "LOCKING_RFID_2_STATUS";
+
+        protected readonly int TIME_TO_READ_RFID = 30;
+
         public void SendMessage(string name, string message)
         {
             try
@@ -106,6 +114,36 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         public async void ReadDataScale(DateTime time, string value)
         {
             int currentScaleValue = Int32.Parse(value);
+
+            // Check lock RFID
+            if (currentScaleValue > ScaleConfig.MIN_WEIGHT_TO_SCALE && Program.IsLockingRfid == false && Program.IsEnabledRfid == false)
+            {
+                Program.IsEnabledRfid = true;
+                Program.EnabledRfidTime = time;
+            }
+
+            if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE || Program.IsLockingRfid == true)
+            {
+                Program.IsEnabledRfid = false;
+            }
+
+            if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE)
+            {
+                Program.IsLockingRfid = false;
+                Program.EnabledRfidTime = null;
+            }
+
+            if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-1 * TIME_TO_READ_RFID))
+            {
+                Program.IsLockingRfid = true;
+            }
+
+            SendMessage($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
+
+            SendMessage($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime}");
+
+            SendMessage($"{LOCKING_RFID_STATUS}", $"{Program.IsLockingRfid}");
+            // End Check lock RFID
 
             if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
             {

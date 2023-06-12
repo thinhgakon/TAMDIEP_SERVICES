@@ -21,6 +21,10 @@ namespace XHTD_SERVICES_TRAM481
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
 
+        public static bool IsLockingRfid = false;
+        public static bool IsEnabledRfid = false;
+        public static DateTime? EnabledRfidTime = null;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
