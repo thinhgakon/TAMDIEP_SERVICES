@@ -649,11 +649,29 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         Thread.Sleep(500);
 
-                        _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                        M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+
+                        if (batLan1 == M221Result.SUCCESS)
+                        {
+                            _gatewayLogger.LogInfo($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogInfo($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
+                        }
 
                         Thread.Sleep(500);
 
-                        _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+                        M221Result batLan2 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
+
+                        if (batLan2 == M221Result.SUCCESS)
+                        {
+                            _gatewayLogger.LogInfo($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogInfo($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
+                        }
 
                         Thread.Sleep(500);
 
