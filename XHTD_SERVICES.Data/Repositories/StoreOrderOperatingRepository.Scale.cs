@@ -48,7 +48,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string cancelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
@@ -85,7 +85,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
@@ -132,7 +132,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string currentTime = DateTime.Now.ToString();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.CardNo == cardNo
@@ -396,7 +396,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
-                    string cancelTime = DateTime.Now.ToString();
+                    string cancelTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.CardNo == cardNo && (x.DriverUserName ?? "") != "" && x.Step == (int)OrderStep.DA_VAO_CONG)
