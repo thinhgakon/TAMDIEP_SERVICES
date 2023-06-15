@@ -7,11 +7,14 @@ using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM481.Devices
 {
     public class BarrierControl
     {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(BarrierControl));
+
         protected readonly PLCBarrier _barrier;
 
         private const string IP_ADDRESS = "10.0.20.2";
@@ -32,72 +35,232 @@ namespace XHTD_SERVICES_TRAM481.Devices
         }
 
         // Barrier chiều vào
-        public void OpenBarrierScaleIn()
+        public bool OpenBarrierScaleIn()
         {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
+            var isConnectSuccessed = false;
+            int count = 0;
 
-            if (connectStatus != M221Result.SUCCESS)
+            try
             {
-                return;
+                while (!isConnectSuccessed && count < 6)
+                {
+                    count++;
+
+                    _logger.Info($@"OpenBarrierScaleIn: count={count}");
+
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        if (_barrier.ReadInputPort(SCALE_IN_I1))
+                        {
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.Close();
+
+                            _logger.Info($"OpenBarrierScaleIn count={count} thanh cong");
+                        }
+                        else
+                        {
+                            _logger.Info($"OpenBarrierScaleIn count={count}: barrier dang mo");
+                        }
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"OpenBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
+                }
+
+                return isConnectSuccessed;
             }
-
-            if (_barrier.ReadInputPort(SCALE_IN_I1))
+            catch (Exception ex)
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
-                Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+                _logger.Info($"OpenBarrierScaleIn Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                return false;
             }
         }
 
-        public void CloseBarrierScaleIn()
+        public bool CloseBarrierScaleIn()
         {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
+            var isConnectSuccessed = false;
+            int count = 0;
 
-            if (connectStatus != M221Result.SUCCESS)
+            try
             {
-                return;
+                while (!isConnectSuccessed && count < 6)
+                {
+                    count++;
+
+                    _logger.Info($@"CloseBarrierScaleIn: count={count}");
+
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        if (!_barrier.ReadInputPort(SCALE_IN_I1))
+                        {
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.Close();
+
+                            _logger.Info($"CloseBarrierScaleIn count={count} thanh cong");
+                        }
+                        else
+                        {
+                            _logger.Info($"CloseBarrierScaleIn count={count}: barrier dang dong");
+                        }
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"CloseBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
+                }
+
+                return isConnectSuccessed;
             }
-
-            if (!_barrier.ReadInputPort(SCALE_IN_I1))
+            catch (Exception ex)
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
-                Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+                _logger.Info($"CloseBarrierScaleIn Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                return false;
             }
         }
 
         // Barrier chiều ra
-        public void OpenBarrierScaleOut()
+        public bool OpenBarrierScaleOut()
         {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
+            var isConnectSuccessed = false;
+            int count = 0;
 
-            if (connectStatus != M221Result.SUCCESS)
+            try
             {
-                return;
+                while (!isConnectSuccessed && count < 6)
+                {
+                    count++;
+
+                    _logger.Info($@"OpenBarrierScaleOut: count={count}");
+
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        if (_barrier.ReadInputPort(SCALE_OUT_I1))
+                        {
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.Close();
+
+                            _logger.Info($"OpenBarrierScaleOut count={count} thanh cong");
+                        }
+                        else
+                        {
+                            _logger.Info($"OpenBarrierScaleOut count={count}: barrier dang mo");
+                        }
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"OpenBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
+                }
+
+                return isConnectSuccessed;
             }
-
-            if (_barrier.ReadInputPort(SCALE_OUT_I1))
+            catch (Exception ex)
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
-                Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+                _logger.Info($"OpenBarrierScaleOut Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                return false;
             }
         }
 
-        public void CloseBarrierScaleOut()
+        public bool CloseBarrierScaleOut()
         {
-            var connectStatus = _barrier.ConnectPLC(IP_ADDRESS);
+            var isConnectSuccessed = false;
+            int count = 0;
 
-            if (connectStatus != M221Result.SUCCESS)
+            try
             {
-                return;
+                while (!isConnectSuccessed && count < 6)
+                {
+                    count++;
+
+                    _logger.Info($@"CloseBarrierScaleOut: count={count}");
+
+                    M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+
+                    if (isConnected == M221Result.SUCCESS)
+                    {
+                        if (!_barrier.ReadInputPort(SCALE_OUT_I1))
+                        {
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+
+                            Thread.Sleep(500);
+
+                            _barrier.Close();
+
+                            _logger.Info($"CloseBarrierScaleOut count={count} thanh cong");
+                        }
+                        else
+                        {
+                            _logger.Info($"CloseBarrierScaleOut count={count}: barrier dang dong");
+                        }
+
+                        isConnectSuccessed = true;
+                    }
+                    else
+                    {
+                        _logger.Info($"CloseBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+
+                        Thread.Sleep(1000);
+                    }
+                }
+
+                return isConnectSuccessed;
             }
-
-            if (!_barrier.ReadInputPort(SCALE_OUT_I1))
+            catch (Exception ex)
             {
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
-                Thread.Sleep(500);
-                _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+                _logger.Info($"CloseBarrierScaleOut Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                return false;
             }
         }
     }
