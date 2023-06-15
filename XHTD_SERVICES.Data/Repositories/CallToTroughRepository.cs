@@ -87,7 +87,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateWhenIntoTrough(string deliveryCode)
+        public async Task UpdateWhenIntoTrough(string deliveryCode, string newMachine)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -99,12 +99,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         var machineCode = itemToCall.Machine;
 
                         itemToCall.IsDone = true;
+                        itemToCall.Machine = newMachine;
                         itemToCall.UpdateDay = DateTime.Now;
                         itemToCall.CallLog = $@"{itemToCall.CallLog} #Xe vào máng lúc {DateTime.Now}";
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} trong callToTrough");
+                        log.Info($@"Dat isDone = true voi deliveryCode {deliveryCode} trong callToTrough: oldMachine={machineCode} newMachine={newMachine}");
 
                         // Xep lai STT với các đơn khác
                         await ReIndexInMachine(machineCode);
