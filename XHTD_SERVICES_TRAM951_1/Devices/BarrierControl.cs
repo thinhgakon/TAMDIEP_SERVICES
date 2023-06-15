@@ -60,11 +60,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if(batLan1 == M221Result.SUCCESS) 
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -73,11 +73,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan2 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 2 thanh cong");
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 2 that bai");
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -135,11 +135,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan1 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -148,11 +148,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan2 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -211,11 +211,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan1 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -224,11 +224,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan2 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -286,11 +286,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan1 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
@@ -299,11 +299,11 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
                             if (batLan2 == M221Result.SUCCESS)
                             {
-                                _logger.Info($"Bat lan 1 thanh cong");
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
                             }
                             else
                             {
-                                _logger.Info($"Bat lan 1 that bai");
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
                             }
 
                             Thread.Sleep(500);
