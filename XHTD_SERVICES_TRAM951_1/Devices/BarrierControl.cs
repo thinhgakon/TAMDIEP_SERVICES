@@ -56,11 +56,29 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                         {
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+                            M221Result batLan1 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+
+                            if(batLan1 == M221Result.SUCCESS) 
+                            {
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+                            M221Result batLan2 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q1.ToString())));
+
+                            if (batLan2 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
@@ -113,11 +131,29 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                         {
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+                            M221Result batLan1 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+
+                            if (batLan1 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+                            M221Result batLan2 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_IN_Q2.ToString())));
+
+                            if (batLan2 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
@@ -171,11 +207,29 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                         {
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+                            M221Result batLan1 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+
+                            if (batLan1 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+                            M221Result batLan2 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q1.ToString())));
+
+                            if (batLan2 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
@@ -228,11 +282,29 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                         {
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+                            M221Result batLan1 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+
+                            if (batLan1 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
-                            _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+                            M221Result batLan2 = _barrier.ShuttleOutputPort((byte.Parse(SCALE_OUT_Q2.ToString())));
+
+                            if (batLan2 == M221Result.SUCCESS)
+                            {
+                                _logger.Info($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
+                            }
+                            else
+                            {
+                                _logger.Info($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
+                            }
 
                             Thread.Sleep(500);
 
