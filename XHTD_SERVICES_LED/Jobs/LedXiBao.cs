@@ -793,8 +793,8 @@ namespace XHTD_SERVICES_LED.Jobs
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                 }
 
-                log.Info("end show led xi bao");
-                Console.WriteLine("end show led bao");
+                log.Info($"end show led xi bao - nErrorCode: {nErrorCode}");
+                Console.WriteLine($"end show led bao - nErrorCode: {nErrorCode}");
             }
             catch (Exception ex)
             {
@@ -933,8 +933,8 @@ namespace XHTD_SERVICES_LED.Jobs
                     nErrorCode = CSDKExport.Hd_GetSDKLastError();
                 }
 
-                log.Info("end show led xi bao: no content");
-                Console.WriteLine("end show led bao: no content");
+                log.Info($"end show led xi bao: no content - nErrorCode: {nErrorCode}");
+                Console.WriteLine($"end show led bao: no content - nErrorCode: {nErrorCode}");
             }
             catch (Exception ex)
             {
