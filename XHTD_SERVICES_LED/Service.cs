@@ -16,14 +16,14 @@ namespace XHTD_SERVICES_LED
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service SYNC_ORDER");
+            log.Info("OnStart service LED");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
         }
 
         protected override void OnStop()
         {
-            log.Info("OnStop service SYNC_ORDER");
+            log.Info("OnStop service LED");
         }
     }
 }
