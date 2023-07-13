@@ -47,6 +47,8 @@ namespace XHTD_SERVICES_GATEWAY.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(GATEWAY_IN_Q1);
+
                         Thread.Sleep(500);
 
                         M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_IN_Q1.ToString()));
@@ -116,6 +118,8 @@ namespace XHTD_SERVICES_GATEWAY.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(GATEWAY_OUT_Q1);
+
                         Thread.Sleep(500);
 
                         M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(GATEWAY_OUT_Q1.ToString()));
