@@ -52,6 +52,8 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(SCALE_IN_Q1);
+
                         if (_barrier.ReadInputPort(SCALE_IN_I1))
                         {
                             Thread.Sleep(500);
@@ -127,6 +129,8 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(SCALE_IN_Q2);
+
                         if (!_barrier.ReadInputPort(SCALE_IN_I1))
                         {
                             Thread.Sleep(500);
@@ -204,6 +208,8 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(SCALE_OUT_Q1);
+
                         if (_barrier.ReadInputPort(SCALE_OUT_I1))
                         {
                             Thread.Sleep(500);
@@ -279,6 +285,8 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(SCALE_OUT_Q2);
+
                         if (!_barrier.ReadInputPort(SCALE_OUT_I1))
                         {
                             Thread.Sleep(500);
