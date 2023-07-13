@@ -41,6 +41,26 @@ namespace XHTD_SERVICES.Device.PLCM221
             return false;
         }
 
+        public bool ReadOutputPort(int portOut)
+        {
+            bool[] Ports = new bool[15];
+            PLC_Result = CheckOutputPorts(Ports);
+
+            if (PLC_Result == M221Result.SUCCESS)
+            {
+                if (Ports[portOut])
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
+
         public void ResetOutPort(int port)
         {
             if (ReadInputPort(port))

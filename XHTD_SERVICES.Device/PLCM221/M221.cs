@@ -27,6 +27,11 @@ namespace XHTD_SERVICES.Device.PLCM221
             return (M221Result)_plc.CheckInputPorts(PortsValue);
         }
 
+        public M221Result CheckOutputPorts(bool[] PortsValue)
+        {
+            return (M221Result)_plc.CheckOutputPorts(PortsValue);
+        }
+
         public M221Result ShuttleOutputPort(byte q)
         {
             return (M221Result)_plc.ShuttleOutputPort(q);
