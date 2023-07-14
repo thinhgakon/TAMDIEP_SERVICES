@@ -31,13 +31,19 @@ namespace XHTD_SERVICES_GATEWAY.Devices
 
         public void ResetAllOutputPorts()
         {
-            M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
-            if (isConnected == M221Result.SUCCESS)
-            {
-                _barrier.ResetAllOutputPorts();
+            try { 
+                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+                if (isConnected == M221Result.SUCCESS)
+                {
+                    _barrier.ResetAllOutputPorts();
+                }
+                Thread.Sleep(100);
+                _barrier.Close();
             }
-            Thread.Sleep(100);
-            _barrier.Close();
+            catch (Exception ex)
+            {
+
+            }
         }
 
         // Barrier chiều vào
