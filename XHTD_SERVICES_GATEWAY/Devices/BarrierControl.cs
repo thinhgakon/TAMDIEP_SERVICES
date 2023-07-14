@@ -36,13 +36,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
             {
                 _barrier.ResetAllOutputPorts();
             }
-            else
-            {
-
-            }
-
-            Thread.Sleep(500);
-
+            Thread.Sleep(100);
             _barrier.Close();
         }
 
