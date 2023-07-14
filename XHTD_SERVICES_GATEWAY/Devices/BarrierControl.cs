@@ -29,6 +29,23 @@ namespace XHTD_SERVICES_GATEWAY.Devices
             _barrier = barrier;
         }
 
+        public void ResetAllOutputPorts()
+        {
+            M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+            if (isConnected == M221Result.SUCCESS)
+            {
+                _barrier.ResetAllOutputPorts();
+            }
+            else
+            {
+
+            }
+
+            Thread.Sleep(500);
+
+            _barrier.Close();
+        }
+
         // Barrier chiều vào
         public bool OpenBarrierScaleIn()
         {
