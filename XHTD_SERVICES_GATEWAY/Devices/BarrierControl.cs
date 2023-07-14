@@ -102,7 +102,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -173,7 +173,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }

@@ -685,7 +685,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     }
                     else
                     {
-                        _gatewayLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+                        _gatewayLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
