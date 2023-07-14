@@ -41,11 +41,37 @@ namespace XHTD_SERVICES.Device.PLCM221
             return false;
         }
 
-        public void ResetOutPort(int port)
+        public bool ReadOutputPort(int portOut)
         {
-            if (ReadInputPort(port))
+            bool[] Ports = new bool[15];
+            PLC_Result = CheckOutputPorts(Ports);
+
+            if (PLC_Result == M221Result.SUCCESS)
             {
-                ShuttleOutputPort((byte.Parse(port.ToString())));
+                if (Ports[portOut])
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public void ResetOutputPort(int portOut)
+        {
+            try { 
+                if (ReadOutputPort(portOut))
+                {
+                    ShuttleOutputPort((byte.Parse(portOut.ToString())));
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
@@ -63,74 +89,6 @@ namespace XHTD_SERVICES.Device.PLCM221
                     return false;
                 }
             }
-            return true;
-        }
-
-        public bool TurnOn(string ipAddress, int portNumber, int portNumberDeviceIn, int portNumberDeviceOut) {
-
-            PLC_Result = Connect($"{ipAddress}", portNumber);
-
-            if (PLC_Result == M221Result.SUCCESS)
-            {
-                bool[] Ports = new bool[24];
-                PLC_Result = CheckInputPorts(Ports);
-
-                if (PLC_Result == M221Result.SUCCESS)
-                {
-                    if (!Ports[portNumberDeviceIn])
-                    {
-                        PLC_Result = ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
-                        if (PLC_Result != M221Result.SUCCESS)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Connect failed to PLC ... {GetLastErrorString()}");
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool TurnOff(string ipAddress, int portNumber, int portNumberDeviceIn, int portNumberDeviceOut) {
-
-            PLC_Result = Connect($"{ipAddress}", portNumber);
-
-            if (PLC_Result == M221Result.SUCCESS)
-            {
-                bool[] Ports = new bool[24];
-                PLC_Result = CheckInputPorts(Ports);
-
-                if (PLC_Result == M221Result.SUCCESS)
-                {
-                    if (Ports[portNumberDeviceIn])
-                    {
-                        PLC_Result = ShuttleOutputPort((byte.Parse(portNumberDeviceOut.ToString())));
-                        if (PLC_Result != M221Result.SUCCESS)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Connect failed to PLC ... {GetLastErrorString()}");
-                return false;
-            }
-
             return true;
         }
     }

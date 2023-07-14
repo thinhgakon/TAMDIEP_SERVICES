@@ -647,6 +647,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (isConnected == M221Result.SUCCESS)
                     {
+                        _barrier.ResetOutputPort(portNumberDeviceIn);
+
                         Thread.Sleep(500);
 
                         M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
