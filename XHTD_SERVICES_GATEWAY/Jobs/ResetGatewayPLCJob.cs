@@ -46,6 +46,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(() =>
             {
+                _gatewayLogger.LogInfo("========= Start reset gateway PLC service =========");
+
                 ResetPLC();
             });                                                                                                                     
         }

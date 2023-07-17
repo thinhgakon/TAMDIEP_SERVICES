@@ -44,6 +44,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             await Task.Run(() =>
             {
+                _logger.LogInfo("========= Start reset 951 PLC service =========");
+
                 ResetPLC();
             });
         }
