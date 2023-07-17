@@ -34,6 +34,24 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             _barrier = barrier;
         }
 
+        public void ResetAllOutputPorts()
+        {
+            try
+            {
+                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+                if (isConnected == M221Result.SUCCESS)
+                {
+                    _barrier.ResetAllOutputPorts();
+                }
+                Thread.Sleep(100);
+                _barrier.Close();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         // Barrier chiều vào
         public bool OpenBarrierScaleIn()
         {

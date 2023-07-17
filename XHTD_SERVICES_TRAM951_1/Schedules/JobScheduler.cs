@@ -36,6 +36,17 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            // Reset PLC trạm 951
+            IJobDetail resetPLCJob = JobBuilder.Create<Reset951PLCJob>().Build();
+            ITrigger resetPLCTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
         }
     }
 }
