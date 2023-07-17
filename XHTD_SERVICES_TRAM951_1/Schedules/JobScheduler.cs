@@ -43,7 +43,7 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
+                     .WithIntervalInSeconds(60)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
