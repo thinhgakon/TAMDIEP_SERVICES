@@ -69,7 +69,8 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
-                    if (!String.IsNullOrEmpty(machineCode)){ 
+                    if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                    { 
                         await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
                     }
                 }

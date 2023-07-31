@@ -131,6 +131,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             from typeProductItem in typeProducts.DefaultIfEmpty()
                             where typeProductItem.TypeProduct == typeProduct
                             from callToTroughItem in callToTroughs.DefaultIfEmpty()
+                            where callToTroughItem.IsDone == false
                             select new {
                                 t.Code,
                                 callToTroughItem.IsDone,
