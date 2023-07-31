@@ -36,6 +36,17 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            // Reset PLC cổng bảo vệ
+            IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
+            ITrigger resetPLCTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
         }
     }
 }

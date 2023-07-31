@@ -261,6 +261,7 @@
     <Compile Include="GatewayLogger.cs" />
     <Compile Include="Hubs\GatewayHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
+    <Compile Include="Jobs\ResetGatewayPLCJob.cs" />
     <Compile Include="Jobs\GatewayModuleJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />

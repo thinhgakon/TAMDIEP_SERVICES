@@ -99,7 +99,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrierScaleIn count={count}: Ket noi PLC khong thanh cong  {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -179,7 +179,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                     }
                     else
                     {
-                        _logger.Info($"CloseBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"CloseBarrierScaleIn count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -259,7 +259,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrierScaleOut count={count}: Ket noi PLC khong thanh cong  {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -338,7 +338,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                     }
                     else
                     {
-                        _logger.Info($"CloseBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"CloseBarrierScaleOut count={count}: Ket noi PLC khong thanh cong  {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }

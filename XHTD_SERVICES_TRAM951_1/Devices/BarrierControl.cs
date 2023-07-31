@@ -34,6 +34,24 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             _barrier = barrier;
         }
 
+        public void ResetAllOutputPorts()
+        {
+            try
+            {
+                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+                if (isConnected == M221Result.SUCCESS)
+                {
+                    _barrier.ResetAllOutputPorts();
+                }
+                Thread.Sleep(100);
+                _barrier.Close();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         // Barrier chiều vào
         public bool OpenBarrierScaleIn()
         {
@@ -99,7 +117,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrierScaleIn count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -178,7 +196,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                     }
                     else
                     {
-                        _logger.Info($"CloseBarrierScaleIn count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"CloseBarrierScaleIn count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -258,7 +276,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrierScaleOut count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -337,7 +355,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                     }
                     else
                     {
-                        _logger.Info($"CloseBarrierScaleOut count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"CloseBarrierScaleOut count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }

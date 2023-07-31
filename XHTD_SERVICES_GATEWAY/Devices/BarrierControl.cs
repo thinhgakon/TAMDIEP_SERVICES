@@ -29,6 +29,23 @@ namespace XHTD_SERVICES_GATEWAY.Devices
             _barrier = barrier;
         }
 
+        public void ResetAllOutputPorts()
+        {
+            try { 
+                M221Result isConnected = _barrier.ConnectPLC(IP_ADDRESS);
+                if (isConnected == M221Result.SUCCESS)
+                {
+                    _barrier.ResetAllOutputPorts();
+                }
+                Thread.Sleep(100);
+                _barrier.Close();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         // Barrier chiều vào
         public bool OpenBarrierScaleIn()
         {
@@ -85,7 +102,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
@@ -156,7 +173,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
 
                         Thread.Sleep(1000);
                     }
