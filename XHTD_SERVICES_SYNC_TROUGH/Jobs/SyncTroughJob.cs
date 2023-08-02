@@ -145,6 +145,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             var response = encoding.GetString(data1).Trim();
             var responseArr = response.Split(';');
+            
+            if(responseArr == null || responseArr.Length == 0)
+            {
+                _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
+                return;
+            }
 
             var status = responseArr[1];
             var deliveryCode = responseArr[5].Replace("'", "");
