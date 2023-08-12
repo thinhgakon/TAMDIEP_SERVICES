@@ -214,6 +214,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
 
+                        // Send SMS Brandname: theo chu kỳ 30 phút
+                        if (Program.SendSmsLastTime == null || Program.SendSmsLastTime < DateTime.Now.AddMinutes(-30)) {
+                            Program.SendSmsLastTime = DateTime.Now;
+                            HttpRequest.SendSMSBrandName("HP-CBV: Connect C3-400 failed");
+                        }
+
                         ret = PullLastError();
                         DeviceConnected = false;
                     }
@@ -222,7 +228,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo($@"ConnectGateway {ipAddress} error: {ex.Message}");
+                _gatewayLogger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
@@ -620,7 +626,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             else
             {
-                _gatewayLogger.LogWarn("No data. Reconnect ...");
                 DeviceConnected = false;
                 h21 = IntPtr.Zero;
 
