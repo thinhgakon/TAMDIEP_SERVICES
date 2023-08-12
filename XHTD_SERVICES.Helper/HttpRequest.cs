@@ -368,7 +368,7 @@ namespace XHTD_SERVICES.Helper
             }
         }
 
-        public static bool SendSMSBrandName(string content)
+        public static bool SendSMSBrandName(string content, string recipient = null)
         {
             var sId = LoginSMSBrandName();
 
@@ -382,7 +382,7 @@ namespace XHTD_SERVICES.Helper
 
             var BrandName = smsBrandNameConfig["BrandName"];
             var SendUrl = smsBrandNameConfig["SendUrl"];
-            var Recipient = smsBrandNameConfig["Recipient"];
+            var Recipient = recipient ?? smsBrandNameConfig["Recipient"];
 
             var sendUrl = SendUrl.Replace("{Sid}", sId)
                                           .Replace("{BrandName}", BrandName)

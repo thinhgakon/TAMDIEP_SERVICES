@@ -218,6 +218,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         if (Program.SendSmsLastTime == null || Program.SendSmsLastTime < DateTime.Now.AddMinutes(-30)) {
                             Program.SendSmsLastTime = DateTime.Now;
                             HttpRequest.SendSMSBrandName("HP-CBV: Connect C3-400 failed");
+                            HttpRequest.SendSMSBrandName("HP-CBV: Connect C3-400 failed", "0773392020");
                         }
 
                         ret = PullLastError();
