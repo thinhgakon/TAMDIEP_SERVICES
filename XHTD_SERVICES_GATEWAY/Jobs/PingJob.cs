@@ -26,6 +26,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(() =>
             {
+                Console.WriteLine("-------- Start ping server --------");
                 logger.Info("-------- Start ping server --------");
 
                 PingServer();
