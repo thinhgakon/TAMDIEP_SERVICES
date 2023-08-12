@@ -368,17 +368,26 @@ namespace XHTD_SERVICES.Helper
             }
         }
 
-        public static bool SendSMSBrandName(string sId)
+        public static bool SendSMSBrandName(string content)
         {
+            var sId = LoginSMSBrandName();
+
+            if (string.IsNullOrEmpty(sId))
+            {
+                logger.Info($"Login sms brandname khong thanh cong");
+                return false;
+            }
+
             var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
 
             var BrandName = smsBrandNameConfig["BrandName"];
             var SendUrl = smsBrandNameConfig["SendUrl"];
+            var Recipient = smsBrandNameConfig["Recipient"];
 
             var sendUrl = SendUrl.Replace("{Sid}", sId)
                                           .Replace("{BrandName}", BrandName)
-                                          .Replace("{Recipient}", "0773392020")
-                                          .Replace("{Content}", "Test");
+                                          .Replace("{Recipient}", Recipient)
+                                          .Replace("{Content}", content);
 
             try
             {
