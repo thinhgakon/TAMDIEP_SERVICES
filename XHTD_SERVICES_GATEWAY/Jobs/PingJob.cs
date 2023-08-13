@@ -10,7 +10,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
     {
         ILog logger = LogManager.GetLogger("SecondFileAppender");
 
-        protected const string IP_ADDRESS = "10.0.9.1";
+        protected const string C3400_IP_ADDRESS = "10.0.9.1";
+        protected const string M221_IP_ADDRESS = "10.0.9.2";
+        protected const string DGT_IN_IP_ADDRESS = "10.0.9.3";
+        protected const string DGT_OUT_IP_ADDRESS = "10.0.9.4";
 
         public PingJob(
             )
@@ -36,17 +39,53 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private void PingServer()
         {
             Ping myPing = new Ping();
-            PingReply reply = myPing.Send(IP_ADDRESS, 2000);
+            PingReply replyC3400 = myPing.Send(C3400_IP_ADDRESS, 1000);
+            PingReply replyM221 = myPing.Send(M221_IP_ADDRESS, 1000);
+            PingReply replyLightIn = myPing.Send(DGT_IN_IP_ADDRESS, 1000);
+            PingReply replyLightOut = myPing.Send(DGT_OUT_IP_ADDRESS, 1000);
 
-            if (reply != null)
+            if (replyC3400 != null)
             {
-                Console.WriteLine("Address: " + reply.Address + " - Status:  " + reply.Status + " - Time : " + reply.RoundtripTime.ToString());
-                logger.Info("Address: " + reply.Address + " - Status:  " + reply.Status + " - Time : " + reply.RoundtripTime.ToString());
+                Console.WriteLine("C3400 Address: " + replyC3400.Address + " - Status:  " + replyC3400.Status + " - Time : " + replyC3400.RoundtripTime.ToString());
+                logger.Info("C3400 Address: " + replyC3400.Address + " - Status:  " + replyC3400.Status + " - Time : " + replyC3400.RoundtripTime.ToString());
             }
             else
             {
-                Console.WriteLine("Khong nhan duoc tin hieu ping");
-                logger.Info("Khong nhan duoc tin hieu ping");
+                Console.WriteLine("Khong nhan duoc tin hieu ping replyC3400");
+                logger.Info("Khong nhan duoc tin hieu ping replyC3400");
+            }
+
+            if (replyM221 != null)
+            {
+                Console.WriteLine("M221 Address: " + replyM221.Address + " - Status:  " + replyM221.Status + " - Time : " + replyM221.RoundtripTime.ToString());
+                logger.Info("M221 Address: " + replyM221.Address + " - Status:  " + replyM221.Status + " - Time : " + replyM221.RoundtripTime.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Khong nhan duoc tin hieu ping replyM221");
+                logger.Info("Khong nhan duoc tin hieu ping replyM221");
+            }
+
+            if (replyLightIn != null)
+            {
+                Console.WriteLine("LightIn Address: " + replyLightIn.Address + " - Status:  " + replyLightIn.Status + " - Time : " + replyLightIn.RoundtripTime.ToString());
+                logger.Info("LightIn Address: " + replyLightIn.Address + " - Status:  " + replyLightIn.Status + " - Time : " + replyLightIn.RoundtripTime.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Khong nhan duoc tin hieu ping replyLightIn");
+                logger.Info("Khong nhan duoc tin hieu ping replyLightIn");
+            }
+
+            if (replyLightOut != null)
+            {
+                Console.WriteLine("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
+                logger.Info("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Khong nhan duoc tin hieu ping replyLightOut");
+                logger.Info("Khong nhan duoc tin hieu ping replyLightOut");
             }
         }
     }
