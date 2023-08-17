@@ -256,7 +256,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\PingJob.cs" />
+    <Compile Include="Jobs\Tram481PingJob.cs" />
+    <Compile Include="Jobs\Tram9512PingJob.cs" />
+    <Compile Include="Jobs\Tram9511PingJob.cs" />
+    <Compile Include="Jobs\GatewayPingJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
