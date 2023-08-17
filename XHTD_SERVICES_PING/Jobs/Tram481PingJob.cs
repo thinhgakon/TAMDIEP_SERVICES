@@ -10,10 +10,10 @@ namespace XHTD_SERVICES_PING.Jobs
     {
         ILog logger = LogManager.GetLogger("Tram481FileAppender");
 
-        protected const string C3400_IP_ADDRESS = "10.0.9.1";
-        protected const string M221_IP_ADDRESS = "10.0.9.2";
-        protected const string DGT_IN_IP_ADDRESS = "10.0.9.3";
-        protected const string DGT_OUT_IP_ADDRESS = "10.0.9.4";
+        protected const string C3400_IP_ADDRESS = "10.0.20.1";
+        protected const string M221_IP_ADDRESS = "10.0.20.2";
+        protected const string DGT_IN_IP_ADDRESS = "10.0.20.3";
+        protected const string DGT_OUT_IP_ADDRESS = "10.0.20.4";
 
         public Tram481PingJob(
             )
