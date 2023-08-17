@@ -322,5 +322,104 @@ namespace XHTD_SERVICES.Helper
 
             return response;
         }
+
+        public static string LoginSMSBrandName()
+        {
+            var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
+
+            var UserName = smsBrandNameConfig["UserName"];
+            var Password = smsBrandNameConfig["Password"];
+            var BindMode = smsBrandNameConfig["BindMode"];
+            var LoginUrl = smsBrandNameConfig["LoginUrl"];
+
+            string sId = string.Empty;
+            var url = LoginUrl.Replace("{UserName}", UserName)
+                                      .Replace("{Password}", Password)
+                                      .Replace("{BindMode}", BindMode);
+
+            try
+            {
+                var client = new RestClient(url);
+                client.Timeout = 10000;
+
+                var request = new RestRequest(Method.GET);
+
+                var response = client.Execute(request);
+
+                string tmpValueReturn = response.Content;
+
+                if (!string.IsNullOrWhiteSpace(tmpValueReturn))
+                {
+                    tmpValueReturn = tmpValueReturn.Replace("{", "")
+                                                   .Replace("}", "")
+                                                   .Replace("\"", "");
+                    string[] tmpValueReturnArr = tmpValueReturn.Split(',');
+                    if (tmpValueReturnArr.Length > 0)
+                    {
+                        sId = tmpValueReturnArr[0].Replace("sid:", "").Trim();
+                    }
+                }
+
+                return sId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error occurred while making request to {url}", ex);
+            }
+        }
+
+        public static bool SendSMSBrandName(string content, string recipient = null)
+        {
+            var sId = LoginSMSBrandName();
+
+            if (string.IsNullOrEmpty(sId))
+            {
+                logger.Info($"Login sms brandname khong thanh cong");
+                return false;
+            }
+
+            var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
+
+            var BrandName = smsBrandNameConfig["BrandName"];
+            var SendUrl = smsBrandNameConfig["SendUrl"];
+            var Recipient = recipient ?? smsBrandNameConfig["Recipient"];
+
+            var sendUrl = SendUrl.Replace("{Sid}", sId)
+                                          .Replace("{BrandName}", BrandName)
+                                          .Replace("{Recipient}", Recipient)
+                                          .Replace("{Content}", content);
+
+            try
+            {
+                var client = new RestClient(sendUrl);
+                client.Timeout = 10000;
+
+                var request = new RestRequest(Method.GET);
+
+                var response = client.Execute(request);
+
+                string tmpValueReturn = response.Content;
+
+                string status = string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(tmpValueReturn))
+                {
+                    tmpValueReturn = tmpValueReturn.Replace("{", "")
+                                                   .Replace("}", "")
+                                                   .Replace("\"", "");
+                    string[] tmpValueReturnArr = tmpValueReturn.Split(',');
+                    if (tmpValueReturnArr.Length > 0)
+                    {
+                        status = tmpValueReturnArr[1].Replace("status:", "").Trim();
+                    }
+                }
+
+                return status == "200";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error occurred while making request to {sendUrl}", ex);
+            }
+        }
     }
 }

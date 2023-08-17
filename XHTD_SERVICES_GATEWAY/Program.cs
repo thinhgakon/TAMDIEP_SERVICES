@@ -15,6 +15,7 @@ namespace XHTD_SERVICES_GATEWAY
 
         public static bool IsLockingRfidIn = false;
         public static bool IsLockingRfidOut = false;
+        public static DateTime? SendSmsLastTime = null;
 
         static void Main()
         {

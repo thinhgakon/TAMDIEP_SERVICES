@@ -47,6 +47,17 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
+
+            // Ping server
+            IJobDetail pingJob = JobBuilder.Create<PingJob>().Build();
+            ITrigger pingTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(pingJob, pingTrigger);
         }
     }
 }
