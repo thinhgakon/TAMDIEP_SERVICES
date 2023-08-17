@@ -1,4 +1,4 @@
-﻿namespace XHTD_SERVICES_GATEWAY
+﻿namespace XHTD_SERVICES_PING
 {
     partial class Service
     {

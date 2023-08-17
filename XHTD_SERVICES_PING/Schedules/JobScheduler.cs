@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
-using XHTD_SERVICES_GATEWAY.Jobs;
+using XHTD_SERVICES_PING.Jobs;
 using System.Configuration;
 
-namespace XHTD_SERVICES_GATEWAY.Schedules
+namespace XHTD_SERVICES_PING.Schedules
 {
     public class JobScheduler
     {

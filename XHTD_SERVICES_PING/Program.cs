@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_GATEWAY
+namespace XHTD_SERVICES_PING
 {
     internal static class Program
     {

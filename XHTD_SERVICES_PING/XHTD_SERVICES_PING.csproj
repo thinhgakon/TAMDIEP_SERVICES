@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0C2ED83E-EBB0-41C3-93E7-A91C9C3CECCB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_GATEWAY</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_GATEWAY</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_PING</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_PING</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

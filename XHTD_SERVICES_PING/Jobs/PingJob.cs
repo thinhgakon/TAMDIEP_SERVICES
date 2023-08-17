@@ -4,7 +4,7 @@ using Quartz;
 using System.Net.NetworkInformation;
 using log4net;
 
-namespace XHTD_SERVICES_GATEWAY.Jobs
+namespace XHTD_SERVICES_PING.Jobs
 {
     public class PingJob : IJob
     {

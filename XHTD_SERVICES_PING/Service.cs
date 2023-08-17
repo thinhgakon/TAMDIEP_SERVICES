@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
-using XHTD_SERVICES_GATEWAY.Hubs;
-using XHTD_SERVICES_GATEWAY.Schedules;
+using XHTD_SERVICES_PING.Hubs;
+using XHTD_SERVICES_PING.Schedules;
 
-namespace XHTD_SERVICES_GATEWAY
+namespace XHTD_SERVICES_PING
 {
     public partial class Service : ServiceBase
     {
@@ -17,7 +17,7 @@ namespace XHTD_SERVICES_GATEWAY
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service GATEWAY");
+            log.Info("OnStart service PING");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
 
@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_GATEWAY
 
         protected override void OnStop()
         {
-            log.Info("OnStop service GATEWAY");
+            log.Info("OnStop service PING");
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_GATEWAY
+namespace XHTD_SERVICES_PING
 {
     class Startup
     {
