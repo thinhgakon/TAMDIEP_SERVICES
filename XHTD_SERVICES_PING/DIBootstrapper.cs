@@ -29,7 +29,7 @@ namespace XHTD_SERVICES_PING
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(PingJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(GatewayPingJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

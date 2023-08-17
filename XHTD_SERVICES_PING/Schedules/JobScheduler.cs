@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_PING.Schedules
             await _scheduler.Start();
 
             // Ping server
-            IJobDetail pingJob = JobBuilder.Create<PingJob>().Build();
+            IJobDetail pingJob = JobBuilder.Create<GatewayPingJob>().Build();
             ITrigger pingTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()

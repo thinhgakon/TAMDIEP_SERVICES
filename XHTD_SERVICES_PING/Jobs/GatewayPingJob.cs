@@ -6,16 +6,16 @@ using log4net;
 
 namespace XHTD_SERVICES_PING.Jobs
 {
-    public class PingJob : IJob
+    public class GatewayPingJob : IJob
     {
-        ILog logger = LogManager.GetLogger("SecondFileAppender");
+        ILog logger = LogManager.GetLogger("GatewayFileAppender");
 
         protected const string C3400_IP_ADDRESS = "10.0.9.1";
         protected const string M221_IP_ADDRESS = "10.0.9.2";
         protected const string DGT_IN_IP_ADDRESS = "10.0.9.3";
         protected const string DGT_OUT_IP_ADDRESS = "10.0.9.4";
 
-        public PingJob(
+        public GatewayPingJob(
             )
         {
         }
