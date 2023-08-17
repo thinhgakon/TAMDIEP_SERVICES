@@ -8,8 +8,7 @@ namespace XHTD_SERVICES_PING.Jobs
 {
     public class Tram9512PingJob : IJob
     {
-        //ILog logger = LogManager.GetLogger("Tram9512FileAppender");
-        private static readonly ILog logger = LogManager.GetLogger(typeof(Tram9512PingJob));
+        ILog logger = LogManager.GetLogger("Tram9512FileAppender");
 
         protected const string C3400_IP_ADDRESS = "10.0.9.5";
         protected const string M221_IP_ADDRESS = "10.0.9.6";
