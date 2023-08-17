@@ -26,28 +26,6 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
         {
             await _scheduler.Start();
 
-            // Xác thực cổng bảo vệ
-            IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
-
-            // Reset PLC cổng bảo vệ
-            IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
-            ITrigger resetPLCTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
-
             // Ping server
             IJobDetail pingJob = JobBuilder.Create<PingJob>().Build();
             ITrigger pingTrigger = TriggerBuilder.Create()

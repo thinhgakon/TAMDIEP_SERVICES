@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A155E121-CC6A-4A34-8808-D142454BB3DB}</ProjectGuid>
+    <ProjectGuid>{0C2ED83E-EBB0-41C3-93E7-A91C9C3CECCB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>XHTD_SERVICES_GATEWAY</RootNamespace>
     <AssemblyName>XHTD_SERVICES_GATEWAY</AssemblyName>
