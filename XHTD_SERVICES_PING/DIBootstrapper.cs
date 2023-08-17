@@ -2,15 +2,7 @@
 using Autofac;
 using System.Collections.Specialized;
 using XHTD_SERVICES_PING.Schedules;
-using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_PING.Jobs;
-using XHTD_SERVICES.Data.Entities;
-using XHTD_SERVICES.Device.PLCM221;
-using XHTD_SERVICES.Device;
-using NDTan;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES_PING.Business;
-using XHTD_SERVICES_PING.Devices;
 
 namespace XHTD_SERVICES_PING
 {
@@ -19,20 +11,6 @@ namespace XHTD_SERVICES_PING
         public static IContainer Init()
         {
             var builder = new ContainerBuilder();
-
-            builder.RegisterType<XHTD_Entities>().AsSelf();
-            builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<RfidRepository>().AsSelf();
-            builder.RegisterType<CategoriesDevicesRepository>().AsSelf();
-            builder.RegisterType<CategoriesDevicesLogRepository>().AsSelf();
-            builder.RegisterType<SystemParameterRepository>().AsSelf();
-            builder.RegisterType<PLCBarrier>().AsSelf();
-            builder.RegisterType<TCPTrafficLight>().AsSelf();
-            builder.RegisterType<Notification>().AsSelf();
-            builder.RegisterType<PLC>().AsSelf();
-            builder.RegisterType<GatewayLogger>().AsSelf();
-            builder.RegisterType<ScaleApiLib>().AsSelf();
-            builder.RegisterType<BarrierControl>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -51,7 +29,7 @@ namespace XHTD_SERVICES_PING
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(GatewayModuleJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(PingJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }
