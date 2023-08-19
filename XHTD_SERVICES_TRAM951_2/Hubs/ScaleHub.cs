@@ -56,16 +56,17 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
         public void OpenManualBarrier(string name)
         {
-            _logger.Info($"6.1. Mo thủ công barrier IN");
+            _logger.Info($"Mo thủ công barrier IN");
             SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
             DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
 
             Thread.Sleep(1000);
 
-            _logger.Info($"6.2. Mo thủ công barrier OUT");
+            _logger.Info($"Mo thủ công barrier OUT");
             SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
             DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
+            _logger.Info($"Bat đèn xanh thủ công");
             TurnOnGreenTrafficLight(true);
         }
 
