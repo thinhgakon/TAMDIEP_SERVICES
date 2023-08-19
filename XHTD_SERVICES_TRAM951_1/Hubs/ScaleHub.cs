@@ -221,7 +221,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE && (bool)x.IsScaling);
                         if (scaleInfo == null)
                         {
-                            _logger.Info($"Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
+                            _logger.Info($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
                             // TODO
                             // Giải phóng cân
@@ -242,19 +242,19 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             _logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
                             await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
+                            // 4. Đóng barrier
                             if (isLongVehicle)
                             {
-                                _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+                                _logger.Info($"4. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
 
                                 SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
-                                _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
+                                _logger.Info($"4. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
 
                                 if (Program.IsBarrierActive)
                                 {
-                                    // 4. Đóng barrier
                                     _logger.Info($"4.1. Dong barrier IN");
                                     DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
                                     Thread.Sleep(1000);
@@ -263,7 +263,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 }
                                 else 
                                 {
-                                    _logger.Info($"4. Cau hinh barrier dang TAT");
+                                    _logger.Info($"4.1. Cau hinh barrier dang TAT");
                                 }
                             }
 
