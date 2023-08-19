@@ -56,16 +56,17 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         public void OpenManualBarrier(string name)
         {
-            _logger.Info($"6.1. Mo thủ công barrier IN");
+            _logger.Info($"Mo thủ công barrier IN");
             SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
             DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
 
             Thread.Sleep(1000);
 
-            _logger.Info($"6.2. Mo thủ công barrier OUT");
+            _logger.Info($"Mo thủ công barrier OUT");
             SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
             DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
+            _logger.Info($"Bat đèn xanh thủ công");
             TurnOnGreenTrafficLight(true);
         }
 
@@ -279,9 +280,9 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 _logger.Info($"5.1. Lưu giá trị cân thành công");
 
+                                // 6. Update gia tri can va trang thai Can vao
                                 _logger.Info($"6. Update gia tri can va trang thai Can vao");
 
-                                // TODO: lấy thông tin đơn hàng
                                 var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
 
                                 if (currentOrder.CatId == OrderCatIdCode.CLINKER
@@ -325,7 +326,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                     if (Program.IsBarrierActive)
                                     {
-                                        // 6. Mở barrier
                                         _logger.Info($"7.2. Mo barrier IN");
                                         DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
                                         Thread.Sleep(1000);
@@ -340,7 +340,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 Thread.Sleep(3500);
 
-                                // 7. Bật đèn xanh
+                                // 8. Bật đèn xanh
+                                _logger.Info($"8. Bat den xanh");
                                 TurnOnGreenTrafficLight();
                             }
                             else
@@ -475,7 +476,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         public void TurnOnGreenTrafficLight(bool isHasNotification = false)
         {
-            _logger.Info($"7.1. Bat thủ công den xanh chieu vao");
+            _logger.Info($@"Bật den xanh chieu vao");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
             {
                 if (isHasNotification) 
@@ -495,7 +496,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
             Thread.Sleep(500);
 
-            _logger.Info($"7.2. Bat thủ công den xanh chieu ra");
+            _logger.Info($@"Bật den xanh chieu ra");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
             {
                 if (isHasNotification)
