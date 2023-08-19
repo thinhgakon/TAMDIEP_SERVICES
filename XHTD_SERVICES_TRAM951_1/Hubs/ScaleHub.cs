@@ -276,9 +276,9 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // Lưu giá trị cân thành công
                                 SendMessage("Notification", $"{scaleInfoResult.Message}");
 
-                                _logger.Info($"Lưu giá trị cân thành công");
+                                _logger.Info($"5.1. Lưu giá trị cân thành công");
 
-                                _logger.Info($"8. Update gia tri can va trang thai Can vao");
+                                _logger.Info($"6. Update gia tri can va trang thai Can vao");
 
                                 // TODO: lấy thông tin đơn hàng
                                 var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
@@ -287,22 +287,22 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                  || currentOrder.TypeXK == OrderTypeXKCode.JUMBO
                                  || currentOrder.TypeXK == OrderTypeXKCode.SLING)
                                 {
-                                    _logger.Info($"8.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+                                    _logger.Info($"6.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                    _logger.Info($"8.2. Update gia tri can vao toan bo don hang theo vehicle code");
+                                    _logger.Info($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
 
-                                    _logger.Info($"8.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                    _logger.Info($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                 }
                                 else
                                 {
-                                    _logger.Info($"8.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+                                    _logger.Info($"6.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                    _logger.Info($"8.2. Update gia tri can vao");
+                                    _logger.Info($"6.2. Update gia tri can vao");
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                    _logger.Info($"8.3. Update trạng thái cân vào");
+                                    _logger.Info($"6.3. Update trạng thái cân vào");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
 
                                     DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
@@ -345,7 +345,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // Lưu giá trị cân thất bại
                                 SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
-                                _logger.Info($"Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+                                _logger.Info($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                 Thread.Sleep(5000);
                             }
