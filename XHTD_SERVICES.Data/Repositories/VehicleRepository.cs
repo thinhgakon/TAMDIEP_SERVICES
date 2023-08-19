@@ -129,5 +129,44 @@ namespace XHTD_SERVICES.Data.Repositories
                 await dbContext.SaveChangesAsync();
             }
         }
+
+        public int GetUnladenWeight(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var vehicleRecord = dbContext.tblVehicles.FirstOrDefault(x => x.Vehicle == vehicleCode);
+                if (vehicleRecord == null)
+                {
+                    return 0;
+                }
+
+                var number = 0;
+                var total = 0;
+
+                var unladenWeight1 = vehicleRecord.UnladenWeight1;
+                var unladenWeight2 = vehicleRecord.UnladenWeight2;
+                var unladenWeight3 = vehicleRecord.UnladenWeight3;
+
+                if (unladenWeight1 != null)
+                {
+                    number += 1;
+                    total += (int)unladenWeight1;
+                }
+
+                if (unladenWeight2 != null)
+                {
+                    number += 1;
+                    total += (int)unladenWeight2;
+                }
+
+                if (unladenWeight3 != null)
+                {
+                    number += 1;
+                    total += (int)unladenWeight3;
+                }
+
+                return number > 0 ? total / number : 0;
+            }
+        }
     }
 }
