@@ -243,27 +243,28 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                             // 4. Đóng barrier
+                            _logger.Info($"4. Dong barrier");
                             if (isLongVehicle)
                             {
-                                _logger.Info($"4. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
+                                _logger.Info($"4.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
 
                                 SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                             }
                             else
                             {
-                                _logger.Info($"4. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
+                                _logger.Info($"4.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
 
                                 if (Program.IsBarrierActive)
                                 {
-                                    _logger.Info($"4.1. Dong barrier IN");
+                                    _logger.Info($"4.2. Dong barrier IN");
                                     DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
                                     Thread.Sleep(1000);
-                                    _logger.Info($"4.2. Dong barrier OUT");
+                                    _logger.Info($"4.3. Dong barrier OUT");
                                     DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
                                 }
                                 else 
                                 {
-                                    _logger.Info($"4.1. Cau hinh barrier dang TAT");
+                                    _logger.Info($"4.2. Cau hinh barrier dang TAT");
                                 }
                             }
 
@@ -310,28 +311,30 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 Thread.Sleep(5000);
 
+                                // 7. Mở barrier
+                                _logger.Info($"7. Mo barrier");
                                 if (isLongVehicle)
                                 {
-                                    _logger.Info($"{scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
+                                    _logger.Info($"7.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
 
                                     SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
-                                    _logger.Info($"{scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
+                                    _logger.Info($"7.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
 
                                     if (Program.IsBarrierActive)
                                     {
                                         // 6. Mở barrier
-                                        _logger.Info($"6.1. Mo barrier IN");
+                                        _logger.Info($"7.2. Mo barrier IN");
                                         DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
                                         Thread.Sleep(1000);
-                                        _logger.Info($"6.2. Mo barrier OUT");
+                                        _logger.Info($"7.3. Mo barrier OUT");
                                         DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
                                     }
                                     else
                                     {
-                                        _logger.Info($"4. Cau hinh barrier dang TAT");
+                                        _logger.Info($"7.2. Cau hinh barrier dang TAT");
                                     }
                                 }
 
