@@ -239,6 +239,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                         // Đang cân vào
                         if ((bool)scaleInfo.ScaleIn)
                         {
+                            // Độ lệch khối lượng không tải trung bình và giá trị cân bì hiện tại
+                            var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
+                            _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
+                            _logger.Info($"2.2. Sai so khoi luong khong tai: {unladenWeight - currentScaleValue}");
+
                             // 3. Cập nhật khối lượng không tải của phương tiện
                             _logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
                             await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
