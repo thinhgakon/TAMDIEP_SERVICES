@@ -12,6 +12,7 @@ using Autofac;
 using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Business;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_TRAM951_1.Hubs
 {
@@ -368,10 +369,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                             // 9. Giải phóng cân
                             _logger.Info($"9. Giai phong can {SCALE_CODE}");
-                            Program.IsScalling = false;
-                            Program.IsLockingScale = false;
-                            Program.scaleValues.Clear();
-                            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+                            await ReleaseScale();
                         }
                         // Đang cân ra
                         else if ((bool)scaleInfo.ScaleOut)
@@ -472,10 +470,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                             // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
                             _logger.Info($"8. Giai phong can {SCALE_CODE}");
-                            Program.IsScalling = false;
-                            Program.IsLockingScale = false;
-                            Program.scaleValues.Clear();
-                            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+                            await ReleaseScale();
                         }
                     }
                 }
@@ -487,6 +482,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     Program.scaleValues.Clear();
                 }
             }
+        }
+
+        public async Task ReleaseScale()
+        {
+            Program.IsScalling = false;
+            Program.IsLockingScale = false;
+            Program.scaleValues.Clear();
+            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
         }
 
         public void TurnOnGreenTrafficLight(bool isHasNotification = false)
