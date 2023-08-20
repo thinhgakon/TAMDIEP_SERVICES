@@ -227,12 +227,25 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         {
                             _logger.Info($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
-                            // TODO
-                            // Giải phóng cân
-                            // Thông báo chuyển sang cân thủ công
+                            SendMessage("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
 
+                            Thread.Sleep(TIME_TO_RELEASE_SCALE);
+                            await ReleaseScale();
                             return;
                         }
+
+                        var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
+                        if (currentOrder == null)
+                        {
+                            _logger.Info($"2. Khong co thong tin don hang dang can voi code = {scaleInfo.DeliveryCode}");
+
+                            SendMessage("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
+
+                            Thread.Sleep(TIME_TO_RELEASE_SCALE);
+                            await ReleaseScale();
+                            return;
+                        }
+
                         _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                         var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
@@ -303,8 +316,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 6. Update gia tri can va trang thai Can vao
                                 _logger.Info($"6. Update gia tri can va trang thai Can vao");
-
-                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
 
                                 if (currentOrder.CatId == OrderCatIdCode.CLINKER
                                  || currentOrder.TypeXK == OrderTypeXKCode.JUMBO
@@ -418,9 +429,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 SendMessage("Notification", $"{scaleInfoResult.Message}");
 
                                 _logger.Info($"4.1. Lưu giá trị cân thành công");
-
-                                // TODO: lấy thông tin đơn hàng
-                                var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
 
                                 // 5. Update gia tri can va trang thai Can ra
                                 _logger.Info($"5. Update gia tri can va trang thai Can ra");
