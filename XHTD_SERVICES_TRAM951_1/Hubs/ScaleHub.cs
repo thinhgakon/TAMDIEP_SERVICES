@@ -248,15 +248,18 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                         _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
+                        // Thông tin cấu hình
                         var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
 
                         var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                        var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
+                        var ladenWeight = unladenWeight + currentOrder.SumNumber * 1000;
 
                         // Đang cân vào
                         if ((bool)scaleInfo.ScaleIn)
                         {
                             // Độ lệch khối lượng không tải trung bình và giá trị cân bì hiện tại
-                            var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
                             var unladenWeightSaiSo = Math.Abs(unladenWeight - currentScaleValue);
 
                             _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
@@ -393,6 +396,25 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         // Đang cân ra
                         else if ((bool)scaleInfo.ScaleOut)
                         {
+                            // Độ lệch khối lượng hiện tại và khối lượng có tải dự kiến (không tải trung bình + số lượng đặt hàng)
+                            var ladenWeightSaiSo = Math.Abs((int)ladenWeight - currentScaleValue);
+
+                            _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
+                            _logger.Info($"2.2. Khoi luong đặt hàng: {currentOrder.SumNumber}");
+                            _logger.Info($"2.3. Khoi luong có tải dự kiến: {ladenWeight}");
+                            _logger.Info($"2.4. Sai so khoi luong có tải: {ladenWeightSaiSo}");
+
+                            if (ladenWeightSaiSo > ScaleConfig.LADEN_WEIGHT_SAISO)
+                            {
+                                _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.LADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
+
+                                SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.LADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+
+                                Thread.Sleep(TIME_TO_RELEASE_SCALE);
+                                await ReleaseScale();
+                                return;
+                            }
+
                             // 3. Đóng barrier
                             _logger.Info($"3. Dong barrier");
                             if (isLongVehicle)
