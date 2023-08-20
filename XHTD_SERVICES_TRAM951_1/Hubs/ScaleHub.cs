@@ -254,6 +254,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                         var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
+
                         var ladenWeight = unladenWeight + currentOrder.SumNumber * 1000;
 
                         // Đang cân vào
