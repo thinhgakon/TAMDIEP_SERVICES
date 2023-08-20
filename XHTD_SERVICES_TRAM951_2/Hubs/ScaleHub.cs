@@ -42,6 +42,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
         protected readonly int TIME_TO_READ_RFID = 30;
 
+        protected readonly int TIME_TO_RELEASE_SCALE = 5000;
+
         public void SendMessage(string name, string message)
         {
             try
@@ -250,6 +252,12 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             if (unladenWeightSaiSo > ScaleConfig.UNLADEN_WEIGHT_SAISO)
                             {
                                 _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
+
+                                SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+
+                                Thread.Sleep(TIME_TO_RELEASE_SCALE);
+                                await ReleaseScale();
+                                return;
                             }
 
                             // 3. Cập nhật khối lượng không tải của phương tiện
@@ -364,7 +372,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 _logger.Info($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
-                                Thread.Sleep(5000);
+                                Thread.Sleep(TIME_TO_RELEASE_SCALE);
                             }
 
                             // 9. Giải phóng cân
@@ -465,7 +473,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                 _logger.Info($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
-                                Thread.Sleep(5000);
+                                Thread.Sleep(TIME_TO_RELEASE_SCALE);
                             }
 
                             // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
