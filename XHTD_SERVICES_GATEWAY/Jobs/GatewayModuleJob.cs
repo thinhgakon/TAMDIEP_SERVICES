@@ -60,6 +60,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected const string C3400_CBV_IP_ADDRESS = "10.0.9.1";
 
+        protected const string C3400_TEST_CBV_IP_ADDRESS = "10.0.9.10";
+
         protected const string M221_CBV_IP_ADDRESS = "10.0.9.2";
 
         protected const string C3400_951_2_IP_ADDRESS = "10.0.9.5";
@@ -231,12 +233,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                 Ping myPing = new Ping();
                                 PingReply replyC3400CBV = myPing.Send(C3400_CBV_IP_ADDRESS, 1000);
+                                PingReply replyC3400TestCBV = myPing.Send(C3400_TEST_CBV_IP_ADDRESS, 1000);
                                 PingReply replyM221CBV = myPing.Send(M221_CBV_IP_ADDRESS, 1000);
                                 PingReply replyC34009512 = myPing.Send(C3400_951_2_IP_ADDRESS, 1000);
 
                                 if (replyC3400CBV != null)
                                 {
                                     SmsContent += $"C3400-CBV: {replyC3400CBV.Status}. ";
+                                }
+
+                                if (replyC3400TestCBV != null)
+                                {
+                                    SmsContent += $"C3400-TEST-CBV: {replyC3400TestCBV.Status}. ";
                                 }
 
                                 if (replyM221CBV != null)
