@@ -11,7 +11,6 @@ namespace XHTD_SERVICES_PING.Jobs
         ILog logger = LogManager.GetLogger("GatewayFileAppender");
 
         protected const string C3400_IP_ADDRESS = "10.0.9.1";
-        protected const string C3400_TEST_IP_ADDRESS = "10.0.9.10";
         protected const string M221_IP_ADDRESS = "10.0.9.2";
         protected const string DGT_IN_IP_ADDRESS = "10.0.9.3";
         protected const string DGT_OUT_IP_ADDRESS = "10.0.9.4";
@@ -41,7 +40,6 @@ namespace XHTD_SERVICES_PING.Jobs
         {
             Ping myPing = new Ping();
             PingReply replyC3400 = myPing.Send(C3400_IP_ADDRESS, 1000);
-            PingReply replyC3400Test = myPing.Send(C3400_TEST_IP_ADDRESS, 1000);
             PingReply replyM221 = myPing.Send(M221_IP_ADDRESS, 1000);
             PingReply replyLightIn = myPing.Send(DGT_IN_IP_ADDRESS, 1000);
             PingReply replyLightOut = myPing.Send(DGT_OUT_IP_ADDRESS, 1000);
@@ -55,17 +53,6 @@ namespace XHTD_SERVICES_PING.Jobs
             {
                 Console.WriteLine("Khong nhan duoc tin hieu ping replyC3400");
                 logger.Info("Khong nhan duoc tin hieu ping replyC3400");
-            }
-
-            if (replyC3400Test != null)
-            {
-                Console.WriteLine("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
-                logger.Info("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
-            }
-            else
-            {
-                Console.WriteLine("Khong nhan duoc tin hieu ping replyC3400Test");
-                logger.Info("Khong nhan duoc tin hieu ping replyC3400Test");
             }
 
             if (replyM221 != null)
