@@ -21,6 +21,8 @@ namespace XHTD_SERVICES.Device
         private const string OFFGREENONRED = "*[L1]OFF[L2]ON[!]";
         private const string OFFGREENOFFRED = "*[L1]OFF[L2]OFF[!]";
 
+        private const int COUNT_RETRY_CONNECT = 1;
+
         private string IpAddress { get; set; }
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -35,7 +37,7 @@ namespace XHTD_SERVICES.Device
             var isSuccessed = false;
             int count = 0;
 
-            while (!isSuccessed && count < 6)
+            while (!isSuccessed && count < COUNT_RETRY_CONNECT)
             {
                 count++;
                 try
@@ -80,7 +82,7 @@ namespace XHTD_SERVICES.Device
             var isSuccessed = false;
             int count = 0;
 
-            while (!isSuccessed && count < 6)
+            while (!isSuccessed && count < COUNT_RETRY_CONNECT)
             {
                 count++;
                 try
