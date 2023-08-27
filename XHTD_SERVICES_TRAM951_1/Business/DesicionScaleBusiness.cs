@@ -37,21 +37,6 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleIn(deliveryCode, weight);
 
-            //if (response.Code == "01")
-            //{
-            //    // Gọi API lưu thành công
-            //    logger.Info($"Scale_Send_Successed: {response.Message}");
-
-            //    new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
-            //}
-            //else
-            //{
-            //    // Gọi API lưu thất bại
-            //    logger.Info($"Scale_Send_Failed: {response.Message}");
-
-            //    new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
-            //}
-
             resultResponse.Code = response.Code;
             resultResponse.Message = response.Message;
 
@@ -89,21 +74,6 @@ namespace XHTD_SERVICES_TRAM951_1.Business
             //}
 
             var response = DIBootstrapper.Init().Resolve<ScaleApiLib>().ScaleOut(deliveryCode, weight);
-
-            //if (response.Code == "01")
-            //{
-            //    // Gọi API lưu thành công
-            //    logger.Info($"Scale_Send_Successed: {response.Message}");
-
-            //    new ScaleHub().SendMessage("Scale_Send_Successed", $"{response.Message}");
-            //}
-            //else
-            //{
-            //    // Gọi API lưu thất bại
-            //    logger.Info($"Scale_Send_Failed: {response.Message}");
-
-            //    new ScaleHub().SendMessage("Scale_Send_Failed", $"{response.Message}");
-            //}
 
             resultResponse.Code = response.Code;
             resultResponse.Message = response.Message;

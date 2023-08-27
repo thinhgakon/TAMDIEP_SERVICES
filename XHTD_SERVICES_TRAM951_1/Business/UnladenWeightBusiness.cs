@@ -25,5 +25,10 @@ namespace XHTD_SERVICES_TRAM951_1.Business
         {
             await _vehicleRepository.UpdateUnladenWeight(cardNo, weight);
         }
+
+        public int GetUnladenWeight(string vehicleCode)
+        {
+            return _vehicleRepository.GetUnladenWeight(vehicleCode);
+        }
     }
 }

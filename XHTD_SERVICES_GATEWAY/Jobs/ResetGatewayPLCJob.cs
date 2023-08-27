@@ -19,23 +19,15 @@ using Autofac;
 using XHTD_SERVICES_GATEWAY.Business;
 using XHTD_SERVICES_GATEWAY.Hubs;
 using XHTD_SERVICES_GATEWAY.Devices;
+using log4net;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
     public class ResetGatewayPLCJob : IJob
     {
-        protected readonly PLCBarrier _barrier;
+        ILog logger = LogManager.GetLogger("SecondFileAppender");
 
-        protected readonly GatewayLogger _gatewayLogger;
-
-        public ResetGatewayPLCJob(
-            PLCBarrier barrier,
-            GatewayLogger gatewayLogger
-            )
-        {
-            _barrier = barrier;
-            _gatewayLogger = gatewayLogger;
-        }
+        public ResetGatewayPLCJob(){}
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -46,7 +38,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(() =>
             {
-                _gatewayLogger.LogInfo("========= Start reset gateway PLC service =========");
+                logger.Info("========= Start reset gateway PLC service =========");
 
                 ResetPLC();
             });                                                                                                                     

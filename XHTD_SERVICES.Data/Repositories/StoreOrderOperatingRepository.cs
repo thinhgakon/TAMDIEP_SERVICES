@@ -398,6 +398,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
                                                 && x.CatId == OrderCatIdCode.XI_MANG_BAO
                                                 && x.TypeXK != OrderTypeXKCode.JUMBO
+                                                && x.TypeXK != OrderTypeXKCode.SLING
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
