@@ -16,8 +16,8 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly int WEIGHT_SAISO = 20;
 
-        public static readonly int UNLADEN_WEIGHT_SAISO = 1000;
+        public static readonly int UNLADEN_WEIGHT_SAISO = 50000;
 
-        public static readonly int LADEN_WEIGHT_SAISO = 2000;
+        public static readonly int LADEN_WEIGHT_SAISO = 70000;
     }
 }

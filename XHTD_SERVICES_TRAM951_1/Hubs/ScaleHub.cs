@@ -266,7 +266,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
                             _logger.Info($"2.2. Sai so khoi luong khong tai: {unladenWeightSaiSo}");
 
-                            if(unladenWeightSaiSo > ScaleConfig.UNLADEN_WEIGHT_SAISO)
+                            if(unladenWeight > 0 && unladenWeightSaiSo > ScaleConfig.UNLADEN_WEIGHT_SAISO)
                             {
                                 _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
@@ -405,7 +405,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             _logger.Info($"2.3. Khoi luong có tải dự kiến: {ladenWeight}");
                             _logger.Info($"2.4. Sai so khoi luong có tải: {ladenWeightSaiSo}");
 
-                            if (ladenWeightSaiSo > ScaleConfig.LADEN_WEIGHT_SAISO)
+                            if (unladenWeight > 0 && ladenWeightSaiSo > ScaleConfig.LADEN_WEIGHT_SAISO)
                             {
                                 _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.LADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
