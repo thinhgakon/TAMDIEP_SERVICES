@@ -17,23 +17,15 @@ using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Business;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Device.PLCM221;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class Reset951PLCJob : IJob
     {
-        protected readonly PLCBarrier _barrier;
+        ILog logger = LogManager.GetLogger("SecondFileAppender");
 
-        protected readonly Logger _logger;
-
-        public Reset951PLCJob(
-            PLCBarrier barrier,
-            Logger logger
-            )
-        {
-            _barrier = barrier;
-            _logger = logger;
-        }
+        public Reset951PLCJob(){}
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -44,7 +36,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             await Task.Run(() =>
             {
-                _logger.LogInfo("========= Start reset 951 PLC service =========");
+                logger.Info("========= Start reset 951 PLC service =========");
 
                 ResetPLC();
             });
