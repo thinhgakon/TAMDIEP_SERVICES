@@ -178,6 +178,50 @@ namespace XHTD_SERVICES.Data.Repositories
 
             try
             {
+                string typeProduct = "";
+                string typeXK = null;
+                string productNameUpper = websaleOrder.productName.ToUpper();
+                string itemCategory = websaleOrder.itemCategory;
+
+                if (itemCategory == OrderCatIdCode.XI_MANG_XA)
+                {
+                    typeProduct = "ROI";
+                }
+                else if (itemCategory == OrderCatIdCode.CLINKER)
+                {
+                    typeProduct = OrderCatIdCode.CLINKER;
+                }
+                else
+                {
+                    // Type Product
+                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
+                    {
+                        typeProduct = "PCB30";
+                    }
+                    else if (productNameUpper.Contains("PC30"))
+                    {
+                        typeProduct = "PC30";
+                    }
+                    else if (productNameUpper.Contains("PCB40"))
+                    {
+                        typeProduct = "PCB40";
+                    }
+                    else if (productNameUpper.Contains("PC40"))
+                    {
+                        typeProduct = "PC40";
+                    }
+
+                    // Type XK
+                    if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
+                    {
+                        typeXK = OrderTypeXKCode.JUMBO;
+                    }
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING))
+                    {
+                        typeXK = OrderTypeXKCode.SLING;
+                    }
+                }
+
                 var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
                 var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
                 var cardNo = rfidItem?.Code ?? null;
@@ -207,6 +251,15 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.DriverName = websaleOrder.driverName;
                             order.CardNo = cardNo;
                             order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+
+                            order.CatId = websaleOrder.itemCategory;
+                            order.NameProduct = websaleOrder.productName;
+                            order.TypeProduct = typeProduct;
+                            order.TypeXK = typeXK;
+                            order.LocationCode = websaleOrder.locationCode;
+                            order.TransportMethodId = websaleOrder.transportMethodId;
+                            order.TransportMethodName = websaleOrder.transportMethodName;
+
                             order.UpdateDay = lastUpdatedDate;
 
                             order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
