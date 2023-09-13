@@ -41,10 +41,10 @@ namespace XHTD_SERVICES_PING.Jobs
         {
             Ping myPing = new Ping();
             PingReply replyC3400 = myPing.Send(C3400_IP_ADDRESS, 1000);
-            PingReply replyC3400Test = myPing.Send(C3400_TEST_IP_ADDRESS, 1000);
+            //PingReply replyC3400Test = myPing.Send(C3400_TEST_IP_ADDRESS, 1000);
             PingReply replyM221 = myPing.Send(M221_IP_ADDRESS, 1000);
             PingReply replyLightIn = myPing.Send(DGT_IN_IP_ADDRESS, 1000);
-            PingReply replyLightOut = myPing.Send(DGT_OUT_IP_ADDRESS, 1000);
+            //PingReply replyLightOut = myPing.Send(DGT_OUT_IP_ADDRESS, 1000);
 
             if (replyC3400 != null)
             {
@@ -57,16 +57,16 @@ namespace XHTD_SERVICES_PING.Jobs
                 logger.Info("Khong nhan duoc tin hieu ping replyC3400");
             }
 
-            if (replyC3400Test != null)
-            {
-                Console.WriteLine("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
-                logger.Info("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
-            }
-            else
-            {
-                Console.WriteLine("Khong nhan duoc tin hieu ping replyC3400Test");
-                logger.Info("Khong nhan duoc tin hieu ping replyC3400Test");
-            }
+            //if (replyC3400Test != null)
+            //{
+            //    Console.WriteLine("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
+            //    logger.Info("C3400 Address: " + replyC3400Test.Address + " - Status:  " + replyC3400Test.Status + " - Time : " + replyC3400Test.RoundtripTime.ToString());
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Khong nhan duoc tin hieu ping replyC3400Test");
+            //    logger.Info("Khong nhan duoc tin hieu ping replyC3400Test");
+            //}
 
             if (replyM221 != null)
             {
@@ -90,16 +90,16 @@ namespace XHTD_SERVICES_PING.Jobs
                 logger.Info("Khong nhan duoc tin hieu ping replyLightIn");
             }
 
-            if (replyLightOut != null)
-            {
-                Console.WriteLine("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
-                logger.Info("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
-            }
-            else
-            {
-                Console.WriteLine("Khong nhan duoc tin hieu ping replyLightOut");
-                logger.Info("Khong nhan duoc tin hieu ping replyLightOut");
-            }
+            //if (replyLightOut != null)
+            //{
+            //    Console.WriteLine("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
+            //    logger.Info("LightOut Address: " + replyLightOut.Address + " - Status:  " + replyLightOut.Status + " - Time : " + replyLightOut.RoundtripTime.ToString());
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Khong nhan duoc tin hieu ping replyLightOut");
+            //    logger.Info("Khong nhan duoc tin hieu ping replyLightOut");
+            //}
         }
     }
 }
