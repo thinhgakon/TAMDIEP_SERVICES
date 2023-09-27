@@ -46,7 +46,15 @@ namespace XHTD_SERVICES.Device
                     TcpClient client = new TcpClient();
 
                     // 1. connect
-                    client.Connect($"{this.IpAddress}", PORT_NUMBER);
+                    var isConnected = client.ConnectAsync($"{this.IpAddress}", PORT_NUMBER).Wait(3000);
+                    if (!isConnected)
+                    {
+                        // connection failure
+                        _logger.Error($@"Khong the connect count={count}");
+                        continue;
+                    }
+
+                    //client.Connect($"{this.IpAddress}", PORT_NUMBER);
                     Stream stream = client.GetStream();
 
                     // 2. send 1
@@ -92,7 +100,15 @@ namespace XHTD_SERVICES.Device
                     TcpClient client = new TcpClient();
 
                     // 1. connect
-                    client.Connect($"{this.IpAddress}", PORT_NUMBER);
+                    var isConnected = client.ConnectAsync($"{this.IpAddress}", PORT_NUMBER).Wait(3000);
+                    if (!isConnected)
+                    {
+                        // connection failure
+                        _logger.Error($@"Khong the connect count={count}");
+                        continue;
+                    }
+
+                    //client.Connect($"{this.IpAddress}", PORT_NUMBER);
                     Stream stream = client.GetStream();
 
                     // 2. send 1
