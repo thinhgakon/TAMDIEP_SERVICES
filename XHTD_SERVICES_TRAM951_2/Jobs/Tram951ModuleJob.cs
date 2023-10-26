@@ -475,7 +475,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                _logger.LogError($@"Co loi xay ra khi xu ly RFID: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
                                 continue;
                             }
                         }
