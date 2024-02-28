@@ -254,7 +254,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                     }
 
                                     // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
-                                    SendRFIDInfo(cardNoCurrent, doorCurrent);
+                                    //SendRFIDInfo(cardNoCurrent, doorCurrent);
 
                                     // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
