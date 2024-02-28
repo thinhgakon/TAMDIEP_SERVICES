@@ -495,7 +495,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
-                                                SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
+                                                //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
 
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
                                             }
@@ -561,7 +561,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                                             if (isUpdatedOrder)
                                             {
-                                                SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
+                                                //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
 
                                                 _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) => Đã xác thực trạng thái ra cổng");
                                             }
