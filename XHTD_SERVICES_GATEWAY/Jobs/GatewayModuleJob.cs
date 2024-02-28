@@ -338,7 +338,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     }
 
                                     // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
-                                    SendRFIDInfo(isLuongVao, cardNoCurrent);
+                                    // SendRFIDInfo(isLuongVao, cardNoCurrent);
 
                                     // 2. Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
