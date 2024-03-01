@@ -345,7 +345,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                         _logger.Info($"6.3. Update trạng thái cân vào");
                                         await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
 
-                                        DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
+                                        //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
 
                                     Thread.Sleep(5000);
@@ -463,7 +463,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     _logger.Info($"5.2. Update trạng thái cân ra");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
 
-                                    DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
+                                    //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
 
                                     Thread.Sleep(5000);
 

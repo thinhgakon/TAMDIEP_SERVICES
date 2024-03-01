@@ -225,7 +225,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     {
                         var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-                        SendInfoNotification("khoanv", $"{websaleOrder.deliveryCode} {canceledOrder.DriverUserName} đã bị hủy lúc {currentTime}");
+                        //SendInfoNotification("khoanv", $"{websaleOrder.deliveryCode} {canceledOrder.DriverUserName} đã bị hủy lúc {currentTime}");
                     }
                 }
             }
