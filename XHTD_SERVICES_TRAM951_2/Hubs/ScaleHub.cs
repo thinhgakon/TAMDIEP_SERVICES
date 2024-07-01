@@ -181,11 +181,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 // TODO: kiểm tra vi phạm cảm biến cân
                 if (Program.IsSensorActive)
                 {
+                    _logger.Info($"Đang MỞ check cảm biến cân");
                     if (!Program.IsLockingScale)
                     {
                         var isInValidSensor = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale();
                         if (isInValidSensor)
                         {
+                            _logger.Info($"Vi phạm cảm biến cân");
+
                             SendSensor(SCALE_CODE, "1");
 
                             Program.scaleValues.Clear();
@@ -194,13 +197,27 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                         }
                         else
                         {
+                            _logger.Info($"Không vi phạm cảm biến cân");
+
                             SendSensor(SCALE_CODE, "0");
                         }
                     }
+                    else
+                    {
+                        _logger.Info($"Đang khóa cân IsLockingScale = true");
+                    }
                 }
+                else
+                {
+                    _logger.Info($"Đang TẮT check cảm biến cân");
+                }
+
+                _logger.Info($"Giá trị: IsScalling = {Program.IsScalling}; IsLockingScale={Program.IsLockingScale}");
 
                 if (Program.IsScalling && !Program.IsLockingScale)
                 {
+                    _logger.Info($"Thỏa mãn điều kiện nhận giá trị cân");
+
                     Program.scaleValues.Add(currentScaleValue);
 
                     if (Program.scaleValues.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
@@ -518,6 +535,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 }
                 else
                 {
+                    _logger.Info($"KHÔNG thỏa mãn điều kiện nhận giá trị cân");
+
                     if (Program.scaleValues.Count > 5)
                     {
                         Program.scaleValues.Clear();
