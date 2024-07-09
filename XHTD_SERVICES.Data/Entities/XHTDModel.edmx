@@ -124,7 +124,7 @@
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="tblCompany">
           <Key>
             <PropertyRef Name="ComId" />
@@ -481,6 +481,8 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="Confirm10" Type="int" />
+          <Property Name="TimeConfirm10" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -495,7 +497,7 @@ warning 6002: The table/view 'XHTD.dbo.tblCompany' does not have a primary key d
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="tblStoreOrderOperatingVoice">
           <Key>
             <PropertyRef Name="Id" />
@@ -601,6 +603,34 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
+          <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblTroughTypeProduct" Type="Self.tblTroughTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTrough">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblTroughTypeProduct">
+              <PropertyRef Name="TroughCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct">
+          <End Role="tblTypeProduct" Type="Self.tblTypeProduct" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblTroughTypeProduct" Type="Self.tblTroughTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTypeProduct">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblTroughTypeProduct">
+              <PropertyRef Name="TypeProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="XHTD_SERVICESDataEntitiesStoreContainer">
           <EntitySet Name="tblAccount" EntityType="Self.tblAccount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAccountGroup" EntityType="Self.tblAccountGroup" Schema="dbo" store:Type="Tables" />
@@ -663,6 +693,14 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
     [tblStoreOrderOperatingVoice].[UpdateBy] AS [UpdateBy]
     FROM [dbo].[tblStoreOrderOperatingVoice] AS [tblStoreOrderOperatingVoice]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
+            <End Role="tblTrough" EntitySet="tblTrough" />
+            <End Role="tblTroughTypeProduct" EntitySet="tblTroughTypeProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" Association="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct">
+            <End Role="tblTypeProduct" EntitySet="tblTypeProduct" />
+            <End Role="tblTroughTypeProduct" EntitySet="tblTroughTypeProduct" />
+          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -1125,6 +1163,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Confirm10" Type="Int32" />
+          <Property Name="TimeConfirm10" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1177,6 +1217,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode" FromRole="tblTrough" ToRole="tblTroughTypeProduct" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -1189,6 +1230,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblTrough" Relationship="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode" FromRole="tblTroughTypeProduct" ToRole="tblTrough" />
+          <NavigationProperty Name="tblTypeProduct" Relationship="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" FromRole="tblTroughTypeProduct" ToRole="tblTypeProduct" />
         </EntityType>
         <EntityType Name="tblTypeProduct">
           <Key>
@@ -1202,6 +1245,7 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" FromRole="tblTypeProduct" ToRole="tblTroughTypeProduct" />
         </EntityType>
         <EntityType Name="tblVehicle">
           <Key>
@@ -1261,6 +1305,34 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
+          <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblTroughTypeProduct" Type="Self.tblTroughTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTrough">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblTroughTypeProduct">
+              <PropertyRef Name="TroughCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct">
+          <End Role="tblTypeProduct" Type="Self.tblTypeProduct" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblTroughTypeProduct" Type="Self.tblTroughTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTypeProduct">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblTroughTypeProduct">
+              <PropertyRef Name="TypeProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="XHTD_Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="tblAccounts" EntityType="Self.tblAccount" />
           <EntitySet Name="tblAccountGroups" EntityType="Self.tblAccountGroup" />
@@ -1294,6 +1366,14 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
           <EntitySet Name="tblVehicles" EntityType="Self.tblVehicle" />
           <EntitySet Name="tblCompanies" EntityType="Self.tblCompany" />
           <EntitySet Name="tblStoreOrderOperatingVoices" EntityType="Self.tblStoreOrderOperatingVoice" />
+          <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
+            <End Role="tblTrough" EntitySet="tblTroughs" />
+            <End Role="tblTroughTypeProduct" EntitySet="tblTroughTypeProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" Association="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct">
+            <End Role="tblTypeProduct" EntitySet="tblTypeProducts" />
+            <End Role="tblTroughTypeProduct" EntitySet="tblTroughTypeProducts" />
+          </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
@@ -1779,6 +1859,8 @@ warning 6002: The table/view 'XHTD.dbo.tblStoreOrderOperatingVoice' does not hav
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+                <ScalarProperty Name="Confirm10" ColumnName="Confirm10" />
+                <ScalarProperty Name="TimeConfirm10" ColumnName="TimeConfirm10" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

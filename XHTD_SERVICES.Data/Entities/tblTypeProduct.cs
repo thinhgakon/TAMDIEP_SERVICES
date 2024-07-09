@@ -14,6 +14,12 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class tblTypeProduct
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tblTypeProduct()
+        {
+            this.tblTroughTypeProducts = new HashSet<tblTroughTypeProduct>();
+        }
+    
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
@@ -22,5 +28,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblTroughTypeProduct> tblTroughTypeProducts { get; set; }
     }
 }
