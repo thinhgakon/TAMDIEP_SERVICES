@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using log4net;
-using XHTD_SERVICES_PING;
-using XHTD_SERVICES_PING.Schedules;
+using XHTD_SERVICES_INIT;
+using XHTD_SERVICES_INIT.Schedules;
 
 namespace XHTD_DEBUG
 {
