@@ -117,71 +117,32 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public List<OrderItemResponse> GetWebsaleViewOrder()
         {
-            DataTable orderTable = new DataTable();
-
             string strConString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
+            OracleHelper oracleHelper = new OracleHelper(strConString);
             string sqlQuery = @"SELECT * 
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN TO_DATE(:startDate,'dd/MM/yyyy') AND TO_DATE(:endDate,'dd/MM/yyyy') 
                                 ORDER BY ORDER_ID DESC";
 
-            try
+            OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
-                using (OracleConnection sqlCon = new OracleConnection(strConString))
-                {
-                    sqlCon.Open();
+                vehicleCode = reader["VEHICLE_CODE"].ToString(),
+                driverName = reader["DRIVER_NAME"].ToString(),
+                customerName = reader["CUSTOMER_NAME"].ToString(),
+                productName = reader["PRODUCT_NAME"].ToString(),
+                bookQuantity = decimal.Parse(reader["BOOK_QUANTITY"].ToString()),
+                id = int.Parse(reader["ORDER_ID"].ToString()),
+                deliveryCode = reader["DELIVERY_CODE"].ToString(),
+                orderDate = DateTime.ParseExact(reader["ORDER_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
+                moocCode = reader["MOOC_CODE"].ToString(),
+                locationCode = reader["LOCATION_CODE"].ToString(),
+                transportMethodId = int.Parse(reader["TRANSPORT_METHOD_ID"].ToString()),
+                status = reader["STATUS"].ToString(),
+                lastUpdatedDate = DateTime.ParseExact(reader["LAST_UPDATE_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss")
+            };
 
-                    using (OracleCommand sqlCmd = new OracleCommand(sqlQuery, sqlCon))
-                    {
-                        var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).ToString("dd/MM/yyyy");
-                        var endDate = DateTime.Now.ToString("dd/MM/yyyy");
-
-                        sqlCmd.Parameters.Add(new OracleParameter("startDate", startDate));
-                        sqlCmd.Parameters.Add(new OracleParameter("endDate", endDate));
-
-                        using (OracleDataAdapter sqlAdpt = new OracleDataAdapter(sqlCmd))
-                        {
-                            sqlAdpt.Fill(orderTable);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _syncOrderLogger.LogInfo("getViewOrder error: " + ex.Message);
-            }
-
-            List<OrderItemResponse> orderList = new List<OrderItemResponse>();
-
-            foreach (DataRow orderRow in orderTable.Rows)
-            {
-                var orderDate = DateTime.ParseExact(orderRow["ORDER_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture);
-                var orderDateString = orderDate.ToString("yyyy-MM-ddTHH:mm:ss");
-
-                var lastUpdateDate = DateTime.ParseExact(orderRow["LAST_UPDATE_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture);
-                var lastUpdateDateString = lastUpdateDate.ToString("yyyy-MM-ddTHH:mm:ss");
-
-                var order = new OrderItemResponse()
-                {
-                    vehicleCode = orderRow["VEHICLE_CODE"].ToString(),
-                    driverName = orderRow["DRIVER_NAME"].ToString(),
-                    customerName = orderRow["CUSTOMER_NAME"].ToString(),
-                    productName = orderRow["PRODUCT_NAME"].ToString(),
-                    bookQuantity = decimal.Parse(orderRow["BOOK_QUANTITY"].ToString()),
-                    id = int.Parse(orderRow["ORDER_ID"].ToString()),
-                    deliveryCode = orderRow["DELIVERY_CODE"].ToString(),
-                    orderDate = orderDateString,
-                    moocCode = orderRow["MOOC_CODE"].ToString(),
-                    locationCode = orderRow["LOCATION_CODE"].ToString(),
-                    transportMethodId = int.Parse(orderRow["TRANSPORT_METHOD_ID"].ToString()),
-                    status = orderRow["STATUS"].ToString(),
-                    lastUpdatedDate = lastUpdateDateString
-                };
-
-                orderList.Add(order);
-            }
-
-            return orderList;
+            List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc);
+            return result;
         }
 
         public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
