@@ -14,6 +14,10 @@ using XHTD_SERVICES.Helper;
 using XHTD_SERVICES.Helper.Models.Request;
 using System.Threading;
 using XHTD_SERVICES.Data.Entities;
+using System.Data.OracleClient;
+using System.Data;
+using System.Web.UI;
+using System.Globalization;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -87,7 +91,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var numberHoursParameter = parameters.FirstOrDefault(x => x.Code == SYNC_ORDER_HOURS);
 
-            if(activeParameter == null || activeParameter.Value == "0")
+            if (activeParameter == null || activeParameter.Value == "0")
             {
                 isActiveService = false;
             }
@@ -106,9 +110,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             _syncOrderLogger.LogInfo($"Start Sync In Progress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-            GetToken();
+            //GetToken();
 
-            List<OrderItemResponse> websaleOrders = GetWebsaleOrder();
+            List<OrderItemResponse> websaleOrders = GetWebsaleOrderFromView();
 
             if (websaleOrders == null || websaleOrders.Count == 0)
             {
@@ -120,7 +124,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             foreach (var websaleOrder in websaleOrders)
             {
                 // Không đồng bộ các đơn tại sông Thao
-                if (websaleOrder.shippointId != "13") { 
+                if (websaleOrder.shippointId != "13")
+                {
                     bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
 
                     if (!isChanged) isChanged = isSynced;
@@ -164,6 +169,33 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             return responseData.collection.OrderBy(x => x.id).ToList();
         }
 
+        public List<OrderItemResponse> GetWebsaleOrderFromView()
+        {
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
+
+            OracleHelper oracleHelper = new OracleHelper(connectionString);
+
+            string query = $"SELECT ORDER_ID, DELIVERY_CODE,TIMEIN,TIMEOUT,LOADWEIGHTNULL,STATUS,LOADWEIGHTFULL,PRODUCT_NAME,VEHICLE_CODE " +
+                           $"FROM apps.dev_sales_orders_mbf_v " +
+                           $"WHERE ORDER_DATE >= SYSTIMESTAMP - INTERVAL '72' HOUR";
+
+            OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
+            {
+                id = Convert.ToInt32(reader["ORDER_ID"]),
+                deliveryCode = reader["DELIVERY_CODE"]?.ToString(),
+                timeIn = string.IsNullOrEmpty(reader["TIMEIN"].ToString()) ? null : DateTime.ParseExact(reader["TIMEIN"].ToString(), "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
+                timeOut = string.IsNullOrEmpty(reader["TIMEOUT"].ToString()) ? null : DateTime.ParseExact(reader["TIMEOUT"].ToString(), "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
+                loadweightnull = reader["LOADWEIGHTNULL"].ToString(),
+                loadweightfull = reader["LOADWEIGHTFULL"].ToString(),
+                status = reader["STATUS"].ToString(),
+                productName = reader["PRODUCT_NAME"].ToString(),
+                vehicleCode = reader["VEHICLE_CODE"].ToString(),
+            };
+
+            List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
+            return result;
+        }
+
         public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
@@ -189,10 +221,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
-                    isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+                    //isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
                 }
-                else 
-                { 
+                else
+                {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull);
                 }
             }
@@ -203,10 +235,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
-                    isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+                    //isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
                 }
-                else 
-                { 
+                else
+                {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull);
                 }
             }
