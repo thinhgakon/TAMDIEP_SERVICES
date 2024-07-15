@@ -148,7 +148,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             catch (Exception ex)
             {
-                _syncOrderLogger.LogInfo("getViewOrder error: " + ex.Message);
+                _syncOrderLogger.LogInfo("GetWebsaleViewOrder error: " + ex.Message);
             }
 
             List<OrderItemResponse> orderList = new List<OrderItemResponse>();
