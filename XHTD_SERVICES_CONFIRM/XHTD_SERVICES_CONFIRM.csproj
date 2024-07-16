@@ -258,11 +258,11 @@
     <Compile Include="Business\ScaleApiLib.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="GatewayLogger.cs" />
+    <Compile Include="ConfirmLogger.cs" />
     <Compile Include="Hubs\GatewayHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
     <Compile Include="Jobs\ResetGatewayPLCJob.cs" />
-    <Compile Include="Jobs\GatewayModuleJob.cs" />
+    <Compile Include="Jobs\ConfirmModuleJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
     <Compile Include="Models\Response\DesicionScaleResponse.cs" />

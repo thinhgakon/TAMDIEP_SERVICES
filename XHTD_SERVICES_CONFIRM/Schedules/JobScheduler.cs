@@ -38,7 +38,7 @@ namespace XHTD_SERVICES_CONFIRM.Schedules
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
             // Reset PLC cổng bảo vệ
-            IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
+            IJobDetail resetPLCJob = JobBuilder.Create<ResetConfirmPLCJob>().Build();
             ITrigger resetPLCTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()

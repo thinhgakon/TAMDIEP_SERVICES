@@ -46,10 +46,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private static bool DeviceConnected = false;
 
-        private List<CardNoLog> tmpCardNoLst_In = new List<CardNoLog>();
-
-        private List<CardNoLog> tmpCardNoLst_Out = new List<CardNoLog>();
-
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
@@ -129,7 +125,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateGatewayModule();
+                AuthenticateConfirmModule();
             });                                                                                                                     
         }
 
@@ -189,19 +185,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
         }
 
-        public void AuthenticateGatewayModule()
+        public void AuthenticateConfirmModule()
         {
             // 1. Connect Device
             while (!DeviceConnected)
             {
-                ConnectGatewayModule();
+                ConnectConfirmationPointModule();
             }
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromC3400();
         }
 
-        public bool ConnectGatewayModule()
+        public bool ConnectConfirmationPointModule()
         {
             var ipAddress = c3400?.IpAddress;
             try
@@ -258,11 +254,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                 // Bắt đầu xử lý khi nhận diện được RFID
                                 if (tmp[2] != "0" && tmp[2] != "")
                                 {
-                                    var cardNoCurrent = tmp[2]?.ToString();
-                                    var doorCurrent = tmp[3]?.ToString();
-                                    var timeCurrent = tmp[0]?.ToString();
+                                    var cardNoCurrent = tmp[2]?.ToString(); // RFID
+                                    var doorCurrent = tmp[3]?.ToString(); // Điểm xác thực
+                                    var timeCurrent = tmp[0]?.ToString(); // Thời gian xác thực
 
-                                    // 2. Loại bỏ các tag đã check trước đó
+                                    // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
                                     { 
                                         tmpInvalidCardNoLst.RemoveRange(0, 3); 
@@ -274,24 +270,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         continue;
                                     }
 
-                                    if (tmpCardNoLst_In.Count > 5)
-                                    { 
-                                        tmpCardNoLst_In.RemoveRange(0, 3); 
-                                    }
-
-                                    if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                    {
-                                        //_confirmLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                        continue;
-                                    }
-
                                     _confirmLogger.LogInfo("----------------------------");
                                     _confirmLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
                                     _confirmLogger.LogInfo("-----");
 
                                     _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
 
-                                    // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
+                                    // Kiểm tra RFID có hợp lệ hay không
                                     string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
                                     if (!String.IsNullOrEmpty(vehicleCodeCurrent))
@@ -310,13 +295,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         continue;
                                     }
 
-                                    // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+                                    // Kiểm tra RFID có đang chứa đơn hàng hợp lệ không
                                     tblStoreOrderOperating currentOrder = null;
                                     var isValidCardNo = false;
 
-                                    currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
+                                    currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
 
-                                    isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
+                                    isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
 
                                     if (currentOrder == null)
                                     {
@@ -346,7 +331,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                        tmpCardNoLst_In.Add(newCardNoLog);
+                                        tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         Program.IsLockingRfidIn = true;
                                     }
@@ -354,26 +339,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     var currentDeliveryCode = currentOrder.DeliveryCode;
                                     _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
-                                    var isUpdatedOrder = false;
+                                    // Xác thực
+                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(cardNoCurrent);
 
-                                    var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
-                                    if (isUpdatedOrder)
+                                    // Xác thực thành công
+                                    if (isConfirmSuccess)
                                     {
-                                        _confirmLogger.LogInfo($"9. Ghi log thiet bi mo barrier");
-
-                                        string luongText = isLuongVao ? "vào" : "ra";
-                                        string deviceCode = isLuongVao ? "CBV.M221.BRE-IN" : "CBV.M221.BRE-OUT";
-                                        var newLog = new CategoriesDevicesLogItemResponse
-                                        {
-                                            Code = deviceCode,
-                                            ActionType = 1,
-                                            ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
-                                            ActionDate = DateTime.Now,
-                                        };
-
-                                        await _categoriesDevicesLogRepository.CreateAsync(newLog);
+                                        // Xếp số
+                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
                                     }
+                                    else
+                                    {
+                                        _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}" );
+                                    }
+                                    //
 
                                     _confirmLogger.LogInfo($"10. Giai phong RFID IN");
 
@@ -392,7 +371,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
-                            AuthenticateGatewayModule();
+                            AuthenticateConfirmModule();
                         }
                     }
                 }
@@ -402,79 +381,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 DeviceConnected = false;
                 h21 = IntPtr.Zero;
 
-                AuthenticateGatewayModule();
-            }
-        }
-
-        public bool OpenBarrier(string luong)
-        {
-            var isConnectSuccessed = false;
-            int count = 0;
-
-            try { 
-                int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-                int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
-
-                while (!isConnectSuccessed && count < 6)
-                {
-                    count++;
-
-                    _confirmLogger.LogInfo($@"OpenBarrier: count={count}");
-
-                    M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
-
-                    if (isConnected == M221Result.SUCCESS)
-                    {
-                        _barrier.ResetOutputPort(portNumberDeviceIn);
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan1 == M221Result.SUCCESS)
-                        {
-                            _confirmLogger.LogInfo($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _confirmLogger.LogInfo($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan2 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan2 == M221Result.SUCCESS)
-                        {
-                            _confirmLogger.LogInfo($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _confirmLogger.LogInfo($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        _barrier.Close();
-
-                        _confirmLogger.LogWarn($"OpenBarrier count={count} thanh cong");
-
-                        isConnectSuccessed = true;
-                    }
-                    else
-                    {
-                        _confirmLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
-
-                        Thread.Sleep(1000);
-                    }
-                }
-
-                return isConnectSuccessed;
-            }
-            catch (Exception ex)
-            {
-                _confirmLogger.LogInfo($"OpenBarrier Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                return false;
+                AuthenticateConfirmModule();
             }
         }
 
@@ -489,6 +396,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             else if (code == "OUT")
             {
                 ipAddress = trafficLightOut?.IpAddress;
+                AuthenticateConfirmModule();
             }
 
             return ipAddress;
@@ -538,19 +446,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
-            new GatewayHub().SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
-            //try
-            //{
-            //    await StartIfNeededAsync();
-
-            //    HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message, deliveryCode).Wait();
-
-            //    _confirmLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
-            //}
-            //catch (Exception ex)
-            //{
-            //    _confirmLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
-            //}
+            new ConfirmHub().SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
         }
 
         public void SendRFIDInfo(bool isLuongVao, string cardNo)

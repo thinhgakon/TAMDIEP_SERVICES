@@ -56,9 +56,10 @@ namespace XHTD_SERVICES.Data.Repositories
                 using (var db = this._appDbContext)
                 {
                     var currentOrder = db.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == 1 && (x.IndexOrder2 ?? 0) == 0).FirstOrDefault();
-                    //logProccess += "Đơn đang xử lý: " + string.Join(",", orders.Select(x => x.Id).ToList());
                     logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
+
                     if (currentOrder == null || currentOrder.IndexOrder > 0) return;
+
                     var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == 1 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
                     // log thêm các đơn cùng loại đã được xếp lốt
                     var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == 1 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
@@ -67,13 +68,16 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         logProccess += $@"Order {orderReceiving.Id} - lot hien tai: {orderReceiving.IndexOrder} - loai sp: {orderReceiving.TypeProduct} - step: {orderReceiving.Step},";
                     }
+
                     var indexOrderSet = orderIndexMax + 1;
                     logProccess += $@", xep lot cho xe {indexOrderSet}";
+
                     currentOrder.IndexOrder = indexOrderSet;
                     currentOrder.IndexOrderTemp = indexOrderSet;
                     currentOrder.IndexOrder1 = indexOrderSet;
                     currentOrder.LogHistory = currentOrder.LogHistory + $@" #IndexOrder: {indexOrderSet}";
                     currentOrder.LogProcessOrder = currentOrder.LogProcessOrder + $@" #Xếp lốt : {indexOrderSet}";
+
                     db.SaveChanges();
                     log.Info(logProccess);
                 }
