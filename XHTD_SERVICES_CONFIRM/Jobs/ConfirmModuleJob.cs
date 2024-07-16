@@ -309,7 +309,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         _confirmLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, "XAC_THUC", cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+                                        await SendNotificationHub(0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+
+                                        SendNotificationAPI(0, $"RFID {cardNoCurrent} không thuộc hệ thống", null, null);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -317,7 +319,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         continue;
                                     }
 
-                                    // Kiểm tra RFID có đang chứa đơn hàng hợp lệ không
+                                    // Nếu RFID hợp lệ
                                     tblStoreOrderOperating currentOrder = null;
                                     var isValidCardNo = false;
 
@@ -325,31 +327,42 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                     isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
 
+                                    // Nếu RFID không có đơn hàng
                                     if (currentOrder == null)
                                     {
                                         _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                                        await SendNotificationCBV(0, "XAC_THUC", cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                                        await SendNotificationHub(1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
+                                        SendNotificationAPI(1, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent, cardNoCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
                                     }
+
+                                    // Nếu RFID không có đơn hàng hợp lệ
                                     else if (isValidCardNo == false)
                                     {
                                         _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationCBV(0, "XAC_THUC", cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                                        await SendNotificationHub(1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+
+                                        SendNotificationAPI(1, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent, cardNoCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
 
                                         continue;
                                     }
+
+                                    // Nếu RFID có đơn hàng hợp lệ
                                     else
                                     {
-                                        await SendNotificationCBV(1, "XAC_THUC", cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                                        await SendNotificationHub(2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+
+                                        SendNotificationAPI(2, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent, cardNoCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -469,67 +482,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             return _trafficLight.TurnOffGreenOnRed();
         }
 
-        private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
+        private async Task SendNotificationHub(int status, string cardNo, string message, string deliveryCode = "")
         {
-            new ConfirmHub().SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+            new ConfirmHub().SendNotificationConfirmationPoint(status, cardNo, message, deliveryCode);
         }
 
-        public void SendRFIDInfo(bool isLuongVao, string cardNo)
+        public void SendNotificationAPI(int status, string message, string vehicle, string cardNo)
         {
             try
             {
-                if (isLuongVao)
-                {
-                    _notification.SendNotification(
-                        "GATE_WAY_RFID",
-                        null,
-                        1,
-                        cardNo,
-                        0,
-                        null,
-                        null,
-                        0,
-                        null,
-                        null,
-                        null
-                    );
-
-                    //_confirmLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
-                }
-                else
-                {
-                    _notification.SendNotification(
-                       "GATE_WAY_OUT_RFID",
-                       null,
-                       1,
-                       cardNo,
-                       1,
-                       null,
-                       null,
-                       0,
-                       null,
-                       null,
-                       null
-                   );
-
-                    //_confirmLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
-                }
+                _notification.SendConfirmNotification(status, message, vehicle, cardNo);
             }
             catch (Exception ex)
             {
-                _confirmLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
-        public void SendInfoNotification(string receiver, string message)
-        {
-            try
-            {
-                _notification.SendInforNotification(receiver, message);
-            }
-            catch (Exception ex)
-            {
-                _confirmLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _confirmLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

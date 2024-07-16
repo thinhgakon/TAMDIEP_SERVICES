@@ -32,46 +32,18 @@ namespace XHTD_SERVICES_CONFIRM.Hubs
             }
         }
 
-        public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
+        public void SendNotificationConfirmationPoint(int status, string cardNo, string message, string deliveryCode = "")
         {
             try
             {
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<ConfirmHub>();
-                broadcast.Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+                broadcast.Clients.All.SendNotificationConfirmationPoint(status, cardNo, message, deliveryCode);
             }
             catch (Exception ex)
             {
 
             }
-            //Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
-        }
-
-        public void OpenManualBarrierIn(string name)
-        {
-            _logger.Info("Open Manual Barrier In");
-            bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-            if (isOpened)
-            {
-                _logger.Info("Mở thành công");
-            }
-            else
-            {
-                _logger.Info("Mở thất bại");
-            }
-        }
-
-        public void OpenManualBarrierOut(string name)
-        {
-            _logger.Info("Open Manual Barrier Out");
-            bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-            if (isOpened)
-            {
-                _logger.Info("Mở thành công");
-            }
-            else
-            {
-                _logger.Info("Mở thất bại");
-            }
+            //Clients.All.SendNotificationHub(status, inout, cardNo, message, deliveryCode);
         }
     }
 }
