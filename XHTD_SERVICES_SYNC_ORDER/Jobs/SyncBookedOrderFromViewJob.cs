@@ -121,11 +121,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             OracleHelper oracleHelper = new OracleHelper(strConString);
             string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
-                                WHERE CREATION_DATE BETWEEN TO_DATE(:startDate,'dd/MM/yyyy') AND TO_DATE(:endDate,'dd/MM/yyyy') 
+                                WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
 
-            var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).Date.ToString("dd/MM/yyyy");
-            var endDate = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy");
+            var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder);
+            var endDate = DateTime.Now;
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
