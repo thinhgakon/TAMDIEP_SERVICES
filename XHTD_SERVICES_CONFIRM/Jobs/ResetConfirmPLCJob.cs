@@ -23,11 +23,11 @@ using log4net;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
-    public class ResetGatewayPLCJob : IJob
+    public class ResetConfirmPLCJob : IJob
     {
         ILog logger = LogManager.GetLogger("SecondFileAppender");
 
-        public ResetGatewayPLCJob(){}
+        public ResetConfirmPLCJob(){}
 
         public async Task Execute(IJobExecutionContext context)
         {
