@@ -15,15 +15,15 @@ using XHTD_SERVICES_CONFIRM.Devices;
 
 namespace XHTD_SERVICES_CONFIRM.Hubs
 {
-    public class GatewayHub : Hub
+    public class ConfirmHub : Hub
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(GatewayHub));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(ConfirmHub));
 
         public void SendMessage(string name, string message)
         {
             try
             {
-                var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<ConfirmHub>();
                 broadcast.Clients.All.SendMessage(name, message);
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_CONFIRM.Hubs
         {
             try
             {
-                var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<ConfirmHub>();
                 broadcast.Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
             }
             catch (Exception ex)
