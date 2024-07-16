@@ -119,10 +119,13 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             string strConString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
             OracleHelper oracleHelper = new OracleHelper(strConString);
-            string sqlQuery = @"SELECT * 
+            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN TO_DATE(:startDate,'dd/MM/yyyy') AND TO_DATE(:endDate,'dd/MM/yyyy') 
-                                ORDER BY ORDER_ID DESC";
+                                ORDER BY STATUS ASC";
+
+            var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder).Date.ToString("dd/MM/yyyy");
+            var endDate = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy");
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
@@ -141,7 +144,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 lastUpdatedDate = DateTime.ParseExact(reader["LAST_UPDATE_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss")
             };
 
-            List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc);
+            List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });
             return result;
         }
 
