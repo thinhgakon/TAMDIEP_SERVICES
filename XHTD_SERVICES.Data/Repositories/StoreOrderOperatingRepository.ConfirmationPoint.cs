@@ -5,7 +5,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -85,6 +87,34 @@ namespace XHTD_SERVICES.Data.Repositories
             catch (Exception ex)
             {
                 log.Error($@"UpdateIndexOrderForNewConfirm with cardno {cardNo}, {ex.Message}");
+            }
+        }
+
+        public async Task<tblStoreOrderOperating> GetCurrentOrderConfirmationPoint(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && (
+                                                            (
+                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
+                                                                &&
+                                                                x.Step < (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                            ||
+                                                            (
+                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
+                                                                &&
+                                                                x.Step <= (int)OrderStep.DA_CAN_RA
+                                                            )
+                                                        )
+                                                     )
+                                            .OrderByDescending(x => x.Step)
+                                            .FirstOrDefaultAsync();
+
+                return order;
             }
         }
     }
