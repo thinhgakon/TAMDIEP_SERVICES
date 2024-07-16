@@ -289,11 +289,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            var weightIn = Double.Parse(loadweightnull);
+            var weightIn = !string.IsNullOrEmpty(loadweightnull) ? Double.Parse(loadweightnull) : 0.0;
 
             try
             {
-                DateTime timeInDate = DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+                DateTime timeInDate = !string.IsNullOrEmpty(timeIn) ? 
+                                       DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                                       DateTime.Now;
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
@@ -307,7 +309,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeIn} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
+                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
@@ -349,11 +351,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            var weightOut = Double.Parse(loadweightfull);
+            var weightOut = !string.IsNullOrEmpty(loadweightfull) ? Double.Parse(loadweightfull) : 0.0;
 
             try
             {
-                DateTime timeOutDate = DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+                DateTime timeOutDate = !string.IsNullOrEmpty(timeOut) ?
+                                        DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                                        DateTime.Now;
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
                 if (timeOutDate > DateTime.Now.AddMinutes(-30))
@@ -370,7 +374,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order != null)
                     {
-                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOut} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
+                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOutDate} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
