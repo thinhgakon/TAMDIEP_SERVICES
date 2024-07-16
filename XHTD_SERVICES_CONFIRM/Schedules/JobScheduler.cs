@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_CONFIRM.Schedules
             await _scheduler.Start();
 
             // Xác thực cổng bảo vệ
-            IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
+            IJobDetail syncOrderJob = JobBuilder.Create<ConfirmModuleJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()

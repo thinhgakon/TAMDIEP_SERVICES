@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_CONFIRM
 {
-    public class GatewayLogger : BaseLogger<Jobs.GatewayModuleJob>
+    public class ConfirmLogger : BaseLogger<Jobs.ConfirmModuleJob>
     {
     }
 }

@@ -51,7 +51,7 @@ namespace XHTD_SERVICES_CONFIRM
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(GatewayModuleJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(ConfirmModuleJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }
