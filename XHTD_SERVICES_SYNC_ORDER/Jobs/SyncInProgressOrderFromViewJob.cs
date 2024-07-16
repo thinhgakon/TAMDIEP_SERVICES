@@ -15,7 +15,7 @@ using System.Globalization;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
-    public class SyncInProgessOrderFromViewJob : IJob
+    public class SyncInProgressOrderFromViewJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         private static int numberHoursSearchOrder = 48;
 
-        public SyncInProgessOrderFromViewJob(
+        public SyncInProgressOrderFromViewJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
             CallToTroughRepository callToTroughRepository,
@@ -178,8 +178,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 id = Convert.ToInt32(reader["ORDER_ID"]),
                 deliveryCode = reader["DELIVERY_CODE"]?.ToString(),
-                timeIn = string.IsNullOrEmpty(reader["TIMEIN"].ToString()) ? null : DateTime.ParseExact(reader["TIMEIN"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
-                timeOut = string.IsNullOrEmpty(reader["TIMEOUT"].ToString()) ? null : DateTime.ParseExact(reader["TIMEOUT"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
+                timeIn = string.IsNullOrEmpty(reader["TIMEIN"].ToString()) ? null : DateTime.ParseExact(reader["TIMEIN"].ToString(), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString(),
+                timeOut = string.IsNullOrEmpty(reader["TIMEOUT"].ToString()) ? null : DateTime.ParseExact(reader["TIMEOUT"].ToString(), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString(),
                 loadweightnull = reader["LOADWEIGHTNULL"].ToString(),
                 loadweightfull = reader["LOADWEIGHTFULL"].ToString(),
                 status = reader["STATUS"].ToString(),
@@ -188,11 +188,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 bookQuantity = decimal.Parse(reader["BOOK_QUANTITY"].ToString()),
-                orderDate = DateTime.ParseExact(reader["ORDER_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss"),
+                orderDate = string.IsNullOrEmpty(reader["ORDER_DATE"].ToString()) ? null : DateTime.ParseExact(reader["ORDER_DATE"].ToString(), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString(),
                 moocCode = reader["MOOC_CODE"].ToString(),
                 locationCode = reader["LOCATION_CODE"].ToString(),
                 transportMethodId = int.Parse(reader["TRANSPORT_METHOD_ID"].ToString()),
-                lastUpdatedDate = DateTime.ParseExact(reader["LAST_UPDATE_DATE"].ToString(), "dd-MMM-yy HH:mm:ss", CultureInfo.InvariantCulture).ToString("yyyy-MM-ddTHH:mm:ss")
+                lastUpdatedDate = string.IsNullOrEmpty(reader["LAST_UPDATE_DATE"].ToString()) ? null : DateTime.ParseExact(reader["LAST_UPDATE_DATE"].ToString(), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString()
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
