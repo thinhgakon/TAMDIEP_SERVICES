@@ -58,6 +58,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncChangedOrderJob, syncChangedOrderTrigger);
+
+            // Đồng bộ đơn hàng từ View Oracle
+            IJobDetail syncBookedOrderFromViewJob = JobBuilder.Create<SyncBookedOrderFromViewJob>().Build();
+            ITrigger syncBookedOrderFromViewTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Order_From_View_In_Seconds")))
+                     .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(syncBookedOrderFromViewJob, syncBookedOrderFromViewTrigger);
         }
     }
 }
