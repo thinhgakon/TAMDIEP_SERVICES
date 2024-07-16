@@ -260,6 +260,17 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     var doorCurrent = tmp[3]?.ToString(); // Điểm xác thực
                                     var timeCurrent = tmp[0]?.ToString(); // Thời gian xác thực
 
+                                    if (Program.IsLockingRfidIn)
+                                    {
+                                        _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+
+                                        new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
+                                    }
+                                    else
+                                    {
+                                        new ConfirmHub().SendMessage("IS_LOCKING_RFID", "0");
+                                    }
+
                                     // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
                                     {
@@ -276,7 +287,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         tmpValidCardNoLst.RemoveRange(0, 3);
                                     }
 
-                                    if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
+                                    if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                                     {
                                         continue;
                                     }
@@ -358,6 +369,30 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         // Xếp số
                                         this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
+
+                                        Thread.Sleep(3000);
+
+                                        _confirmLogger.LogInfo($"7. Bật đèn xanh");
+                                        if (TurnOnGreenTrafficLight("IN"))
+                                        {
+                                            _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                                        }
+                                        else
+                                        {
+                                            _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                                        }
+
+                                        Thread.Sleep(12000);
+
+                                        _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+                                        if (TurnOnRedTrafficLight("IN"))
+                                        {
+                                            _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                                        }
+                                        else
+                                        {
+                                            _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                                        }
                                     }
                                     else
                                     {
