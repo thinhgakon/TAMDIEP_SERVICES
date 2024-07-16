@@ -65,6 +65,19 @@ namespace XHTD_SERVICES.Helper
             SendMsg(notification);
         }
 
+        public void SendConfirmNotification(int status, string message, string vehicle, string cardNo)
+        {
+            SendConfirmNotificationRequest notification = new SendConfirmNotificationRequest
+            {
+                Status = status,
+                Message = message,
+                Vehicle = vehicle,
+                CardNo = cardNo
+            };
+
+            HttpRequest.SendDMSMsgForConfirmation(notification);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
