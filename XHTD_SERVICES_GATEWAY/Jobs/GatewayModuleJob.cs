@@ -221,43 +221,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
 
-                        // Send SMS Brandname: theo chu kỳ 30 phút
-                        //try { 
-                        //    if (Program.SendSmsLastTime == null || Program.SendSmsLastTime < DateTime.Now.AddMinutes(-30)) 
-                        //    {
-                        //        Program.SendSmsLastTime = DateTime.Now;
-
-                        //        var SmsContent = "CBV failed. Ping: ";
-
-                        //        Ping myPing = new Ping();
-                        //        PingReply replyC3400CBV = myPing.Send(C3400_CBV_IP_ADDRESS, 1000);
-                        //        PingReply replyM221CBV = myPing.Send(M221_CBV_IP_ADDRESS, 1000);
-                        //        PingReply replyC34009512 = myPing.Send(C3400_951_2_IP_ADDRESS, 1000);
-
-                        //        if (replyC3400CBV != null)
-                        //        {
-                        //            SmsContent += $"C3400-CBV: {replyC3400CBV.Status}. ";
-                        //        }
-
-                        //        if (replyM221CBV != null)
-                        //        {
-                        //            SmsContent += $"M221-CBV: {replyM221CBV.Status}. ";
-                        //        }
-
-                        //        if (replyC34009512 != null)
-                        //        {
-                        //            SmsContent += $"C3400-951-2: {replyC34009512.Status}";
-                        //        }
-
-                        //        HttpRequest.SendSMSBrandName(SmsContent);
-                        //        HttpRequest.SendSMSBrandName(SmsContent, "0773392020");
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    _gatewayLogger.LogInfo($"Send SMS error: {ex.Message}");
-                        //}
-
                         ret = PullLastError();
                         DeviceConnected = false;
                     }
