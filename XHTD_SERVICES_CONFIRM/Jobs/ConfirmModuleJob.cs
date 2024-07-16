@@ -370,8 +370,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         // Xếp số
                                         this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
 
-                                        Thread.Sleep(3000);
-
                                         _confirmLogger.LogInfo($"7. Bật đèn xanh");
                                         if (TurnOnGreenTrafficLight("IN"))
                                         {
@@ -382,7 +380,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                             _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                         }
 
-                                        Thread.Sleep(12000);
+                                        Thread.Sleep(10000);
 
                                         _confirmLogger.LogInfo($"8. Bật đèn đỏ");
                                         if (TurnOnRedTrafficLight("IN"))
