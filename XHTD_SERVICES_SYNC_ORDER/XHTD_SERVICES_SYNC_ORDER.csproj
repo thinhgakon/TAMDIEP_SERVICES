@@ -142,7 +142,7 @@
     <Compile Include="Jobs\SyncBookedOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncBookedOrderJob.cs" />
     <Compile Include="Jobs\SyncChangedOrderJob.cs" />
-    <Compile Include="Jobs\SyncInProgessOrderFromViewJob.cs" />
+    <Compile Include="Jobs\SyncInProgressOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderJob.cs" />
     <Compile Include="SyncOrderLogger.cs" />
     <Compile Include="Jobs\SyncOrderJob.cs" />
