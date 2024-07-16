@@ -371,7 +371,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
 
                                         _confirmLogger.LogInfo($"7. Bật đèn xanh");
-                                        if (TurnOnGreenTrafficLight("IN"))
+                                        if (TurnOnGreenTrafficLight())
                                         {
                                             _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
                                         }
@@ -383,7 +383,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         Thread.Sleep(10000);
 
                                         _confirmLogger.LogInfo($"8. Bật đèn đỏ");
-                                        if (TurnOnRedTrafficLight("IN"))
+                                        if (TurnOnRedTrafficLight())
                                         {
                                             _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
                                         }
@@ -428,26 +428,18 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
         }
 
-        public string GetTrafficLightIpAddress(string code)
+        public string GetTrafficLightIpAddress()
         {
             var ipAddress = "";
 
-            if (code == "IN")
-            {
-                ipAddress = trafficLightIn?.IpAddress;
-            }
-            else if (code == "OUT")
-            {
-                ipAddress = trafficLightOut?.IpAddress;
-                AuthenticateConfirmModule();
-            }
+            ipAddress = trafficLightIn?.IpAddress;
 
             return ipAddress;
         }
 
-        public bool TurnOnGreenTrafficLight(string code)
+        public bool TurnOnGreenTrafficLight()
         {
-            var ipAddress = GetTrafficLightIpAddress(code);
+            var ipAddress = GetTrafficLightIpAddress();
 
             if (String.IsNullOrEmpty(ipAddress))
             {
@@ -461,9 +453,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             return _trafficLight.TurnOnGreenOffRed();
         }
 
-        public bool TurnOnRedTrafficLight(string code)
+        public bool TurnOnRedTrafficLight()
         {
-            var ipAddress = GetTrafficLightIpAddress(code);
+            var ipAddress = GetTrafficLightIpAddress();
 
             if (String.IsNullOrEmpty(ipAddress))
             {
@@ -475,16 +467,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _trafficLight.Connect(ipAddress);
 
             return _trafficLight.TurnOffGreenOnRed();
-        }
-
-        public async Task StartIfNeededAsync()
-        {
-            if (Connection.State == ConnectionState.Disconnected)
-            {
-                await Connection.Start();
-
-                _confirmLogger.LogInfo($"Reconnect Connection: {Connection.State}");
-            }
         }
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
