@@ -46,17 +46,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private static bool DeviceConnected = false;
 
+        private List<CardNoLog> tmpValidCardNoLst = new List<CardNoLog>();
+
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
         private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
 
-        protected const string CBV_ACTIVE = "CBV_ACTIVE";
+        protected const string CONFIRM_ACTIVE = "CONFIRM_ACTIVE";
 
         private static bool isActiveService = true;
 
-        protected const string C3400_CBV_IP_ADDRESS = "10.0.9.1";
+        protected const string C3400_CONFIRM_IP_ADDRESS = "10.0.9.1";
 
-        protected const string M221_CBV_IP_ADDRESS = "10.0.9.2";
+        protected const string M221_CONFIRM_IP_ADDRESS = "10.0.9.2";
 
         protected const string C3400_951_2_IP_ADDRESS = "10.0.9.5";
 
@@ -153,7 +155,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == CBV_ACTIVE);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == CONFIRM_ACTIVE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -260,13 +262,22 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                     // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
-                                    { 
+                                    {
                                         tmpInvalidCardNoLst.RemoveRange(0, 3); 
                                     }
 
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
                                     {
-                                        //_confirmLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                                        continue;
+                                    }
+
+                                    if (tmpValidCardNoLst.Count > 10)
+                                    {
+                                        tmpValidCardNoLst.RemoveRange(0, 3);
+                                    }
+
+                                    if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
+                                    {
                                         continue;
                                     }
 
@@ -331,7 +342,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
+                                        tmpValidCardNoLst.Add(newCardNoLog);
 
                                         Program.IsLockingRfidIn = true;
                                     }
@@ -352,7 +363,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}" );
                                     }
-                                    //
 
                                     _confirmLogger.LogInfo($"10. Giai phong RFID IN");
 
