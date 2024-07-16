@@ -163,5 +163,53 @@ namespace XHTD_SERVICES.Helper
                 }
             }
         }
+
+        public static bool IsValidOrderConfirmationPoint(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang: order = null");
+                return false;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if (order.CatId == OrderCatIdCode.CLINKER)
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
+            {
+                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                    )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }
