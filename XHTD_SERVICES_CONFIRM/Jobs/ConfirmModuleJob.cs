@@ -374,7 +374,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công");
 
                                         // Xếp số
-                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
+                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
                                         int statusGreenLight = 0;
                                         string messageGreenLight = "";
