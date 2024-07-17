@@ -19,6 +19,10 @@ using Autofac;
 using XHTD_SERVICES_GATEWAY.Business;
 using XHTD_SERVICES_GATEWAY.Hubs;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.IO;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -79,8 +83,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
+        private const int BUFFER_SIZE = 1024;
+        private const int PORT_NUMBER = 10000;
+
+        static ASCIIEncoding encoding = new ASCIIEncoding();
+
+        static TcpClient client = new TcpClient();
+        static Stream stream = null;
+
+
         public GatewayModuleJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository, 
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
@@ -129,8 +142,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateGatewayModule();
-            });                                                                                                                     
+                AuthenticateGatewayModuleFromController();
+            });
         }
 
         private async void ConnectScaleHubAsync()
@@ -201,6 +214,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             ReadDataFromC3400();
         }
 
+        public void AuthenticateGatewayModuleFromController()
+        {
+            // 1. Connect Device
+            while (!DeviceConnected)
+            {
+                ConnectGatewayModuleFromController();
+            }
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromController();
+        }
+
         public bool ConnectGatewayModule()
         {
             var ipAddress = c3400?.IpAddress;
@@ -234,6 +259,33 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
+        public bool ConnectGatewayModuleFromController()
+        {
+            Console.WriteLine("Thuc hien ket noi.");
+            try
+            {
+                Console.WriteLine("Bat dau ket noi.");
+                client = new TcpClient();
+
+                // 1. connect
+                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
+                stream = client.GetStream();
+
+                Console.WriteLine("Connected to controller");
+
+                DeviceConnected = true;
+
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ket noi that bai.");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return false;
+            }
+        }
+
         public async void ReadDataFromC3400()
         {
             _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
@@ -252,7 +304,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
-                            try {
+                            try
+                            {
                                 str = Encoding.Default.GetString(buffer);
                                 tmp = str.Split(',');
 
@@ -263,6 +316,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var doorCurrent = tmp[3]?.ToString();
                                     var timeCurrent = tmp[0]?.ToString();
 
+
                                     // 1.Xác định xe cân vào / ra
                                     var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
@@ -270,342 +324,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                     var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
                                                     || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
 
-                                    if(isLuongVao)
-                                    {
-                                        if (Program.IsLockingRfidIn) { 
-                                            _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
-
-                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "1");
-
-                                            //continue;
-                                        }
-                                        else
-                                        {
-                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "0");
-                                        }
-                                    }
-
-                                    if (isLuongRa)
-                                    {
-                                        if (Program.IsLockingRfidOut) { 
-                                            _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
-
-                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "1");
-
-                                            //continue;
-                                        }
-                                        else
-                                        {
-                                            new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "0");
-                                        }
-                                    }
-
-                                    // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
-                                    // SendRFIDInfo(isLuongVao, cardNoCurrent);
-
-                                    // 2. Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10)
-                                    { 
-                                        tmpInvalidCardNoLst.RemoveRange(0, 3); 
-                                    }
-
-                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
-                                    {
-                                        //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                        continue;
-                                    }
-
-                                    if (isLuongVao)
-                                    {
-                                        if (tmpCardNoLst_In.Count > 5)
-                                        { 
-                                            tmpCardNoLst_In.RemoveRange(0, 3); 
-                                        }
-
-                                        if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                        {
-                                            //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        if (tmpCardNoLst_Out.Count > 5) 
-                                        { 
-                                            tmpCardNoLst_Out.RemoveRange(0, 3); 
-                                        }
-
-                                        if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                        {
-                                            //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
-                                            continue;
-                                        }
-                                    }
-
-                                    _gatewayLogger.LogInfo("----------------------------");
-                                    _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _gatewayLogger.LogInfo("-----");
-
-                                    var inout = "";
-                                    if (isLuongVao)
-                                    {
-                                        inout = "IN";
-                                        _gatewayLogger.LogInfo($"1. Xe VAO cong");
-                                    }
-                                    else
-                                    {
-                                        inout = "OUT";
-                                        _gatewayLogger.LogInfo($"1. Xe RA cong");
-                                    }
-
-                                    _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
-
-                                    // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
-                                    string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
-
-                                    if (!String.IsNullOrEmpty(vehicleCodeCurrent))
-                                    {
-                                        _gatewayLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
-                                    }
-                                    else
-                                    {
-                                        _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
-
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-
-                                    // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-                                    tblStoreOrderOperating currentOrder = null;
-                                    var isValidCardNo = false;
-
-                                    if (isLuongVao)
-                                    {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
-
-                                        isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(vehicleCodeCurrent);
-
-                                        isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
-                                    }
-
-                                    if (currentOrder == null)
-                                    {
-                                        _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
-
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-                                    else if (isValidCardNo == false)
-                                    {
-                                        _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
-
-                                        await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                                        if (isLuongVao)
-                                        {
-                                            tmpCardNoLst_In.Add(newCardNoLog);
-
-                                            Program.IsLockingRfidIn = true;
-                                        }
-                                        else if (isLuongRa)
-                                        {
-                                            tmpCardNoLst_Out.Add(newCardNoLog);
-
-                                            Program.IsLockingRfidOut = true;
-                                        }
-                                    }
-
-                                    var currentDeliveryCode = currentOrder.DeliveryCode;
-                                    _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
-
-                                    var isUpdatedOrder = false;
-                                    bool isSuccessOpenBarrier = true;
-
-                                    bool isNormalOrder = currentOrder.CatId != OrderCatIdCode.CLINKER
-                                                      && currentOrder.TypeXK != OrderTypeXKCode.JUMBO
-                                                      && currentOrder.TypeXK != OrderTypeXKCode.SLING;
-
-                                    var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
-                                    if (isLuongVao)
-                                    {
-                                        if (isNormalOrder)
-                                        {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
-
-                                            if (isUpdatedOrder)
-                                            {
-                                                //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
-
-                                                _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) =>  Đã xác thực trạng thái vào cổng");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            isUpdatedOrder = true;
-                                            _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái vào cổng.");
-                                        }
-
-                                        if (isUpdatedOrder)
-                                        {
-                                            _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            isSuccessOpenBarrier = OpenBarrier("IN");
-
-                                            Thread.Sleep(3000);
-
-                                            _gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                                            if(TurnOnGreenTrafficLight("IN"))
-                                            {
-                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                                            }
-                                            else
-                                            {
-                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                                            }
-
-                                            if (isNormalOrder)
-                                            {
-                                                try
-                                                {
-                                                    var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
-                                                    _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                                                }
-                                            }
-
-                                            Thread.Sleep(12000);
-
-                                            _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                                            if(TurnOnRedTrafficLight("IN"))
-                                            {
-                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                                            }
-                                            else
-                                            {
-                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
-                                        }
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        if (isNormalOrder)
-                                        {
-                                            isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
-
-                                            if (isUpdatedOrder)
-                                            {
-                                                //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
-
-                                                _gatewayLogger.LogInfo($"5. Đơn hàng thông thường (không phải CLINKER, JUMBO, SLING) => Đã xác thực trạng thái ra cổng");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            isUpdatedOrder = true;
-                                            _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái ra cổng.");
-                                        }
-
-                                        if (isUpdatedOrder)
-                                        {
-                                            _gatewayLogger.LogInfo($"6. Mở barrier");
-                                            isSuccessOpenBarrier = OpenBarrier("OUT");
-
-                                            Thread.Sleep(3000);
-
-                                            _gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                                            if(TurnOnGreenTrafficLight("OUT"))
-                                            {
-                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                                            }
-                                            else
-                                            {
-                                                _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                                            }
-
-                                            Thread.Sleep(15000);
-
-                                            _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                                            if(TurnOnRedTrafficLight("OUT"))
-                                            {
-                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                                            }
-                                            else
-                                            {
-                                                _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
-                                        }
-                                    }
-
-                                    if (isUpdatedOrder)
-                                    {
-                                        if (isSuccessOpenBarrier)
-                                        {
-                                            _gatewayLogger.LogInfo($"9. Ghi log thiet bi mo barrier");
-
-                                            string luongText = isLuongVao ? "vào" : "ra";
-                                            string deviceCode = isLuongVao ? "CBV.M221.BRE-IN" : "CBV.M221.BRE-OUT";
-                                            var newLog = new CategoriesDevicesLogItemResponse
-                                            {
-                                                Code = deviceCode,
-                                                ActionType = 1,
-                                                ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
-                                                ActionDate = DateTime.Now,
-                                            };
-
-                                            await _categoriesDevicesLogRepository.CreateAsync(newLog);
-                                        }
-                                        else
-                                        {
-                                            _gatewayLogger.LogInfo($"9. Mo barrier KHONG thanh cong");
-                                        }
-                                    }
-
-                                    if (isLuongVao)
-                                    {
-                                        _gatewayLogger.LogInfo($"10. Giai phong RFID IN");
-
-                                        Program.IsLockingRfidIn = false;
-                                    }
-                                    else if (isLuongRa)
-                                    {
-                                        _gatewayLogger.LogInfo($"10. Giai phong RFID OUT");
-
-                                        Program.IsLockingRfidOut = false;
-                                    }
+                                    await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
                                 }
                             }
                             catch (Exception ex)
@@ -634,12 +353,410 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
+        public async void ReadDataFromController()
+        {
+            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
+
+            if (DeviceConnected)
+            {
+                while (DeviceConnected)
+                {
+                    try
+                    {
+                        byte[] data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+                        //var dataStr = "*[Reader][1]1974716100[!]";
+                        var dataStr = encoding.GetString(data);
+
+                        Console.WriteLine($"Nhan tin hieu: {dataStr}");
+
+                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
+                        Match match = Regex.Match(dataStr, pattern);
+
+                        string xValue = string.Empty;
+                        string cardNoCurrent = string.Empty;
+
+                        if (match.Success)
+                        {
+                            xValue = match.Groups[1].Value;
+                            cardNoCurrent = match.Groups[2].Value;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Tin hieu nhan vao khong dung dinh dang");
+                            continue;
+                        }
+
+                        if (!int.TryParse(xValue, out int doorCurrent))
+                        {
+                            Console.WriteLine("XValue is not valid");
+                            continue;
+                        }
+
+                        var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
+
+                        var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
+
+                        Console.WriteLine($"x: {xValue}");
+                        Console.WriteLine($"Luong vao: {isLuongVao}");
+                        Console.WriteLine($"Luong ra: {isLuongRa}");
+                        Console.WriteLine($"Card No: {cardNoCurrent}");
+
+                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                    }
+                    catch (Exception ex)
+                    {
+                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                DeviceConnected = false;
+                AuthenticateGatewayModuleFromController();
+            }
+        }
+
+
+        private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)
+        {
+            if (isLuongVao)
+            {
+                if (Program.IsLockingRfidIn)
+                {
+                    _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "1");
+                    return;
+                }
+                else
+                {
+                    new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "0");
+                }
+            }
+
+            if (isLuongRa)
+            {
+                if (Program.IsLockingRfidOut)
+                {
+                    _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "1");
+                    return;
+                }
+                else
+                {
+                    new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "0");
+                }
+            }
+
+            // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
+            // SendRFIDInfo(isLuongVao, cardNoCurrent);
+
+            // 2. Loại bỏ các tag đã check trước đó
+            if (tmpInvalidCardNoLst.Count > 10)
+            {
+                tmpInvalidCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
+            {
+                //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                return;
+            }
+
+            if (isLuongVao)
+            {
+                if (tmpCardNoLst_In.Count > 5)
+                {
+                    tmpCardNoLst_In.RemoveRange(0, 3);
+                }
+
+                if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                {
+                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    return;
+                }
+            }
+            else if (isLuongRa)
+            {
+                if (tmpCardNoLst_Out.Count > 5)
+                {
+                    tmpCardNoLst_Out.RemoveRange(0, 3);
+                }
+
+                if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+                {
+                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    return;
+                }
+            }
+
+            var inout = "";
+            if (isLuongVao)
+            {
+                inout = "IN";
+                _gatewayLogger.LogInfo($"1. Xe VAO cong");
+            }
+            else
+            {
+                inout = "OUT";
+                _gatewayLogger.LogInfo($"1. Xe RA cong");
+            }
+
+            _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+
+            // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
+            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+
+            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            {
+                _gatewayLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+            }
+            else
+            {
+                _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+
+                await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+
+            // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+            tblStoreOrderOperating currentOrder = null;
+            var isValidCardNo = false;
+
+            if (isLuongVao)
+            {
+                currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
+
+                isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
+            }
+            else if (isLuongRa)
+            {
+                currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(vehicleCodeCurrent);
+
+                isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
+            }
+
+            if (currentOrder == null)
+            {
+                _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+
+                await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (isValidCardNo == false)
+            {
+                _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+
+                await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else
+            {
+                await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+
+                if (isLuongVao)
+                {
+                    tmpCardNoLst_In.Add(newCardNoLog);
+
+                    Program.IsLockingRfidIn = true;
+                }
+                else if (isLuongRa)
+                {
+                    tmpCardNoLst_Out.Add(newCardNoLog);
+
+                    Program.IsLockingRfidOut = true;
+                }
+            }
+
+            var currentDeliveryCode = currentOrder.DeliveryCode;
+            _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
+
+            var isUpdatedOrder = false;
+            bool isSuccessOpenBarrier = true;
+
+            bool isNormalOrder = true;
+
+            var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+            if (isLuongVao)
+            {
+                if (isNormalOrder)
+                {
+                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
+
+                    if (isUpdatedOrder)
+                    {
+                        SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
+                        _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
+                    }
+                }
+                else
+                {
+                    isUpdatedOrder = true;
+                    _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái vào cổng.");
+                }
+
+                if (isUpdatedOrder)
+                {
+                    _gatewayLogger.LogInfo($"6. Mở barrier");
+                    isSuccessOpenBarrier = OpenBarrier("IN");
+
+                    Thread.Sleep(3000);
+
+                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
+                    //if (TurnOnGreenTrafficLight("IN"))
+                    //{
+                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                    //}
+                    //else
+                    //{
+                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                    //}
+
+                    //if (isNormalOrder)
+                    //{
+                    //    try
+                    //    {
+                    //        var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
+                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    //    }
+                    //}
+
+                    Thread.Sleep(12000);
+
+                    _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
+                    if (TurnOnRedTrafficLight("IN"))
+                    {
+                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                    }
+                }
+                else
+                {
+                    _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
+                }
+            }
+            else if (isLuongRa)
+            {
+                if (isNormalOrder)
+                {
+                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
+
+                    if (isUpdatedOrder)
+                    {
+                        //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
+
+                        _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
+                    }
+                }
+                else
+                {
+                    isUpdatedOrder = true;
+                    _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái ra cổng.");
+                }
+
+                if (isUpdatedOrder)
+                {
+                    _gatewayLogger.LogInfo($"6. Mở barrier");
+                    isSuccessOpenBarrier = OpenBarrier("OUT");
+
+                    Thread.Sleep(3000);
+
+                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
+                    //if (TurnOnGreenTrafficLight("OUT"))
+                    //{
+                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                    //}
+                    //else
+                    //{
+                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                    //}
+
+                    //Thread.Sleep(15000);
+
+                    //_gatewayLogger.LogInfo($"8. Bật đèn đỏ");
+                    //if (TurnOnRedTrafficLight("OUT"))
+                    //{
+                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                    //}
+                    //else
+                    //{
+                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                    //}
+                }
+                else
+                {
+                    _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
+                }
+            }
+
+            if (isUpdatedOrder)
+            {
+                if (isSuccessOpenBarrier)
+                {
+                    _gatewayLogger.LogInfo($"9. Ghi log thiet bi mo barrier");
+
+                    string luongText = isLuongVao ? "vào" : "ra";
+                    string deviceCode = isLuongVao ? "CBV.M221.BRE-IN" : "CBV.M221.BRE-OUT";
+                    var newLog = new CategoriesDevicesLogItemResponse
+                    {
+                        Code = deviceCode,
+                        ActionType = 1,
+                        ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
+                        ActionDate = DateTime.Now,
+                    };
+
+                    await _categoriesDevicesLogRepository.CreateAsync(newLog);
+                }
+                else
+                {
+                    _gatewayLogger.LogInfo($"9. Mo barrier KHONG thanh cong");
+                }
+            }
+
+            if (isLuongVao)
+            {
+                _gatewayLogger.LogInfo($"10. Giai phong RFID IN");
+
+                Program.IsLockingRfidIn = false;
+            }
+            else if (isLuongRa)
+            {
+                _gatewayLogger.LogInfo($"10. Giai phong RFID OUT");
+
+                Program.IsLockingRfidOut = false;
+            }
+        }
+
         public bool OpenBarrier(string luong)
         {
             var isConnectSuccessed = false;
             int count = 0;
 
-            try { 
+            try
+            {
                 int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
                 int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
 
