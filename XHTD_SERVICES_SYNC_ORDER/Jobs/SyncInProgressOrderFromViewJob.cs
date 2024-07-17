@@ -225,6 +225,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
                     isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+
+                    if (isSynced)
+                    {
+                        var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                        await _vehicleRepository.CreateAsync(vehicleCode);
+                    }
                 }
                 else
                 {
@@ -239,6 +245,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
                 {
                     isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+
+                    if (isSynced)
+                    {
+                        var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                        await _vehicleRepository.CreateAsync(vehicleCode);
+                    }
                 }
                 else
                 {
@@ -254,6 +266,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                 if (isSynced)
                 {
+                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                    await _vehicleRepository.CreateAsync(vehicleCode);
+
                     // Gửi notification đơn bị hủy đến app lái xe
                     var canceledOrder = await _storeOrderOperatingRepository.GetDetail(websaleOrder.deliveryCode);
                     if (canceledOrder != null && !String.IsNullOrEmpty(canceledOrder.DriverUserName))
