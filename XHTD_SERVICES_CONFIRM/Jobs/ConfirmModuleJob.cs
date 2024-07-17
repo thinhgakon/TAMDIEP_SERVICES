@@ -332,9 +332,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                                        await SendNotificationHub(1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                                        await SendNotificationHub(1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
 
-                                        SendNotificationAPI(1, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent, cardNoCurrent);
+                                        SendNotificationAPI(1, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent, cardNoCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -347,9 +347,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationHub(1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                                        await SendNotificationHub(1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
 
-                                        SendNotificationAPI(1, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent, cardNoCurrent);
+                                        SendNotificationAPI(1, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent, cardNoCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                                         tmpInvalidCardNoLst.Add(newCardNoLog);
