@@ -117,11 +117,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 if (!isActiveService)
                 {
-                    _confirmLogger.LogInfo("Service cong bao ve dang TAT.");
+                    _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
                     return;
                 }
 
-                _confirmLogger.LogInfo("Start gateway service");
+                _confirmLogger.LogInfo("Start confirm point service");
                 _confirmLogger.LogInfo("----------------------------");
 
                 // Get devices info
