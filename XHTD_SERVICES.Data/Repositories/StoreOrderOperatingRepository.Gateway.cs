@@ -21,21 +21,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
-                                                     && (
-                                                            (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                            ||
-                                                            (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step <= (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                        )
+                                                     && (x.Step == (int)OrderStep.DA_XAC_THUC)
                                                      )
-                                            .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
 
                 return order;
@@ -49,21 +36,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
-                                                     && (
-                                                            (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step <= (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                            ||
-                                                            (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step <= (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                        )
+                                                     && x.Step == (int)OrderStep.DA_CAN_RA
                                                   )
-                                            .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
 
                 return order;
@@ -162,8 +136,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
-                                                     && x.Step < (int)OrderStep.DA_VAO_CONG
-                                                     )
+                                                     && x.Step == (int)OrderStep.DA_XAC_THUC)
                                             .FirstOrDefaultAsync();
 
                     if (order == null)
