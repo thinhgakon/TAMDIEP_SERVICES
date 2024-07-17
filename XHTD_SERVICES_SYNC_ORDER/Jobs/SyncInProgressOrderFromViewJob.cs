@@ -172,7 +172,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string query = $"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, VEHICLE_CODE, " +
                            $"DRIVER_NAME, CUSTOMER_NAME, BOOK_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, LAST_UPDATE_DATE " +
                            $"FROM apps.dev_sales_orders_mbf_v " +
-                           $"WHERE ORDER_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
+                           $"WHERE TIMEOUT >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
