@@ -14,24 +14,23 @@ namespace XHTD_SERVICES.Data.Repositories
 {
     public partial class StoreOrderOperatingRepository : BaseRepository<tblStoreOrderOperating>
     {
-        public bool UpdateBillOrderConfirm10(string cardNo)
+        public bool UpdateBillOrderConfirm10(string vehicleCode)
         {
             bool res = false;
             try
             {
                 using (var db = this._appDbContext)
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && (x.Step ?? 0) == 0 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step ?? 0) == 0 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
                     if (orders.Count < 1) return false;
                     
-                    var ordersFist = new tblStoreOrderOperating();
+                    var ordersFist = orders.FirstOrDefault();
 
                     var sqlUpdateIndexOrder2 = $@"UPDATE tblStoreOrderOperating
                                                 SET Confirm10 = 1 ,
                                                     TimeConfirm10 = GETDATE() ,
                                                     Step = 1 ,
                                                     IndexOrder2 = 1 ,
-                                                    DeliveryCodeParent = @DeliveryCode ,
                                                     CountReindex = 0 ,
                                                     TimeConfirmHistory = GETDATE() ,
                                                     LogHistory = CONCAT(LogHistory, '#confirm by rfid at ', GETDATE()) ,
@@ -41,12 +40,12 @@ namespace XHTD_SERVICES.Data.Repositories
                                                       AND ISNULL(Step, 0) = 0
                                                       AND ISNULL(DriverUserName, '') != ''";
 
-                    res = db.Database.ExecuteSqlCommand(sqlUpdateIndexOrder2, new SqlParameter("@DeliveryCode", ordersFist.DeliveryCode), new SqlParameter("@Vehicle", ordersFist.Vehicle)) > 0;
+                    res = db.Database.ExecuteSqlCommand(sqlUpdateIndexOrder2, new SqlParameter("@Vehicle", ordersFist.Vehicle)) > 0;
                 }
             }
             catch (Exception ex)
             {
-                log.Error($@"UpdateBillOrderConfirm10, card no {cardNo}, {ex.Message}");
+                log.Error($@"UpdateBillOrderConfirm10, vehicle {vehicleCode}, {ex.Message}");
             }
             return res;
         }
