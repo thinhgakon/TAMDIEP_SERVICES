@@ -393,9 +393,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                             _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                         }
 
-                                        await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
+                                        //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
 
-                                        SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
+                                        //SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
 
                                         Thread.Sleep(10000);
 
@@ -416,9 +416,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                             _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
                                         }
 
-                                        await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
+                                        //await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
 
-                                        SendNotificationAPI("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
+                                        //SendNotificationAPI("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
                                     }
                                     else
                                     {
