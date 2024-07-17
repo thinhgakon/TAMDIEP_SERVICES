@@ -17,7 +17,7 @@ namespace XHTD_SERVICES_CONFIRM
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service GATEWAY");
+            log.Info("OnStart service CONFIRM");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
 
@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_CONFIRM
 
         protected override void OnStop()
         {
-            log.Info("OnStop service GATEWAY");
+            log.Info("OnStop service CONFIRM");
         }
     }
 }
