@@ -261,17 +261,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public bool ConnectGatewayModuleFromController()
         {
-            Console.WriteLine("Thuc hien ket noi.");
+            _gatewayLogger.LogInfo("Thuc hien ket noi.");
             try
             {
-                Console.WriteLine("Bat dau ket noi.");
+                _gatewayLogger.LogInfo("Bat dau ket noi.");
                 client = new TcpClient();
 
                 // 1. connect
                 client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
                 stream = client.GetStream();
 
-                Console.WriteLine("Connected to controller");
+                _gatewayLogger.LogInfo("Connected to controller");
 
                 DeviceConnected = true;
 
@@ -279,9 +279,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ket noi that bai.");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                _gatewayLogger.LogInfo("Ket noi that bai.");
+                _gatewayLogger.LogInfo(ex.Message);
+                _gatewayLogger.LogInfo(ex.StackTrace);
                 return false;
             }
         }
@@ -368,7 +368,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         //var dataStr = "*[Reader][1]1974716100[!]";
                         var dataStr = encoding.GetString(data);
 
-                        Console.WriteLine($"Nhan tin hieu: {dataStr}");
+                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
 
                         string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
                         Match match = Regex.Match(dataStr, pattern);
@@ -383,24 +383,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         }
                         else
                         {
-                            Console.WriteLine("Tin hieu nhan vao khong dung dinh dang");
+                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
                             continue;
                         }
 
                         if (!int.TryParse(xValue, out int doorCurrent))
                         {
-                            Console.WriteLine("XValue is not valid");
+                            _gatewayLogger.LogInfo("XValue is not valid");
                             continue;
                         }
 
                         var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
 
                         var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
-
-                        Console.WriteLine($"x: {xValue}");
-                        Console.WriteLine($"Luong vao: {isLuongVao}");
-                        Console.WriteLine($"Luong ra: {isLuongRa}");
-                        Console.WriteLine($"Card No: {cardNoCurrent}");
 
                         await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
                     }
