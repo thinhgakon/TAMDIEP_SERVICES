@@ -55,16 +55,16 @@ namespace XHTD_SERVICES.Data.Repositories
                 var logProccess = "";
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == 10 && (x.IndexOrder2 ?? 0) == 0).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC && (x.IndexOrder2 ?? 0) == 0).ToList();
                     if (orders == null || orders.Count < 1) return;
 
                     var currentOrder = orders.FirstOrDefault();
                     if (currentOrder == null || currentOrder.IndexOrder > 0) return;
                     logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
 
-                    var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == 10 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
+                    var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
                     // log thêm các đơn cùng loại đã được xếp lốt
-                    var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == 10 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
+                    var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
                     logProccess += $@", Cac don duoc xep lot truoc do: ";
                     foreach (var orderReceiving in orderReceivings)
                     {
