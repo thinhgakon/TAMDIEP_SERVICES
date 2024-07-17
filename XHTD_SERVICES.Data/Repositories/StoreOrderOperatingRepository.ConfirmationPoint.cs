@@ -14,58 +14,57 @@ namespace XHTD_SERVICES.Data.Repositories
 {
     public partial class StoreOrderOperatingRepository : BaseRepository<tblStoreOrderOperating>
     {
-        public bool UpdateBillOrderConfirm10(string cardNo)
+        public bool UpdateBillOrderConfirm10(string vehicleCode)
         {
             bool res = false;
             try
             {
-                using (var db = this._appDbContext)
+                using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && (x.Step ?? 0) == 0 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step ?? 0) == 1 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
                     if (orders.Count < 1) return false;
                     
-                    var ordersFist = new tblStoreOrderOperating();
+                    var ordersFist = orders.FirstOrDefault();
 
-                    var sqlUpdateIndexOrder2 = $@"UPDATE tblStoreOrderOperating
+                    var sqlUpdate = $@"UPDATE tblStoreOrderOperating
                                                 SET Confirm10 = 1 ,
                                                     TimeConfirm10 = GETDATE() ,
-                                                    Step = 1 ,
-                                                    IndexOrder2 = 1 ,
-                                                    DeliveryCodeParent = @DeliveryCode ,
-                                                    CountReindex = 0 ,
+                                                    Step = 10 ,
                                                     TimeConfirmHistory = GETDATE() ,
                                                     LogHistory = CONCAT(LogHistory, '#confirm by rfid at ', GETDATE()) ,
-                                                    LogProcessOrder = CONCAT(LogProcessOrder, N'#Xác thực bước 1 lúc ',
+                                                    LogProcessOrder = CONCAT(LogProcessOrder, N'#Xác thực thủ công lúc ',
                                                                                 FORMAT(GETDATE(), 'dd/MM/yyyy HH:mm:ss'))
                                                 WHERE Vehicle = @Vehicle
-                                                      AND ISNULL(Step, 0) = 0
+                                                      AND ISNULL(Step, 0) = 1
                                                       AND ISNULL(DriverUserName, '') != ''";
 
-                    res = db.Database.ExecuteSqlCommand(sqlUpdateIndexOrder2, new SqlParameter("@DeliveryCode", ordersFist.DeliveryCode), new SqlParameter("@Vehicle", ordersFist.Vehicle)) > 0;
+                    res = db.Database.ExecuteSqlCommand(sqlUpdate, new SqlParameter("@Vehicle", ordersFist.Vehicle)) > 0;
                 }
             }
             catch (Exception ex)
             {
-                log.Error($@"UpdateBillOrderConfirm10, card no {cardNo}, {ex.Message}");
+                log.Error($@"UpdateBillOrderConfirm10, vehicle {vehicleCode}, {ex.Message}");
             }
             return res;
         }
 
-        public void UpdateIndexOrderForNewConfirm(string cardNo)
+        public void UpdateIndexOrderForNewConfirm(string vehicleCode)
         {
             try
             {
                 var logProccess = "";
-                using (var db = this._appDbContext)
+                using (var db = new XHTD_Entities())
                 {
-                    var currentOrder = db.tblStoreOrderOperatings.Where(x => x.CardNo == cardNo && x.Step == 1 && (x.IndexOrder2 ?? 0) == 0).FirstOrDefault();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == 10 && (x.IndexOrder2 ?? 0) == 0).ToList();
+                    if (orders == null || orders.Count < 1) return;
+
+                    var currentOrder = orders.FirstOrDefault();
+                    if (currentOrder == null || currentOrder.IndexOrder > 0) return;
                     logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
 
-                    if (currentOrder == null || currentOrder.IndexOrder > 0) return;
-
-                    var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == 1 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
+                    var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == 10 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
                     // log thêm các đơn cùng loại đã được xếp lốt
-                    var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == 1 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
+                    var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == 10 || x.Step == 4) && (x.IndexOrder2 ?? 0) == 0 && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
                     logProccess += $@", Cac don duoc xep lot truoc do: ";
                     foreach (var orderReceiving in orderReceivings)
                     {
@@ -87,7 +86,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"UpdateIndexOrderForNewConfirm with cardno {cardNo}, {ex.Message}");
+                log.Error($@"UpdateIndexOrderForNewConfirm with vehicle {vehicleCode}, {ex.Message}");
             }
         }
 

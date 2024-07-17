@@ -364,7 +364,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     // Xác thực
-                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(cardNoCurrent);
+                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
                                     // Xác thực thành công
                                     if (isConfirmSuccess)
@@ -374,7 +374,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công");
 
                                         // Xếp số
-                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(cardNoCurrent);
+                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
                                         int statusGreenLight = 0;
                                         string messageGreenLight = "";
