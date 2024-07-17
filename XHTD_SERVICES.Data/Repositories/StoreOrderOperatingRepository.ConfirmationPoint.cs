@@ -21,7 +21,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 using (var db = this._appDbContext)
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step ?? 0) == 0 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step ?? 0) == 1 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
                     if (orders.Count < 1) return false;
                     
                     var ordersFist = orders.FirstOrDefault();
