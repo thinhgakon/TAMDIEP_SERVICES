@@ -50,7 +50,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
+        private tblCategoriesDevice c3400, trafficLight;
 
         protected const string CONFIRM_ACTIVE = "CONFIRM_ACTIVE";
 
@@ -169,22 +169,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async Task LoadDevicesInfo()
         {
-            var devices = await _categoriesDevicesRepository.GetDevices("CBV");
+            var devices = await _categoriesDevicesRepository.GetDevices("CONFIRM");
 
-            c3400 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400");
+            c3400 = devices.FirstOrDefault(x => x.Code == "CONFIRM.C3-400");
 
-            rfidVao1 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-IN-1");
-            rfidVao2 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-IN-2");
-            rfidRa1 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
-            rfidRa2 = devices.FirstOrDefault(x => x.Code == "CBV.C3-400.RFID-OUT-1");
-
-            m221 = devices.FirstOrDefault(x => x.Code == "CBV.M221");
-
-            barrierVao = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-IN");
-            barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
-
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
+            trafficLight = devices.FirstOrDefault(x => x.Code == "CONFIRM.DGT");
         }
 
         public void AuthenticateConfirmModule()
@@ -432,7 +421,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         {
             var ipAddress = "";
 
-            ipAddress = trafficLightIn?.IpAddress;
+            ipAddress = trafficLight?.IpAddress;
 
             return ipAddress;
         }
