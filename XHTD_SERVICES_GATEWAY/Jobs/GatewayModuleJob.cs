@@ -512,6 +512,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                 await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationAPI(inout, 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -541,6 +542,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
                 await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationAPI(inout, 0, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -551,7 +553,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -560,7 +563,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             else
             {
-                await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                await SendNotificationCBV(2, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                SendNotificationAPI(inout, 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -949,6 +953,18 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             catch (Exception ex)
             {
                 _gatewayLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationAPI(string inout, int status, string cardNo, string message)
+        {
+            try
+            {
+                _notification.SendGatewayNotification(inout, status, cardNo, message);
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
