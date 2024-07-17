@@ -39,5 +39,8 @@ namespace XHTD_SERVICES.Data.Models.Values
 
         [Display(Name = "Đã giao hàng")]
         DA_GIAO_HANG = 9,
+
+        [Display(Name = "Đã xác thực")]
+        DA_XAC_THUC = 10
     }
 }
