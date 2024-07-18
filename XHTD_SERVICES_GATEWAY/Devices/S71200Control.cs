@@ -40,7 +40,7 @@ namespace XHTD_SERVICES.Device
 
                     if (_barrier.IsConnected)
                     {
-                        _barrier.Write(GATEWAY_IN_Q1, true);
+                        _barrier.ShuttleOutputPort(GATEWAY_IN_Q1, true);
 
                         var batLan1 = _barrier.ReadOutputPort(GATEWAY_IN_Q1);
 
@@ -55,7 +55,7 @@ namespace XHTD_SERVICES.Device
 
                         Thread.Sleep(500);
 
-                        _barrier.Write(GATEWAY_IN_Q1, false);
+                        _barrier.ShuttleOutputPort(GATEWAY_IN_Q1, false);
 
                         var batLan2 = _barrier.ReadOutputPort(GATEWAY_IN_Q1);
 
@@ -110,7 +110,7 @@ namespace XHTD_SERVICES.Device
 
                     if (_barrier.IsConnected)
                     {
-                        _barrier.Write(GATEWAY_OUT_Q1, true);
+                        _barrier.ShuttleOutputPort(GATEWAY_OUT_Q1, true);
 
                         var batLan1 = _barrier.ReadOutputPort(GATEWAY_OUT_Q1);
 
@@ -125,7 +125,7 @@ namespace XHTD_SERVICES.Device
 
                         Thread.Sleep(500);
 
-                        _barrier.Write(GATEWAY_OUT_Q1, false);
+                        _barrier.ShuttleOutputPort(GATEWAY_OUT_Q1, false);
 
                         var batLan2 = _barrier.ReadOutputPort(GATEWAY_OUT_Q1);
 

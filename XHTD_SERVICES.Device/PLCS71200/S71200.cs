@@ -48,7 +48,7 @@ namespace XHTD_SERVICES.Device
 
         }
 
-        public ErrorCode Write(string variable, bool value)
+        public ErrorCode ShuttleOutputPort(string variable, bool value)
         {
             try
             {
