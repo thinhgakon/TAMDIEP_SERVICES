@@ -32,12 +32,12 @@ namespace XHTD_SERVICES_GATEWAY.Hubs
             }
         }
 
-        public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
+        public void SendNotificationCBV(int status, string inout, string cardNo, string message, string vehicle = null)
         {
             try
             {
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
-                broadcast.Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
+                broadcast.Clients.All.SendNotificationCBV(status, inout, cardNo, message, vehicle);
             }
             catch (Exception ex)
             {
