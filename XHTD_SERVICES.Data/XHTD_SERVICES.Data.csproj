@@ -76,6 +76,9 @@
     <Compile Include="Entities\tblCallToTrough.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblCallVehicleStatu.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblCategoriesDevice.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
