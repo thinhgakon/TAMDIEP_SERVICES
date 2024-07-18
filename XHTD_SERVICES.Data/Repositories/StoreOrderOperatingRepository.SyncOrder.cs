@@ -37,7 +37,11 @@ namespace XHTD_SERVICES.Data.Repositories
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("RỜI"))
+                    {
+                        typeProduct = "ROI";
+                    }
+                    else if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
