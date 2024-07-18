@@ -37,7 +37,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
@@ -45,7 +45,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC30";
                     }
-                    else if (productNameUpper.Contains("PCB40"))
+                    else if (productNameUpper.Contains("PCB40") || productNameUpper.Contains("PCB 40"))
                     {
                         typeProduct = "PCB40";
                     }
