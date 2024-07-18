@@ -822,6 +822,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
+        public bool OpenS7Barrier(string luong)
+        {
+            if (luong == "IN")
+            {
+                return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
+            }
+            return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+        }
+
         public string GetTrafficLightIpAddress(string code)
         {
             var ipAddress = "";
