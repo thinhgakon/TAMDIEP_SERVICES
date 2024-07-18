@@ -65,14 +65,15 @@ namespace XHTD_SERVICES.Helper
             SendMsg(notification);
         }
 
-        public void SendConfirmNotification(string name, int status, string cardNo, string message)
+        public void SendConfirmNotification(string name, int status, string cardNo, string message, string vehicle = "")
         {
             SendConfirmNotificationRequest notification = new SendConfirmNotificationRequest
             {
                 Name = name,
                 Status = status,
                 CardNo = cardNo,
-                Message = message
+                Message = message,
+                Vehicle = vehicle
             };
 
             HttpRequest.SendDMSMsgForConfirmation(notification);

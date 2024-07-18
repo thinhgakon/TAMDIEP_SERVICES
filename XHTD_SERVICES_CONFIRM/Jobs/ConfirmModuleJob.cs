@@ -336,7 +336,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     {
                                         _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                                        await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                                        await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
 
                                         SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
 
@@ -349,9 +349,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     // Nếu RFID có đơn hàng hợp lệ
                                     else
                                     {
-                                        await SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", currentOrder.DeliveryCode);
+                                        await SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
 
-                                        SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                                        SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
 
                                         var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
 
@@ -369,9 +369,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     // Xác thực thành công
                                     if (isConfirmSuccess)
                                     {
-                                        await SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công");
+                                        await SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
-                                        SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công");
+                                        SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
                                         // Xếp số
                                         this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -501,16 +501,16 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             return _trafficLight.TurnOffGreenOnRed();
         }
 
-        private async Task SendNotificationHub(string name, int status, string cardNo, string message, string deliveryCode = "")
+        private async Task SendNotificationHub(string name, int status, string cardNo, string message, string vehicle = "")
         {
-            new ConfirmHub().SendNotificationConfirmationPoint(name, status, cardNo, message, deliveryCode);
+            new ConfirmHub().SendNotificationConfirmationPoint(name, status, cardNo, message, vehicle);
         }
 
-        public void SendNotificationAPI(string name, int status, string cardNo, string message)
+        public void SendNotificationAPI(string name, int status, string cardNo, string message, string vehicle = "")
         {
             try
             {
-                _notification.SendConfirmNotification(name, status, cardNo, message);
+                _notification.SendConfirmNotification(name, status, cardNo, message, vehicle);
             }
             catch (Exception ex)
             {
