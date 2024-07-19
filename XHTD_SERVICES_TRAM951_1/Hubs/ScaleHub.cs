@@ -44,6 +44,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         protected readonly int TIME_TO_RELEASE_SCALE = 5000;
 
+        protected Notification _notification = new Notification();
+
         public void SendMessage(string name, string message)
         {
             try
@@ -57,21 +59,21 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
         }
 
-        public void OpenManualBarrier(string name)
-        {
-            _logger.Info($"Mo thủ công barrier IN");
-            SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
-            DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
+        //public void OpenManualBarrier(string name)
+        //{
+        //    _logger.Info($"Mo thủ công barrier IN");
+        //    SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
+        //    DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
 
-            Thread.Sleep(1000);
+        //    Thread.Sleep(1000);
 
-            _logger.Info($"Mo thủ công barrier OUT");
-            SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
-            DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
+        //    _logger.Info($"Mo thủ công barrier OUT");
+        //    SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
+        //    DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
 
-            _logger.Info($"Bat đèn xanh thủ công");
-            TurnOnGreenTrafficLight(true);
-        }
+        //    _logger.Info($"Bat đèn xanh thủ công");
+        //    TurnOnGreenTrafficLight(true);
+        //}
 
         public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
@@ -145,10 +147,13 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 }
 
                 SendMessage($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
+                SendScale1Message($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
 
                 SendMessage($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime}");
+                SendScale1Message($"{ENABLED_RFID_TIME}", $"{Program.EnabledRfidTime}");
 
                 SendMessage($"{LOCKING_RFID_STATUS}", $"{Program.IsLockingRfid}");
+                SendScale1Message($"{LOCKING_RFID_STATUS}", $"{Program.IsLockingRfid}");
                 // End Check lock RFID
 
                 if (currentScaleValue < ScaleConfig.MIN_WEIGHT_VEHICLE)
@@ -159,6 +164,9 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessage($"{SCALE_STATUS}", $"Cân đang nghỉ");
                     SendMessage($"{SCALE_BALANCE}", "");
 
+                    SendScale1Message($"{SCALE_STATUS}", $"Cân đang nghỉ");
+                    SendScale1Message($"{SCALE_BALANCE}", "");
+
                     Program.scaleValues.Clear();
 
                     return;
@@ -167,15 +175,22 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (Program.IsScalling)
                 {
                     SendMessage($"{SCALE_STATUS}", $"Đang cân tự động");
-
                     SendMessage($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
                     SendMessage($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
+
+                    SendScale1Message($"{SCALE_STATUS}", $"Đang cân tự động");
+                    SendScale1Message($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
+                    SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
                 }
                 else
                 {
                     SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                     SendMessage($"{SCALE_BALANCE}", "");
                     SendMessage("Notification", "");
+
+                    SendScale1Message($"{SCALE_STATUS}", $"Đang cân thủ công");
+                    SendScale1Message($"{SCALE_BALANCE}", "");
+                    SendScale1Message("Notification", "");
                 }
 
                 // TODO: kiểm tra vi phạm cảm biến cân
@@ -187,6 +202,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         if (isInValidSensor)
                         {
                             SendSensor(SCALE_CODE, "1");
+                            SendScale1Sensor(SCALE_CODE, "1");
 
                             Program.scaleValues.Clear();
 
@@ -195,6 +211,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         else
                         {
                             SendSensor(SCALE_CODE, "0");
+                            SendScale1Sensor(SCALE_CODE, "0");
                         }
                     }
                 }
@@ -220,6 +237,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                         _logger.Info($"1. Can {SCALE_CODE} on dinh: " + currentScaleValue);
 
                         SendMessage($"{SCALE_BALANCE}", $"{currentScaleValue}");
+                        SendScale1Message($"{SCALE_BALANCE}", $"{currentScaleValue}");
 
                         using (var dbContext = new XHTD_Entities())
                         {
@@ -230,6 +248,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 _logger.Info($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
                                 SendMessage("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
+                                SendScale1Message("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 await ReleaseScale();
@@ -242,6 +261,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 _logger.Info($"2. Khong co thong tin don hang dang can voi code = {scaleInfo.DeliveryCode}");
 
                                 SendMessage("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
+                                SendScale1Message("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 await ReleaseScale();
@@ -273,6 +293,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
                                     SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+                                    SendScale1Message("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                     await ReleaseScale();
@@ -290,6 +311,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     _logger.Info($"4.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
 
                                     SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
+                                    SendScale1Message("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                 }
                                 else
                                 {
@@ -317,6 +339,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 {
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
+                                    SendScale1Message("Notification", $"{scaleInfoResult.Message}");
 
                                     _logger.Info($"5.1. Lưu giá trị cân thành công");
 
@@ -357,6 +380,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                         _logger.Info($"7.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
 
                                         SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
+                                        SendScale1Message("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
                                     }
                                     else
                                     {
@@ -386,6 +410,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 {
                                     // Lưu giá trị cân thất bại
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendScale1Message("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     _logger.Info($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -546,6 +571,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (isHasNotification) 
                 { 
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
+                    SendScale1Message("Notification", $"Bật đèn xanh chiều vào thành công");
                 }
                 _logger.Info($@"Bật thành công");
             }
@@ -554,6 +580,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (isHasNotification)
                 {
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thất bại");
+                    SendScale1Message("Notification", $"Bật đèn xanh chiều vào thất bại");
                 }
                 _logger.Info($@"Bật thất bại");
             }
@@ -566,6 +593,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (isHasNotification)
                 {
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thành công");
+                    SendScale1Message("Notification", $"Bật đèn xanh chiều ra thành công");
                 }
                 _logger.Info($@"Bật thành công");
             }
@@ -574,8 +602,33 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (isHasNotification)
                 {
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
+                    SendScale1Message("Notification", $"Bật đèn xanh chiều ra thất bại");
                 }
                 _logger.Info($@"Bật thất bại");
+            }
+        }
+
+        private void SendScale1Message(string name, string message)
+        {
+            try
+            {
+                _notification.SendScale1Message(name, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.Info($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        private void SendScale1Sensor(string sensorCode, string status)
+        {
+            try
+            {
+                _notification.SendScale1Sensor(sensorCode, status);
+            }
+            catch (Exception ex)
+            {
+                _logger.Info($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
