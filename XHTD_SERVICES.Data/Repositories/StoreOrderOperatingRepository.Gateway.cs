@@ -166,6 +166,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        // Lấy số lượng xe trong bãi chờ
         public int CountStoreOrderWaitingIntoTroughByType(string typeProduct)
         {
             var validStep = new[] { OrderStep.DA_VAO_CONG, 
