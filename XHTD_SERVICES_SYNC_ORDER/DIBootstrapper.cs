@@ -22,8 +22,6 @@ namespace XHTD_SERVICES_SYNC_ORDER
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<SyncOrderLogger>().AsSelf();
-            builder.RegisterType<SyncInProgressLogger>().AsSelf();
-            builder.RegisterType<OracleLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
