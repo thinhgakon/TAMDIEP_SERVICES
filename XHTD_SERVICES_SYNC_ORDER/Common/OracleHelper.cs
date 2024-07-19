@@ -17,6 +17,7 @@ public class OracleHelper
     public OracleHelper(string connectionString)
     {
         _connectionString = connectionString;
+        _oracleLogger = new OracleLogger();
     }
 
     public List<T> GetDataFromOracle<T>(string query, Func<IDataReader, T> mapFunc, OracleParameter[] parameters = null)
