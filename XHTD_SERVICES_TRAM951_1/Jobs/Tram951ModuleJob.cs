@@ -365,7 +365,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                             continue;
                         }
 
-                         ReadDataProcess(cardNoCurrent);
+                        if (doorCurrent != 1 && doorCurrent != 2) continue;
+
+                        ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
                     {
