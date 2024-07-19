@@ -612,6 +612,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (isUpdatedOrder)
                 {
+                    await SendNotificationCBV(3, inout, null, $"Xác thực vào cổng thành công", null);
+                    SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
+
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("IN");
 
@@ -654,6 +657,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
                 else
                 {
+                    await SendNotificationCBV(4, inout, null, $"Xác thực vào cổng thất bại", null);
+                    SendNotificationAPI(inout, 4, null, $"Xác thực vào cổng thất bại", null);
+
                     _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
                 }
             }
@@ -678,6 +684,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (isUpdatedOrder)
                 {
+                    await SendNotificationCBV(3, inout, null, $"Xác thực ra cổng thành công", null);
+                    SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
+
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("OUT");
 
@@ -707,6 +716,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
                 else
                 {
+                    await SendNotificationCBV(4, inout, null, $"Xác thực ra cổng thất bại", null);
+                    SendNotificationAPI(inout, 4, null, $"Xác thực ra cổng thất bại", null);
+
                     _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
                 }
             }
