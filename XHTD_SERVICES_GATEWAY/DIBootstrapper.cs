@@ -33,6 +33,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<GatewayLogger>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
+            builder.RegisterType<S71200Control>().AsSelf();
 
             RegisterScheduler(builder);
 
