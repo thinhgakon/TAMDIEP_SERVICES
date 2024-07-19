@@ -14,8 +14,8 @@ namespace XHTD_SERVICES.Device
         private const string IP_ADDRESS = "192.168.13.166";
         private const short RACK = 0;
         private const short SLOT = 1;
-        private const string GATEWAY_IN_Q1 = "Q0.4"; /*"Q0.0"; */
-        private const string GATEWAY_OUT_Q1 = "Q0.5"; /*"Q0.2";*/
+        private const string GATEWAY_IN_Q1 = "Q0.0";
+        private const string GATEWAY_OUT_Q1 = "Q0.1";
 
         public S71200Control()
         {
