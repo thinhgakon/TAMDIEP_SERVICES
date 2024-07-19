@@ -15,11 +15,6 @@ using System.Globalization;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
-    public class SyncInProgressLogger : BaseLogger<SyncInProgressLogger>
-    {
-
-    }
-
     public class SyncInProgressOrderFromViewJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -32,7 +27,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly SyncInProgressLogger _syncOrderLogger;
+        protected readonly SyncOrderLogger _syncOrderLogger;
 
         private static string strToken;
 
@@ -50,7 +45,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            SyncInProgressLogger syncOrderLogger
+            SyncOrderLogger syncOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -184,21 +179,21 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 id = Convert.ToInt32(reader["ORDER_ID"]),
                 deliveryCode = reader["DELIVERY_CODE"]?.ToString(),
-                timeIn = reader["TIMEIN"] == DBNull.Value ? null : DateTime.Parse(reader["TIMEIN"].ToString()).ToString("yyyy-MM-ddTHH:mm:ss"),
-                timeOut = reader["TIMEOUT"] == DBNull.Value ? null : DateTime.Parse(reader["TIMEOUT"].ToString()).ToString("yyyy-MM-ddTHH:mm:ss"),
-                loadweightnull = reader["LOADWEIGHTNULL"].ToString(),
-                loadweightfull = reader["LOADWEIGHTFULL"].ToString(),
-                status = reader["STATUS"].ToString(),
-                productName = reader["PRODUCT_NAME"].ToString(),
-                vehicleCode = reader["VEHICLE_CODE"].ToString(),
-                driverName = reader["DRIVER_NAME"].ToString(),
-                customerName = reader["CUSTOMER_NAME"].ToString(),
-                bookQuantity = decimal.Parse(reader["BOOK_QUANTITY"].ToString()),
-                orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : DateTime.Parse(reader["ORDER_DATE"].ToString()).ToString("yyyy-MM-ddTHH:mm:ss"),
-                moocCode = reader["MOOC_CODE"].ToString(),
-                locationCode = reader["LOCATION_CODE"].ToString(),
-                transportMethodId = int.Parse(reader["TRANSPORT_METHOD_ID"].ToString()),
-                lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : DateTime.Parse(reader["LAST_UPDATE_DATE"].ToString()).ToString("yyyy-MM-ddTHH:mm:ss")
+                timeIn = reader["TIMEIN"] == DBNull.Value ? null : reader.GetDateTime(2).ToString("yyyy-MM-ddTHH:mm:ss"),
+                timeOut = reader["TIMEOUT"] == DBNull.Value ? null : reader.GetDateTime(3).ToString("yyyy-MM-ddTHH:mm:ss"),
+                loadweightnull = reader["LOADWEIGHTNULL"]?.ToString(),
+                loadweightfull = reader["LOADWEIGHTFULL"]?.ToString(),
+                status = reader["STATUS"]?.ToString(),
+                productName = reader["PRODUCT_NAME"]?.ToString(),
+                vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
+                driverName = reader["DRIVER_NAME"]?.ToString(),
+                customerName = reader["CUSTOMER_NAME"]?.ToString(),
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
+                orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
+                moocCode = reader["MOOC_CODE"]?.ToString(),
+                locationCode = reader["LOCATION_CODE"]?.ToString(),
+                transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(), out int i) ? i : default,
+                lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(16).ToString("yyyy-MM-ddTHH:mm:ss")
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
