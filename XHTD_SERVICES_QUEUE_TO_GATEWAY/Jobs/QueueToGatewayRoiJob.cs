@@ -12,17 +12,15 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayRoiJob : IJob
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("QueueToGatewayRoiFileAppender");
+
+        private const string TYPE_PRODUCT = "ROI";
+
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly QueueToGatewayLogger _queueToGatewayLogger;
-
-        public QueueToGatewayRoiJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository,
-            QueueToGatewayLogger queueToGatewayLogger
-            )
+        public QueueToGatewayRoiJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _queueToGatewayLogger = queueToGatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -34,18 +32,27 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                _queueToGatewayLogger.LogInfo($"Start Queue To Gateway ROI: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                log.Info($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-                PushToDbCallRoiProccesss();
+                PushToDbCallProccesss();
             });
         }
 
-        public void PushToDbCallRoiProccesss()
+        public void PushToDbCallProccesss()
         {
             try
             {
                 var LimitVehicle = 5;
                 var IsCall = true;
+
+                using (var db = new XHTD_Entities())
+                {
+                    var isCallRoi = db.tblSystemParameters.FirstOrDefault(x => x.Code == "IS_CALL_ROI");
+                    IsCall = isCallRoi.Value == "1" ? true : false;
+
+                    var maxVehicleRoi = db.tblSystemParameters.FirstOrDefault(x => x.Code == "MAX_VEHICLE_ROI");
+                    LimitVehicle = int.Parse(maxVehicleRoi.Value);
+                }
 
                 if (!IsCall) return;
 
@@ -53,34 +60,32 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError(ex.Message);
+                log.Error(ex.Message);
             }
         }
-
         public void ProcessPushToDBCall(int LimitVehicle)
         {
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontRoiYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType("ROI");
-                if (vehicleFrontRoiYard < LimitVehicle)
+                var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
+                if (vehicleFrontYard < LimitVehicle)
                 {
-                    ProcessUpdateStepIntoRoiYard(LimitVehicle - vehicleFrontRoiYard);
+                    ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($@"ProcessPushToDBCall ROI error: {ex.Message}");
+                log.Error($@"ProcessPushToDBCall error: {ex.Message}");
             }
         }
-
-        public void ProcessUpdateStepIntoRoiYard(int topX)
+        public void ProcessUpdateStepIntoYard(int topX)
         {
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals("ROI") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals(TYPE_PRODUCT) && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
@@ -111,7 +116,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($"ProcessUpdateStepIntoROIYard error: " + ex.Message);
+                log.Error($"ProcessUpdateStepIntoYard error: " + ex.Message);
             }
         }
     }

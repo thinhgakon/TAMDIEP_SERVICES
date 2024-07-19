@@ -12,17 +12,15 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayPcb40Job : IJob
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("QueueToGatewayPcb40FileAppender");
+
+        private const string TYPE_PRODUCT = "PCB40";
+
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly QueueToGatewayLogger _queueToGatewayLogger;
-
-        public QueueToGatewayPcb40Job(
-            StoreOrderOperatingRepository storeOrderOperatingRepository,
-            QueueToGatewayLogger queueToGatewayLogger
-            )
+        public QueueToGatewayPcb40Job(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _queueToGatewayLogger = queueToGatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -34,18 +32,27 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                _queueToGatewayLogger.LogInfo($"Start Queue To Gateway PCB40: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                log.Info($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-                PushToDbCallPcb40Proccesss();
+                PushToDbCallProccesss();
             });
         }
 
-        public void PushToDbCallPcb40Proccesss()
+        public void PushToDbCallProccesss()
         {
             try
             {
                 var LimitVehicle = 5;
                 var IsCall = true;
+
+                using (var db = new XHTD_Entities())
+                {
+                    var isCallPcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "IS_CALL_PCB40");
+                    IsCall = isCallPcb40.Value == "1" ? true : false;
+
+                    var maxVehiclePcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "MAX_VEHICLE_PCB40");
+                    LimitVehicle = int.Parse(maxVehiclePcb40.Value);
+                }
 
                 if (!IsCall) return;
 
@@ -53,34 +60,32 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError(ex.Message);
+                log.Error(ex.Message);
             }
         }
-
         public void ProcessPushToDBCall(int LimitVehicle)
         {
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontPcb40Yard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType("PCB40");
-                if (vehicleFrontPcb40Yard < LimitVehicle)
+                var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
+                if (vehicleFrontYard < LimitVehicle)
                 {
-                    ProcessUpdateStepIntoPcb40Yard(LimitVehicle - vehicleFrontPcb40Yard);
+                    ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($@"ProcessPushToDBCall PCB40 error: {ex.Message}");
+                log.Error($@"ProcessPushToDBCall error: {ex.Message}");
             }
         }
-
-        public void ProcessUpdateStepIntoPcb40Yard(int topX)
+        public void ProcessUpdateStepIntoYard(int topX)
         {
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals("PCB40") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals(TYPE_PRODUCT) && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
@@ -111,7 +116,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($"ProcessUpdateStepIntoPCB40Yard error: " + ex.Message);
+                log.Error($"ProcessUpdateStepIntoYard error: " + ex.Message);
             }
         }
     }
