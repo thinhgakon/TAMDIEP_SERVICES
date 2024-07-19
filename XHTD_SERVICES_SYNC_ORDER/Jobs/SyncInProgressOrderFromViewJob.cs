@@ -15,6 +15,11 @@ using System.Globalization;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
+    public class SyncInProgressLogger : BaseLogger<SyncInProgressLogger>
+    {
+
+    }
+
     public class SyncInProgressOrderFromViewJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -27,7 +32,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly SyncOrderLogger _syncOrderLogger;
+        protected readonly SyncInProgressLogger _syncOrderLogger;
 
         private static string strToken;
 
@@ -45,7 +50,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            SyncOrderLogger syncOrderLogger
+            SyncInProgressLogger syncOrderLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -102,7 +107,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo($"Start Sync In Progress Order From View: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            _syncOrderLogger.LogInfo($"Start Sync In Progress Order From View: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} Updated");
 
             //GetToken();
 
@@ -110,6 +115,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (websaleOrders == null || websaleOrders.Count == 0)
             {
+                _syncOrderLogger.LogInfo($"Sync In Progress Order From View: Khong co don hang");
                 return;
             }
 
@@ -279,7 +285,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     }
                 }
             }
-
+            _syncOrderLogger.LogInfo($"Sync status: {isSynced}, {websaleOrder.deliveryCode}, {websaleOrder.status}");
             return isSynced;
         }
 
