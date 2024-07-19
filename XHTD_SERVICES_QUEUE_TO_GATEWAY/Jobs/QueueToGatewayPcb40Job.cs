@@ -45,6 +45,15 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                 var LimitVehicle = 5;
                 var IsCall = true;
 
+                using (var db = new XHTD_Entities())
+                {
+                    var isCallPcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "IS_CALL_PCB40");
+                    IsCall = isCallPcb40.Value == "1" ? true : false;
+
+                    var maxVehiclePcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "MAX_VEHICLE_PCB40");
+                    LimitVehicle = int.Parse(maxVehiclePcb40.Value);
+                }
+
                 if (!IsCall) return;
 
                 ProcessPushToDBCall(LimitVehicle);
