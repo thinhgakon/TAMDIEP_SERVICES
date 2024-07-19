@@ -340,7 +340,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         //var dataStr = "*[Reader][1]1974716100[!]";
                         var dataStr = encoding.GetString(data);
 
-                        _logger.LogInfo($"Nhan tin hieu: {dataStr}");
+                        if(Program.IsLockingRfid == true)
+                        {
+                            _logger.LogInfo($"Nhan tin hieu: {dataStr}");
+                        }
 
                         string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
                         Match match = Regex.Match(dataStr, pattern);
