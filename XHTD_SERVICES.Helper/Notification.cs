@@ -78,14 +78,15 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSMsgForConfirmation(notification);
         }
 
-        public void SendGatewayNotification(string inout, int status, string cardNo, string message)
+        public void SendGatewayNotification(string inout, int status, string cardNo, string message, string vehicle = null)
         {
             SendGatewayNotificationRequest notification = new SendGatewayNotificationRequest
             {
                 InOut = inout,
                 Status = status,
                 CardNo = cardNo,
-                Message = message
+                Message = message,
+                Vehicle = vehicle
             };
 
             HttpRequest.SendDMSMsgForGatewayNotification(notification);
