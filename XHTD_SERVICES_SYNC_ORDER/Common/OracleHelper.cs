@@ -5,19 +5,13 @@ using System.Collections.Generic;
 using System.Data;
 using XHTD_SERVICES.Helper;
 
-public class OracleLogger : BaseLogger<OracleHelper>
-{
-
-}
 public class OracleHelper
 {
     private string _connectionString;
-    protected readonly OracleLogger _oracleLogger;
 
     public OracleHelper(string connectionString)
     {
         _connectionString = connectionString;
-        _oracleLogger = new OracleLogger();
     }
 
     public List<T> GetDataFromOracle<T>(string query, Func<IDataReader, T> mapFunc, OracleParameter[] parameters = null)
@@ -45,10 +39,8 @@ public class OracleHelper
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _oracleLogger.LogError(ex.Message);
-                    _oracleLogger.LogError(ex.StackTrace);
                 }
             }
         }
