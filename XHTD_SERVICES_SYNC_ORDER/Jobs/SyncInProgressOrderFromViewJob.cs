@@ -110,6 +110,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (websaleOrders == null || websaleOrders.Count == 0)
             {
+                _syncOrderLogger.LogInfo($"Sync In Progress Order From View: Khong co don hang");
                 return;
             }
 
@@ -279,7 +280,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     }
                 }
             }
-
+            _syncOrderLogger.LogInfo($"Sync status: {isSynced}, {websaleOrder.deliveryCode}, {websaleOrder.status}");
             return isSynced;
         }
 
