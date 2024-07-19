@@ -17,7 +17,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
-            builder.RegisterType<QueueToGatewayJob>().AsSelf();
+            builder.RegisterType<QueueToGatewayClinkerJob>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayClinkerJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

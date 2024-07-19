@@ -8,6 +8,7 @@ using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Common;
+using System.Data.SqlClient;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -162,6 +163,16 @@ namespace XHTD_SERVICES.Data.Repositories
                     log.Error($@"Xác thực vào cổng DeliveryCode={deliveryCode} error: " + ex.Message);
                     return false;
                 }
+            }
+        }
+
+        public int CountStoreOrderWaitingIntoTroughByType(string typeProduct)
+        {
+            using (var db = new XHTD_Entities())
+            {
+                var sqlCount = "SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN (2,3,5,6,7) AND IndexOrder2 = 0 AND TypeProduct = @TypeProduct";
+                var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct)).Single();
+                return count;
             }
         }
     }

@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.Start();
 
             // Đồng bộ đơn hàng
-            IJobDetail queueToGatewayJob = JobBuilder.Create<QueueToGatewayJob>().Build();
+            IJobDetail queueToGatewayJob = JobBuilder.Create<QueueToGatewayClinkerJob>().Build();
             ITrigger queueToGatewayTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()

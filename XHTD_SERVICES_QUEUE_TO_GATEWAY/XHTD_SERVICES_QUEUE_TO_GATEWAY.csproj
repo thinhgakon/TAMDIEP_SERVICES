@@ -123,7 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\QueueToGatewayJob.cs" />
+    <Compile Include="Jobs\QueueToGatewayClinkerJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Request\SearchOrderRequest.cs" />
     <Compile Include="Models\Response\GetTokenResponse.cs" />
