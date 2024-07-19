@@ -18,17 +18,15 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayClinkerJob : IJob
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("QueueToGatewayClinkerFileAppender");
+
+        private const string TYPE_PRODUCT = "CLINKER";
+
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly QueueToGatewayLogger _queueToGatewayLogger;
-
-        public QueueToGatewayClinkerJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository,
-            QueueToGatewayLogger queueToGatewayLogger
-            )
+        public QueueToGatewayClinkerJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _queueToGatewayLogger = queueToGatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -40,13 +38,13 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                _queueToGatewayLogger.LogInfo($"Start Queue To Gateway CLINKER: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                log.Info($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-                PushToDbCallClinkerProccesss();
+                PushToDbCallProccesss();
             });
         }
 
-        public void PushToDbCallClinkerProccesss()
+        public void PushToDbCallProccesss()
         {
             try
             {
@@ -59,7 +57,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError(ex.Message);
+                log.Error(ex.Message);
             }
         }
         public void ProcessPushToDBCall(int LimitVehicle)
@@ -67,24 +65,24 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontClinkerYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType("CLINKER");
-                if (vehicleFrontClinkerYard < LimitVehicle)
+                var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
+                if (vehicleFrontYard < LimitVehicle)
                 {
-                    ProcessUpdateStepIntoClinkerYard(LimitVehicle - vehicleFrontClinkerYard);
+                    ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($@"ProcessPushToDBCall CLINKER error: {ex.Message}");
+                log.Error($@"ProcessPushToDBCall error: {ex.Message}");
             }
         }
-        public void ProcessUpdateStepIntoClinkerYard(int topX)
+        public void ProcessUpdateStepIntoYard(int topX)
         {
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals("CLINKER") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals(TYPE_PRODUCT) && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
@@ -115,7 +113,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($"ProcessUpdateStepIntoClinkerYard error: " + ex.Message);
+                log.Error($"ProcessUpdateStepIntoYard error: " + ex.Message);
             }
         }
     }
