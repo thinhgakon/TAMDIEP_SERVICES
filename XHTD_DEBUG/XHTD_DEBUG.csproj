@@ -234,6 +234,10 @@
       <Project>{ee357022-f104-42f0-bfbc-a5c4e9791300}</Project>
       <Name>XHTD_SERVICES.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_CALL_IN_GATEWAY\XHTD_SERVICES_CALL_IN_GATEWAY.csproj">
+      <Project>{eb57708a-8b3c-4416-b86b-970b0fe2000e}</Project>
+      <Name>XHTD_SERVICES_CALL_IN_GATEWAY</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_CALL_IN_TROUGH\XHTD_SERVICES_CALL_IN_TROUGH.csproj">
       <Project>{e1ba9b59-31eb-4f3b-9261-bd843c9df463}</Project>
       <Name>XHTD_SERVICES_CALL_IN_TROUGH</Name>
@@ -261,6 +265,10 @@
     <ProjectReference Include="..\XHTD_SERVICES_QUEUE_TO_CALL\XHTD_SERVICES_QUEUE_TO_CALL.csproj">
       <Project>{1b4bb622-6c20-4f23-a6b1-32bd30bf886e}</Project>
       <Name>XHTD_SERVICES_QUEUE_TO_CALL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_QUEUE_TO_GATEWAY\XHTD_SERVICES_QUEUE_TO_GATEWAY.csproj">
+      <Project>{d75106af-a21f-4580-bc44-0c6072fb5751}</Project>
+      <Name>XHTD_SERVICES_QUEUE_TO_GATEWAY</Name>
     </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_REINDEX_TO_TROUGH\XHTD_SERVICES_REINDEX_TO_TROUGH.csproj">
       <Project>{d76dbe62-9c85-4ff0-94b8-8f423a032664}</Project>

@@ -12,5 +12,6 @@ namespace XHTD_SERVICES.Helper.Models.Request
         public int Status { get; set; }
         public string CardNo { get; set; }
         public string Message { get; set; }
+        public string Vehicle { get; set; }
     }
 }

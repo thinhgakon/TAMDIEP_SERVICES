@@ -65,14 +65,15 @@ namespace XHTD_SERVICES.Helper
             SendMsg(notification);
         }
 
-        public void SendConfirmNotification(string name, int status, string cardNo, string message)
+        public void SendConfirmNotification(string name, int status, string cardNo, string message, string vehicle = "")
         {
             SendConfirmNotificationRequest notification = new SendConfirmNotificationRequest
             {
                 Name = name,
                 Status = status,
                 CardNo = cardNo,
-                Message = message
+                Message = message,
+                Vehicle = vehicle
             };
 
             HttpRequest.SendDMSMsgForConfirmation(notification);
@@ -96,6 +97,21 @@ namespace XHTD_SERVICES.Helper
         public void SendInforNotification(string receiver, string message)
         {
             HttpRequest.SendInforNotification(receiver, message);
+        }
+
+        public void SendScale1Sensor(string sensorCode, string status)
+        {
+            HttpRequest.SendScale1Sensor(sensorCode,status);
+        }
+
+        public void SendScale1Info(DateTime time, string value)
+        {
+            HttpRequest.SendScale1Info(time, value);
+        }
+
+        public void SendScale1Message(string name, string message)
+        {
+            HttpRequest.SendScale1Message(name, message);
         }
     }
 }

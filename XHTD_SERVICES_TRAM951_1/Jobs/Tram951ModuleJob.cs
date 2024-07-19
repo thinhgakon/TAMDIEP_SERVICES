@@ -62,6 +62,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_1_BARRIER_ACTIVE";
 
+        protected readonly string SCALE_CURRENT_RFID = "SCALE_1_CURRENT_RFID";
+
         private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -337,7 +339,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     {
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);
-                        //var dataStr = "*[Reader][1]1974716100[!]";
                         var dataStr = encoding.GetString(data);
 
                         if(Program.IsLockingRfid == true)
@@ -368,7 +369,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                             continue;
                         }
 
-                         ReadDataProcess(cardNoCurrent);
+                        if (doorCurrent != 1 && doorCurrent != 2) continue;
+
+                        ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
                     {
@@ -400,7 +403,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
-                //_logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -411,9 +414,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
-                //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
+
+            SendScale1Message(SCALE_CURRENT_RFID, cardNoCurrent);
 
             _logger.LogInfo("----------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
@@ -432,7 +437,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     )
                 {
                     new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-
+                    SendScale1Message("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
                     // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                     return;
@@ -461,7 +466,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
-
+                SendScale1Message($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -477,7 +482,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -489,7 +494,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -501,7 +507,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpCardNoLst.Add(newCardNoLog);
 
@@ -631,6 +638,18 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        private void SendScale1Message(string name, string message)
+        {
+            try
+            {
+                _notification.SendScale1Message(name, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

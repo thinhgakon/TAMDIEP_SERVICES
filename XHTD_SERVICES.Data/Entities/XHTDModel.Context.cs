@@ -29,6 +29,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblAccountGroup> tblAccountGroups { get; set; }
         public virtual DbSet<tblAccountGroupFunction> tblAccountGroupFunctions { get; set; }
         public virtual DbSet<tblCallToTrough> tblCallToTroughs { get; set; }
+        public virtual DbSet<tblCallVehicleStatu> tblCallVehicleStatus { get; set; }
         public virtual DbSet<tblCategory> tblCategories { get; set; }
         public virtual DbSet<tblCategoriesDevice> tblCategoriesDevices { get; set; }
         public virtual DbSet<tblCategoriesDevicesLog> tblCategoriesDevicesLogs { get; set; }
