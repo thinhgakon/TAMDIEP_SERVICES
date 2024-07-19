@@ -234,10 +234,6 @@
       <Project>{ee357022-f104-42f0-bfbc-a5c4e9791300}</Project>
       <Name>XHTD_SERVICES.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_CALL_IN_GATEWAY\XHTD_SERVICES_CALL_IN_GATEWAY.csproj">
-      <Project>{fc6a60e9-c735-4f6d-af8e-c1643118efc7}</Project>
-      <Name>XHTD_SERVICES_CALL_IN_GATEWAY</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_CALL_IN_TROUGH\XHTD_SERVICES_CALL_IN_TROUGH.csproj">
       <Project>{e1ba9b59-31eb-4f3b-9261-bd843c9df463}</Project>
       <Name>XHTD_SERVICES_CALL_IN_TROUGH</Name>
