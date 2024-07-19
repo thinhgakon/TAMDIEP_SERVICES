@@ -22,8 +22,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 
         protected readonly GatewayCallLogger _gatewayCallLogger;
 
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        string PathAudio = $@"D:/VICEM_HOANGMAI/xuathangtudong/AudioNew";
+        string PathAudio = $@"D:/VICEM_TAMDIEP/xuathangtudong/AudioNew";
 
         public GatewayCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -49,7 +48,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 
         public void CallVehicleProcess()
         {
-            log.Info("==============start process CallVehicleProcess ====================");
+            _gatewayCallLogger.LogInfo("==============start process CallVehicleProcess ====================");
 
             try
             {
@@ -64,10 +63,10 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (callVehicleItem == null || callVehicleItem.Id < 1) return;
                     // check xem trong bảng tblStoreOrderOperating xem đơn hàng có đang yêu cầu gọi vào không
                     var storeOrderOperating = db.tblStoreOrderOperatings.FirstOrDefault(x => x.Id == callVehicleItem.StoreOrderOperatingId);
-                    log.Error($@"======1==call vehicle {storeOrderOperating.Vehicle} ==============");
+                    _gatewayCallLogger.LogError($@"======1==call vehicle {storeOrderOperating.Vehicle} ==============");
                     if (storeOrderOperating.CountReindex != null && (int)storeOrderOperating.CountReindex >= 3)
                     {
-                        log.Error($@"======2==call vehicle {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi -- hủy lốt==============");
+                        _gatewayCallLogger.LogError($@"======2==call vehicle {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi -- hủy lốt==============");
                         if (storeOrderOperating.Step == 1 || storeOrderOperating.Step == 4)
                         {
                             var sql = $@"UPDATE dbo.tblStoreOrderOperating SET IndexOrder = 0, Confirm1 = 0, TimeConfirm1 = NULL, Step = 0, IndexOrder2 = 0, DeliveryCodeParent = NULL, LogProcessOrder = CONCAT(LogProcessOrder, N'#Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE  Step IN (1,4) AND ISNULL(DriverUserName,'') <> '' AND (DeliveryCode = @DeliveryCode OR DeliveryCodeParent = @DeliveryCode)";
@@ -105,7 +104,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                _gatewayCallLogger.LogError(ex.Message);
             }
 
         }
@@ -127,7 +126,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                _gatewayCallLogger.LogError(ex.Message);
             }
             return callVehicleItem;
         }
@@ -185,7 +184,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                _gatewayCallLogger.LogError(ex.Message);
             }
         }
     }
