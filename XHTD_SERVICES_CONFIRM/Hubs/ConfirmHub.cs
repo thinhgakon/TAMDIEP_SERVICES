@@ -32,12 +32,12 @@ namespace XHTD_SERVICES_CONFIRM.Hubs
             }
         }
 
-        public void SendNotificationConfirmationPoint(string name, int status, string cardNo, string message, string deliveryCode = "")
+        public void SendNotificationConfirmationPoint(string name, int status, string cardNo, string message, string vehicle = "")
         {
             try
             {
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<ConfirmHub>();
-                broadcast.Clients.All.SendNotificationConfirmationPoint(name, status, cardNo, message, deliveryCode);
+                broadcast.Clients.All.SendNotificationConfirmationPoint(name, status, cardNo, message, vehicle);
             }
             catch (Exception ex)
             {

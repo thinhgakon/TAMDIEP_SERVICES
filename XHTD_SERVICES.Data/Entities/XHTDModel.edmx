@@ -70,6 +70,19 @@
           <Property Name="CreateDay" Type="datetime" />
           <Property Name="UpdateDay" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblCallVehicleStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StoreOrderOperatingId" Type="int" Nullable="false" />
+          <Property Name="CountTry" Type="int" />
+          <Property Name="CreatedOn" Type="datetime2" Precision="7" />
+          <Property Name="ModifiledOn" Type="datetime2" Precision="7" />
+          <Property Name="LogCall" Type="nvarchar" MaxLength="500" />
+          <Property Name="IsDone" Type="bit" />
+          <Property Name="TypeProduct" Type="varchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="tblCategories">
           <Key>
             <PropertyRef Name="Code" />
@@ -636,6 +649,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblAccountGroup" EntityType="Self.tblAccountGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAccountGroupFunction" EntityType="Self.tblAccountGroupFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCallToTrough" EntityType="Self.tblCallToTrough" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCallVehicleStatus" EntityType="Self.tblCallVehicleStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategories" EntityType="Self.tblCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategoriesDevices" EntityType="Self.tblCategoriesDevices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategoriesDevicesLog" EntityType="Self.tblCategoriesDevicesLog" Schema="dbo" store:Type="Tables" />
@@ -771,6 +785,19 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="CallLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="tblCallVehicleStatu">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StoreOrderOperatingId" Type="Int32" Nullable="false" />
+          <Property Name="CountTry" Type="Int32" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="7" />
+          <Property Name="ModifiledOn" Type="DateTime" Precision="7" />
+          <Property Name="LogCall" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsDone" Type="Boolean" />
+          <Property Name="TypeProduct" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -1338,6 +1365,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblAccountGroups" EntityType="Self.tblAccountGroup" />
           <EntitySet Name="tblAccountGroupFunctions" EntityType="Self.tblAccountGroupFunction" />
           <EntitySet Name="tblCallToTroughs" EntityType="Self.tblCallToTrough" />
+          <EntitySet Name="tblCallVehicleStatus" EntityType="Self.tblCallVehicleStatu" />
           <EntitySet Name="tblCategories" EntityType="Self.tblCategory" />
           <EntitySet Name="tblCategoriesDevices" EntityType="Self.tblCategoriesDevice" />
           <EntitySet Name="tblCategoriesDevicesLogs" EntityType="Self.tblCategoriesDevicesLog" />
@@ -1447,6 +1475,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="CallLog" ColumnName="CallLog" />
                 <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblCallVehicleStatus">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallVehicleStatu">
+              <MappingFragment StoreEntitySet="tblCallVehicleStatus">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="StoreOrderOperatingId" ColumnName="StoreOrderOperatingId" />
+                <ScalarProperty Name="CountTry" ColumnName="CountTry" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="ModifiledOn" ColumnName="ModifiledOn" />
+                <ScalarProperty Name="LogCall" ColumnName="LogCall" />
+                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
+                <ScalarProperty Name="TypeProduct" ColumnName="TypeProduct" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
