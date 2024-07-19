@@ -127,10 +127,6 @@
     <Compile Include="Jobs\QueueToGatewayPcb30Job.cs" />
     <Compile Include="Jobs\QueueToGatewayPcb40Job.cs" />
     <Compile Include="Jobs\QueueToGatewayRoiJob.cs" />
-    <Compile Include="Models\Request\GetTokenRequest.cs" />
-    <Compile Include="Models\Request\SearchOrderRequest.cs" />
-    <Compile Include="Models\Response\GetTokenResponse.cs" />
-    <Compile Include="Models\Values\OrderState.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
