@@ -1,30 +1,22 @@
-﻿using System;
+﻿using Quartz;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Quartz;
-using log4net;
-using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES_QUEUE_TO_GATEWAY.Models.Response;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
-using XHTD_SERVICES_QUEUE_TO_GATEWAY.Models.Values;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
-using System.Threading;
-using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
-    public class QueueToGatewayClinkerJob : IJob
+    public class QueueToGatewayPcb30Job : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly QueueToGatewayLogger _queueToGatewayLogger;
 
-        public QueueToGatewayClinkerJob(
+        public QueueToGatewayPcb30Job(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             QueueToGatewayLogger queueToGatewayLogger
             )
@@ -42,11 +34,11 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                PushToDbCallClinkerProccesss();
+                PushToDbCallPcb30Proccesss();
             });
         }
 
-        public void PushToDbCallClinkerProccesss()
+        public void PushToDbCallPcb30Proccesss()
         {
             try
             {
@@ -62,29 +54,31 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                 _queueToGatewayLogger.LogError(ex.Message);
             }
         }
+
         public void ProcessPushToDBCall(int LimitVehicle)
         {
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontClinkerYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType("CLINKER");
-                if (vehicleFrontClinkerYard < LimitVehicle)
+                var vehicleFrontPcb30Yard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType("PCB30");
+                if (vehicleFrontPcb30Yard < LimitVehicle)
                 {
-                    ProcessUpdateStepIntoClinkerYard(LimitVehicle - vehicleFrontClinkerYard);
+                    ProcessUpdateStepIntoPcb30Yard(LimitVehicle - vehicleFrontPcb30Yard);
                 }
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($@"ProcessPushToDBCall CLINKER error: {ex.Message}");
+                _queueToGatewayLogger.LogError($@"ProcessPushToDBCall PCB30 error: {ex.Message}");
             }
         }
-        public void ProcessUpdateStepIntoClinkerYard(int topX)
+
+        public void ProcessUpdateStepIntoPcb30Yard(int topX)
         {
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 1 && x.TypeProduct.Equals("CLINKER") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 1 && x.TypeProduct.Equals("PCB30") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
@@ -115,7 +109,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _queueToGatewayLogger.LogError($"ProcessUpdateStepIntoClinkerYard error: " + ex.Message);
+                _queueToGatewayLogger.LogError($"ProcessUpdateStepIntoPCB30Yard error: " + ex.Message);
             }
         }
     }

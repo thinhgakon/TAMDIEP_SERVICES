@@ -26,16 +26,49 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
         {
             await _scheduler.Start();
 
-            // Đồng bộ đơn hàng
-            IJobDetail queueToGatewayJob = JobBuilder.Create<QueueToGatewayClinkerJob>().Build();
-            ITrigger queueToGatewayTrigger = TriggerBuilder.Create()
+            // Đưa Clinker vào hàng đợi gọi loa
+            IJobDetail queueToGatewayClinkerJob = JobBuilder.Create<QueueToGatewayClinkerJob>().Build();
+            ITrigger queueToGatewayClinkerTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(queueToGatewayJob, queueToGatewayTrigger);
+            await _scheduler.ScheduleJob(queueToGatewayClinkerJob, queueToGatewayClinkerTrigger);
+
+            // Đưa Rời vào hàng đợi gọi loa
+            IJobDetail queueToGatewayRoiJob = JobBuilder.Create<QueueToGatewayRoiJob>().Build();
+            ITrigger queueToGatewayRoiTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToGatewayRoiJob, queueToGatewayRoiTrigger);
+
+            // Đưa PCB40 vào hàng đợi gọi loa
+            IJobDetail queueToGatewayPcb40Job = JobBuilder.Create<QueueToGatewayPcb40Job>().Build();
+            ITrigger queueToGatewayPcb40Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToGatewayPcb40Job, queueToGatewayPcb40Trigger);
+
+            // Đưa PCB30 vào hàng đợi gọi loa
+            IJobDetail queueToGatewayPcb30Job = JobBuilder.Create<QueueToGatewayPcb30Job>().Build();
+            ITrigger queueToGatewayPcb30Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToGatewayPcb30Job, queueToGatewayPcb30Trigger);
         }
     }
 }
