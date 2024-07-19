@@ -34,6 +34,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
+                _queueToGatewayLogger.LogInfo($"Start Queue To Gateway ROI: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+
                 PushToDbCallRoiProccesss();
             });
         }
@@ -78,7 +80,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 1 && x.TypeProduct.Equals("ROI") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals("ROI") && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
