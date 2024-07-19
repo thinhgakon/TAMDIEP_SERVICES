@@ -299,7 +299,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 DateTime timeInDate = !string.IsNullOrEmpty(timeIn) ? 
                                        DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
-                                       DateTime.Now;
+                                       DateTime.MinValue;
 
                 var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == orderId
@@ -361,7 +361,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 DateTime timeOutDate = !string.IsNullOrEmpty(timeOut) ?
                                         DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
-                                        DateTime.Now;
+                                        DateTime.MinValue;
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
                 if (timeOutDate > DateTime.Now.AddMinutes(-30))
