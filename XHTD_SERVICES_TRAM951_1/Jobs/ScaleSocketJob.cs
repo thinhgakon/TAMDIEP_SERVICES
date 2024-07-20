@@ -141,5 +141,17 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
+
+        private void SendScale1Message(string name, string message)
+        {
+            try
+            {
+                _notification.SendScale1Message(name, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
     }
 }
