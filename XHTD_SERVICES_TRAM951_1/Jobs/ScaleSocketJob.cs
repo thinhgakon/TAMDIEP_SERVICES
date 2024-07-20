@@ -23,7 +23,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         private readonly Notification _notification;
 
         public const string IP_ADDRESS = "127.0.0.2";
-        public const int PORT = 10000;
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {
@@ -63,7 +62,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 client = new TcpClient();
 
                 // 1. connect
-                client.ConnectAsync(IP_ADDRESS, PORT).Wait(2000);
+                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
 
                 _logger.LogInfo("Connected to controller");
