@@ -119,7 +119,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         public async void ReadDataScale(DateTime time, string value)
         {
-            try 
+            try
             {
                 int currentScaleValue = Int32.Parse(value);
 
@@ -568,8 +568,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             _logger.Info($@"Bật den xanh chieu vao");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
             {
-                if (isHasNotification) 
-                { 
+                if (isHasNotification)
+                {
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
                     SendScale1Message("Notification", $"Bật đèn xanh chiều vào thành công");
                 }
@@ -630,6 +630,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             {
                 _logger.Info($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
-        }
+        }  
     }
 }
