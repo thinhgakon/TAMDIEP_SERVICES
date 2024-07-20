@@ -7,6 +7,8 @@ using XHTD_SERVICES_TRAM951_1.Models.Response;
 using XHTD_SERVICES_TRAM951_1.Hubs;
 using log4net;
 using XHTD_SERVICES.Data.Common;
+using Microsoft.AspNet.SignalR.Messaging;
+using NDTan;
 
 namespace XHTD_SERVICES_TRAM951_1.Business
 {
@@ -29,6 +31,12 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
+            //return new DesicionScaleResponse
+            //{
+            //    Code = "01",
+            //    Message = "Cân thành công"
+            //};
+
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
@@ -45,6 +53,12 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
         {
+            //return new DesicionScaleResponse
+            //{
+            //    Code = "01",
+            //    Message = "Cân thành công"
+            //};
+
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
