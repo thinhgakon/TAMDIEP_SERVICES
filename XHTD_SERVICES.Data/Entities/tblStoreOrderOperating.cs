@@ -108,5 +108,7 @@ namespace XHTD_SERVICES.Data.Entities
         public string UpdateBy { get; set; }
         public Nullable<int> Confirm10 { get; set; }
         public Nullable<System.DateTime> TimeConfirm10 { get; set; }
+        public Nullable<System.Guid> ReferenceId { get; set; }
+        public string ImgConfirm10 { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -47,6 +48,27 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             return res;
         }
+
+        public void UpdateImgConfirm10(string vehicleCode,string img)
+        {
+            try
+            {
+                using (var db = new XHTD_Entities())
+                {
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.DANG_GOI_XE) && (x.IndexOrder2 ?? 0) == 0).ToList();
+                    if (orders == null || orders.Count < 1) return;
+
+                    var currentOrder = orders.FirstOrDefault();
+                    currentOrder.ImgConfirm10 = img;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($@"UpdateIndexOrderForNewConfirm with vehicle {vehicleCode}, {ex.Message}");
+            }
+        }
+
 
         public void UpdateIndexOrderForNewConfirm(string vehicleCode)
         {
