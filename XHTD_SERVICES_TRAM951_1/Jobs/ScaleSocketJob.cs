@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
         private readonly Notification _notification;
+        private readonly string START_CONNECTION_STR = "hello*mbf*[abc123]";
 
         public const string IP_ADDRESS = "127.0.0.2";
 
@@ -45,12 +46,13 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (!DeviceConnected)
+            while (true)
             {
-                ConnectScaleStationModuleFromController();
+                if (!client.Connected)
+                    ConnectScaleStationModuleFromController();
+                else ReadDataFromController();
             }
 
-            ReadDataFromController();
         }
 
         public bool ConnectScaleStationModuleFromController()
@@ -64,10 +66,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 // 1. connect
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-
                 _logger.LogInfo("Connected to controller");
 
                 DeviceConnected = true;
+
+                var data = encoding.GetBytes(START_CONNECTION_STR);
+                stream.Write(data, 0, data.Length);
 
                 return DeviceConnected;
             }
@@ -82,30 +86,30 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void ReadDataFromController()
         {
-            _logger.LogInfo("Reading RFID from Controller ...");
-
-            if (DeviceConnected)
+            if (client.Connected)
             {
-                while (DeviceConnected)
+                while (client.Connected)
                 {
                     try
                     {
+                        _logger.LogInfo("Reading Data scale from Controller ...");
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);
                         var dataStr = encoding.GetString(data);
 
                         _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
-                        string pattern = @"\[Reader\]\[(\d+)\](\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2})\[!\]";
+                        string pattern = @"tdc\*(\d+)\*([\d/ :]+)\*";
+
                         Match match = Regex.Match(dataStr, pattern);
 
-                        int scaleValue; 
+                        int scaleValue;
                         DateTime dateTime;
 
                         if (match.Success)
                         {
                             scaleValue = int.TryParse(match.Groups[1].Value, out int i) ? i : 0;
-                            dateTime = DateTime.ParseExact(match.Groups[2].Value, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                            dateTime = DateTime.ParseExact(match.Groups[2].Value, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
                         }
                         else
                         {
