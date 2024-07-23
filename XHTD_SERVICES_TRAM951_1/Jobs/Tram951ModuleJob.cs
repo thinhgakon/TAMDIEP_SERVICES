@@ -201,11 +201,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (!DeviceConnected)
+            while (!client.Connected)
             {
                 ConnectScaleStationModuleFromController();
             }
-
             ReadDataFromController();
         }
 
@@ -257,7 +256,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 _logger.LogInfo("Connected to controller");
 
                 DeviceConnected = true;
-
                 return DeviceConnected;
             }
             catch (Exception ex)
@@ -331,19 +329,20 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void ReadDataFromController()
         {
-            _logger.LogInfo("Reading RFID from Controller ...");
-
-            if (DeviceConnected)
+            if (client.Connected)
             {
-                while (DeviceConnected)
+                while (client.Connected)
                 {
                     try
                     {
+                        if (Program.IsEnabledRfid == false)
+                            continue;
+                        _logger.LogInfo("Reading RFID from Controller ...");
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);
                         var dataStr = encoding.GetString(data);
 
-                        if(Program.IsLockingRfid == true)
+                        if (Program.IsLockingRfid == true)
                         {
                             _logger.LogInfo($"Nhan tin hieu: {dataStr}");
                         }
@@ -381,10 +380,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         continue;
                     }
                 }
+                AuthenticateScaleStationModuleFromController();
             }
             else
             {
-                DeviceConnected = false;
                 AuthenticateScaleStationModuleFromController();
             }
         }

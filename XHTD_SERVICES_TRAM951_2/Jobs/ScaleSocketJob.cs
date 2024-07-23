@@ -1,15 +1,14 @@
 ﻿using Quartz;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_TRAM951_2;
+using XHTD_SERVICES_TRAM951_2.Hubs;
 
-namespace XHTD_SERVICES_TRAM951_1.Jobs
+namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
     public class ScaleSocketJob : IJob
     {
@@ -23,7 +22,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         private readonly Notification _notification;
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
-        public const string IP_ADDRESS = "192.168.121.14";
+        public const string IP_ADDRESS = "192.168.121.15";
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {
@@ -118,7 +117,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                 continue;
                             }
 
-                            SendScale1Info(dateTime, scaleValue.ToString());
+                            SendScale2Info(dateTime, scaleValue.ToString());
                             new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                         }
 
@@ -137,27 +136,27 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 AuthenticateScaleStationModuleFromController();
             }
         }
-        private void SendScale1Info(DateTime time, string value)
+        private void SendScale2Info(DateTime time, string value)
         {
             try
             {
-                _notification.SendScale1Info(time, value);
+                _notification.SendScale2Info(time, value);
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
-        private void SendScale1Message(string name, string message)
+        private void SendScale2Message(string name, string message)
         {
             try
             {
-                _notification.SendScale1Message(name, message);
+                _notification.SendScale2Message(name, message);
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
