@@ -36,6 +36,16 @@ namespace XHTD_SERVICES_TRAM951_2.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            IJobDetail scaleSocketJob = JobBuilder.Create<ScaleSocketJob>().Build();
+            ITrigger scaleSocketTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Scale_Module_Interval_In_Hours")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(scaleSocketJob, scaleSocketTrigger);
         }
     }
 }

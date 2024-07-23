@@ -335,6 +335,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 {
                     try
                     {
+                        if (Program.IsEnabledRfid == false)
+                            continue;
                         _logger.LogInfo("Reading RFID from Controller ...");
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);

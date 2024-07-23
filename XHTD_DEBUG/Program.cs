@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using log4net;
-using XHTD_SERVICES_TRAM951_1;
-using XHTD_SERVICES_TRAM951_1.Schedules;
+using XHTD_SERVICES_TRAM951_2;
+using XHTD_SERVICES_TRAM951_2.Schedules;
 
 namespace XHTD_DEBUG
 {
