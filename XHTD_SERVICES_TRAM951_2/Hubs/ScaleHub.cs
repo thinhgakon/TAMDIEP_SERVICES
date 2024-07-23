@@ -256,9 +256,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                             _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
-                            // Thông tin cấu hình
-                            //var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
-
                             var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                             var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
