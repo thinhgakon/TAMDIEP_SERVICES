@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
-using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_TRAM951_2.Hubs;
 using XHTD_SERVICES.Data.Common;
 using log4net;
 using S7.Net;
 using System.Threading;
 
-namespace XHTD_SERVICES_TRAM951_1.Devices
+namespace XHTD_SERVICES_TRAM951_2.Devices
 {
     public class S7SensorControl
     {
@@ -26,9 +26,9 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
         private const string SCALE_IN_I = "I0.4"; /*"Q0.0"; */
         private const string SCALE_OUT_I = "I0.5"; /*"Q0.2";*/
 
-        protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_1_CB_1;
+        protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_2_CB_1;
 
-        protected readonly string SCALE_CB_2_CODE = ScaleCode.CODE_951_1_CB_2;
+        protected readonly string SCALE_CB_2_CODE = ScaleCode.CODE_951_2_CB_2;
 
         public S7SensorControl(
             )
