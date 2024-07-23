@@ -31,11 +31,11 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
-            //return new DesicionScaleResponse
-            //{
-            //    Code = "01",
-            //    Message = "Cân thành công"
-            //};
+            return new DesicionScaleResponse
+            {
+                Code = "01",
+                Message = "Cân thành công"
+            };
 
             var resultResponse = new DesicionScaleResponse
             {
@@ -53,11 +53,11 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
         {
-            //return new DesicionScaleResponse
-            //{
-            //    Code = "01",
-            //    Message = "Cân thành công"
-            //};
+            return new DesicionScaleResponse
+            {
+                Code = "01",
+                Message = "cân thành công"
+            };
 
             var resultResponse = new DesicionScaleResponse
             {

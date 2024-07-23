@@ -61,22 +61,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
         }
 
-        //public void OpenManualBarrier(string name)
-        //{
-        //    _logger.Info($"Mo thủ công barrier IN");
-        //    SendMessage("Notification", $"Mở thủ công barrier chiều vào...");
-        //    DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-
-        //    Thread.Sleep(1000);
-
-        //    _logger.Info($"Mo thủ công barrier OUT");
-        //    SendMessage("Notification", $"Mở thủ công barrier chiều ra...");
-        //    DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-
-        //    _logger.Info($"Bat đèn xanh thủ công");
-        //    TurnOnGreenTrafficLight(true);
-        //}
-
         public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
         {
             Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
@@ -275,9 +259,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                             _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
-                            // Thông tin cấu hình
-                            //var isLongVehicle = await DIBootstrapper.Init().Resolve<VehicleBusiness>().IsLongVehicle(scaleInfo.Vehicle);
-
                             var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
                             var unladenWeight = DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().GetUnladenWeight(scaleInfo.Vehicle);
@@ -308,33 +289,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // 3. Cập nhật khối lượng không tải của phương tiện
                                 _logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
                                 await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
-
-                                // 4. Đóng barrier
-                                //_logger.Info($"4. Dong barrier");
-                                //if (isLongVehicle)
-                                //{
-                                //    _logger.Info($"4.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
-
-                                //    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                //    SendScale1Message("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                //}
-                                //else
-                                //{
-                                //    _logger.Info($"4.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
-
-                                //    if (Program.IsBarrierActive)
-                                //    {
-                                //        _logger.Info($"4.2. Dong barrier IN");
-                                //        DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                //        Thread.Sleep(1000);
-                                //        _logger.Info($"4.3. Dong barrier OUT");
-                                //        DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
-                                //    }
-                                //    else
-                                //    {
-                                //        _logger.Info($"4.2. Cau hinh barrier dang TAT");
-                                //    }
-                                //}
 
                                 // 5. Gọi iERP API lưu giá trị cân
                                 _logger.Info($"5. Goi iERP API luu gia tri can");
@@ -376,36 +330,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                         //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
 
-                                    Thread.Sleep(5000);
-
-                                    //// 7. Mở barrier
-                                    //_logger.Info($"7. Mo barrier");
-                                    //if (isLongVehicle)
-                                    //{
-                                    //    _logger.Info($"7.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
-
-                                    //    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                    //    SendScale1Message("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                    //}
-                                    //else
-                                    //{
-                                    //    _logger.Info($"7.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
-
-                                    //    if (Program.IsBarrierActive)
-                                    //    {
-                                    //        _logger.Info($"7.2. Mo barrier IN");
-                                    //        DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //        Thread.Sleep(1000);
-                                    //        _logger.Info($"7.3. Mo barrier OUT");
-                                    //        DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-                                    //    }
-                                    //    else
-                                    //    {
-                                    //        _logger.Info($"7.2. Cau hinh barrier dang TAT");
-                                    //    }
-                                    //}
-
-                                    //Thread.Sleep(3500);
+                                    Thread.Sleep(3000);
 
                                     // 8. Bật đèn xanh
                                     _logger.Info($"8. Bat den xanh");
@@ -448,32 +373,6 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     return;
                                 }
 
-                                //// 3. Đóng barrier
-                                //_logger.Info($"3. Dong barrier");
-                                //if (isLongVehicle)
-                                //{
-                                //    _logger.Info($"3.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG ĐÓNG barrier");
-
-                                //    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                //}
-                                //else
-                                //{
-                                //    _logger.Info($"3.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => ĐÓNG barrier");
-
-                                //    if (Program.IsBarrierActive)
-                                //    {
-                                //        _logger.Info($"3.2. Dong barrier IN");
-                                //        DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleIn();
-                                //        Thread.Sleep(1000);
-                                //        _logger.Info($"3.3. Dong barrier OUT");
-                                //        DIBootstrapper.Init().Resolve<BarrierControl>().CloseBarrierScaleOut();
-                                //    }
-                                //    else
-                                //    {
-                                //        _logger.Info($"3.2. Cau hinh barrier dang TAT");
-                                //    }
-                                //}
-
                                 // 4. Gọi iERP API lưu giá trị cân
                                 _logger.Info($"4. Goi iERP API luu gia tri can");
                                 var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
@@ -495,35 +394,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                     //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
 
-                                    Thread.Sleep(5000);
-
-                                    //// 6. Mở barrier
-                                    //_logger.Info($"6. Mo barrier");
-                                    //if (isLongVehicle)
-                                    //{
-                                    //    _logger.Info($"6.1. {scaleInfo.Vehicle} LA long vehicle => KHÔNG MỞ barrier");
-
-                                    //    SendMessage("Notification", $"{scaleInfo.Vehicle} là phương tiện quá khổ dài. Hệ thống không tự động đóng mở barrier");
-                                    //}
-                                    //else
-                                    //{
-                                    //    _logger.Info($"6.1. {scaleInfo.Vehicle} KHONG PHAI LA long vehicle => MỞ barrier");
-
-                                    //    if (Program.IsBarrierActive)
-                                    //    {
-                                    //        _logger.Info($"6.2. Mo barrier IN");
-                                    //        DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-                                    //        Thread.Sleep(1000);
-                                    //        _logger.Info($"6.3. Mo barrier OUT");
-                                    //        DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-                                    //    }
-                                    //    else
-                                    //    {
-                                    //        _logger.Info($"6.2. Cau hinh barrier dang TAT");
-                                    //    }
-                                    //}
-
-                                    //Thread.Sleep(3500);
+                                    Thread.Sleep(3000);
 
                                     // 7. Bật đèn xanh
                                     _logger.Info($"7. Bat den xanh");
