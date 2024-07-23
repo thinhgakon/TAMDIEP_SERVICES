@@ -201,12 +201,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (true)
+            while (!client.Connected)
             {
-                if (!client.Connected)
-                    ConnectScaleStationModuleFromController();
-                else ReadDataFromController();
+                ConnectScaleStationModuleFromController();
             }
+            ReadDataFromController();
         }
 
         public bool ConnectScaleStationModule()
@@ -379,6 +378,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         continue;
                     }
                 }
+                AuthenticateScaleStationModuleFromController();
             }
             else
             {
