@@ -259,10 +259,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     var doorCurrent = tmp[3]?.ToString(); // Điểm xác thực
                                     var timeCurrent = tmp[0]?.ToString(); // Thời gian xác thực
 
-                                    doorCurrent = "1";
-                                    cardNoCurrent = "123456789";
-                                    timeCurrent = DateTime.Now.ToString();
-
                                     if (Program.IsLockingRfidIn)
                                     {
                                         _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
