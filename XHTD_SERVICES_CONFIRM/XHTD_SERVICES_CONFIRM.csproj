@@ -257,6 +257,7 @@
   <ItemGroup>
     <Compile Include="Business\ScaleApiLib.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
+    <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="ConfirmLogger.cs" />
     <Compile Include="Hubs\ConfirmHub.cs" />

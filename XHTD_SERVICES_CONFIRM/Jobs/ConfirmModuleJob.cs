@@ -19,6 +19,7 @@ using Autofac;
 using XHTD_SERVICES_CONFIRM.Business;
 using XHTD_SERVICES_CONFIRM.Hubs;
 using System.Net.NetworkInformation;
+using XHTD_SERVICES_CONFIRM.Devices;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
@@ -77,8 +78,16 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
+        private readonly string CAMERA_IP = "192.168.13.163";
+        private readonly string CAMERA_USER_NAME = "admin";
+        private readonly string CAMERA_PASSWORD = "tamdiep@35";
+        private readonly string IMG_PATH = "C:\\IMAGE";
+        private readonly int CAMERA_NUMBER = 2;
+
+
+
         public ConfirmModuleJob(
-            StoreOrderOperatingRepository storeOrderOperatingRepository, 
+            StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
@@ -128,7 +137,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 await LoadDevicesInfo();
 
                 AuthenticateConfirmModule();
-            });                                                                                                                     
+            });
         }
 
         private async void ConnectScaleHubAsync()
@@ -238,7 +247,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         ret = GetRTLog(h21, ref buffer[0], buffersize);
                         if (ret >= 0)
                         {
-                            try {
+                            try
+                            {
                                 str = Encoding.Default.GetString(buffer);
                                 tmp = str.Split(',');
 
@@ -263,7 +273,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     // Loại bỏ các tag đã check trước đó
                                     if (tmpInvalidCardNoLst.Count > 10)
                                     {
-                                        tmpInvalidCardNoLst.RemoveRange(0, 3); 
+                                        tmpInvalidCardNoLst.RemoveRange(0, 3);
                                     }
 
                                     if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
@@ -393,6 +403,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                             _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                         }
 
+                                        var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
+
+                                        if (!string.IsNullOrEmpty(img))
+                                        {
+                                            _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent,img);
+                                        }
+
                                         //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
 
                                         //SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
@@ -426,7 +443,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                         SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-                                        _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}" );
+                                        _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
                                     }
 
                                     _confirmLogger.LogInfo($"10. Giai phong RFID IN");
