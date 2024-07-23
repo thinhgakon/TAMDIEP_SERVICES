@@ -113,5 +113,20 @@ namespace XHTD_SERVICES.Helper
         {
             HttpRequest.SendScale1Message(name, message);
         }
+
+        public void SendScale2Sensor(string sensorCode, string status)
+        {
+            HttpRequest.SendScale2Sensor(sensorCode, status);
+        }
+
+        public void SendScale2Info(DateTime time, string value)
+        {
+            HttpRequest.SendScale2Info(time, value);
+        }
+
+        public void SendScale2Message(string name, string message)
+        {
+            HttpRequest.SendScale2Message(name, message);
+        }
     }
 }
