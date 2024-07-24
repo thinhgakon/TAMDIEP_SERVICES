@@ -23,6 +23,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using XHTD_SERVICES_GATEWAY.Devices;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -91,7 +92,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
-
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.168";
         public GatewayModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -142,7 +145,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateGatewayModuleFromController();
+                AuthenticateGatewayModuleFromPegasus();
             });
         }
 
@@ -224,6 +227,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromController();
+        }
+
+        public void AuthenticateGatewayModuleFromPegasus()
+        {
+            // 1. Connect Device
+            DeviceConnected = true;
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromPegasus();
         }
 
         public bool ConnectGatewayModule()
@@ -352,6 +364,48 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 AuthenticateGatewayModule();
             }
         }
+
+        public async void ReadDataFromPegasus()
+        {
+            _gatewayLogger.LogInfo("Reading Pegasus...");
+            while (DeviceConnected)
+            {
+                int port = 0;
+                var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                if (openresult == 0)
+                {
+                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
+
+                    foreach (var item in data)
+                    {
+                        try
+                        {
+                            var cardNoCurrent = ByteArrayToString(item);
+                            Console.WriteLine($"Nhan the {cardNoCurrent}");
+                            // 1.Xác định xe cân vào / ra
+                            var isLuongVao = true;
+
+                            var isLuongRa = false;
+
+                            await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                        }
+                        catch (Exception ex)
+                        {
+                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    _gatewayLogger.LogError($"Disconnected");
+                    Thread.Sleep(2000);
+                }
+                PegasusStaticClassReader.CloseNetPort(PortHandle);
+            }
+
+        }
+
 
         public async void ReadDataFromController()
         {
@@ -987,6 +1041,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
+        }
+
+        public string ByteArrayToString(byte[] b)
+        {
+            return BitConverter.ToString(b).Replace("-", "");
         }
     }
 }

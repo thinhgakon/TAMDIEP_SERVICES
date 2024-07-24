@@ -87,7 +87,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.168";
+        private string PegasusAdr = "192.168.13.16";
 
         public ConfirmModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,

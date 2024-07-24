@@ -260,6 +260,8 @@
   <ItemGroup>
     <Compile Include="Business\ScaleApiLib.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
+    <Compile Include="Devices\PegasusReader.cs" />
+    <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="Devices\S71200Control.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="GatewayLogger.cs" />
