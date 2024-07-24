@@ -36,6 +36,16 @@ namespace XHTD_SERVICES_CONFIRM.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            IJobDetail syncOrderJob2 = JobBuilder.Create<ConfirmModuleJob2>().Build();
+            ITrigger syncOrderTrigger2 = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(syncOrderJob2, syncOrderTrigger2);
         }
     }
 }
