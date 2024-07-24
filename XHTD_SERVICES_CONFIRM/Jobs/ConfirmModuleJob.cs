@@ -87,7 +87,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.1.150";
+        private string PegasusAdr = "192.168.13.162";
 
         public ConfirmModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -520,11 +520,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             if (DeviceConnected)
             {
+                int port = 6000;
                 while (DeviceConnected)
                 {
-                    int port = 0;
-                    var openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    if(openresult == 0)
+                    int openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                    if (openresult == 0)
                     {
                         var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
 
@@ -734,9 +734,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     else
                     {
                         _confirmLogger.LogWarn("Disconnected!");
-                        Thread.Sleep(2000);
                     }
-                   
                     StaticClassReaderB.CloseNetPort(PortHandle);
                 }
             }

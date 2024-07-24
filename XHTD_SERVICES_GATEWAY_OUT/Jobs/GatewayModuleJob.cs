@@ -139,7 +139,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     return;
                 }
 
-                _gatewayLogger.LogInfo("Start gateway service");
+                _gatewayLogger.LogInfo("Start gateway service out");
                 _gatewayLogger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -367,7 +367,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _gatewayLogger.LogInfo("Reading Pegasus...");
+            _gatewayLogger.LogInfo("Reading Pegasus gateway out...");
             while (DeviceConnected)
             {
                 int port = 0;
@@ -375,13 +375,12 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                 if (openresult == 0)
                 {
                     var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
-
                     foreach (var item in data)
                     {
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            Console.WriteLine($"Nhan the {cardNoCurrent}");
+                            Console.WriteLine($"Nhan the {cardNoCurrent} out");
                             // 1.Xác định xe cân vào / ra
                             var isLuongVao = false;
 
@@ -391,14 +390,14 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                         }
                         catch (Exception ex)
                         {
-                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} out");
                             continue;
                         }
                     }
                 }
                 else
                 {
-                    _gatewayLogger.LogError($"Disconnected");
+                    _gatewayLogger.LogError($"Disconnected out");
                     Thread.Sleep(2000);
                 }
                 PegasusStaticClassReader.CloseNetPort(PortHandle);
@@ -474,7 +473,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 if (Program.IsLockingRfidIn)
                 {
-                    _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == out");
                     new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "1");
                     return;
                 }
@@ -488,7 +487,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 if (Program.IsLockingRfidOut)
                 {
-                    _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == out");
                     new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "1");
                     return;
                 }
