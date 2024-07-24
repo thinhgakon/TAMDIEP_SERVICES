@@ -528,7 +528,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         StaticClassReaderB.CloseNetPort(PortHandle);
                         Thread.Sleep(2000);
                         openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        _confirmLogger.LogWarn("Disconnected! 162");
+                        Console.WriteLine("Disconnected! 162");
                     }
 
                     var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);

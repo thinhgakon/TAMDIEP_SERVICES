@@ -525,7 +525,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     int openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
-                        _confirmLogger.LogWarn("Disconnected! 161");
+                        Console.WriteLine("Disconnected! 161");
                         Thread.Sleep(2000);
                         openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     }
