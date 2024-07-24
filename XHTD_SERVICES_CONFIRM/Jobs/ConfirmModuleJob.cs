@@ -734,6 +734,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     else
                     {
                         _confirmLogger.LogWarn("Disconnected!");
+                        Thread.Sleep(2000);
                     }
                    
                     StaticClassReaderB.CloseNetPort(PortHandle);
