@@ -87,7 +87,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.1.150";
+        private string PegasusAdr = "192.168.13.168";
 
         public ConfirmModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -533,7 +533,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             try
                             {
                                 var cardNoCurrent = ByteArrayToString(item);
-
+                                Console.WriteLine($"Nhan the {cardNoCurrent}");
                                 if (Program.IsLockingRfidIn)
                                 {
                                     _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
