@@ -125,7 +125,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                 ORDER BY STATUS ASC";
 
             var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder);
-            var endDate = DateTime.Now;
+            var endDate = DateTime.Now.AddDays(1);
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
