@@ -440,12 +440,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                             _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                         }
 
-                                        var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
+                                        //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
 
-                                        if (!string.IsNullOrEmpty(img))
-                                        {
-                                            _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
-                                        }
+                                        //if (!string.IsNullOrEmpty(img))
+                                        //{
+                                        //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
+                                        //}
 
                                         //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
 
@@ -677,12 +677,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                     }
 
-                                    var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
+                                    //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
 
-                                    if (!string.IsNullOrEmpty(img))
-                                    {
-                                        _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
-                                    }
+                                    //if (!string.IsNullOrEmpty(img))
+                                    //{
+                                    //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
+                                    //}
 
                                     //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
 
