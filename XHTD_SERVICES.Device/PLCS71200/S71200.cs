@@ -12,20 +12,22 @@ namespace XHTD_SERVICES.Device
             _plc = plc;
         }
 
-        public ErrorCode ReadInputPort(string variable)
+        public bool ReadInputPort(string variable)
         {
             try
             {
                 var result = _plc.Read(variable);
                 if (result is bool outputValue && outputValue)
                 {
-                    return ErrorCode.NoError;
+                    return true;
                 }
-                return ErrorCode.ReadData;
+                else {
+                    return false;
+                }
             }
             catch (Exception)
             {
-                return ErrorCode.ReadData;
+                return false;
             }
 
         }
