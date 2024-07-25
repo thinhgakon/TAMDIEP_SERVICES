@@ -184,7 +184,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 {
                     if (!Program.IsLockingScale)
                     {
-                        var isInValidSensor = DIBootstrapper.Init().Resolve<SensorControl>().IsInValidSensorScale();
+                        var isInValidSensor = DIBootstrapper.Init().Resolve<S7SensorControl>().IsInValidSensorScale();
                         if (isInValidSensor)
                         {
                             SendSensor(SCALE_CODE, "1");
