@@ -19,9 +19,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private const string IP_ADDRESS = "192.168.13.166";
         private const short RACK = 0;
         private const short SLOT = 1;
-        private const string GATE_IN = "I0.4"; 
+        private const string GATE_IN = "I0.4";
 
-        private readonly string CAMERA_IP = "192.168.13.169";
+
+        private readonly string CAMERA_IP = "192.168.13.167";
         private readonly string CAMERA_USER_NAME = "admin";
         private readonly string CAMERA_PASSWORD = "tamdiep@35";
         private readonly string IMG_PATH = "C:\\IMAGE";
@@ -49,42 +50,55 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(() =>
             {
-                _sensor.Open();
                 Capture();
-                _sensor.Close();
             });
         }
 
 
         public void Capture()
         {
+            if (Program.IsCapturing)
+            {
+                Console.WriteLine("Capturing...");
+                return;
+            }
+
+            Program.IsCapturing = true;
             try
             {
+                _sensor.Open();
                 if (_sensor.IsConnected == false)
                 {
                     Console.WriteLine("Can not connect sensor!");
+                    _sensor.Close();
+                    Program.IsCapturing = false;
                     return;
                 }
                 var status = _sensor.ReadInputPort(GATE_IN);
                 if (status == DEFAULT_STATUS)
                 {
                     Console.WriteLine($"Status not change: {status}");
+                    _sensor.Close();
+                    Program.IsCapturing = false;
                     return;
                 }
-                Thread.Sleep(2000);
 
                 var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CHECKIN", CAMERA_NUMBER, IMG_PATH);
 
                 if (string.IsNullOrEmpty(img))
                 {
                     Console.WriteLine($"Capture fail");
+                    _sensor.Close();
+                    Program.IsCapturing = false;
                     return;
                 }
 
-                while (_sensor.ReadInputPort(GATE_IN) == DEFAULT_STATUS)
+                Console.WriteLine("Wait to Barrier off");
+                while (status != DEFAULT_STATUS)
                 {
-                    Thread.Sleep(1000);
+                    status = _sensor.ReadInputPort(GATE_IN);
                 }
+                Console.WriteLine("Barrier off success");
 
                 var attachmentId = _attachmentRepository.Create(new XHTD_SERVICES.Data.Entities.tblAttachment()
                 {
@@ -97,6 +111,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 if (attachmentId == 0)
                 {
                     Console.WriteLine($"Add attachment fail");
+                    _sensor.Close();
+                    Program.IsCapturing = false;
                     return;
                 }
 
@@ -113,6 +129,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 Console.WriteLine($"Capture fail {ex.Message}");
             }
+            Program.IsCapturing = false;
         }
     }
 }

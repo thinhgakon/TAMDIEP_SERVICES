@@ -37,8 +37,8 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
-            // Reset PLC cổng bảo vệ
-            IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
+            //Reset PLC cổng bảo vệ
+           IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
             ITrigger resetPLCTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -53,10 +53,20 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(1)
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(captureJob, captureTrigger);
+
+            IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger reconnectTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
         }
     }
 }

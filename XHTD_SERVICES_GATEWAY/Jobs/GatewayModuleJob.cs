@@ -232,6 +232,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         public void AuthenticateGatewayModuleFromPegasus()
         {
             // 1. Connect Device
+            int port = PortHandle;
+            PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             DeviceConnected = true;
 
             // 2. Đọc dữ liệu từ thiết bị
@@ -370,38 +372,27 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _gatewayLogger.LogInfo("Reading Pegasus...");
             while (DeviceConnected)
             {
-                int port = 0;
-                var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                if (openresult == 0)
+                var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
+
+                foreach (var item in data)
                 {
-                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
-
-                    foreach (var item in data)
+                    try
                     {
-                        try
-                        {
-                            var cardNoCurrent = ByteArrayToString(item);
-                            Console.WriteLine($"Nhan the {cardNoCurrent}");
-                            // 1.Xác định xe cân vào / ra
-                            var isLuongVao = true;
+                        var cardNoCurrent = ByteArrayToString(item);
+                        Console.WriteLine($"Nhan the {cardNoCurrent}");
+                        // 1.Xác định xe cân vào / ra
+                        var isLuongVao = true;
 
-                            var isLuongRa = false;
+                        var isLuongRa = false;
 
-                            await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
-                        }
-                        catch (Exception ex)
-                        {
-                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                            continue;
-                        }
+                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                    }
+                    catch (Exception ex)
+                    {
+                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
                     }
                 }
-                else
-                {
-                    _gatewayLogger.LogError($"Disconnected");
-                    Thread.Sleep(2000);
-                }
-                PegasusStaticClassReader.CloseNetPort(PortHandle);
             }
 
         }
