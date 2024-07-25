@@ -40,6 +40,9 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingVoice" Width="1.5" PointX="0.75" PointY="17.75" IsExpanded="true" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblTroughTypeProduct_tblTrough_TroughCode" ManuallyRouted="false" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCheckInOut" Width="1.5" PointX="3.375" PointY="17.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAttachment" Width="1.5" PointX="1.125" PointY="22.125" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblCheckInOut_tblAttachment" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

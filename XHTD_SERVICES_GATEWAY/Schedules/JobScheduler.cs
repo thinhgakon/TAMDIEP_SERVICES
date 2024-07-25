@@ -26,8 +26,8 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
         {
             await _scheduler.Start();
 
-            // Xác thực cổng bảo vệ
-            IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
+            //Xác thực cổng bảo vệ
+           IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -47,6 +47,16 @@ namespace XHTD_SERVICES_GATEWAY.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
+
+            IJobDetail captureJob = JobBuilder.Create<CaptureInOutJob>().Build();
+            ITrigger captureTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(1)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(captureJob, captureTrigger);
         }
     }
 }

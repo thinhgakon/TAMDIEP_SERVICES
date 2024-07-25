@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_CONFIRM.Devices
+namespace XHTD_SERVICES_GATEWAY.Devices
 {
     public class HikvisionStreamCamera
     {
