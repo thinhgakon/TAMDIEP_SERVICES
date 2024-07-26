@@ -117,6 +117,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                 continue;
                             }
 
+                            if(scaleValue == 0)
+                            {
+                                continue;
+                            }
+
                             SendScale2Info(dateTime, scaleValue.ToString());
                             new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                         }

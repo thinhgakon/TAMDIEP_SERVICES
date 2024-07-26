@@ -420,7 +420,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {cardNoCurrent}");
+                        Console.WriteLine($"Nhan the {PegasusAdr} {cardNoCurrent}");
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
