@@ -77,6 +77,39 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     return;
                 }
                 var status = _sensor.ReadInputPort(GATE_IN);
+
+                if (status)
+                {
+                    Program.IsBarrierOpen = true;
+                }
+                else
+                {
+                    Program.IsBarrierOpen = false;
+                }
+
+                if (Program.IsBarrierOpen)
+                {
+                    Console.WriteLine("Barrier dang MO");
+                    if (Program.IsFirstTimeChange)
+                    {
+                        Console.WriteLine("LAN DAU");
+
+                        // Thực hiện nghiệp vụ chụp ảnh ở đây 
+
+                        Program.IsFirstTimeChange = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("KHONG PHAI LAN DAU");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Barrier dang DONG");
+
+                    Program.IsFirstTimeChange = true;
+                }
+
                 if (status == DEFAULT_STATUS)
                 {
                     Console.WriteLine($"Status not change: {status}");
