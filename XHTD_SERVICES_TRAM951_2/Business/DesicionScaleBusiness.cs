@@ -29,6 +29,12 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public DesicionScaleResponse MakeDecisionScaleIn(string deliveryCode, int weight)
         {
+            return  new DesicionScaleResponse
+            {
+                Code = "01",
+                Message = "Cân thành công"
+            };
+
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
@@ -45,6 +51,12 @@ namespace XHTD_SERVICES_TRAM951_2.Business
 
         public async Task<DesicionScaleResponse> MakeDecisionScaleOut(string deliveryCode, int weight)
         {
+            return new DesicionScaleResponse
+            {
+                Code = "01",
+                Message = "Cân thành công"
+            };
+
             var resultResponse = new DesicionScaleResponse
             {
                 Code = "02",
