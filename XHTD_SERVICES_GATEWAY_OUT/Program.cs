@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_CONFIRM
+namespace XHTD_SERVICES_GATEWAY_OUT
 {
     internal static class Program
     {
@@ -16,8 +16,6 @@ namespace XHTD_SERVICES_CONFIRM
         public static bool IsLockingRfidIn = false;
         public static bool IsLockingRfidOut = false;
         public static DateTime? SendSmsLastTime = null;
-        public static bool IsLockingRfid = false;
-
 
         static void Main()
         {

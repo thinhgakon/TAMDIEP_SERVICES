@@ -73,6 +73,9 @@
     <Compile Include="Entities\tblAccountGroupFunction.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblAttachment.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblCallToTrough.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -86,6 +89,9 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblCategory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblCheckInOut.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblCompany.cs">
@@ -187,7 +193,9 @@
     <Compile Include="Models\Values\ConfirmType.cs" />
     <Compile Include="Models\Values\OrderStep.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AttachmentRepository.cs" />
     <Compile Include="Repositories\CallToTroughRepository.cs" />
+    <Compile Include="Repositories\CheckInOutRepository.cs" />
     <Compile Include="Repositories\MachineRepository .cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.ConfirmationPoint.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Led.cs" />

@@ -24,7 +24,7 @@ using PK_UHF_Test;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
-    public class ConfirmModuleJob : IJob
+    public class ConfirmModuleJob2 : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -87,9 +87,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.162";
+        private string PegasusAdr = "192.168.13.161";
 
-        public ConfirmModuleJob(
+        public ConfirmModuleJob2(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
@@ -516,7 +516,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _confirmLogger.LogInfo("162 Reading RFID from Pegasus ...");
+            _confirmLogger.LogInfo("161 Reading RFID from Pegasus ...");
             int port = 6000;
             while (true)
             {
@@ -525,22 +525,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     int openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
-                        StaticClassReaderB.CloseNetPort(PortHandle);
+                        Console.WriteLine("Disconnected! 161");
                         Thread.Sleep(2000);
                         openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        Console.WriteLine("Disconnected! 162");
                     }
-
                     var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
                     foreach (var item in data)
                     {
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            Console.WriteLine($"Nhan the {cardNoCurrent}");
+                            Console.WriteLine($"161 Nhan the {cardNoCurrent}");
                             if (Program.IsLockingRfidIn)
                             {
-                                _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+                                _confirmLogger.LogInfo($"161 == Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
                                 new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
                             }
