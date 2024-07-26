@@ -453,43 +453,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("IN");
-
-                    Thread.Sleep(3000);
-
-                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                    //if (TurnOnGreenTrafficLight("IN"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                    //}
-
-                    //if (isNormalOrder)
-                    //{
-                    //    try
-                    //    {
-                    //        var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
-                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                    //    }
-                    //}
-
-                    Thread.Sleep(12000);
-
-                    _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                    if (TurnOnRedTrafficLight("IN"))
-                    {
-                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                    }
                 }
                 else
                 {
@@ -525,30 +488,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("OUT");
-
-                    Thread.Sleep(3000);
-
-                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                    //if (TurnOnGreenTrafficLight("OUT"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                    //}
-
-                    //Thread.Sleep(15000);
-
-                    //_gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                    //if (TurnOnRedTrafficLight("OUT"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                    //}
                 }
                 else
                 {
@@ -693,38 +632,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
 
             return ipAddress;
-        }
-
-        public bool TurnOnGreenTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"7.1. IP đèn: {ipAddress}");
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOnGreenOffRed();
-        }
-
-        public bool TurnOnRedTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"8.1. IP đèn: {ipAddress}");
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOffGreenOnRed();
         }
 
         public async Task StartIfNeededAsync()
