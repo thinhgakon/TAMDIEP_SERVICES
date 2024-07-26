@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using log4net;
 using XHTD_SERVICES_GATEWAY_OUT.Jobs;
 using System.Configuration;
+using XHTD_SERVICES_GATEWAY.Jobs;
 
 namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
 {
@@ -47,6 +48,26 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
+
+            IJobDetail captureJob = JobBuilder.Create<CaptureInOutJob>().Build();
+            ITrigger captureTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(captureJob, captureTrigger);
+
+            IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger reconnectTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
         }
     }
 }

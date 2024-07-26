@@ -16,7 +16,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT
         public static bool IsLockingRfidIn = false;
         public static bool IsLockingRfidOut = false;
         public static DateTime? SendSmsLastTime = null;
-
+        public static bool IsCapturing = false;
         static void Main()
         {
             ServiceBase[] ServicesToRun;
