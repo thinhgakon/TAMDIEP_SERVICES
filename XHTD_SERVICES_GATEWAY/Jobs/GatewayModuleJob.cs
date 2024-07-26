@@ -233,9 +233,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             // 1. Connect Device
             int port = PortHandle;
-            PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            while(openResult != 0)
+            {
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            }
+            _gatewayLogger.LogInfo("Connected Pegasus");
             DeviceConnected = true;
-
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
         }

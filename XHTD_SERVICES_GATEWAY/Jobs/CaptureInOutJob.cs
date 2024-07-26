@@ -32,13 +32,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private readonly AttachmentRepository _attachmentRepository;
         private readonly CheckInOutRepository _checkInOutRepository;
+        protected readonly GatewayLogger _gatewayLogger;
 
-        public CaptureInOutJob(AttachmentRepository attachmentRepository, CheckInOutRepository checkInOutRepository)
+        public CaptureInOutJob(AttachmentRepository attachmentRepository, CheckInOutRepository checkInOutRepository, GatewayLogger gatewayLogger)
         {
             var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
             _sensor = new S71200Sensor(plc);
             this._attachmentRepository = attachmentRepository;
             _checkInOutRepository = checkInOutRepository;
+            _gatewayLogger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -127,7 +129,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Capture fail {ex.Message}");
+                _gatewayLogger.LogError($"Capture fail {ex.Message}");
+                _gatewayLogger.LogError($"Capture fail {ex.StackTrace}");
             }
             Program.IsCapturing = false;
         }

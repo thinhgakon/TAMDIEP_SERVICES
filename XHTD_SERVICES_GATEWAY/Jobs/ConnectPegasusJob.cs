@@ -15,6 +15,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.168";
+        protected readonly GatewayLogger _gatewayLogger;
+
+        public ConnectPegasusJob(GatewayLogger gatewayLogger)
+        {
+            _gatewayLogger = gatewayLogger;
+        }
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -48,6 +54,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     Thread.Sleep(1000);
                 }
+                _gatewayLogger.LogWarn("Connect fail. Start reconnect");
             }
         }
     }
