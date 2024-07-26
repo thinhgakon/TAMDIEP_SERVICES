@@ -41,8 +41,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly PLCBarrier _barrier;
 
-        protected readonly TCPTrafficLight _trafficLight;
-
         protected readonly Notification _notification;
 
         protected readonly GatewayLogger _gatewayLogger;
@@ -57,23 +55,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
+        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa;
 
         protected const string CBV_ACTIVE = "CBV_ACTIVE";
 
         private static bool isActiveService = true;
-
-        protected const string C3400_CBV_IP_ADDRESS = "10.0.9.1";
-
-        protected const string M221_CBV_IP_ADDRESS = "10.0.9.2";
-
-        protected const string C3400_951_2_IP_ADDRESS = "10.0.9.5";
-
-        private IHubProxy HubProxy { get; set; }
-
-        private string ServerURI = URIConfig.SIGNALR_GATEWAY_SERVICE_URL;
-
-        private HubConnection Connection { get; set; }
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -95,6 +81,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.168";
+
         public GatewayModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -113,7 +100,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
             _barrier = barrier;
-            _trafficLight = trafficLight;
             _notification = notification;
             _gatewayLogger = gatewayLogger;
         }
@@ -127,9 +113,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                // Connect Scale Hub
-                ConnectScaleHubAsync();
-
                 // Get System Parameters
                 await LoadSystemParameters();
 
@@ -147,26 +130,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 AuthenticateGatewayModuleFromPegasus();
             });
-        }
-
-        private async void ConnectScaleHubAsync()
-        {
-            Connection = new HubConnection(ServerURI);
-            Connection.Closed += Connection_Closed;
-            HubProxy = Connection.CreateHubProxy("ScaleHub");
-            try
-            {
-                await Connection.Start();
-                _gatewayLogger.LogInfo($"Connected scale hub {ServerURI}");
-            }
-            catch (System.Net.Http.HttpRequestException ex)
-            {
-                _gatewayLogger.LogInfo($"Connect failed scale hub {ServerURI}");
-            }
-        }
-
-        private void Connection_Closed()
-        {
         }
 
         public async Task LoadSystemParameters()
@@ -200,9 +163,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             barrierVao = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-IN");
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
-
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
         }
 
         public void AuthenticateGatewayModuleFromPegasus()
@@ -542,16 +502,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
             }
             return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
-        }
-
-        public async Task StartIfNeededAsync()
-        {
-            if (Connection.State == ConnectionState.Disconnected)
-            {
-                await Connection.Start();
-
-                _gatewayLogger.LogInfo($"Reconnect Connection: {Connection.State}");
-            }
         }
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string vehicle = null)
