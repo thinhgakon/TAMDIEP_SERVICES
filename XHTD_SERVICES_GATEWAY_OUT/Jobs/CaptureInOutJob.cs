@@ -85,7 +85,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     return;
                 }
 
-                var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CHECKIN", CAMERA_NUMBER, IMG_PATH);
+                var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CHECKOUT", CAMERA_NUMBER, IMG_PATH);
 
                 if (string.IsNullOrEmpty(img))
                 {
