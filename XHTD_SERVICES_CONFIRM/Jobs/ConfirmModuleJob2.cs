@@ -202,11 +202,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public void AuthenticateConfirmModuleFromPegasus()
         {
-            // 1. Connect Device
-            //while (!DeviceConnected)
-            //{
-            //    ConnectConfirmationPointModuleFromPegasus();
-            //}
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            while (openResult != 0)
+            {
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            }
+            _confirmLogger.LogInfo($"Connected Pegasus {PegasusAdr}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -522,13 +524,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 while (!Program.IsLockingRfid)
                 {
-                    int openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
-                    {
-                        Console.WriteLine("Disconnected! 161");
-                        Thread.Sleep(2000);
-                        openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    }
                     var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
                     foreach (var item in data)
                     {
@@ -734,8 +729,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             continue;
                         }
                     }
-
-                    StaticClassReaderB.CloseNetPort(PortHandle);
                 }
             }
         }
