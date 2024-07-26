@@ -436,7 +436,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (isUpdatedOrder)
                     {
-                        SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
                         _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
                     }
                 }
@@ -536,79 +535,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public bool OpenBarrier(string luong)
-        {
-            var isConnectSuccessed = false;
-            int count = 0;
-
-            try
-            {
-                int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-                int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
-
-                while (!isConnectSuccessed && count < 6)
-                {
-                    count++;
-
-                    _gatewayLogger.LogInfo($@"OpenBarrier: count={count}");
-
-                    M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
-
-                    if (isConnected == M221Result.SUCCESS)
-                    {
-                        _barrier.ResetOutputPort(portNumberDeviceIn);
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan1 == M221Result.SUCCESS)
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan2 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan2 == M221Result.SUCCESS)
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        _barrier.Close();
-
-                        _gatewayLogger.LogWarn($"OpenBarrier count={count} thanh cong");
-
-                        isConnectSuccessed = true;
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
-
-                        Thread.Sleep(1000);
-                    }
-                }
-
-                return isConnectSuccessed;
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"OpenBarrier Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                return false;
-            }
-        }
-
         public bool OpenS7Barrier(string luong)
         {
             if (luong == "IN")
@@ -616,22 +542,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
             }
             return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
-        }
-
-        public string GetTrafficLightIpAddress(string code)
-        {
-            var ipAddress = "";
-
-            if (code == "IN")
-            {
-                ipAddress = trafficLightIn?.IpAddress;
-            }
-            else if (code == "OUT")
-            {
-                ipAddress = trafficLightOut?.IpAddress;
-            }
-
-            return ipAddress;
         }
 
         public async Task StartIfNeededAsync()
@@ -659,65 +569,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             //{
             //    _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
             //}
-        }
-
-        public void SendRFIDInfo(bool isLuongVao, string cardNo)
-        {
-            try
-            {
-                if (isLuongVao)
-                {
-                    _notification.SendNotification(
-                        "GATE_WAY_RFID",
-                        null,
-                        1,
-                        cardNo,
-                        0,
-                        null,
-                        null,
-                        0,
-                        null,
-                        null,
-                        null
-                    );
-
-                    //_gatewayLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
-                }
-                else
-                {
-                    _notification.SendNotification(
-                       "GATE_WAY_OUT_RFID",
-                       null,
-                       1,
-                       cardNo,
-                       1,
-                       null,
-                       null,
-                       0,
-                       null,
-                       null,
-                       null
-                   );
-
-                    //_gatewayLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
-        public void SendInfoNotification(string receiver, string message)
-        {
-            try
-            {
-                _notification.SendInforNotification(receiver, message);
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
         }
 
         public void SendNotificationAPI(string inout, int status, string cardNo, string message, string vehicle = null)
