@@ -95,6 +95,40 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         Console.WriteLine("LAN DAU");
 
                         // Thực hiện nghiệp vụ chụp ảnh ở đây 
+                        var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CHECKIN", CAMERA_NUMBER, IMG_PATH);
+
+                        if (string.IsNullOrEmpty(img))
+                        {
+                            Console.WriteLine($"Capture fail");
+                            _sensor.Close();
+                            Program.IsCapturing = false;
+                            return;
+                        }
+
+                        var attachmentId = _attachmentRepository.Create(new XHTD_SERVICES.Data.Entities.tblAttachment()
+                        {
+                            Url = img,
+                            Extension = "JPG",
+                            Type = "CHECKIN",
+                            Title = $"IN_{DateTime.Now:ddMMyyyy_HHmmss}"
+                        });
+
+                        if (attachmentId == 0)
+                        {
+                            Console.WriteLine($"Add attachment fail");
+                            _sensor.Close();
+                            Program.IsCapturing = false;
+                            return;
+                        }
+
+                        _checkInOutRepository.Create(new XHTD_SERVICES.Data.Entities.tblCheckInOut()
+                        {
+                            AttactmentId = attachmentId,
+                            CheckInTime = DateTime.Now,
+                            LogProcess = $"#CheckIn time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
+                        });
+
+                        Console.WriteLine("Capture success");
 
                         Program.IsFirstTimeChange = false;
                     }
@@ -109,56 +143,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     Program.IsFirstTimeChange = true;
                 }
-
-                if (status == DEFAULT_STATUS)
-                {
-                    Console.WriteLine($"Status not change: {status}");
-                    _sensor.Close();
-                    Program.IsCapturing = false;
-                    return;
-                }
-
-                var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CHECKIN", CAMERA_NUMBER, IMG_PATH);
-
-                if (string.IsNullOrEmpty(img))
-                {
-                    Console.WriteLine($"Capture fail");
-                    _sensor.Close();
-                    Program.IsCapturing = false;
-                    return;
-                }
-
-                Console.WriteLine("Wait to Barrier off");
-                while (status != DEFAULT_STATUS)
-                {
-                    status = _sensor.ReadInputPort(GATE_IN);
-                }
-                Console.WriteLine("Barrier off success");
-
-                var attachmentId = _attachmentRepository.Create(new XHTD_SERVICES.Data.Entities.tblAttachment()
-                {
-                    Url = img,
-                    Extension = "JPG",
-                    Type = "CHECKIN",
-                    Title = $"IN_{DateTime.Now:ddMMyyyy_HHmmss}"
-                });
-
-                if (attachmentId == 0)
-                {
-                    Console.WriteLine($"Add attachment fail");
-                    _sensor.Close();
-                    Program.IsCapturing = false;
-                    return;
-                }
-
-                _checkInOutRepository.Create(new XHTD_SERVICES.Data.Entities.tblCheckInOut()
-                {
-                    AttactmentId = attachmentId,
-                    CheckInTime = DateTime.Now,
-                    LogProcess = $"#CheckIn time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
-                });
-
-                Console.WriteLine("Capture success");
             }
             catch (Exception ex)
             {
