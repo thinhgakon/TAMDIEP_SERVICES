@@ -106,8 +106,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     Url = img,
                     Extension = "JPG",
-                    Type = "CHECKIN",
-                    Title = $"IN_{DateTime.Now:ddMMyyyy_HHmmss}"
+                    Type = "CHECKOUT",
+                    Title = $"OUT_{DateTime.Now:ddMMyyyy_HHmmss}"
                 });
 
                 if (attachmentId == 0)
@@ -121,8 +121,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 _checkInOutRepository.Create(new XHTD_SERVICES.Data.Entities.tblCheckInOut()
                 {
                     AttactmentId = attachmentId,
-                    CheckInTime = DateTime.Now,
-                    LogProcess = $"#CheckIn time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
+                    CheckOutTime = DateTime.Now,
+                    LogProcess = $"#Checkout time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
                 });
 
                 Console.WriteLine("Capture success");
