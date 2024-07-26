@@ -22,7 +22,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         private readonly Notification _notification;
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
-        public const string IP_ADDRESS = "192.168.121.15";
+        public const string IP_ADDRESS = "192.168.13.203";
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {

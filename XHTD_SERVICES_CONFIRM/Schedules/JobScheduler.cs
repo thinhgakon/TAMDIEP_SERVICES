@@ -46,6 +46,16 @@ namespace XHTD_SERVICES_CONFIRM.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob2, syncOrderTrigger2);
+
+            IJobDetail ConnectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger ConnectPegasusTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(ConnectPegasusJob, ConnectPegasusTrigger);
         }
     }
 }

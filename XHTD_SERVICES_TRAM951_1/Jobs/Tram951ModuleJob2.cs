@@ -11,19 +11,18 @@ using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
+using XHTD_SERVICES_TRAM951_1.Models.Response;
+using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_TRAM951_1.Devices;
+using XHTD_SERVICES_TRAM951_1.Business;
 using XHTD_SERVICES.Helper;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
-using XHTD_SERVICES_TRAM951_2;
-using XHTD_SERVICES_TRAM951_2.Models.Response;
-using XHTD_SERVICES_TRAM951_2.Hubs;
-using XHTD_SERVICES_TRAM951_2.Business;
-using XHTD_SERVICES_TRAM951_2.Devices;
 
-namespace XHTD_SERVICES_TRAM951_2.Jobs
+namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
-    public class Tram951ModuleJob : IJob
+    public class Tram951ModuleJob2 : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -43,29 +42,29 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly Logger _logger;
 
-        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
 
-        protected readonly string SCALE_SIGNALR_RFID_CODE = "TRAM951_2_RFID";
+        protected readonly string SCALE_SIGNALR_RFID_CODE = "TRAM951_1_RFID";
 
-        protected readonly string SCALE_DELIVERY_CODE = "TRAM951_2_DELIVERY_CODE";
+        protected readonly string SCALE_DELIVERY_CODE = "TRAM951_1_DELIVERY_CODE";
 
-        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_2_IS_LOCKING_RFID";
+        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_1_IS_LOCKING_RFID";
 
-        protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
+        protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
-        protected const string SERVICE_ACTIVE_CODE = "TRAM951_2_ACTIVE";
+        protected const string SERVICE_ACTIVE_CODE = "TRAM951_1_ACTIVE";
 
-        protected const string SERVICE_SENSOR_ACTIVE_CODE = "TRAM951_2_SENSOR_ACTIVE";
+        protected const string SERVICE_SENSOR_ACTIVE_CODE = "TRAM951_1_SENSOR_ACTIVE";
 
-        protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_2_BARRIER_ACTIVE";
+        protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_1_BARRIER_ACTIVE";
 
-        protected readonly string SCALE_CURRENT_RFID = "SCALE_2_CURRENT_RFID";
+        protected readonly string SCALE_CURRENT_RFID = "SCALE_1_CURRENT_RFID";
 
-        protected readonly string SCALE_2_IS_LOCKING_RFID = "SCALE_2_IS_LOCKING_RFID";
+        protected readonly string SCALE_1_IS_LOCKING_RFID = "SCALE_1_IS_LOCKING_RFID";
 
         private static bool isActiveService = true;
 
@@ -91,16 +90,16 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
 
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.187";
-
         static ASCIIEncoding encoding = new ASCIIEncoding();
 
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
-        public Tram951ModuleJob(
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.182";
+
+        public Tram951ModuleJob2(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
@@ -390,7 +389,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                             continue;
                         }
 
-                        if (doorCurrent != 3 && doorCurrent != 4) continue;
+                        if (doorCurrent != 1 && doorCurrent != 2) continue;
 
                         ReadDataProcess(cardNoCurrent);
                     }
@@ -420,7 +419,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {cardNoCurrent}");
+                        Console.WriteLine($"Nhan the {PegasusAdr}: {cardNoCurrent}");
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
@@ -435,7 +434,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         public async void ReadDataProcess(string cardNoCurrent)
         {
             new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendScale2Message($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendScale1Message($"{SCALE_1_IS_LOCKING_RFID}", $"{cardNoCurrent}");
             if (Program.IsEnabledRfid == false)
             {
                 return;
@@ -464,7 +463,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 return;
             }
 
-            SendScale2Message(SCALE_CURRENT_RFID, cardNoCurrent);
+            SendScale1Message(SCALE_CURRENT_RFID, cardNoCurrent);
 
             _logger.LogInfo("----------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
@@ -483,7 +482,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     )
                 {
                     new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-                    SendScale2Message("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                    SendScale1Message("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
                     // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                     return;
@@ -512,7 +511,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
-                SendScale2Message($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendScale1Message($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -528,7 +527,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -540,8 +539,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendScale2Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -553,8 +552,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                 new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                SendScale2Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpCardNoLst.Add(newCardNoLog);
 
@@ -687,15 +686,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
         }
 
-        private void SendScale2Message(string name, string message)
+        private void SendScale1Message(string name, string message)
         {
             try
             {
-                _notification.SendScale2Message(name, message);
+                _notification.SendScale1Message(name, message);
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

@@ -20,9 +20,9 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
 
         protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
 
-        protected readonly string SCALE_DGT_IN_URL = "10.0.9.7";
+        protected readonly string SCALE_DGT_IN_URL = "192.168.13.178";
 
-        protected readonly string SCALE_DGT_OUT_URL = "10.0.9.8";
+        protected readonly string SCALE_DGT_OUT_URL = "192.168.13.185";
 
         public TrafficLightControl(
             TCPTrafficLight trafficLight

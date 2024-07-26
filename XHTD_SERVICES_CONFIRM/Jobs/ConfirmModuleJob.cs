@@ -202,11 +202,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public void AuthenticateConfirmModuleFromPegasus()
         {
-            // 1. Connect Device
-            //while (!DeviceConnected)
-            //{
-            //    ConnectConfirmationPointModuleFromPegasus();
-            //}
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            while (openResult != 0)
+            {
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            }
+            _confirmLogger.LogInfo($"Connected Pegasus {PegasusAdr}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -516,21 +518,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _confirmLogger.LogInfo("162 Reading RFID from Pegasus ...");
-            int port = 6000;
+            _confirmLogger.LogInfo($"Reading RFID from Pegasus {PegasusAdr} ...");
             while (true)
             {
                 while (!Program.IsLockingRfid)
                 {
-                    int openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
-                    {
-                        StaticClassReaderB.CloseNetPort(PortHandle);
-                        Thread.Sleep(2000);
-                        openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        Console.WriteLine("Disconnected! 162");
-                    }
-
                     var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
                     foreach (var item in data)
                     {
@@ -736,8 +728,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             continue;
                         }
                     }
-
-                    StaticClassReaderB.CloseNetPort(PortHandle);
                 }
             }
         }

@@ -95,6 +95,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.181";
+
         public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -142,7 +146,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 // Get devices info
                 await LoadDevicesInfo();
 
-                AuthenticateScaleStationModuleFromController();
+                AuthenticateGatewayModuleFromPegasus();
             });
         }
 
@@ -206,6 +210,21 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 ConnectScaleStationModuleFromController();
             }
             ReadDataFromController();
+        }
+
+        public void AuthenticateGatewayModuleFromPegasus()
+        {
+            // 1. Connect Device
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            while (openResult != 0)
+            {
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            }
+            _logger.LogInfo($"Connected Pegasus {PegasusAdr}");
+            DeviceConnected = true;
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromPegasus();
         }
 
         public bool ConnectScaleStationModule()
@@ -385,6 +404,30 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             else
             {
                 AuthenticateScaleStationModuleFromController();
+            }
+        }
+
+        public void ReadDataFromPegasus()
+        {
+            _logger.LogInfo($"Reading Pegasus {PegasusAdr}...");
+            while (DeviceConnected)
+            {
+                var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
+
+                foreach (var item in data)
+                {
+                    try
+                    {
+                        var cardNoCurrent = ByteArrayToString(item);
+                        Console.WriteLine($"Nhan the {PegasusAdr}: {cardNoCurrent}");
+                        ReadDataProcess(cardNoCurrent);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
             }
         }
 
@@ -653,6 +696,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
+        }
+
+        public string ByteArrayToString(byte[] b)
+        {
+            return BitConverter.ToString(b).Replace("-", "");
         }
     }
 }
