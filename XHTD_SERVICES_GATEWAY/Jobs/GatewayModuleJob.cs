@@ -205,18 +205,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
         }
 
-        public void AuthenticateGatewayModuleFromController()
-        {
-            // 1. Connect Device
-            while (!DeviceConnected)
-            {
-                ConnectGatewayModuleFromController();
-            }
-
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromController();
-        }
-
         public void AuthenticateGatewayModuleFromPegasus()
         {
             // 1. Connect Device
@@ -230,33 +218,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
-        }
-
-        public bool ConnectGatewayModuleFromController()
-        {
-            _gatewayLogger.LogInfo("Thuc hien ket noi.");
-            try
-            {
-                _gatewayLogger.LogInfo("Bat dau ket noi.");
-                client = new TcpClient();
-
-                // 1. connect
-                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
-                stream = client.GetStream();
-
-                _gatewayLogger.LogInfo("Connected to controller");
-
-                DeviceConnected = true;
-
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo("Ket noi that bai.");
-                _gatewayLogger.LogInfo(ex.Message);
-                _gatewayLogger.LogInfo(ex.StackTrace);
-                return false;
-            }
         }
 
         public async void ReadDataFromPegasus()
@@ -287,66 +248,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
             }
 
-        }
-
-        public async void ReadDataFromController()
-        {
-            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
-
-            if (DeviceConnected)
-            {
-                while (DeviceConnected)
-                {
-                    try
-                    {
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        //var dataStr = "*[Reader][1]1974716100[!]";
-                        var dataStr = encoding.GetString(data);
-
-                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
-
-                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
-                        Match match = Regex.Match(dataStr, pattern);
-
-                        string xValue = string.Empty;
-                        string cardNoCurrent = string.Empty;
-
-                        if (match.Success)
-                        {
-                            xValue = match.Groups[1].Value;
-                            cardNoCurrent = match.Groups[2].Value;
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
-                            continue;
-                        }
-
-                        if (!int.TryParse(xValue, out int doorCurrent))
-                        {
-                            _gatewayLogger.LogInfo("XValue is not valid");
-                            continue;
-                        }
-
-                        var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
-
-                        var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
-
-                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
-                    }
-                    catch (Exception ex)
-                    {
-                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
-                    }
-                }
-            }
-            else
-            {
-                DeviceConnected = false;
-                AuthenticateGatewayModuleFromController();
-            }
         }
 
         private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)
@@ -1039,6 +940,107 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 h21 = IntPtr.Zero;
 
                 AuthenticateGatewayModule();
+            }
+        }
+        #endregion
+
+        #region Read RFID by Controller
+        public void AuthenticateGatewayModuleFromController()
+        {
+            // 1. Connect Device
+            while (!DeviceConnected)
+            {
+                ConnectGatewayModuleFromController();
+            }
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromController();
+        }
+
+        public bool ConnectGatewayModuleFromController()
+        {
+            _gatewayLogger.LogInfo("Thuc hien ket noi.");
+            try
+            {
+                _gatewayLogger.LogInfo("Bat dau ket noi.");
+                client = new TcpClient();
+
+                // 1. connect
+                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
+                stream = client.GetStream();
+
+                _gatewayLogger.LogInfo("Connected to controller");
+
+                DeviceConnected = true;
+
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo("Ket noi that bai.");
+                _gatewayLogger.LogInfo(ex.Message);
+                _gatewayLogger.LogInfo(ex.StackTrace);
+                return false;
+            }
+        }
+
+        public async void ReadDataFromController()
+        {
+            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
+
+            if (DeviceConnected)
+            {
+                while (DeviceConnected)
+                {
+                    try
+                    {
+                        byte[] data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+                        //var dataStr = "*[Reader][1]1974716100[!]";
+                        var dataStr = encoding.GetString(data);
+
+                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
+
+                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
+                        Match match = Regex.Match(dataStr, pattern);
+
+                        string xValue = string.Empty;
+                        string cardNoCurrent = string.Empty;
+
+                        if (match.Success)
+                        {
+                            xValue = match.Groups[1].Value;
+                            cardNoCurrent = match.Groups[2].Value;
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
+                            continue;
+                        }
+
+                        if (!int.TryParse(xValue, out int doorCurrent))
+                        {
+                            _gatewayLogger.LogInfo("XValue is not valid");
+                            continue;
+                        }
+
+                        var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
+
+                        var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
+
+                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                    }
+                    catch (Exception ex)
+                    {
+                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                DeviceConnected = false;
+                AuthenticateGatewayModuleFromController();
             }
         }
         #endregion
