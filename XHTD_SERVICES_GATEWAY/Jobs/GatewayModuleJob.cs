@@ -192,10 +192,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {cardNoCurrent}");
-                        // 1.Xác định xe cân vào / ra
-                        var isLuongVao = true;
 
+                        // Xác định xe cân vào / ra
+                        var isLuongVao = true;
                         var isLuongRa = false;
 
                         await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
@@ -240,9 +239,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
             }
 
-            // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
-            // SendRFIDInfo(isLuongVao, cardNoCurrent);
-
             // 2. Loại bỏ các tag đã check trước đó
             if (tmpInvalidCardNoLst.Count > 10)
             {
@@ -251,7 +247,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
             {
-                //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                _gatewayLogger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -264,7 +260,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
@@ -277,10 +273,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
+
+            _gatewayLogger.LogInfo("----------------------------");
+            _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}");
+            _gatewayLogger.LogInfo("-----");
 
             var inout = "";
             if (isLuongVao)
@@ -429,8 +429,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (isUpdatedOrder)
                     {
-                        //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
-
                         _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
                     }
                 }
