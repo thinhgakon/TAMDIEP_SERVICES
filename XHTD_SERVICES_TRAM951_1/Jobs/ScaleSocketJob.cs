@@ -1,12 +1,16 @@
-﻿using Quartz;
+﻿using Autofac;
+using Quartz;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Hubs;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
@@ -23,7 +27,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         private readonly Notification _notification;
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
-        public const string IP_ADDRESS = "192.168.121.14";
+        public const string IP_ADDRESS = "192.168.13.206";
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {
@@ -48,7 +52,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         {
             while (!client.Connected)
             {
-                    ConnectScaleStationModuleFromController();
+                ConnectScaleStationModuleFromController();
             }
             ReadDataFromController();
         }
@@ -98,7 +102,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
                         string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
-                        
+
                         foreach (var item in parts)
                         {
                             int scaleValue;
@@ -160,5 +164,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
+
     }
+
 }

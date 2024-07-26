@@ -23,7 +23,7 @@ using XHTD_SERVICES_TRAM951_2.Devices;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
-    public class Tram951ModuleJob : IJob
+    public class Tram951ModuleJob2 : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -93,14 +93,14 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.187";
+        private string PegasusAdr = "192.168.13.188";
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
 
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
-        public Tram951ModuleJob(
+        public Tram951ModuleJob2(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
@@ -410,7 +410,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void ReadDataFromPegasus()
         {
-            _logger.LogInfo($"Reading Pegasus {PegasusAdr}...");
+            _logger.LogInfo($"Reading Pegasus {PegasusAdr} ...");
             while (DeviceConnected)
             {
                 var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);

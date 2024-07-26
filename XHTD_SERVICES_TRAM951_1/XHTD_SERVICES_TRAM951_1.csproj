@@ -270,6 +270,8 @@
     <Compile Include="Business\StepBusiness.cs" />
     <Compile Include="Business\WeightBusiness.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
+    <Compile Include="Devices\PegasusReader.cs" />
+    <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="Devices\S71200Control.cs" />
     <Compile Include="Devices\S7SensorControl.cs" />
     <Compile Include="Devices\SensorControl.cs" />
@@ -277,9 +279,11 @@
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Hubs\ScaleHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
+    <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Jobs\Reset951PLCJob.cs" />
     <Compile Include="Jobs\ScaleSocketJob.cs" />
     <Compile Include="Jobs\Tram951ModuleJob.cs" />
+    <Compile Include="Jobs\Tram951ModuleJob2.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
     <Compile Include="Models\Response\DesicionScaleResponse.cs" />
