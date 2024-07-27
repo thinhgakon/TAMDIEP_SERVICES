@@ -181,198 +181,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            _confirmLogger.LogInfo($"Nhan the{Program.PegasusIP1}: {cardNoCurrent}");
-                            if (Program.IsLockingRfidIn)
-                            {
-                                _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
-                                new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
-                            }
-                            else
-                            {
-                                new ConfirmHub().SendMessage("IS_LOCKING_RFID", "0");
-                            }
-
-                            // Loại bỏ các tag đã check trước đó
-                            if (tmpInvalidCardNoLst.Count > 10)
-                            {
-                                tmpInvalidCardNoLst.RemoveRange(0, 3);
-                            }
-
-                            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
-                            {
-                                continue;
-                            }
-
-                            if (tmpValidCardNoLst.Count > 10)
-                            {
-                                tmpValidCardNoLst.RemoveRange(0, 3);
-                            }
-
-                            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                            {
-                                continue;
-                            }
-
-                            _confirmLogger.LogInfo("----------------------------");
-                            _confirmLogger.LogInfo("-----");
-
-                            _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
-
-                            // Kiểm tra RFID có hợp lệ hay không
-                            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
-
-                            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
-                            {
-                                _confirmLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
-                            }
-                            else
-                            {
-                                _confirmLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
-
-                                await SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-
-                                SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-
-                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                continue;
-                            }
-
-                            // Nếu RFID hợp lệ
-                            tblStoreOrderOperating currentOrder = null;
-                            var isValidCardNo = false;
-
-                            currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
-
-                            isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
-
-                            // Nếu RFID không có đơn hàng
-                            if (currentOrder == null)
-                            {
-                                _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
-
-                                await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
-                                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
-                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                continue;
-                            }
-
-                            // Nếu RFID không có đơn hàng hợp lệ
-                            else if (isValidCardNo == false)
-                            {
-                                _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
-
-                                await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-
-                                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-
-                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                continue;
-                            }
-
-                            // Nếu RFID có đơn hàng hợp lệ
-                            else
-                            {
-                                await SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-
-                                SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-
-                                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                                tmpValidCardNoLst.Add(newCardNoLog);
-
-                                Program.IsLockingRfidIn = true;
-                                Program.IsLockingRfid = true;
-                            }
-
-                            var currentDeliveryCode = currentOrder.DeliveryCode;
-                            _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
-
-                            // Xác thực
-                            bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
-
-                            // Xác thực thành công
-                            if (isConfirmSuccess)
-                            {
-                                await SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
-                                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
-                                // Xếp số
-                                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
-
-                                int statusGreenLight = 0;
-                                string messageGreenLight = "";
-
-                                _confirmLogger.LogInfo($"7. Bật đèn xanh");
-                                if (TurnOnGreenTrafficLight())
-                                {
-                                    statusGreenLight = 1;
-                                    messageGreenLight = "Bật đèn xanh thành công";
-                                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                                }
-                                else
-                                {
-                                    statusGreenLight = 0;
-                                    messageGreenLight = "Bật đèn xanh thất bại";
-                                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                                }
-
-                                //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
-
-                                //if (!string.IsNullOrEmpty(img))
-                                //{
-                                //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
-                                //}
-
-                                //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
-
-                                //SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
-
-                                Thread.Sleep(10000);
-
-                                int statusRedLight = 0;
-                                string messageRedLight = "";
-
-                                _confirmLogger.LogInfo($"8. Bật đèn đỏ");
-                                if (TurnOnRedTrafficLight())
-                                {
-                                    statusRedLight = 1;
-                                    messageRedLight = "Bật đèn đỏ thành công";
-                                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                                }
-                                else
-                                {
-                                    statusRedLight = 0;
-                                    messageRedLight = "Bật đèn đỏ thất bại";
-                                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                                }
-
-                                //await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
-
-                                //SendNotificationAPI("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
-                            }
-                            else
-                            {
-                                await SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
-                                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
-                                _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
-                            }
-
-                            _confirmLogger.LogInfo($"10. Giai phong RFID IN");
-
-                            Program.IsLockingRfidIn = false;
-                            Program.IsLockingRfid = false;
+                            await ReadDataProcess(cardNoCurrent);
                         }
                         catch (Exception ex)
                         {
@@ -382,6 +192,201 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     }
                 }
             }
+        }
+
+        private async Task ReadDataProcess(string cardNoCurrent)
+        {
+            if (Program.IsLockingRfidIn)
+            {
+                _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+
+                new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
+            }
+            else
+            {
+                new ConfirmHub().SendMessage("IS_LOCKING_RFID", "0");
+            }
+
+            // Loại bỏ các tag đã check trước đó
+            if (tmpInvalidCardNoLst.Count > 10)
+            {
+                tmpInvalidCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
+            {
+                return;
+            }
+
+            if (tmpValidCardNoLst.Count > 10)
+            {
+                tmpValidCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            {
+                return;
+            }
+
+            _confirmLogger.LogInfo("----------------------------");
+            _confirmLogger.LogInfo("-----");
+
+            _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+
+            // Kiểm tra RFID có hợp lệ hay không
+            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+
+            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            {
+                _confirmLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+            }
+            else
+            {
+                _confirmLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+
+                await SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+
+                SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+
+            // Nếu RFID hợp lệ
+            tblStoreOrderOperating currentOrder = null;
+            var isValidCardNo = false;
+
+            currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
+
+            isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
+
+            // Nếu RFID không có đơn hàng
+            if (currentOrder == null)
+            {
+                _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+
+                await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+
+            // Nếu RFID không có đơn hàng hợp lệ
+            else if (isValidCardNo == false)
+            {
+                _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+
+                await SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+
+            // Nếu RFID có đơn hàng hợp lệ
+            else
+            {
+                await SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
+
+                SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+
+                tmpValidCardNoLst.Add(newCardNoLog);
+
+                Program.IsLockingRfidIn = true;
+                Program.IsLockingRfid = true;
+            }
+
+            var currentDeliveryCode = currentOrder.DeliveryCode;
+            _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
+
+            // Xác thực
+            bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+
+            // Xác thực thành công
+            if (isConfirmSuccess)
+            {
+                await SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+
+                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+
+                // Xếp số
+                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
+
+                int statusGreenLight = 0;
+                string messageGreenLight = "";
+
+                _confirmLogger.LogInfo($"7. Bật đèn xanh");
+                if (TurnOnGreenTrafficLight())
+                {
+                    statusGreenLight = 1;
+                    messageGreenLight = "Bật đèn xanh thành công";
+                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                }
+                else
+                {
+                    statusGreenLight = 0;
+                    messageGreenLight = "Bật đèn xanh thất bại";
+                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                }
+
+                //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
+
+                //if (!string.IsNullOrEmpty(img))
+                //{
+                //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
+                //}
+
+                //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
+
+                //SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
+
+                Thread.Sleep(10000);
+
+                int statusRedLight = 0;
+                string messageRedLight = "";
+
+                _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+                if (TurnOnRedTrafficLight())
+                {
+                    statusRedLight = 1;
+                    messageRedLight = "Bật đèn đỏ thành công";
+                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                }
+                else
+                {
+                    statusRedLight = 0;
+                    messageRedLight = "Bật đèn đỏ thất bại";
+                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                }
+
+                //await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
+
+                //SendNotificationAPI("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
+            }
+            else
+            {
+                await SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+
+                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+
+                _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
+            }
+
+            _confirmLogger.LogInfo($"10. Giai phong RFID IN");
+
+            Program.IsLockingRfidIn = false;
+            Program.IsLockingRfid = false;
         }
 
         public string ByteArrayToString(byte[] b)
