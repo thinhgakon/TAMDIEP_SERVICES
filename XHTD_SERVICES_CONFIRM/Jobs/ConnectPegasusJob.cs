@@ -63,10 +63,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 else
                 {
                     int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
+                    var openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
+                        openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
                     _logger.LogWarn($"Connect {PegasusAdr2} fail. Start reconnect");
