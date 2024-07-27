@@ -69,11 +69,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 else
                 {
                     int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
+                    var openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader.CloseNetPort(PortHandle);
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
+                        openresult = PegasusStaticClassReader2.CloseNetPort(PortHandle);
+                        openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
                     _logger.LogWarn($"Connect {PegasusAdr2} fail. Start reconnect");

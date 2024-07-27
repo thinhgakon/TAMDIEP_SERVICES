@@ -53,13 +53,14 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 {
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
+                    _logger.LogWarn($"Connect {PegasusAdr1} fail. Start reconnect");
                     while (openresult != 0)
                     {
-                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+                        openresult = PegasusStaticClassReader.CloseNetPort(PortHandle);
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr1, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
-                    _logger.LogWarn($"Connect {PegasusAdr1} fail. Start reconnect");
+                    _logger.LogWarn($"Connect {PegasusAdr1} success. Start reconnect");
                 }
 
                 PingReply reply2 = pingSender.Send(PegasusAdr2);
@@ -69,15 +70,17 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 }
                 else
                 {
+                    _logger.LogWarn($"Connect {PegasusAdr2} fail. Start reconnect");
                     int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
+                    var openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
-                        PegasusStaticClassReader.CloseNetPort(PortHandle);
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
+                        openresult = PegasusStaticClassReader2.CloseNetPort(PortHandle);
+                        openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr2, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
-                    _logger.LogWarn($"Connect {PegasusAdr2} fail. Start reconnect");
+                    _logger.LogWarn($"Connect {PegasusAdr2} success. Start reconnect");
+
                 }
             }
             catch (Exception ex)
