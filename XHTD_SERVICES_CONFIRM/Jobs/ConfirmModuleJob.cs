@@ -173,7 +173,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _confirmLogger.LogInfo($"Reading Pegasus...");
             while (DeviceConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
+                var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
 
                 foreach (var item in data)
                 {
