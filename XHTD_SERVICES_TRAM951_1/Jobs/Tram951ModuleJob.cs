@@ -466,7 +466,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
