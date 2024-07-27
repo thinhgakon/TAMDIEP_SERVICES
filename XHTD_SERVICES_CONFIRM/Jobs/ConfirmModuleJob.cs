@@ -213,6 +213,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
             {
+                _confirmLogger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -223,10 +224,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
+                _confirmLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
             _confirmLogger.LogInfo("----------------------------");
+            _confirmLogger.LogInfo($"Tag: {cardNoCurrent}");
             _confirmLogger.LogInfo("-----");
 
             _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
