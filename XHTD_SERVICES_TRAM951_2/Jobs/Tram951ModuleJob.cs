@@ -235,8 +235,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
-            new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendScale2Message($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationAPI($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+
             if (Program.IsEnabledRfid == false)
             {
                 return;
@@ -265,7 +266,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 return;
             }
 
-            SendScale2Message(SCALE_CURRENT_RFID, cardNoCurrent);
+            SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
+            SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
 
             _logger.LogInfo("----------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
@@ -283,8 +285,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     && scaleInfo.TimeIn > timeToRelease
                     )
                 {
-                    new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-                    SendScale2Message("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                    SendNotificationHub("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                    SendNotificationAPI("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+
                     // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                     return;
@@ -312,8 +315,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
-                SendScale2Message($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -328,8 +332,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -339,10 +344,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendScale2Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -352,10 +359,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 Program.IsLockingRfid = true;
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale2Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                SendScale2Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpCardNoLst.Add(newCardNoLog);
 
@@ -447,33 +456,12 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
         }
 
-        public void SendRFIDInfo(string cardNo, string door)
+        private void SendNotificationHub(string name, string message)
         {
-            try
-            {
-                _notification.SendNotification(
-                    SCALE_SIGNALR_RFID_CODE,
-                    null,
-                    1,
-                    cardNo,
-                    Int32.Parse(door),
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null
-                );
-
-                //_logger.LogInfo($"Sent  RFID to app: {cardNo}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
+            new ScaleHub().SendMessage(name, message);
         }
 
-        private void SendScale2Message(string name, string message)
+        private void SendNotificationAPI(string name, string message)
         {
             try
             {
