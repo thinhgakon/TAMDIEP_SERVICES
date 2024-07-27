@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_2.Devices
+namespace XHTD_SERVICES_TRAM951_1.Devices
 {
-    public static class PegasusReader
+    public static class PegasusReader2
     {
         public static List<byte[]> Inventory_G2(ref byte ConAddr,
                                               byte AdrTID,
@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             var epcBytes = new byte[5000];
             var epcBytesLen = 0;
             var epcCount = 0;
-            PegasusStaticClassReader.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
+            PegasusStaticClassReader2.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
 
             var epcList = new List<byte[]>(epcCount);
             using (var epcStream = new MemoryStream(epcBytes, 0, epcBytesLen))
@@ -40,13 +40,15 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             return epcList;
         }
 
+
         public static int Connect(int Port,
-                                          string IPaddr,
-                                          ref byte ComAddr,
-                                          ref int PortHandle)
+                                             string IPaddr,
+                                             ref byte ComAddr,
+                                             ref int PortHandle)
         {
             return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
         }
+
 
         public static void GetData(int portHandle)
         {
@@ -54,7 +56,7 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             int ValidDatalength, i;
             string temp, temps;
             ValidDatalength = 0;
-            var fCmdRet = PegasusStaticClassReader.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
+            var fCmdRet = PegasusStaticClassReader2.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
             if (fCmdRet == 0)
             {
                 temp = "";

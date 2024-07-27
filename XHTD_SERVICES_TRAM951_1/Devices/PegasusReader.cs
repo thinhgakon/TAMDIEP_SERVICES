@@ -59,6 +59,14 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             }
         }
 
+        public static int Connect(int Port,
+                                          string IPaddr,
+                                          ref byte ComAddr,
+                                          ref int PortHandle)
+        {
+            return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
+        }
+
         private static string ByteArrayToHexString(byte[] data)
         {
             StringBuilder sb = new StringBuilder(data.Length * 3);

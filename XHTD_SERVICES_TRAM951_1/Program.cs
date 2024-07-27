@@ -25,6 +25,13 @@ namespace XHTD_SERVICES_TRAM951_1
         public static bool IsEnabledRfid = false;
         public static DateTime? EnabledRfidTime = null;
 
+        public static string PegasusIP1 = "192.168.13.181";
+        public static string PegasusIP2 = "192.168.13.182";
+        public static int RefPort1 = 6000;
+        public static byte RefComAdr1 = 0xFF;
+        public static int RefPort2 = 6000;
+        public static byte RefComAdr2 = 0xFF;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
