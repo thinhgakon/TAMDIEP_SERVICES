@@ -58,18 +58,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private static bool isActiveService = true;
 
-        protected const string C3400_CONFIRM_IP_ADDRESS = "10.0.9.1";
-
-        protected const string M221_CONFIRM_IP_ADDRESS = "10.0.9.2";
-
-        protected const string C3400_951_2_IP_ADDRESS = "10.0.9.5";
-
-        private IHubProxy HubProxy { get; set; }
-
-        private string ServerURI = URIConfig.SIGNALR_GATEWAY_SERVICE_URL;
-
-        private HubConnection Connection { get; set; }
-
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -84,6 +72,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         private readonly string CAMERA_PASSWORD = "tamdiep@35";
         private readonly string IMG_PATH = "C:\\IMAGE";
         private readonly int CAMERA_NUMBER = 2;
+
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.168";
 
         public ConfirmModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -163,17 +155,14 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public void AuthenticateConfirmModuleFromPegasus()
         {
-            _confirmLogger.LogInfo($"Connecting Pegasus {Program.PegasusIP1} ...");
-            int refport = -1;
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refport);
+            // 1. Connect Device
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             while (openResult != 0)
             {
-                PegasusReader.Close(refport);
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refport);
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            Program.RefPort1 = refport;
-
-            _confirmLogger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
+            _confirmLogger.LogInfo("Connected Pegasus");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -181,8 +170,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _confirmLogger.LogInfo($"Reading RFID from Pegasus {Program.PegasusIP1} ...");
-            while (true)
+            _confirmLogger.LogInfo($"Reading Pegasus...");
+            while (DeviceConnected)
             {
                 while (!Program.IsLockingRfid)
                 {
