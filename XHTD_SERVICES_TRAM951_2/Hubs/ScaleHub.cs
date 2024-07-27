@@ -473,7 +473,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             }
             catch (Exception ex)
             {
-                _logger.Info($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.Info($"SendMessageAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -485,7 +485,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             }
             catch (Exception ex)
             {
-                _logger.Info($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.Info($"SendSensorAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
