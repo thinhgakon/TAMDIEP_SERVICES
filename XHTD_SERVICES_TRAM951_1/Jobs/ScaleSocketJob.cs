@@ -94,12 +94,11 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 {
                     try
                     {
-                        _logger.LogInfo("Reading Data scale from Controller ...");
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);
                         var dataStr = encoding.GetString(data);
 
-                        _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                        //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
                         string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
 
@@ -127,7 +126,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                                 continue;
                             }
 
-                            SendScale1Info(dateTime, scaleValue.ToString());
+                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
                             new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                         }
 
@@ -146,7 +145,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 AuthenticateScaleStationModuleFromController();
             }
         }
-        private void SendScale1Info(DateTime time, string value)
+
+        private void SendScaleInfoAPI(DateTime time, string value)
         {
             try
             {
@@ -154,22 +154,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendScaleInfoAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
-
-        private void SendScale1Message(string name, string message)
-        {
-            try
-            {
-                _notification.SendScale1Message(name, message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
     }
 
 }
