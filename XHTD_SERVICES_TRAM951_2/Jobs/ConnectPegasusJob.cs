@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
     {
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = Program.PegasusIP1;
+        private string PegasusAdr = "192.168.13.188";
         protected readonly Logger _logger;
 
         public ConnectPegasusJob(Logger gatewayLogger)
@@ -47,10 +47,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             else
             {
                 int port = PortHandle;
-                var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref Program.RefComAdr1, ref port);
+                var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                 while (openresult != 0)
                 {
-                    openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref Program.RefComAdr1, ref port);
+                    openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     Thread.Sleep(1000);
                 }
                 _logger.LogWarn("Connect fail. Start reconnect");

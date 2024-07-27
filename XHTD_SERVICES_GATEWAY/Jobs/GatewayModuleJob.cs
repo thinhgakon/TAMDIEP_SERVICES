@@ -307,7 +307,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
-                await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationHub(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
                 SendNotificationAPI(inout, 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -337,7 +337,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
+                SendNotificationHub(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
                 SendNotificationAPI(inout, 0, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -349,7 +349,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
+                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
                 SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -359,7 +359,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             else
             {
-                await SendNotificationCBV(2, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
+                SendNotificationHub(2, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
                 SendNotificationAPI(inout, 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -407,7 +407,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (isUpdatedOrder)
                 {
-                    await SendNotificationCBV(3, inout, null, $"Xác thực vào cổng thành công", null);
+                    SendNotificationHub(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
@@ -415,7 +415,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
                 else
                 {
-                    await SendNotificationCBV(4, inout, null, $"Xác thực vào cổng thất bại", null);
+                    SendNotificationHub(4, inout, null, $"Xác thực vào cổng thất bại", null);
                     SendNotificationAPI(inout, 4, null, $"Xác thực vào cổng thất bại", null);
 
                     _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
@@ -440,7 +440,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (isUpdatedOrder)
                 {
-                    await SendNotificationCBV(3, inout, null, $"Xác thực ra cổng thành công", null);
+                    SendNotificationHub(3, inout, null, $"Xác thực ra cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
@@ -448,7 +448,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
                 else
                 {
-                    await SendNotificationCBV(4, inout, null, $"Xác thực ra cổng thất bại", null);
+                    SendNotificationHub(4, inout, null, $"Xác thực ra cổng thất bại", null);
                     SendNotificationAPI(inout, 4, null, $"Xác thực ra cổng thất bại", null);
 
                     _gatewayLogger.LogInfo($"5. Confirm 8 failed.");
@@ -502,21 +502,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
         }
 
-        private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string vehicle = null)
+        private void SendNotificationHub(int status, string inout, string cardNo, string message, string vehicle = null)
         {
             new GatewayHub().SendNotificationCBV(status, inout, cardNo, message, vehicle);
-            //try
-            //{
-            //    await StartIfNeededAsync();
-
-            //    HubProxy.Invoke("SendNotificationCBV", status, inout, cardNo, message, deliveryCode).Wait();
-
-            //    _gatewayLogger.LogInfo($"SendNotificationCBV: status={status}, inout={inout}, cardNo={cardNo}, message={message}");
-            //}
-            //catch (Exception ex)
-            //{
-            //    _gatewayLogger.LogInfo($"SendNotificationCBV error: {ex.Message}");
-            //}
         }
 
         public void SendNotificationAPI(string inout, int status, string cardNo, string message, string vehicle = null)
