@@ -260,6 +260,7 @@
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
+    <Compile Include="Devices\PegasusStaticClassReader2.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="ConfirmLogger.cs" />
     <Compile Include="Hubs\ConfirmHub.cs" />
@@ -317,6 +318,14 @@
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PK_UHF.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PK_UHF2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

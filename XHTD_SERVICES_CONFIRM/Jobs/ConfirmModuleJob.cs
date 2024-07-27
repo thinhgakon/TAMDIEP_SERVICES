@@ -203,10 +203,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         public void AuthenticateConfirmModuleFromPegasus()
         {
             int port = PortHandle;
-            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            var openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
             _confirmLogger.LogInfo($"Connected Pegasus {PegasusAdr}");
             DeviceConnected = true;

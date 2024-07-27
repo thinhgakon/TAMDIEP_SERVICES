@@ -272,6 +272,7 @@
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
+    <Compile Include="Devices\PegasusStaticClassReader2.cs" />
     <Compile Include="Devices\S71200Control.cs" />
     <Compile Include="Devices\S7SensorControl.cs" />
     <Compile Include="Devices\SensorControl.cs" />
@@ -336,7 +337,14 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="PK_UHF.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PK_UHF2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
