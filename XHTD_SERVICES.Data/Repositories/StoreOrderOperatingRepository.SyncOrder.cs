@@ -307,6 +307,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                 (
                                                     x.Step < (int)OrderStep.DA_CAN_VAO
                                                     ||
+                                                    x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    ||
                                                     x.WeightIn == null
                                                 )
                                             );
@@ -371,6 +373,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_CAN_RA
+                                                        || 
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
                                                         ||
                                                         x.WeightOut == null
                                                     )
