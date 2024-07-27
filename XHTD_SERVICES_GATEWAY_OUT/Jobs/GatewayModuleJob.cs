@@ -194,8 +194,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                         var cardNoCurrent = ByteArrayToString(item);
 
                         // Xác định xe cân vào / ra
-                        var isLuongVao = true;
-                        var isLuongRa = false;
+                        var isLuongVao = false;
+                        var isLuongRa = true;
 
                         await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
                     }
