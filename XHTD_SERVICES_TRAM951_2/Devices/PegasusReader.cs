@@ -40,6 +40,13 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             return epcList;
         }
 
+        public static int Connect(int Port,
+                                          string IPaddr,
+                                          ref byte ComAddr,
+                                          ref int PortHandle)
+        {
+            return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
+        }
 
         public static void GetData(int portHandle)
         {

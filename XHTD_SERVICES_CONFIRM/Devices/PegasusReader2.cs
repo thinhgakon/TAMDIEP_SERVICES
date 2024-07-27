@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_CONFIRM.Devices
 {
-    public static class PegasusReader
+    public static class PegasusReader2
     {
         public static List<byte[]> Inventory_G2(ref byte ConAddr,
                                               byte AdrTID,
@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_CONFIRM.Devices
             var epcBytes = new byte[5000];
             var epcBytesLen = 0;
             var epcCount = 0;
-            PegasusStaticClassReader.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
+            PegasusStaticClassReader2.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
 
             var epcList = new List<byte[]>(epcCount);
             using (var epcStream = new MemoryStream(epcBytes, 0, epcBytesLen))
@@ -44,7 +44,7 @@ namespace XHTD_SERVICES_CONFIRM.Devices
                                              ref byte ComAddr,
                                              ref int PortHandle)
         {
-            return PegasusStaticClassReader.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
+            return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
         }
 
         public static void GetData(int portHandle)
@@ -53,7 +53,7 @@ namespace XHTD_SERVICES_CONFIRM.Devices
             int ValidDatalength, i;
             string temp, temps;
             ValidDatalength = 0;
-            var fCmdRet = PegasusStaticClassReader.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
+            var fCmdRet = PegasusStaticClassReader2.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
             if (fCmdRet == 0)
             {
                 temp = "";

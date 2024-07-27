@@ -1,14 +1,9 @@
 ﻿using Quartz.Impl;
 using Quartz;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
 using XHTD_SERVICES_TRAM951_2.Jobs;
 using System.Configuration;
-using XHTD_SERVICES_TRAM951_1.Jobs;
 
 namespace XHTD_SERVICES_TRAM951_2.Schedules
 {
