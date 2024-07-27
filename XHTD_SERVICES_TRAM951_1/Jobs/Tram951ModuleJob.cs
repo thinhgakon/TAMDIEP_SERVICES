@@ -196,15 +196,13 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         public void AuthenticateGatewayModuleFromPegasus()
         {
             // 1. Connect Device
-            int refPort = -1;
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             while (openResult != 0)
             {
-                PegasusReader.Close(refPort);
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            Program.RefPort1 = refPort;
-            _logger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
+            _logger.LogInfo("Connected Pegasus");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -212,17 +210,17 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void ReadDataFromPegasus()
         {
-            _logger.LogInfo($"Reading Pegasus {Program.PegasusIP1}...");
+            _logger.LogInfo($"Reading Pegasus...");
             while (DeviceConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
+                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
 
                 foreach (var item in data)
                 {
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {Program.PegasusIP1}: {cardNoCurrent}");
+
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
@@ -236,8 +234,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
-            new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendNotificationAPI($"{SCALE_1_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationAPI($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+
             if (Program.IsEnabledRfid == false)
             {
                 return;
@@ -266,6 +265,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 return;
             }
 
+            SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
             SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
 
             _logger.LogInfo("----------------------------");
@@ -284,8 +284,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     && scaleInfo.TimeIn > timeToRelease
                     )
                 {
-                    new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                    SendNotificationHub("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
                     SendNotificationAPI("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+
                     // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                     return;
@@ -313,8 +314,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -329,8 +331,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -340,10 +343,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -353,10 +358,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 Program.IsLockingRfid = true;
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpCardNoLst.Add(newCardNoLog);
 
@@ -386,27 +393,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                     // 5. Bat den do
-                    _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    Thread.Sleep(500);
-
-                    _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
+                    TurnOnRedTrafficLight();
 
                     // 6. Đánh dấu trạng thái đang cân
                     _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
@@ -428,27 +415,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
                     // 5. Bat den do
-                    _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    Thread.Sleep(500);
-
-                    _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
+                    TurnOnRedTrafficLight();
 
                     // 6. Đánh dấu trạng thái đang cân
                     _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
@@ -460,6 +427,31 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 {
                     _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
                 }
+            }
+        }
+
+        public void TurnOnRedTrafficLight()
+        {
+            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                _logger.LogInfo($@"Bật đèn thành công");
+            }
+            else
+            {
+                _logger.LogInfo($@"Bật đèn thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                _logger.LogInfo($@"Bật đèn thành công");
+            }
+            else
+            {
+                _logger.LogInfo($@"Bật đèn thất bại");
             }
         }
 
