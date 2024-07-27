@@ -133,15 +133,15 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 productName = reader["PRODUCT_NAME"].ToString(),
-                bookQuantity = decimal.Parse(reader["BOOK_QUANTITY"].ToString()),
-                id = int.Parse(reader["ORDER_ID"].ToString()),
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"].ToString(), out decimal d) ? d : default ,
+                id = int.TryParse(reader["ORDER_ID"]?.ToString(), out int i) ? i : default,
                 deliveryCode = reader["DELIVERY_CODE"].ToString(),
-                orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(8).ToString("yyyy-MM-ddTHH:mm:ss"),
+                orderDate = reader["ORDER_DATE"]?.ToString() == null ? null : reader.GetDateTime(7).ToString("yyyy-MM-ddTHH:mm:ss"),
                 moocCode = reader["MOOC_CODE"].ToString(),
                 locationCode = reader["LOCATION_CODE"].ToString(),
-                transportMethodId = int.Parse(reader["TRANSPORT_METHOD_ID"].ToString()),
+                transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(),out int t) ? t : default,
                 status = reader["STATUS"].ToString(),
-                lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(13).ToString("yyyy-MM-ddTHH:mm:ss")
+                lastUpdatedDate = reader["LAST_UPDATE_DATE"]?.ToString() == null ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss")
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });
