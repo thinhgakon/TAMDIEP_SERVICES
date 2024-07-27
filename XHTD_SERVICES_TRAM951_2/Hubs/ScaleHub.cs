@@ -58,12 +58,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             }
         }
 
-        public void SendNotificationCBV(int status, string inout, string cardNo, string message, string deliveryCode = "")
-        {
-            Clients.All.SendNotificationCBV(status, inout, cardNo, message, deliveryCode);
-        }
-
-        public void SendSensorHub(string sensorCode, string status)
+        public void SendSensor(string sensorCode, string status)
         {
             try
             {
@@ -74,11 +69,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             {
 
             }
-        }
-
-        public void SendFakeRFID(string value)
-        {
-            Clients.All.SendFakeRFID(value);
         }
 
         public void Send9511ScaleInfo(DateTime time, string value)
@@ -92,12 +82,6 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
         {
             // Call the broadcastMessage method to update clients.
             Clients.All.Send9512ScaleInfo(time, value);
-        }
-
-        public void SendClinkerScaleInfo(DateTime time, string value)
-        {
-            // Call the broadcastMessage method to update clients.
-            Clients.All.SendClinkerScaleInfo(time, value);
         }
 
         public async void ReadDataScale(DateTime time, string value)
@@ -187,7 +171,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                         var isInValidSensor = DIBootstrapper.Init().Resolve<S7SensorControl>().IsInValidSensorScale();
                         if (isInValidSensor)
                         {
-                            SendSensorHub(SCALE_CODE, "1");
+                            SendSensor(SCALE_CODE, "1");
                             SendSensorAPI(SCALE_CODE, "1");
 
                             Program.scaleValues.Clear();
@@ -196,7 +180,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                         }
                         else
                         {
-                            SendSensorHub(SCALE_CODE, "0");
+                            SendSensor(SCALE_CODE, "0");
                             SendSensorAPI(SCALE_CODE, "0");
                         }
                     }
