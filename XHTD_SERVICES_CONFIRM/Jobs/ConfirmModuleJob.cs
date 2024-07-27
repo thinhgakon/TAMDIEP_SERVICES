@@ -173,22 +173,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _confirmLogger.LogInfo($"Reading Pegasus...");
             while (DeviceConnected)
             {
-                while (!Program.IsLockingRfid)
-                {
-                    var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
-                    foreach (var item in data)
-                    {
-                        try
-                        {
-                            var cardNoCurrent = ByteArrayToString(item);
+                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
 
-                            await ReadDataProcess(cardNoCurrent);
-                        }
-                        catch (Exception ex)
-                        {
-                            _confirmLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                            continue;
-                        }
+                foreach (var item in data)
+                {
+                    try
+                    {
+                        var cardNoCurrent = ByteArrayToString(item);
+
+                        await ReadDataProcess(cardNoCurrent);
+                    }
+                    catch (Exception ex)
+                    {
+                        _confirmLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
                     }
                 }
             }
@@ -196,7 +194,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         private async Task ReadDataProcess(string cardNoCurrent)
         {
-            if (Program.IsLockingRfidIn)
+            if (Program.IsLockingRfid)
             {
                 _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
@@ -303,7 +301,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 tmpValidCardNoLst.Add(newCardNoLog);
 
-                Program.IsLockingRfidIn = true;
                 Program.IsLockingRfid = true;
             }
 
@@ -385,7 +382,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             _confirmLogger.LogInfo($"10. Giai phong RFID IN");
 
-            Program.IsLockingRfidIn = false;
             Program.IsLockingRfid = false;
         }
 
@@ -527,7 +523,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     var doorCurrent = tmp[3]?.ToString(); // Điểm xác thực
                                     var timeCurrent = tmp[0]?.ToString(); // Thời gian xác thực
 
-                                    if (Program.IsLockingRfidIn)
+                                    if (Program.IsLockingRfid)
                                     {
                                         _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
@@ -635,7 +631,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                         tmpValidCardNoLst.Add(newCardNoLog);
 
-                                        Program.IsLockingRfidIn = true;
+                                        Program.IsLockingRfid = true;
                                     }
 
                                     var currentDeliveryCode = currentOrder.DeliveryCode;
@@ -716,7 +712,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                     _confirmLogger.LogInfo($"10. Giai phong RFID IN");
 
-                                    Program.IsLockingRfidIn = false;
+                                    Program.IsLockingRfid = false;
                                 }
                             }
                             catch (Exception ex)
