@@ -52,7 +52,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly string SCALE_DELIVERY_CODE = "TRAM951_1_DELIVERY_CODE";
 
-        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_1_IS_LOCKING_RFID";
+        protected readonly string SCALE_IS_LOCKING_RFID = "SCALE_1_IS_LOCKING_RFID";
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
@@ -63,8 +63,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_1_BARRIER_ACTIVE";
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_1_CURRENT_RFID";
-
-        protected readonly string SCALE_1_IS_LOCKING_RFID = "SCALE_1_IS_LOCKING_RFID";
 
         private static bool isActiveService = true;
 
@@ -235,7 +233,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         public async void ReadDataProcess(string cardNoCurrent)
         {
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendNotificationAPI($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
             if (Program.IsEnabledRfid == false)
             {
