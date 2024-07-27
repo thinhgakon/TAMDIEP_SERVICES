@@ -211,12 +211,16 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void AuthenticateGatewayModuleFromPegasus()
         {
+            _logger.LogInfo($"Connecting Pegasus {Program.PegasusIP1}");
             // 1. Connect Device
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+            int refPort = -1;
+            var openResult = PegasusReader.Connect(Program.RefPort2, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
             while (openResult != 0)
             {
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+                PegasusReader.Close(refPort);
+                openResult = PegasusReader.Connect(Program.RefPort2, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
             }
+            Program.RefPort2 = refPort;
             _logger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
@@ -405,10 +409,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void ReadDataFromPegasus()
         {
-            _logger.LogInfo($"Reading Pegasus {Program.PegasusIP1}...");
+            _logger.LogInfo($"Reading Pegasus {Program.PegasusIP1} ...");
             while (DeviceConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
+                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
 
                 foreach (var item in data)
                 {

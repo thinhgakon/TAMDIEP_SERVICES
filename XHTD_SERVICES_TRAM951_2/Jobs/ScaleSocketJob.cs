@@ -89,7 +89,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 {
                     try
                     {
-                        _logger.LogInfo("Reading Data scale from Controller ...");
+                        //_logger.LogInfo("Reading Data scale from Controller ...");
                         byte[] data = new byte[BUFFER_SIZE];
                         stream.Read(data, 0, BUFFER_SIZE);
                         var dataStr = encoding.GetString(data);

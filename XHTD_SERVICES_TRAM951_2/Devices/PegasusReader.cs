@@ -45,9 +45,13 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
                                           ref byte ComAddr,
                                           ref int PortHandle)
         {
-            return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
+            return PegasusStaticClassReader.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
         }
 
+        public static void Close(int port)
+        {
+            PegasusStaticClassReader.CloseNetPort(port);
+        }
         public static void GetData(int portHandle)
         {
             byte[] ScanModeData = new byte[40960];

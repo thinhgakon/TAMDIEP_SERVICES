@@ -80,6 +80,11 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
         {
             return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
         }
+
+        public static void Close(int port)
+        {
+            PegasusStaticClassReader2.CloseNetPort(port);
+        }
     }
 
 }
