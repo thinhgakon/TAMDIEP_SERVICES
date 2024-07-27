@@ -1,18 +1,15 @@
 ﻿using System;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Owin.Hosting;
-using Owin;
-using Microsoft.Owin.Cors;
 using log4net;
 using XHTD_SERVICES.Helper;
 using System.Linq;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Common;
 using Autofac;
-using XHTD_SERVICES_TRAM951_1.Devices;
-using XHTD_SERVICES_TRAM951_1.Business;
 using System.Threading;
 using System.Threading.Tasks;
+using XHTD_SERVICES_TRAM951_1.Devices;
+using XHTD_SERVICES_TRAM951_1.Business;
 
 namespace XHTD_SERVICES_TRAM951_1.Hubs
 {
