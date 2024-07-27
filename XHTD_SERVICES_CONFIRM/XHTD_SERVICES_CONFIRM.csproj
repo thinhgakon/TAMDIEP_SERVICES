@@ -259,6 +259,7 @@
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
+    <Compile Include="Devices\PegasusReader2.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="Devices\PegasusStaticClassReader2.cs" />
     <Compile Include="DIBootstrapper.cs" />

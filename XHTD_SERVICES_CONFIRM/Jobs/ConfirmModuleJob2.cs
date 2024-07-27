@@ -85,10 +85,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         private readonly string IMG_PATH = "C:\\IMAGE";
         private readonly int CAMERA_NUMBER = 2;
 
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.161";
-
         public ConfirmModuleJob2(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -202,13 +198,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public void AuthenticateConfirmModuleFromPegasus()
         {
-            int port = PortHandle;
-            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            _confirmLogger.LogInfo($"Connecting Pegasus {Program.PegasusIP2}...");
+            var openResult = PegasusReader2.Connect(Program.RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                openResult = PegasusReader2.Connect(Program.RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
             }
-            _confirmLogger.LogInfo($"Connected Pegasus {PegasusAdr}");
+            _confirmLogger.LogInfo($"Connected Pegasus {Program.PegasusIP2}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -251,13 +247,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             var ipAddress = c3400?.IpAddress;
             try
             {
-                StaticClassReaderB.CloseNetPort(PortHandle);
-                var openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref PortHandle);
-
-                if (openresult == 0)
-                {
-                    DeviceConnected = true;
-                }
                 return DeviceConnected;
             }
             catch (Exception ex)
@@ -518,19 +507,18 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _confirmLogger.LogInfo("161 Reading RFID from Pegasus ...");
-            int port = 6000;
+            _confirmLogger.LogInfo($"Reading RFID from Pegasus {Program.PegasusIP2} ...");
             while (true)
             {
                 while (!Program.IsLockingRfid)
                 {
-                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
+                    var data = PegasusReader2.Inventory_G2(ref Program.RefComAdr2, 0, 0, 0, Program.RefPort2);
                     foreach (var item in data)
                     {
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            _confirmLogger.LogInfo($"Nhan the{PegasusAdr}: {cardNoCurrent}");
+                            _confirmLogger.LogInfo($"Nhan the{Program.PegasusIP2}: {cardNoCurrent}");
                             if (Program.IsLockingRfidIn)
                             {
                                 _confirmLogger.LogInfo($"161 == Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");

@@ -9,11 +9,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
-        private readonly byte ComAddr = 0xFF;
-        private readonly int PortHandle1 = 6000;
-        private readonly int PortHandle2 = 2000;
-        private readonly string PegasusAdr1 = "192.168.13.161";
-        private readonly string PegasusAdr2 = "192.168.13.162";
+        public static int RefPort1 = 6000;
+        public static byte RefComAdr1 = 0xFF;
+        public static int RefPort2 = 2000;
+        public static byte RefComAdr2 = 0xFF;
+
         protected readonly ConfirmLogger _logger;
 
         public ConnectPegasusJob(ConfirmLogger logger)
@@ -39,7 +39,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             try
             {
                 Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr1);
+                PingReply reply = pingSender.Send(Program.PegasusIP1);
 
                 if (reply.Status == IPStatus.Success)
                 {
@@ -47,15 +47,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 }
                 else
                 {
-                    int port = PortHandle1;
-                    byte comAddr1 = ComAddr;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle1, PegasusAdr1, ref comAddr1, ref port);
+                    var openresult = PegasusReader.Connect(RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
                     while (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle1, PegasusAdr1, ref comAddr1, ref port);
+                        PegasusReader.Connect(RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
                         Thread.Sleep(1000);
                     }
-                    _logger.LogWarn($"Connect {PegasusAdr1} fail. Start reconnect");
+                    _logger.LogWarn($"Connect {Program.PegasusIP1} fail. Start reconnect");
                 }
 
                 if (reply.Status == IPStatus.Success)
@@ -64,15 +62,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 }
                 else
                 {
-                    int port = PortHandle2;
-                    byte comAddr2 = ComAddr;
-                    var openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle2, PegasusAdr2, ref comAddr2, ref port);
+                    var openresult = PegasusReader2.Connect(RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
                     while (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader2.OpenNetPort(PortHandle2, PegasusAdr2, ref comAddr2, ref port);
+                        openresult = PegasusReader2.Connect(RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
                         Thread.Sleep(1000);
                     }
-                    _logger.LogWarn($"Connect {PegasusAdr2} fail. Start reconnect");
+                    _logger.LogWarn($"Connect {Program.PegasusIP2} fail. Start reconnect");
                 }
             }
             catch (Exception ex)
