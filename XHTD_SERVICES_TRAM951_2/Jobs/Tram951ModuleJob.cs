@@ -190,25 +190,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
         }
 
-        public void AuthenticateScaleStationModule()
-        {
-            while (!DeviceConnected)
-            {
-                ConnectScaleStationModule();
-            }
-
-            ReadDataFromC3400();
-        }
-
-        public void AuthenticateScaleStationModuleFromController()
-        {
-            while (!client.Connected)
-            {
-                ConnectScaleStationModuleFromController();
-            }
-            ReadDataFromController();
-        }
-
         public void AuthenticateGatewayModuleFromPegasus()
         {
             _logger.LogInfo($"Connecting Pegasus {Program.PegasusIP1}");
@@ -225,186 +206,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
-        }
-
-        public bool ConnectScaleStationModule()
-        {
-            var ipAddress = c3400?.IpAddress;
-            try
-            {
-                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
-                int ret = 0;
-                if (IntPtr.Zero == h21)
-                {
-                    h21 = Connect(str);
-                    if (h21 != IntPtr.Zero)
-                    {
-                        _logger.LogInfo($"Connected to C3-400 {ipAddress}");
-
-                        DeviceConnected = true;
-                    }
-                    else
-                    {
-                        _logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
-
-                        ret = PullLastError();
-                        DeviceConnected = false;
-                    }
-                }
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($@"ConnectScaleStationModule {ipAddress} error: {ex.Message}");
-                return false;
-            }
-        }
-
-        public bool ConnectScaleStationModuleFromController()
-        {
-            _logger.LogInfo("Thuc hien ket noi.");
-            try
-            {
-                _logger.LogInfo("Bat dau ket noi.");
-                client = new TcpClient();
-
-                // 1. connect
-                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
-                stream = client.GetStream();
-
-                _logger.LogInfo("Connected to controller");
-
-                DeviceConnected = true;
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
-                return false;
-            }
-        }
-
-        public void ReadDataFromC3400()
-        {
-            _logger.LogInfo("Reading RFID from C3-400 ...");
-
-            if (DeviceConnected)
-            {
-                while (DeviceConnected)
-                {
-                    int ret = 0, buffersize = 256;
-                    string str = "";
-                    string[] tmp = null;
-                    byte[] buffer = new byte[256];
-
-                    if (IntPtr.Zero != h21)
-                    {
-                        ret = GetRTLog(h21, ref buffer[0], buffersize);
-                        if (ret >= 0)
-                        {
-                            try
-                            {
-                                str = Encoding.Default.GetString(buffer);
-                                tmp = str.Split(',');
-
-                                // Bắt đầu xử lý khi nhận diện được RFID
-                                if (tmp[2] != "0" && tmp[2] != "")
-                                {
-                                    var cardNoCurrent = tmp[2]?.ToString();
-                                    var doorCurrent = tmp[3]?.ToString();
-                                    var timeCurrent = tmp[0]?.ToString();
-
-                                    ReadDataProcess(cardNoCurrent);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError($@"Co loi xay ra khi xu ly RFID: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            _logger.LogWarn("No data. Reconnect ...");
-                            DeviceConnected = false;
-                            h21 = IntPtr.Zero;
-
-                            AuthenticateScaleStationModule();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                _logger.LogWarn("No data. Reconnect ...");
-                DeviceConnected = false;
-                h21 = IntPtr.Zero;
-
-                AuthenticateScaleStationModule();
-            }
-        }
-
-        public void ReadDataFromController()
-        {
-            if (client.Connected)
-            {
-                while (client.Connected)
-                {
-                    try
-                    {
-                        if (Program.IsEnabledRfid == false)
-                            continue;
-                        _logger.LogInfo("Reading RFID from Controller ...");
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        var dataStr = encoding.GetString(data);
-
-                        if (Program.IsLockingRfid == true)
-                        {
-                            _logger.LogInfo($"Nhan tin hieu: {dataStr}");
-                        }
-
-                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
-                        Match match = Regex.Match(dataStr, pattern);
-
-                        string xValue = string.Empty;
-                        string cardNoCurrent = string.Empty;
-
-                        if (match.Success)
-                        {
-                            xValue = match.Groups[1].Value;
-                            cardNoCurrent = match.Groups[2].Value;
-                        }
-                        else
-                        {
-                            _logger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
-                            continue;
-                        }
-
-                        if (!int.TryParse(xValue, out int doorCurrent))
-                        {
-                            _logger.LogInfo("XValue is not valid");
-                            continue;
-                        }
-
-                        if (doorCurrent != 3 && doorCurrent != 4) continue;
-
-                        ReadDataProcess(cardNoCurrent);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
-                    }
-                }
-                AuthenticateScaleStationModuleFromController();
-            }
-            else
-            {
-                AuthenticateScaleStationModuleFromController();
-            }
         }
 
         public void ReadDataFromPegasus()
@@ -702,5 +503,208 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         {
             return BitConverter.ToString(b).Replace("-", "");
         }
+
+        #region Read RFID by C3-400
+        public void AuthenticateScaleStationModule()
+        {
+            while (!DeviceConnected)
+            {
+                ConnectScaleStationModule();
+            }
+
+            ReadDataFromC3400();
+        }
+
+        public bool ConnectScaleStationModule()
+        {
+            var ipAddress = c3400?.IpAddress;
+            try
+            {
+                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
+                int ret = 0;
+                if (IntPtr.Zero == h21)
+                {
+                    h21 = Connect(str);
+                    if (h21 != IntPtr.Zero)
+                    {
+                        _logger.LogInfo($"Connected to C3-400 {ipAddress}");
+
+                        DeviceConnected = true;
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
+
+                        ret = PullLastError();
+                        DeviceConnected = false;
+                    }
+                }
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($@"ConnectScaleStationModule {ipAddress} error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public void ReadDataFromC3400()
+        {
+            _logger.LogInfo("Reading RFID from C3-400 ...");
+
+            if (DeviceConnected)
+            {
+                while (DeviceConnected)
+                {
+                    int ret = 0, buffersize = 256;
+                    string str = "";
+                    string[] tmp = null;
+                    byte[] buffer = new byte[256];
+
+                    if (IntPtr.Zero != h21)
+                    {
+                        ret = GetRTLog(h21, ref buffer[0], buffersize);
+                        if (ret >= 0)
+                        {
+                            try
+                            {
+                                str = Encoding.Default.GetString(buffer);
+                                tmp = str.Split(',');
+
+                                // Bắt đầu xử lý khi nhận diện được RFID
+                                if (tmp[2] != "0" && tmp[2] != "")
+                                {
+                                    var cardNoCurrent = tmp[2]?.ToString();
+                                    var doorCurrent = tmp[3]?.ToString();
+                                    var timeCurrent = tmp[0]?.ToString();
+
+                                    ReadDataProcess(cardNoCurrent);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError($@"Co loi xay ra khi xu ly RFID: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarn("No data. Reconnect ...");
+                            DeviceConnected = false;
+                            h21 = IntPtr.Zero;
+
+                            AuthenticateScaleStationModule();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogWarn("No data. Reconnect ...");
+                DeviceConnected = false;
+                h21 = IntPtr.Zero;
+
+                AuthenticateScaleStationModule();
+            }
+        }
+        #endregion
+
+        #region Read RFID by Controller
+        public void AuthenticateScaleStationModuleFromController()
+        {
+            while (!client.Connected)
+            {
+                ConnectScaleStationModuleFromController();
+            }
+            ReadDataFromController();
+        }
+
+        public bool ConnectScaleStationModuleFromController()
+        {
+            _logger.LogInfo("Thuc hien ket noi.");
+            try
+            {
+                _logger.LogInfo("Bat dau ket noi.");
+                client = new TcpClient();
+
+                // 1. connect
+                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
+                stream = client.GetStream();
+
+                _logger.LogInfo("Connected to controller");
+
+                DeviceConnected = true;
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo("Ket noi that bai.");
+                _logger.LogInfo(ex.Message);
+                _logger.LogInfo(ex.StackTrace);
+                return false;
+            }
+        }
+
+        public void ReadDataFromController()
+        {
+            if (client.Connected)
+            {
+                while (client.Connected)
+                {
+                    try
+                    {
+                        if (Program.IsEnabledRfid == false)
+                            continue;
+                        _logger.LogInfo("Reading RFID from Controller ...");
+                        byte[] data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+                        var dataStr = encoding.GetString(data);
+
+                        if (Program.IsLockingRfid == true)
+                        {
+                            _logger.LogInfo($"Nhan tin hieu: {dataStr}");
+                        }
+
+                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
+                        Match match = Regex.Match(dataStr, pattern);
+
+                        string xValue = string.Empty;
+                        string cardNoCurrent = string.Empty;
+
+                        if (match.Success)
+                        {
+                            xValue = match.Groups[1].Value;
+                            cardNoCurrent = match.Groups[2].Value;
+                        }
+                        else
+                        {
+                            _logger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
+                            continue;
+                        }
+
+                        if (!int.TryParse(xValue, out int doorCurrent))
+                        {
+                            _logger.LogInfo("XValue is not valid");
+                            continue;
+                        }
+
+                        if (doorCurrent != 3 && doorCurrent != 4) continue;
+
+                        ReadDataProcess(cardNoCurrent);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
+                AuthenticateScaleStationModuleFromController();
+            }
+            else
+            {
+                AuthenticateScaleStationModuleFromController();
+            }
+        }
+        #endregion
     }
 }
