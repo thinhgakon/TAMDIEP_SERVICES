@@ -53,20 +53,20 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
             {
                 if (checkCB1)
                 {
-                    new ScaleHub().SendSensor(SCALE_CB_1_CODE, "1");
+                    new ScaleHub().SendSensorHub(SCALE_CB_1_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(SCALE_CB_1_CODE, "0");
+                    new ScaleHub().SendSensorHub(SCALE_CB_1_CODE, "0");
                 }
 
                 if (checkCB2)
                 {
-                    new ScaleHub().SendSensor(SCALE_CB_2_CODE, "1");
+                    new ScaleHub().SendSensorHub(SCALE_CB_2_CODE, "1");
                 }
                 else
                 {
-                    new ScaleHub().SendSensor(SCALE_CB_2_CODE, "0");
+                    new ScaleHub().SendSensorHub(SCALE_CB_2_CODE, "0");
                 }
             }
             catch (Exception ex)
