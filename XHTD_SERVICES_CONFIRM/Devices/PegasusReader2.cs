@@ -39,6 +39,11 @@ namespace XHTD_SERVICES_CONFIRM.Devices
 
             return epcList;
         }
+
+        public static void Close(int port)
+        {
+            PegasusStaticClassReader2.CloseNetPort(port);
+        }
         public static int Connect(int Port,
                                              string IPaddr,
                                              ref byte ComAddr,

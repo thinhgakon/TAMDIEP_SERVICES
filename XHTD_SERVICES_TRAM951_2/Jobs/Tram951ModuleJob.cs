@@ -212,11 +212,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         public void AuthenticateGatewayModuleFromPegasus()
         {
             // 1. Connect Device
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+            _logger.LogInfo($"Connecting Pegasus {Program.PegasusIP1}");
+            int refPort = -1;
+            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
             while (openResult != 0)
             {
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+                PegasusReader.Close(refPort);
+                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
             }
+            Program.RefPort1 = refPort;
             _logger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị

@@ -199,11 +199,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         public void AuthenticateConfirmModuleFromPegasus()
         {
             _confirmLogger.LogInfo($"Connecting Pegasus {Program.PegasusIP1} ...");
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+            int refport = -1;
+            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refport);
             while (openResult != 0)
             {
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
+                PegasusReader.Close(refport);
+                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refport);
             }
+            Program.RefPort1 = refport;
+
             _confirmLogger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị

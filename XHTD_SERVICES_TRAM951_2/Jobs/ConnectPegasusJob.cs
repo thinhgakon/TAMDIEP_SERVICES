@@ -50,6 +50,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     var openresult = PegasusReader.Connect(RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
                     while (openresult != 0)
                     {
+                        PegasusReader2.Close(Program.RefPort1);
                         PegasusReader.Connect(RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref Program.RefPort1);
                         Thread.Sleep(1000);
                     }
@@ -65,6 +66,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     var openresult = PegasusReader2.Connect(RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
                     while (openresult != 0)
                     {
+                        PegasusReader2.Close(Program.RefPort2);
                         openresult = PegasusReader2.Connect(RefPort2, Program.PegasusIP2, ref Program.RefComAdr2, ref Program.RefPort2);
                         Thread.Sleep(1000);
                     }

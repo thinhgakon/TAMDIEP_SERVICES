@@ -58,7 +58,10 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                 }
             }
         }
-
+        public static void Close(int port)
+        {
+            PegasusStaticClassReader2.CloseNetPort(port);
+        }
         public static int Connect(int Port,
                                           string IPaddr,
                                           ref byte ComAddr,
