@@ -26,6 +26,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      || x.Step == (int)OrderStep.DA_NHAN_DON
                                                      || x.Step == (int)OrderStep.CHUA_NHAN_DON)
                                                      )
+                                            .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
 
                 return order;
@@ -41,6 +42,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && x.Step == (int)OrderStep.DA_CAN_RA
                                                   )
+                                            .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
 
                 return order;
