@@ -36,8 +36,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly PLCBarrier _barrier;
-
         protected readonly TCPTrafficLight _trafficLight;
 
         protected readonly Notification _notification;
@@ -83,7 +81,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
-            PLCBarrier barrier,
             TCPTrafficLight trafficLight,
             Notification notification,
             ConfirmLogger confirmLogger
@@ -94,7 +91,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
-            _barrier = barrier;
             _trafficLight = trafficLight;
             _notification = notification;
             _confirmLogger = confirmLogger;
@@ -317,67 +313,42 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             if (isConfirmSuccess)
             {
                 await SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
-                int statusGreenLight = 0;
-                string messageGreenLight = "";
-
                 _confirmLogger.LogInfo($"7. Bật đèn xanh");
                 if (TurnOnGreenTrafficLight())
                 {
-                    statusGreenLight = 1;
-                    messageGreenLight = "Bật đèn xanh thành công";
                     _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
                 }
                 else
                 {
-                    statusGreenLight = 0;
-                    messageGreenLight = "Bật đèn xanh thất bại";
                     _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
                 }
 
                 //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
-
                 //if (!string.IsNullOrEmpty(img))
                 //{
                 //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
                 //}
 
-                //await SendNotificationHub("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
-
-                //SendNotificationAPI("CONFIRM_RESULT", statusGreenLight, cardNoCurrent, messageGreenLight);
-
                 Thread.Sleep(10000);
-
-                int statusRedLight = 0;
-                string messageRedLight = "";
 
                 _confirmLogger.LogInfo($"8. Bật đèn đỏ");
                 if (TurnOnRedTrafficLight())
                 {
-                    statusRedLight = 1;
-                    messageRedLight = "Bật đèn đỏ thành công";
                     _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
                 }
                 else
                 {
-                    statusRedLight = 0;
-                    messageRedLight = "Bật đèn đỏ thất bại";
                     _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
                 }
-
-                //await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
-
-                //SendNotificationAPI("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
             }
             else
             {
                 await SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
