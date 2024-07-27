@@ -56,7 +56,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             });
         }
 
-
         public void Capture()
         {
             if (Program.IsCapturing)
