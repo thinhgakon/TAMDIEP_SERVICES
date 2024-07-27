@@ -96,6 +96,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.188";
+
         public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -192,17 +196,14 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void AuthenticateGatewayModuleFromPegasus()
         {
-            _logger.LogInfo($"Connecting Pegasus {Program.PegasusIP1}");
             // 1. Connect Device
-            int refPort = -1;
-            var openResult = PegasusReader.Connect(Program.RefPort2, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             while (openResult != 0)
             {
-                PegasusReader.Close(refPort);
-                openResult = PegasusReader.Connect(Program.RefPort2, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            Program.RefPort2 = refPort;
-            _logger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
+            _logger.LogInfo("Connected Pegasus");
             DeviceConnected = true;
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -210,7 +211,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void ReadDataFromPegasus()
         {
-            _logger.LogInfo($"Reading Pegasus {Program.PegasusIP1} ...");
+            _logger.LogInfo($"Reading Pegasus...");
             while (DeviceConnected)
             {
                 var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
@@ -220,7 +221,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {Program.PegasusIP1} {cardNoCurrent}");
+                        
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
