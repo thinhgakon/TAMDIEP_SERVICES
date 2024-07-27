@@ -41,8 +41,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly PLCBarrier _barrier;
 
-        protected readonly TCPTrafficLight _trafficLight;
-
         protected readonly Notification _notification;
 
         protected readonly GatewayLogger _gatewayLogger;
@@ -57,23 +55,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
-        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa, trafficLightIn, trafficLightOut;
+        private tblCategoriesDevice c3400, rfidRa1, rfidRa2, rfidVao1, rfidVao2, m221, barrierVao, barrierRa;
 
         protected const string CBV_ACTIVE = "CBV_ACTIVE";
 
         private static bool isActiveService = true;
-
-        protected const string C3400_CBV_IP_ADDRESS = "10.0.9.1";
-
-        protected const string M221_CBV_IP_ADDRESS = "10.0.9.2";
-
-        protected const string C3400_951_2_IP_ADDRESS = "10.0.9.5";
-
-        private IHubProxy HubProxy { get; set; }
-
-        private string ServerURI = URIConfig.SIGNALR_GATEWAY_SERVICE_URL;
-
-        private HubConnection Connection { get; set; }
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -95,6 +81,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.168";
+
         public GatewayModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -113,7 +100,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
             _barrier = barrier;
-            _trafficLight = trafficLight;
             _notification = notification;
             _gatewayLogger = gatewayLogger;
         }
@@ -127,9 +113,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                // Connect Scale Hub
-                ConnectScaleHubAsync();
-
                 // Get System Parameters
                 await LoadSystemParameters();
 
@@ -147,26 +130,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 AuthenticateGatewayModuleFromPegasus();
             });
-        }
-
-        private async void ConnectScaleHubAsync()
-        {
-            Connection = new HubConnection(ServerURI);
-            Connection.Closed += Connection_Closed;
-            HubProxy = Connection.CreateHubProxy("ScaleHub");
-            try
-            {
-                await Connection.Start();
-                _gatewayLogger.LogInfo($"Connected scale hub {ServerURI}");
-            }
-            catch (System.Net.Http.HttpRequestException ex)
-            {
-                _gatewayLogger.LogInfo($"Connect failed scale hub {ServerURI}");
-            }
-        }
-
-        private void Connection_Closed()
-        {
         }
 
         public async Task LoadSystemParameters()
@@ -200,33 +163,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             barrierVao = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-IN");
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
-
-            trafficLightIn = devices.FirstOrDefault(x => x.Code == "CBV.DGT-IN");
-            trafficLightOut = devices.FirstOrDefault(x => x.Code == "CBV.DGT-OUT");
-        }
-
-        public void AuthenticateGatewayModule()
-        {
-            // 1. Connect Device
-            while (!DeviceConnected)
-            {
-                ConnectGatewayModule();
-            }
-
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromC3400();
-        }
-
-        public void AuthenticateGatewayModuleFromController()
-        {
-            // 1. Connect Device
-            while (!DeviceConnected)
-            {
-                ConnectGatewayModuleFromController();
-            }
-
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromController();
         }
 
         public void AuthenticateGatewayModuleFromPegasus()
@@ -244,133 +180,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             ReadDataFromPegasus();
         }
 
-        public bool ConnectGatewayModule()
-        {
-            var ipAddress = c3400?.IpAddress;
-            try
-            {
-                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
-                int ret = 0;
-                if (IntPtr.Zero == h21)
-                {
-                    h21 = Connect(str);
-                    if (h21 != IntPtr.Zero)
-                    {
-                        _gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
-
-                        DeviceConnected = true;
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
-
-                        ret = PullLastError();
-                        DeviceConnected = false;
-                    }
-                }
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
-                return false;
-            }
-        }
-
-        public bool ConnectGatewayModuleFromController()
-        {
-            _gatewayLogger.LogInfo("Thuc hien ket noi.");
-            try
-            {
-                _gatewayLogger.LogInfo("Bat dau ket noi.");
-                client = new TcpClient();
-
-                // 1. connect
-                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
-                stream = client.GetStream();
-
-                _gatewayLogger.LogInfo("Connected to controller");
-
-                DeviceConnected = true;
-
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo("Ket noi that bai.");
-                _gatewayLogger.LogInfo(ex.Message);
-                _gatewayLogger.LogInfo(ex.StackTrace);
-                return false;
-            }
-        }
-
-        public async void ReadDataFromC3400()
-        {
-            _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
-
-            if (DeviceConnected)
-            {
-                while (DeviceConnected)
-                {
-                    int ret = 0, buffersize = 256;
-                    string str = "";
-                    string[] tmp = null;
-                    byte[] buffer = new byte[256];
-
-                    if (IntPtr.Zero != h21)
-                    {
-                        ret = GetRTLog(h21, ref buffer[0], buffersize);
-                        if (ret >= 0)
-                        {
-                            try
-                            {
-                                str = Encoding.Default.GetString(buffer);
-                                tmp = str.Split(',');
-
-                                // Bắt đầu xử lý khi nhận diện được RFID
-                                if (tmp[2] != "0" && tmp[2] != "")
-                                {
-                                    var cardNoCurrent = tmp[2]?.ToString();
-                                    var doorCurrent = tmp[3]?.ToString();
-                                    var timeCurrent = tmp[0]?.ToString();
-
-
-                                    // 1.Xác định xe cân vào / ra
-                                    var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
-                                                    || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
-
-                                    var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
-                                                    || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
-
-                                    await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogWarn("No data. Reconnect ...");
-                            DeviceConnected = false;
-                            h21 = IntPtr.Zero;
-
-                            AuthenticateGatewayModule();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                DeviceConnected = false;
-                h21 = IntPtr.Zero;
-
-                AuthenticateGatewayModule();
-            }
-        }
-
         public async void ReadDataFromPegasus()
         {
             _gatewayLogger.LogInfo("Reading Pegasus...");
@@ -383,10 +192,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {cardNoCurrent}");
-                        // 1.Xác định xe cân vào / ra
-                        var isLuongVao = true;
 
+                        // Xác định xe cân vào / ra
+                        var isLuongVao = true;
                         var isLuongRa = false;
 
                         await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
@@ -400,68 +208,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
 
         }
-
-
-        public async void ReadDataFromController()
-        {
-            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
-
-            if (DeviceConnected)
-            {
-                while (DeviceConnected)
-                {
-                    try
-                    {
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        //var dataStr = "*[Reader][1]1974716100[!]";
-                        var dataStr = encoding.GetString(data);
-
-                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
-
-                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
-                        Match match = Regex.Match(dataStr, pattern);
-
-                        string xValue = string.Empty;
-                        string cardNoCurrent = string.Empty;
-
-                        if (match.Success)
-                        {
-                            xValue = match.Groups[1].Value;
-                            cardNoCurrent = match.Groups[2].Value;
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
-                            continue;
-                        }
-
-                        if (!int.TryParse(xValue, out int doorCurrent))
-                        {
-                            _gatewayLogger.LogInfo("XValue is not valid");
-                            continue;
-                        }
-
-                        var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
-
-                        var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
-
-                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
-                    }
-                    catch (Exception ex)
-                    {
-                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
-                    }
-                }
-            }
-            else
-            {
-                DeviceConnected = false;
-                AuthenticateGatewayModuleFromController();
-            }
-        }
-
 
         private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)
         {
@@ -493,9 +239,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
             }
 
-            // Gửi signalr thông tin RFID cho chức năng nhận diện RFID trên app mobile
-            // SendRFIDInfo(isLuongVao, cardNoCurrent);
-
             // 2. Loại bỏ các tag đã check trước đó
             if (tmpInvalidCardNoLst.Count > 10)
             {
@@ -504,7 +247,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
             {
-                //_gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                _gatewayLogger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -517,7 +260,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
@@ -530,10 +273,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag da duoc check truoc do => Ket thuc.");
+                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
+
+            _gatewayLogger.LogInfo("----------------------------");
+            _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}");
+            _gatewayLogger.LogInfo("-----");
 
             var inout = "";
             if (isLuongVao)
@@ -649,7 +396,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (isUpdatedOrder)
                     {
-                        SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} vào cổng lúc {currentTime}");
                         _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
                     }
                 }
@@ -666,43 +412,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("IN");
-
-                    Thread.Sleep(3000);
-
-                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                    //if (TurnOnGreenTrafficLight("IN"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                    //}
-
-                    //if (isNormalOrder)
-                    //{
-                    //    try
-                    //    {
-                    //        var SaledOrderWebSale = DIBootstrapper.Init().Resolve<ScaleApiLib>().SaleOrder(currentDeliveryCode);
-                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu thành công {currentDeliveryCode}: Code={SaledOrderWebSale.Code} Message={SaledOrderWebSale.Message}");
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        _gatewayLogger.LogInfo($"7.3. Gọi API cập nhật in phiếu ERROR:  {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                    //    }
-                    //}
-
-                    Thread.Sleep(12000);
-
-                    _gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                    if (TurnOnRedTrafficLight("IN"))
-                    {
-                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                    }
                 }
                 else
                 {
@@ -720,8 +429,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (isUpdatedOrder)
                     {
-                        //SendInfoNotification($"{currentOrder.DriverUserName}", $"{currentDeliveryCode} ra cổng lúc {currentTime}");
-
                         _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
                     }
                 }
@@ -738,30 +445,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     _gatewayLogger.LogInfo($"6. Mở barrier");
                     isSuccessOpenBarrier = OpenS7Barrier("OUT");
-
-                    Thread.Sleep(3000);
-
-                    //_gatewayLogger.LogInfo($"7. Bật đèn xanh");
-                    //if (TurnOnGreenTrafficLight("OUT"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                    //}
-
-                    //Thread.Sleep(15000);
-
-                    //_gatewayLogger.LogInfo($"8. Bật đèn đỏ");
-                    //if (TurnOnRedTrafficLight("OUT"))
-                    //{
-                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                    //}
-                    //else
-                    //{
-                    //    _gatewayLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                    //}
                 }
                 else
                 {
@@ -810,79 +493,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public bool OpenBarrier(string luong)
-        {
-            var isConnectSuccessed = false;
-            int count = 0;
-
-            try
-            {
-                int portNumberDeviceIn = luong == "IN" ? (int)barrierVao.PortNumberDeviceIn : (int)barrierRa.PortNumberDeviceIn;
-                int portNumberDeviceOut = luong == "IN" ? (int)barrierVao.PortNumberDeviceOut : (int)barrierRa.PortNumberDeviceOut;
-
-                while (!isConnectSuccessed && count < 6)
-                {
-                    count++;
-
-                    _gatewayLogger.LogInfo($@"OpenBarrier: count={count}");
-
-                    M221Result isConnected = _barrier.ConnectPLC(m221.IpAddress);
-
-                    if (isConnected == M221Result.SUCCESS)
-                    {
-                        _barrier.ResetOutputPort(portNumberDeviceIn);
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan1 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan1 == M221Result.SUCCESS)
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 1 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 1 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        M221Result batLan2 = _barrier.ShuttleOutputPort(byte.Parse(portNumberDeviceIn.ToString()));
-
-                        if (batLan2 == M221Result.SUCCESS)
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 2 thanh cong: {_barrier.GetLastErrorString()}");
-                        }
-                        else
-                        {
-                            _gatewayLogger.LogInfo($"Bat lan 2 that bai: {_barrier.GetLastErrorString()}");
-                        }
-
-                        Thread.Sleep(500);
-
-                        _barrier.Close();
-
-                        _gatewayLogger.LogWarn($"OpenBarrier count={count} thanh cong");
-
-                        isConnectSuccessed = true;
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogWarn($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {_barrier.GetLastErrorString()}");
-
-                        Thread.Sleep(1000);
-                    }
-                }
-
-                return isConnectSuccessed;
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"OpenBarrier Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-                return false;
-            }
-        }
-
         public bool OpenS7Barrier(string luong)
         {
             if (luong == "IN")
@@ -890,64 +500,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
             }
             return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
-        }
-
-        public string GetTrafficLightIpAddress(string code)
-        {
-            var ipAddress = "";
-
-            if (code == "IN")
-            {
-                ipAddress = trafficLightIn?.IpAddress;
-            }
-            else if (code == "OUT")
-            {
-                ipAddress = trafficLightOut?.IpAddress;
-            }
-
-            return ipAddress;
-        }
-
-        public bool TurnOnGreenTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"7.1. IP đèn: {ipAddress}");
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOnGreenOffRed();
-        }
-
-        public bool TurnOnRedTrafficLight(string code)
-        {
-            var ipAddress = GetTrafficLightIpAddress(code);
-
-            if (String.IsNullOrEmpty(ipAddress))
-            {
-                return false;
-            }
-
-            _gatewayLogger.LogInfo($"8.1. IP đèn: {ipAddress}");
-
-            _trafficLight.Connect(ipAddress);
-
-            return _trafficLight.TurnOffGreenOnRed();
-        }
-
-        public async Task StartIfNeededAsync()
-        {
-            if (Connection.State == ConnectionState.Disconnected)
-            {
-                await Connection.Start();
-
-                _gatewayLogger.LogInfo($"Reconnect Connection: {Connection.State}");
-            }
         }
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string vehicle = null)
@@ -967,65 +519,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             //}
         }
 
-        public void SendRFIDInfo(bool isLuongVao, string cardNo)
-        {
-            try
-            {
-                if (isLuongVao)
-                {
-                    _notification.SendNotification(
-                        "GATE_WAY_RFID",
-                        null,
-                        1,
-                        cardNo,
-                        0,
-                        null,
-                        null,
-                        0,
-                        null,
-                        null,
-                        null
-                    );
-
-                    //_gatewayLogger.LogInfo($"Sent entrace RFID to app: {cardNo}");
-                }
-                else
-                {
-                    _notification.SendNotification(
-                       "GATE_WAY_OUT_RFID",
-                       null,
-                       1,
-                       cardNo,
-                       1,
-                       null,
-                       null,
-                       0,
-                       null,
-                       null,
-                       null
-                   );
-
-                    //_gatewayLogger.LogInfo($"Sent exit RFID to app: {cardNo}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
-        public void SendInfoNotification(string receiver, string message)
-        {
-            try
-            {
-                _notification.SendInforNotification(receiver, message);
-            }
-            catch (Exception ex)
-            {
-                _gatewayLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
         public void SendNotificationAPI(string inout, int status, string cardNo, string message, string vehicle = null)
         {
             try
@@ -1042,5 +535,220 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             return BitConverter.ToString(b).Replace("-", "");
         }
+
+        #region Read RFID by C3-400
+        public void AuthenticateGatewayModule()
+        {
+            // 1. Connect Device
+            while (!DeviceConnected)
+            {
+                ConnectGatewayModule();
+            }
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromC3400();
+        }
+
+        public bool ConnectGatewayModule()
+        {
+            var ipAddress = c3400?.IpAddress;
+            try
+            {
+                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
+                int ret = 0;
+                if (IntPtr.Zero == h21)
+                {
+                    h21 = Connect(str);
+                    if (h21 != IntPtr.Zero)
+                    {
+                        _gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
+
+                        DeviceConnected = true;
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
+
+                        ret = PullLastError();
+                        DeviceConnected = false;
+                    }
+                }
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async void ReadDataFromC3400()
+        {
+            _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
+
+            if (DeviceConnected)
+            {
+                while (DeviceConnected)
+                {
+                    int ret = 0, buffersize = 256;
+                    string str = "";
+                    string[] tmp = null;
+                    byte[] buffer = new byte[256];
+
+                    if (IntPtr.Zero != h21)
+                    {
+                        ret = GetRTLog(h21, ref buffer[0], buffersize);
+                        if (ret >= 0)
+                        {
+                            try
+                            {
+                                str = Encoding.Default.GetString(buffer);
+                                tmp = str.Split(',');
+
+                                // Bắt đầu xử lý khi nhận diện được RFID
+                                if (tmp[2] != "0" && tmp[2] != "")
+                                {
+                                    var cardNoCurrent = tmp[2]?.ToString();
+                                    var doorCurrent = tmp[3]?.ToString();
+                                    var timeCurrent = tmp[0]?.ToString();
+
+
+                                    // 1.Xác định xe cân vào / ra
+                                    var isLuongVao = doorCurrent == rfidVao1.PortNumberDeviceIn.ToString()
+                                                    || doorCurrent == rfidVao2.PortNumberDeviceIn.ToString();
+
+                                    var isLuongRa = doorCurrent == rfidRa1.PortNumberDeviceIn.ToString()
+                                                    || doorCurrent == rfidRa2.PortNumberDeviceIn.ToString();
+
+                                    await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogWarn("No data. Reconnect ...");
+                            DeviceConnected = false;
+                            h21 = IntPtr.Zero;
+
+                            AuthenticateGatewayModule();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                DeviceConnected = false;
+                h21 = IntPtr.Zero;
+
+                AuthenticateGatewayModule();
+            }
+        }
+        #endregion
+
+        #region Read RFID by Controller
+        public void AuthenticateGatewayModuleFromController()
+        {
+            // 1. Connect Device
+            while (!DeviceConnected)
+            {
+                ConnectGatewayModuleFromController();
+            }
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromController();
+        }
+
+        public bool ConnectGatewayModuleFromController()
+        {
+            _gatewayLogger.LogInfo("Thuc hien ket noi.");
+            try
+            {
+                _gatewayLogger.LogInfo("Bat dau ket noi.");
+                client = new TcpClient();
+
+                // 1. connect
+                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
+                stream = client.GetStream();
+
+                _gatewayLogger.LogInfo("Connected to controller");
+
+                DeviceConnected = true;
+
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo("Ket noi that bai.");
+                _gatewayLogger.LogInfo(ex.Message);
+                _gatewayLogger.LogInfo(ex.StackTrace);
+                return false;
+            }
+        }
+
+        public async void ReadDataFromController()
+        {
+            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
+
+            if (DeviceConnected)
+            {
+                while (DeviceConnected)
+                {
+                    try
+                    {
+                        byte[] data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+                        //var dataStr = "*[Reader][1]1974716100[!]";
+                        var dataStr = encoding.GetString(data);
+
+                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
+
+                        string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
+                        Match match = Regex.Match(dataStr, pattern);
+
+                        string xValue = string.Empty;
+                        string cardNoCurrent = string.Empty;
+
+                        if (match.Success)
+                        {
+                            xValue = match.Groups[1].Value;
+                            cardNoCurrent = match.Groups[2].Value;
+                        }
+                        else
+                        {
+                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
+                            continue;
+                        }
+
+                        if (!int.TryParse(xValue, out int doorCurrent))
+                        {
+                            _gatewayLogger.LogInfo("XValue is not valid");
+                            continue;
+                        }
+
+                        var isLuongVao = doorCurrent == c3400.PortNumberDeviceIn;
+
+                        var isLuongRa = doorCurrent == c3400.PortNumberDeviceOut;
+
+                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                    }
+                    catch (Exception ex)
+                    {
+                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                DeviceConnected = false;
+                AuthenticateGatewayModuleFromController();
+            }
+        }
+        #endregion
     }
 }
