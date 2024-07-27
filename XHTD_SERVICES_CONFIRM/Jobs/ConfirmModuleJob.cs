@@ -85,9 +85,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         private readonly string IMG_PATH = "C:\\IMAGE";
         private readonly int CAMERA_NUMBER = 2;
 
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.162";
+        private readonly byte ComAddr = 0xFF;
+        private readonly int PortHandle = 2000;
+        private readonly string PegasusAdr = "192.168.13.162";
 
         public ConfirmModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -203,10 +203,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         public void AuthenticateConfirmModuleFromPegasus()
         {
             int port = PortHandle;
-            var openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            byte comAdr = ComAddr;
+            var openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref comAdr, ref port);
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                openResult = PegasusStaticClassReader2.OpenNetPort(PortHandle, PegasusAdr, ref comAdr, ref port);
             }
             _confirmLogger.LogInfo($"Connected Pegasus {PegasusAdr}");
             DeviceConnected = true;
@@ -251,13 +252,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             var ipAddress = c3400?.IpAddress;
             try
             {
-                StaticClassReaderB.CloseNetPort(PortHandle);
-                var openresult = StaticClassReaderB.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref PortHandle);
-
-                if (openresult == 0)
-                {
-                    DeviceConnected = true;
-                }
                 return DeviceConnected;
             }
             catch (Exception ex)
@@ -523,13 +517,14 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 while (!Program.IsLockingRfid)
                 {
-                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
+                    byte comadr = ComAddr;
+                    var data = PegasusReader.Inventory_G2(ref comadr, 0, 0, 0, PortHandle);
                     foreach (var item in data)
                     {
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            Console.WriteLine($"Nhan the {cardNoCurrent}");
+                            _confirmLogger.LogInfo($"Nhan the{PegasusAdr}: {cardNoCurrent}");
                             if (Program.IsLockingRfidIn)
                             {
                                 _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");

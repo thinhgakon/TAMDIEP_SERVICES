@@ -530,7 +530,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         try
                         {
                             var cardNoCurrent = ByteArrayToString(item);
-                            Console.WriteLine($"161 Nhan the {cardNoCurrent}");
+                            _confirmLogger.LogInfo($"Nhan the{PegasusAdr}: {cardNoCurrent}");
                             if (Program.IsLockingRfidIn)
                             {
                                 _confirmLogger.LogInfo($"161 == Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
