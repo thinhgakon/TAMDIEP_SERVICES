@@ -102,6 +102,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
 
+                        int countZero = 0;
+
                         foreach (var item in parts)
                         {
                             int scaleValue;
@@ -123,7 +125,18 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                             if (scaleValue == 0)
                             {
-                                continue;
+                                if (countZero < 3)
+                                {
+                                    countZero++;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                countZero = 0;
                             }
 
                             SendScaleInfoAPI(dateTime, scaleValue.ToString());
