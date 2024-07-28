@@ -41,11 +41,13 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
             if (reply.Status == IPStatus.Success)
             {
-                Console.WriteLine("Connection ok");
+                //Console.WriteLine("Connection ok");
                 return;
             }
             else
             {
+                _logger.LogWarn("Start reconnect...");
+
                 int port = PortHandle;
                 var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                 while (openresult != 0)
@@ -53,7 +55,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     Thread.Sleep(1000);
                 }
-                _logger.LogWarn("Connect fail. Start reconnect");
+
+                _logger.LogWarn("Reconnect success");
             }
         }
     }

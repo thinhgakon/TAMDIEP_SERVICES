@@ -319,7 +319,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if(order.Step < (int)OrderStep.DA_CAN_VAO) { 
+                    if(order.Step < (int)OrderStep.DA_CAN_VAO || order.Step == (int)OrderStep.DA_XAC_THUC) { 
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
@@ -386,7 +386,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_CAN_RA)
+                        if (order.Step < (int)OrderStep.DA_CAN_RA || order.Step == (int)OrderStep.DA_XAC_THUC)
                         {
                             order.Step = (int)OrderStep.DA_CAN_RA;
                         }
