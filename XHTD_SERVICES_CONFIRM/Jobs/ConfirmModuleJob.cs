@@ -158,8 +158,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            _confirmLogger.LogInfo("Connected Pegasus");
+            _confirmLogger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
             DeviceConnected = true;
+
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
         }

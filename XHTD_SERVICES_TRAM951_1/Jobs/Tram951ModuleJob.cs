@@ -138,7 +138,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     return;
                 }
 
-                _logger.LogInfo("Start tram951 1 service");
+                _logger.LogInfo("Start tramcan service");
                 _logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -200,8 +200,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            _logger.LogInfo("Connected Pegasus");
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
             DeviceConnected = true;
+
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
         }
