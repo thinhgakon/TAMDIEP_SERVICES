@@ -322,27 +322,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
                 //}
 
-                _confirmLogger.LogInfo($"7. Bật đèn xanh");
-                if (TurnOnGreenTrafficLight())
-                {
-                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                }
-                else
-                {
-                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                }
-
-                Thread.Sleep(10000);
-
-                _confirmLogger.LogInfo($"8. Bật đèn đỏ");
-                if (TurnOnRedTrafficLight())
-                {
-                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                }
-                else
-                {
-                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                }
+                // Bật đèn xanh - đỏ
+                TurnOnTrafficLight();
             }
             else
             {
@@ -369,6 +350,31 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             ipAddress = trafficLight?.IpAddress;
 
             return ipAddress;
+        }
+
+        public void TurnOnTrafficLight()
+        {
+            _confirmLogger.LogInfo($"7. Bật đèn xanh");
+            if (TurnOnGreenTrafficLight())
+            {
+                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+            }
+            else
+            {
+                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+            }
+
+            Thread.Sleep(10000);
+
+            _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+            if (TurnOnRedTrafficLight())
+            {
+                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+            }
+            else
+            {
+                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+            }
         }
 
         public bool TurnOnGreenTrafficLight()
