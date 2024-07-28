@@ -197,14 +197,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                     var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues, ScaleConfig.WEIGHT_SAISO);
 
-                    _logger.Info($"Received {SCALE_CODE} data: time={time}, value={value}");
+                    WriteLogInfo($"Received {SCALE_CODE} data: time={time}, value={value}");
 
                     if (isOnDinh)
                     {
                         Program.IsLockingScale = true;
 
                         // 1. Xác định giá trị cân ổn định
-                        _logger.Info($"1. Can {SCALE_CODE} on dinh: " + currentScaleValue);
+                        WriteLogInfo($"1. Can {SCALE_CODE} on dinh: " + currentScaleValue);
 
                         SendMessage($"{SCALE_BALANCE}", $"{currentScaleValue}");
                         SendMessageAPI($"{SCALE_BALANCE}", $"{currentScaleValue}");
@@ -215,7 +215,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == SCALE_CODE && (bool)x.IsScaling);
                             if (scaleInfo == null)
                             {
-                                _logger.Info($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
+                                WriteLogInfo($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
                                 SendMessage("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
                                 SendMessageAPI("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
@@ -228,7 +228,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                             var currentOrder = await DIBootstrapper.Init().Resolve<OrderBusiness>().GetDetail(scaleInfo.DeliveryCode);
                             if (currentOrder == null)
                             {
-                                _logger.Info($"2. Khong co thong tin don hang dang can voi code = {scaleInfo.DeliveryCode}");
+                                WriteLogInfo($"2. Khong co thong tin don hang dang can voi code = {scaleInfo.DeliveryCode}");
 
                                 SendMessage("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
                                 SendMessageAPI("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
@@ -238,7 +238,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 return;
                             }
 
-                            _logger.Info($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
+                            WriteLogInfo($"2. Phuong tien dang can {SCALE_CODE}: Vehicle={scaleInfo.Vehicle} - CardNo={scaleInfo.CardNo} - DeliveryCode={scaleInfo.DeliveryCode}");
 
                             var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
@@ -252,12 +252,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // Độ lệch khối lượng không tải trung bình và giá trị cân bì hiện tại
                                 var unladenWeightSaiSo = Math.Abs(unladenWeight - currentScaleValue);
 
-                                _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
-                                _logger.Info($"2.2. Sai so khoi luong khong tai: {unladenWeightSaiSo}");
+                                WriteLogInfo($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
+                                WriteLogInfo($"2.2. Sai so khoi luong khong tai: {unladenWeightSaiSo}");
 
                                 if (unladenWeight > 0 && unladenWeightSaiSo > ScaleConfig.UNLADEN_WEIGHT_SAISO)
                                 {
-                                    _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
+                                    WriteLogInfo($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
                                     SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
@@ -268,11 +268,11 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 }
 
                                 // 3. Cập nhật khối lượng không tải của phương tiện
-                                _logger.Info($"3. Cap nhat khoi luong khong tai cua phuong tien");
+                                WriteLogInfo($"3. Cap nhat khoi luong khong tai cua phuong tien");
                                 await DIBootstrapper.Init().Resolve<UnladenWeightBusiness>().UpdateUnladenWeight(scaleInfo.CardNo, currentScaleValue);
 
                                 // 5. Gọi iERP API lưu giá trị cân
-                                _logger.Info($"5. Goi iERP API luu gia tri can");
+                                WriteLogInfo($"5. Goi iERP API luu gia tri can");
                                 var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
 
                                 if (scaleInfoResult.Code == "01")
@@ -281,31 +281,31 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
-                                    _logger.Info($"5.1. Lưu giá trị cân thành công");
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
-                                    _logger.Info($"6. Update gia tri can va trang thai Can vao");
+                                    WriteLogInfo($"6. Update gia tri can va trang thai Can vao");
 
                                     if (currentOrder.CatId == OrderCatIdCode.CLINKER
                                      || currentOrder.TypeXK == OrderTypeXKCode.JUMBO
                                      || currentOrder.TypeXK == OrderTypeXKCode.SLING)
                                     {
-                                        _logger.Info($"6.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+                                        WriteLogInfo($"6.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                        _logger.Info($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
+                                        WriteLogInfo($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
 
-                                        _logger.Info($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                        WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
                                         await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                     }
                                     else
                                     {
-                                        _logger.Info($"6.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
+                                        WriteLogInfo($"6.1. Don hang thong thuong: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                        _logger.Info($"6.2. Update gia tri can vao");
+                                        WriteLogInfo($"6.2. Update gia tri can vao");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        _logger.Info($"6.3. Update trạng thái cân vào");
+                                        WriteLogInfo($"6.3. Update trạng thái cân vào");
                                         await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
 
                                         //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
@@ -314,7 +314,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     Thread.Sleep(3000);
 
                                     // 8. Bật đèn xanh
-                                    _logger.Info($"8. Bat den xanh");
+                                    WriteLogInfo($"8. Bat den xanh");
                                     TurnOnGreenTrafficLight();
                                 }
                                 else
@@ -323,13 +323,13 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
-                                    _logger.Info($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 }
 
                                 // 9. Giải phóng cân
-                                _logger.Info($"9. Giai phong can {SCALE_CODE}");
+                                WriteLogInfo($"9. Giai phong can {SCALE_CODE}");
                                 await ReleaseScale();
                             }
                             // Đang cân ra
@@ -338,14 +338,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // Độ lệch khối lượng hiện tại và khối lượng có tải dự kiến (không tải trung bình + số lượng đặt hàng)
                                 var ladenWeightSaiSo = Math.Abs((int)ladenWeight - currentScaleValue);
 
-                                _logger.Info($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
-                                _logger.Info($"2.2. Khoi luong đặt hàng: {currentOrder.SumNumber}");
-                                _logger.Info($"2.3. Khoi luong có tải dự kiến: {ladenWeight}");
-                                _logger.Info($"2.4. Sai so khoi luong có tải: {ladenWeightSaiSo}");
+                                WriteLogInfo($"2.1. Khoi luong khong tai trung binh: {unladenWeight}");
+                                WriteLogInfo($"2.2. Khoi luong đặt hàng: {currentOrder.SumNumber}");
+                                WriteLogInfo($"2.3. Khoi luong có tải dự kiến: {ladenWeight}");
+                                WriteLogInfo($"2.4. Sai so khoi luong có tải: {ladenWeightSaiSo}");
 
                                 if (unladenWeight > 0 && ladenWeightSaiSo > ScaleConfig.LADEN_WEIGHT_SAISO)
                                 {
-                                    _logger.Info($"2.3. Sai so vuot qua {ScaleConfig.LADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
+                                    WriteLogInfo($"2.3. Sai so vuot qua {ScaleConfig.LADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
                                     SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.LADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
 
@@ -355,7 +355,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 }
 
                                 // 4. Gọi iERP API lưu giá trị cân
-                                _logger.Info($"4. Goi iERP API luu gia tri can");
+                                WriteLogInfo($"4. Goi iERP API luu gia tri can");
                                 var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
 
                                 if (scaleInfoResult.Code == "01")
@@ -363,14 +363,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
 
-                                    _logger.Info($"4.1. Lưu giá trị cân thành công");
+                                    WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
                                     // 5. Update gia tri can va trang thai Can ra
-                                    _logger.Info($"5. Update gia tri can va trang thai Can ra");
-                                    _logger.Info($"5.1. Update gia tri can ra");
+                                    WriteLogInfo($"5. Update gia tri can va trang thai Can ra");
+                                    WriteLogInfo($"5.1. Update gia tri can ra");
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                    _logger.Info($"5.2. Update trạng thái cân ra");
+                                    WriteLogInfo($"5.2. Update trạng thái cân ra");
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
 
                                     //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
@@ -378,7 +378,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     Thread.Sleep(3000);
 
                                     // 7. Bật đèn xanh
-                                    _logger.Info($"7. Bat den xanh");
+                                    WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
                                 }
                                 else
@@ -386,13 +386,13 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thất bại
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
-                                    _logger.Info($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+                                    WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 }
 
                                 // 8. Giải phóng cân: Program.IsScalling = false, update table tblScale
-                                _logger.Info($"8. Giai phong can {SCALE_CODE}");
+                                WriteLogInfo($"8. Giai phong can {SCALE_CODE}");
                                 await ReleaseScale();
                             }
                         }
@@ -408,7 +408,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
             catch (Exception ex)
             {
-                _logger.Error($@"Co loi khi xu ly scale data: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($@"Co loi khi xu ly scale data: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -422,7 +422,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         public void TurnOnGreenTrafficLight(bool isHasNotification = false)
         {
-            _logger.Info($@"Bật den xanh chieu vao");
+            WriteLogInfo($@"Bật den xanh chieu vao");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
             {
                 if (isHasNotification)
@@ -430,7 +430,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thành công");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều vào thành công");
                 }
-                _logger.Info($@"Bật thành công");
+                WriteLogInfo($@"Bật thành công");
             }
             else
             {
@@ -439,12 +439,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessage("Notification", $"Bật đèn xanh chiều vào thất bại");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều vào thất bại");
                 }
-                _logger.Info($@"Bật thất bại");
+                WriteLogInfo($@"Bật thất bại");
             }
 
             Thread.Sleep(500);
 
-            _logger.Info($@"Bật den xanh chieu ra");
+            WriteLogInfo($@"Bật den xanh chieu ra");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
             {
                 if (isHasNotification)
@@ -452,7 +452,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thành công");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều ra thành công");
                 }
-                _logger.Info($@"Bật thành công");
+                WriteLogInfo($@"Bật thành công");
             }
             else
             {
@@ -461,7 +461,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều ra thất bại");
                 }
-                _logger.Info($@"Bật thất bại");
+                WriteLogInfo($@"Bật thất bại");
             }
         }
 
@@ -473,7 +473,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
             catch (Exception ex)
             {
-                _logger.Info($"SendMessageAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendMessageAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -485,8 +485,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             }
             catch (Exception ex)
             {
-                _logger.Info($"SendSensorAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendSensorAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }
