@@ -35,24 +35,31 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public void CheckConnection()
         {
-            Ping pingSender = new Ping();
-            PingReply reply = pingSender.Send(PegasusAdr);
+            try
+            {
+                Ping pingSender = new Ping();
+                PingReply reply = pingSender.Send(PegasusAdr);
 
-            if (reply.Status == IPStatus.Success)
-            {
-                //Console.WriteLine("Connection ok");
-                return;
-            }
-            else
-            {
-                int port = PortHandle;
-                var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                while(openresult != 0)
+                if (reply.Status == IPStatus.Success)
                 {
-                    openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    Thread.Sleep(1000);
+                    //Console.WriteLine("Connection ok");
+                    return;
                 }
-                _gatewayLogger.LogWarn("Connect fail. Start reconnect");
+                else
+                {
+                    int port = PortHandle;
+                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                    while (openresult != 0)
+                    {
+                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                        Thread.Sleep(1000);
+                    }
+                    _gatewayLogger.LogWarn("Connect fail. Start reconnect");
+                }
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogWarn($"Ping ERROR: {ex.Message}");
             }
         }
     }
