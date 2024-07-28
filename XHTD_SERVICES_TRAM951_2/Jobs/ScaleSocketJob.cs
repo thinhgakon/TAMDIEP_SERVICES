@@ -96,6 +96,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                         //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
                         string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
+
+                        int countZero = 0;
                         
                         foreach (var item in parts)
                         {
@@ -116,9 +118,20 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                                 continue;
                             }
 
-                            if(scaleValue == 0)
+                            if (scaleValue == 0)
                             {
-                                continue;
+                                if (countZero < 3)
+                                {
+                                    countZero++;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                countZero = 0;
                             }
 
                             SendScaleInfoAPI(dateTime, scaleValue.ToString());
