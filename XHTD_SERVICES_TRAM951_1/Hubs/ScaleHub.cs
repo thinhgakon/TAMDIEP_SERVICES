@@ -129,10 +129,11 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     // Hàm kiểm tra xe đang ra khỏi bàn cân: khối lượng giảm dần
 
                     SendMessage($"{SCALE_STATUS}", $"Cân đang nghỉ");
-                    SendMessage($"{SCALE_BALANCE}", "");
-
                     SendMessageAPI($"{SCALE_STATUS}", $"Cân đang nghỉ");
+
+                    SendMessage($"{SCALE_BALANCE}", "");
                     SendMessageAPI($"{SCALE_BALANCE}", "   ");
+
                     SendMessageAPI($"{VEHICLE_STATUS}", "    ");
                     SendMessageAPI($"{SCALE_DELIVERY_CODE}", "  ");
                     SendMessageAPI("Notification", "    ");
@@ -145,21 +146,23 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 if (Program.IsScalling)
                 {
                     SendMessage($"{SCALE_STATUS}", $"Đang cân tự động");
-                    SendMessage($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
-                    SendMessage($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
-
                     SendMessageAPI($"{SCALE_STATUS}", $"Đang cân tự động");
+
+                    SendMessage($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
                     SendMessageAPI($"{VEHICLE_STATUS}", $"{Program.InProgressVehicleCode}");
+
+                    SendMessage($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
                     SendMessageAPI($"{SCALE_DELIVERY_CODE}", $"{Program.InProgressDeliveryCode}");
                 }
                 else
                 {
                     SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
-                    SendMessage($"{SCALE_BALANCE}", "  ");
-                    SendMessage("Notification", "  ");
-
                     SendMessageAPI($"{SCALE_STATUS}", $"Đang cân thủ công");
+
+                    SendMessage($"{SCALE_BALANCE}", "  ");
                     SendMessageAPI($"{SCALE_BALANCE}", "");
+
+                    SendMessage("Notification", "  ");
                     SendMessageAPI("Notification", "  ");
                 }
 
@@ -362,6 +365,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 {
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
+                                    SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
@@ -385,6 +389,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 {
                                     // Lưu giá trị cân thất bại
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
