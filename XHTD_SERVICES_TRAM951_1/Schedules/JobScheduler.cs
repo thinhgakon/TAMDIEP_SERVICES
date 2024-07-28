@@ -37,16 +37,6 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
-            //IJobDetail syncOrderJob2 = JobBuilder.Create<Tram951ModuleJob2>().Build();
-            //ITrigger syncOrderTrigger2 = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Tram951_Module_Interval_In_Hours")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(syncOrderJob2, syncOrderTrigger2);
-
             IJobDetail scaleSocketJob = JobBuilder.Create<ScaleSocketJob>().Build();
             ITrigger scaleSocketTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
@@ -56,17 +46,6 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(scaleSocketJob, scaleSocketTrigger);
-
-            ////// Reset PLC trạm 951
-            //IJobDetail resetPLCJob = JobBuilder.Create<Reset951PLCJob>().Build();
-            //ITrigger resetPLCTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(60)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(resetPLCJob, resetPLCTrigger);
 
             IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
             ITrigger connectPegasusrigger = TriggerBuilder.Create()

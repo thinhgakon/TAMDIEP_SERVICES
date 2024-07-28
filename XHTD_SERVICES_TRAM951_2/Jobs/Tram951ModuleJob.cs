@@ -53,7 +53,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly string SCALE_DELIVERY_CODE = "TRAM951_2_DELIVERY_CODE";
 
-        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_2_IS_LOCKING_RFID";
+        protected readonly string SCALE_IS_LOCKING_RFID = "SCALE_2_IS_LOCKING_RFID";
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_2_STATUS";
 
@@ -64,8 +64,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_2_BARRIER_ACTIVE";
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_2_CURRENT_RFID";
-
-        protected readonly string SCALE_2_IS_LOCKING_RFID = "SCALE_2_IS_LOCKING_RFID";
 
         private static bool isActiveService = true;
 
@@ -141,7 +139,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     return;
                 }
 
-                _logger.LogInfo("Start tram951 1 service");
+                _logger.LogInfo("Start tramcan service");
                 _logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -203,8 +201,9 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            _logger.LogInfo("Connected Pegasus");
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
             DeviceConnected = true;
+
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
         }
@@ -236,7 +235,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         public async void ReadDataProcess(string cardNoCurrent)
         {
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendNotificationAPI($"{SCALE_2_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
             if (Program.IsEnabledRfid == false)
             {
@@ -469,7 +468,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScale2Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

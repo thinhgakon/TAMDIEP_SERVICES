@@ -158,8 +158,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
-            _confirmLogger.LogInfo("Connected Pegasus");
+            _confirmLogger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
             DeviceConnected = true;
+
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
         }
@@ -314,33 +315,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
-                _confirmLogger.LogInfo($"7. Bật đèn xanh");
-                if (TurnOnGreenTrafficLight())
-                {
-                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
-                }
-                else
-                {
-                    _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
-                }
-
+                // Chụp ảnh
                 //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
                 //if (!string.IsNullOrEmpty(img))
                 //{
                 //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
                 //}
 
-                Thread.Sleep(10000);
-
-                _confirmLogger.LogInfo($"8. Bật đèn đỏ");
-                if (TurnOnRedTrafficLight())
-                {
-                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
-                }
-                else
-                {
-                    _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
-                }
+                // Bật đèn xanh - đỏ
+                TurnOnTrafficLight();
             }
             else
             {
@@ -367,6 +350,31 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             ipAddress = trafficLight?.IpAddress;
 
             return ipAddress;
+        }
+
+        public void TurnOnTrafficLight()
+        {
+            _confirmLogger.LogInfo($"7. Bật đèn xanh");
+            if (TurnOnGreenTrafficLight())
+            {
+                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+            }
+            else
+            {
+                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+            }
+
+            Thread.Sleep(10000);
+
+            _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+            if (TurnOnRedTrafficLight())
+            {
+                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+            }
+            else
+            {
+                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+            }
         }
 
         public bool TurnOnGreenTrafficLight()

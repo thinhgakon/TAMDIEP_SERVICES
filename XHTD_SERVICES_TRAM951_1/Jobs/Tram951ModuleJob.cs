@@ -52,7 +52,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly string SCALE_DELIVERY_CODE = "TRAM951_1_DELIVERY_CODE";
 
-        protected readonly string SCALE_IS_LOCKING_RFID = "TRAM951_1_IS_LOCKING_RFID";
+        protected readonly string SCALE_IS_LOCKING_RFID = "SCALE_1_IS_LOCKING_RFID";
 
         protected readonly string VEHICLE_STATUS = "VEHICLE_1_STATUS";
 
@@ -63,8 +63,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_1_BARRIER_ACTIVE";
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_1_CURRENT_RFID";
-
-        protected readonly string SCALE_1_IS_LOCKING_RFID = "SCALE_1_IS_LOCKING_RFID";
 
         private static bool isActiveService = true;
 
@@ -94,6 +92,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         static TcpClient client = new TcpClient();
         static Stream stream = null;
+
+        private byte ComAddr = 0xFF;
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.182";
 
         public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -136,7 +138,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     return;
                 }
 
-                _logger.LogInfo("Start tram951 1 service");
+                _logger.LogInfo("Start tramcan service");
                 _logger.LogInfo("----------------------------");
 
                 // Get devices info
@@ -189,6 +191,292 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
         }
 
+        public void AuthenticateGatewayModuleFromPegasus()
+        {
+            // 1. Connect Device
+            int port = PortHandle;
+            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            while (openResult != 0)
+            {
+                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            }
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
+            DeviceConnected = true;
+
+            // 2. Đọc dữ liệu từ thiết bị
+            ReadDataFromPegasus();
+        }
+
+        public void ReadDataFromPegasus()
+        {
+            _logger.LogInfo($"Reading Pegasus...");
+            while (DeviceConnected)
+            {
+                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
+
+                foreach (var item in data)
+                {
+                    try
+                    {
+                        var cardNoCurrent = ByteArrayToString(item);
+
+                        ReadDataProcess(cardNoCurrent);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        continue;
+                    }
+                }
+            }
+        }
+
+        public async void ReadDataProcess(string cardNoCurrent)
+        {
+            SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+            SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
+
+            if (Program.IsEnabledRfid == false)
+            {
+                return;
+            }
+
+            // Loại bỏ các tag đã check trước đó
+            if (tmpInvalidCardNoLst.Count > 10)
+            {
+                tmpInvalidCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            {
+                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                return;
+            }
+
+            if (tmpCardNoLst.Count > 5)
+            {
+                tmpCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
+            {
+                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                return;
+            }
+
+            SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
+            SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
+
+            _logger.LogInfo("----------------------------");
+            _logger.LogInfo($"Tag: {cardNoCurrent}");
+            _logger.LogInfo("-----");
+
+            // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+            if (Program.IsScalling)
+            {
+                var timeToRelease = DateTime.Now.AddMinutes(-5);
+
+                var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
+                if (scaleInfo != null
+                    && (bool)scaleInfo.IsScaling
+                    && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
+                    && scaleInfo.TimeIn > timeToRelease
+                    )
+                {
+                    SendNotificationHub("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+                    SendNotificationAPI("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
+
+                    // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
+                    _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
+                    return;
+                }
+                else
+                {
+                    // Giải phóng cân khi bị giữ quá 5 phút
+                    _logger.LogInfo($"== Giai phong can {SCALE_CODE} khi bi giu qua 5 phut ==");
+
+                    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+
+                    Program.IsScalling = false;
+                    Program.InProgressDeliveryCode = null;
+                    Program.InProgressVehicleCode = null;
+                }
+            }
+
+            // 1. Kiểm tra cardNoCurrent hợp lệ
+            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            {
+                _logger.LogInfo($"1. Tag hop le: vehicle={vehicleCodeCurrent}");
+            }
+            else
+            {
+                _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+
+            // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
+            var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
+            var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
+
+            if (currentOrder == null)
+            {
+                _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (isValidCardNo == false)
+            {
+                _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else
+            {
+                Program.IsLockingRfid = true;
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpCardNoLst.Add(newCardNoLog);
+
+                _logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
+            }
+
+            // 3. Xác định xe vào hay ra
+            var isLuongVao = true;
+
+            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
+            {
+                isLuongVao = true;
+                _logger.LogInfo($"3. Xe can VAO");
+            }
+            else
+            {
+                isLuongVao = false;
+                _logger.LogInfo($"3. Xe can RA");
+            }
+
+            if (isLuongVao)
+            {
+                // 4. Lưu thông tin xe đang cân
+                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                if (isUpdatedOrder)
+                {
+                    _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
+
+                    // 5. Bat den do
+                    TurnOnRedTrafficLight();
+
+                    // 6. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    Program.IsScalling = true;
+                    Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
+                    Program.InProgressVehicleCode = currentOrder.Vehicle;
+                }
+                else
+                {
+                    _logger.LogInfo($"4. Lưu thông tin xe đang cân THẤT BẠI");
+                }
+            }
+            else
+            {
+                // 4. Lưu thông tin xe đang cân
+                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                if (isUpdatedOrder)
+                {
+                    _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
+
+                    // 5. Bat den do
+                    TurnOnRedTrafficLight();
+
+                    // 6. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    Program.IsScalling = true;
+                    Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
+                    Program.InProgressVehicleCode = currentOrder.Vehicle;
+                }
+                else
+                {
+                    _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
+                }
+            }
+        }
+
+        public void TurnOnRedTrafficLight()
+        {
+            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                _logger.LogInfo($@"Bật đèn thành công");
+            }
+            else
+            {
+                _logger.LogInfo($@"Bật đèn thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                _logger.LogInfo($@"Bật đèn thành công");
+            }
+            else
+            {
+                _logger.LogInfo($@"Bật đèn thất bại");
+            }
+        }
+
+        private void SendNotificationHub(string name, string message)
+        {
+            new ScaleHub().SendMessage(name, message);
+        }
+
+        private void SendNotificationAPI(string name, string message)
+        {
+            try
+            {
+                _notification.SendScale1Message(name, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public string ByteArrayToString(byte[] b)
+        {
+            return BitConverter.ToString(b).Replace("-", "");
+        }
+
+        #region Read RFID by C3-400
         public void AuthenticateScaleStationModule()
         {
             while (!DeviceConnected)
@@ -197,32 +485,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
 
             ReadDataFromC3400();
-        }
-
-        public void AuthenticateScaleStationModuleFromController()
-        {
-            while (!client.Connected)
-            {
-                ConnectScaleStationModuleFromController();
-            }
-            ReadDataFromController();
-        }
-
-        public void AuthenticateGatewayModuleFromPegasus()
-        {
-            // 1. Connect Device
-            int refPort = -1;
-            var openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
-            while (openResult != 0)
-            {
-                PegasusReader.Close(refPort);
-                openResult = PegasusReader.Connect(Program.RefPort1, Program.PegasusIP1, ref Program.RefComAdr1, ref refPort);
-            }
-            Program.RefPort1 = refPort;
-            _logger.LogInfo($"Connected Pegasus {Program.PegasusIP1}");
-            DeviceConnected = true;
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromPegasus();
         }
 
         public bool ConnectScaleStationModule()
@@ -254,32 +516,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($@"ConnectScaleStationModule {ipAddress} error: {ex.Message}");
-                return false;
-            }
-        }
-
-        public bool ConnectScaleStationModuleFromController()
-        {
-            _logger.LogInfo("Thuc hien ket noi.");
-            try
-            {
-                _logger.LogInfo("Bat dau ket noi.");
-                client = new TcpClient();
-
-                // 1. connect
-                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
-                stream = client.GetStream();
-
-                _logger.LogInfo("Connected to controller");
-
-                DeviceConnected = true;
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
                 return false;
             }
         }
@@ -343,6 +579,43 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 AuthenticateScaleStationModule();
             }
         }
+        #endregion
+
+        #region Read RFID by Controller
+        public void AuthenticateScaleStationModuleFromController()
+        {
+            while (!client.Connected)
+            {
+                ConnectScaleStationModuleFromController();
+            }
+            ReadDataFromController();
+        }
+
+        public bool ConnectScaleStationModuleFromController()
+        {
+            _logger.LogInfo("Thuc hien ket noi.");
+            try
+            {
+                _logger.LogInfo("Bat dau ket noi.");
+                client = new TcpClient();
+
+                // 1. connect
+                client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
+                stream = client.GetStream();
+
+                _logger.LogInfo("Connected to controller");
+
+                DeviceConnected = true;
+                return DeviceConnected;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo("Ket noi that bai.");
+                _logger.LogInfo(ex.Message);
+                _logger.LogInfo(ex.StackTrace);
+                return false;
+            }
+        }
 
         public void ReadDataFromController()
         {
@@ -404,301 +677,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 AuthenticateScaleStationModuleFromController();
             }
         }
-
-        public void ReadDataFromPegasus()
-        {
-            _logger.LogInfo($"Reading Pegasus {Program.PegasusIP1}...");
-            while (DeviceConnected)
-            {
-                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort1);
-
-                foreach (var item in data)
-                {
-                    try
-                    {
-                        var cardNoCurrent = ByteArrayToString(item);
-                        Console.WriteLine($"Nhan the {Program.PegasusIP1}: {cardNoCurrent}");
-                        ReadDataProcess(cardNoCurrent);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
-                    }
-                }
-            }
-        }
-
-        public async void ReadDataProcess(string cardNoCurrent)
-        {
-            new ScaleHub().SendMessage($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            SendScale1Message($"{SCALE_1_IS_LOCKING_RFID}", $"{cardNoCurrent}");
-            if (Program.IsEnabledRfid == false)
-            {
-                return;
-            }
-
-            // Loại bỏ các tag đã check trước đó
-            if (tmpInvalidCardNoLst.Count > 10)
-            {
-                tmpInvalidCardNoLst.RemoveRange(0, 3);
-            }
-
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-            {
-                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
-                return;
-            }
-
-            if (tmpCardNoLst.Count > 5)
-            {
-                tmpCardNoLst.RemoveRange(0, 3);
-            }
-
-            if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
-            {
-                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
-                return;
-            }
-
-            SendScale1Message(SCALE_CURRENT_RFID, cardNoCurrent);
-
-            _logger.LogInfo("----------------------------");
-            _logger.LogInfo($"Tag: {cardNoCurrent}");
-            _logger.LogInfo("-----");
-
-            // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
-            if (Program.IsScalling)
-            {
-                var timeToRelease = DateTime.Now.AddMinutes(-5);
-
-                var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
-                if (scaleInfo != null
-                    && (bool)scaleInfo.IsScaling
-                    && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
-                    && scaleInfo.TimeIn > timeToRelease
-                    )
-                {
-                    new ScaleHub().SendMessage("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-                    SendScale1Message("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-                    // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
-                    _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
-                    return;
-                }
-                else
-                {
-                    // Giải phóng cân khi bị giữ quá 5 phút
-                    _logger.LogInfo($"== Giai phong can {SCALE_CODE} khi bi giu qua 5 phut ==");
-
-                    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
-
-                    Program.IsScalling = false;
-                    Program.InProgressDeliveryCode = null;
-                    Program.InProgressVehicleCode = null;
-                }
-            }
-
-            // 1. Kiểm tra cardNoCurrent hợp lệ
-            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
-            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
-            {
-                _logger.LogInfo($"1. Tag hop le: vehicle={vehicleCodeCurrent}");
-            }
-            else
-            {
-                _logger.LogInfo($"1. Tag KHONG hop le => Ket thuc");
-
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
-                SendScale1Message($"{VEHICLE_STATUS}", $"RFID {cardNoCurrent} không thuộc hệ thống");
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                return;
-            }
-
-            // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-            var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
-            var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
-
-            if (currentOrder == null)
-            {
-                _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
-
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                return;
-            }
-            else if (isValidCardNo == false)
-            {
-                _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
-
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                return;
-            }
-            else
-            {
-                Program.IsLockingRfid = true;
-
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
-                SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpCardNoLst.Add(newCardNoLog);
-
-                _logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
-            }
-
-            // 3. Xác định xe vào hay ra
-            var isLuongVao = true;
-
-            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
-            {
-                isLuongVao = true;
-                _logger.LogInfo($"3. Xe can VAO");
-            }
-            else
-            {
-                isLuongVao = false;
-                _logger.LogInfo($"3. Xe can RA");
-            }
-
-            if (isLuongVao)
-            {
-                // 4. Lưu thông tin xe đang cân
-                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                if (isUpdatedOrder)
-                {
-                    _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
-
-                    // 5. Bat den do
-                    _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    Thread.Sleep(500);
-
-                    _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
-                    Program.IsScalling = true;
-                    Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
-                    Program.InProgressVehicleCode = currentOrder.Vehicle;
-                }
-                else
-                {
-                    _logger.LogInfo($"4. Lưu thông tin xe đang cân THẤT BẠI");
-                }
-            }
-            else
-            {
-                // 4. Lưu thông tin xe đang cân
-                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
-                if (isUpdatedOrder)
-                {
-                    _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
-
-                    // 5. Bat den do
-                    _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    Thread.Sleep(500);
-
-                    _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
-                    if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
-                    {
-                        _logger.LogInfo($@"Bật đèn thành công");
-                    }
-                    else
-                    {
-                        _logger.LogInfo($@"Bật đèn thất bại");
-                    }
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
-                    Program.IsScalling = true;
-                    Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
-                    Program.InProgressVehicleCode = currentOrder.Vehicle;
-                }
-                else
-                {
-                    _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
-                }
-            }
-        }
-
-        public void SendRFIDInfo(string cardNo, string door)
-        {
-            try
-            {
-                _notification.SendNotification(
-                    SCALE_SIGNALR_RFID_CODE,
-                    null,
-                    1,
-                    cardNo,
-                    Int32.Parse(door),
-                    null,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null
-                );
-
-                //_logger.LogInfo($"Sent  RFID to app: {cardNo}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($"SendNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
-        private void SendScale1Message(string name, string message)
-        {
-            try
-            {
-                _notification.SendScale1Message(name, message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($"SendScale1Message Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
-            }
-        }
-
-        public string ByteArrayToString(byte[] b)
-        {
-            return BitConverter.ToString(b).Replace("-", "");
-        }
+        #endregion
     }
 }
