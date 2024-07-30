@@ -47,7 +47,10 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.Vehicle == vehicleCode && x.IsVoiced == false)
+                                            .Where(x => x.Vehicle == vehicleCode 
+                                            && x.Step >= (int)OrderStep.DA_VAO_CONG 
+                                            && x.Step <= (int)OrderStep.DA_HOAN_THANH 
+                                            && x.IsVoiced == false)
                                             .ToListAsync();
                 return orders;
             }
