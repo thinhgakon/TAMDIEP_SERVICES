@@ -559,7 +559,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             }
         }
 
-        private void SendSensorAPI(string sensorCode, string status)
+        public void SendSensorAPI(string sensorCode, string status)
         {
             try
             {
