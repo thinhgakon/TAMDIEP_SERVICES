@@ -2,8 +2,9 @@
 using S7.Net;
 using System.Threading;
 using System;
+using XHTD_SERVICES.Device.PLCS71200;
 
-namespace XHTD_SERVICES.Device
+namespace XHTD_SERVICES_GATEWAY.Devices
 {
     public class S71200Control
     {
@@ -21,6 +22,42 @@ namespace XHTD_SERVICES.Device
         {
             var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
             _barrier = new S71200PLCBarrier(plc);
+        }
+
+        public void ResetAllOutputPorts()
+        {
+            try
+            {
+                _barrier.Open();
+
+                if (_barrier.IsConnected)
+                {
+                    var isOnIn = _barrier.ReadOutputPort(GATEWAY_IN_Q1);
+                    var isOnOut = _barrier.ReadOutputPort(GATEWAY_OUT_Q1);
+
+                    if (isOnIn == ErrorCode.NoError)
+                    {
+                        _barrier.ShuttleOutputPort(GATEWAY_IN_Q1, false);
+
+                    }
+
+                    Thread.Sleep(200);
+
+                    if (isOnOut == ErrorCode.NoError)
+                    {
+                        _barrier.ShuttleOutputPort(GATEWAY_OUT_Q1, false);
+                    }
+
+                    Thread.Sleep(200);
+
+                    _barrier.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public bool OpenBarrierIn()

@@ -2,8 +2,9 @@
 using S7.Net;
 using System.Threading;
 using System;
+using XHTD_SERVICES.Device.PLCS71200;
 
-namespace XHTD_SERVICES.Device
+namespace XHTD_SERVICES_TRAM951_1.Devices
 {
     public class S71200Control
     {

@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES.Device;
+using XHTD_SERVICES.Device.PLCS71200;
 using XHTD_SERVICES_GATEWAY.Devices;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
-using XHTD_SERVICES.Device;
+using XHTD_SERVICES.Device.PLCS71200;
 using XHTD_SERVICES_TRAM951_2.Hubs;
 using XHTD_SERVICES.Data.Common;
 using log4net;
