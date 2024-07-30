@@ -524,8 +524,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
@@ -535,9 +535,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng hợp lệ");
                 SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -548,9 +548,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 Program.IsLockingRfid = true;
 
-                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                new ScaleHub().SendMessage($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} có đơn hàng hợp lệ");
                 new ScaleHub().SendMessage($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
-                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ");
+                SendScale1Message($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} có đơn hàng hợp lệ");
                 SendScale1Message($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpCardNoLst.Add(newCardNoLog);
