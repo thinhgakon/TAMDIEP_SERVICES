@@ -529,7 +529,10 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
             }
-            return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+            else 
+            { 
+                return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+            }
         }
 
         private void SendNotificationHub(int status, string inout, string cardNo, string message, string vehicle = null)

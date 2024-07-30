@@ -528,7 +528,10 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
             }
-            return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+            else 
+            { 
+                return DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+            }
         }
 
         private async Task SendNotificationCBV(int status, string inout, string cardNo, string message, string vehicle = null)
