@@ -24,6 +24,42 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Devices
             _barrier = new S71200PLCBarrier(plc);
         }
 
+        public void ResetAllOutputPorts()
+        {
+            try
+            {
+                _barrier.Open();
+
+                if (_barrier.IsConnected)
+                {
+                    var isOnIn = _barrier.ReadOutputPort(GATEWAY_IN_Q1);
+                    var isOnOut = _barrier.ReadOutputPort(GATEWAY_OUT_Q1);
+
+                    if (isOnIn == ErrorCode.NoError)
+                    {
+                        _barrier.ShuttleOutputPort(GATEWAY_IN_Q1, false);
+                        
+                    }
+
+                    Thread.Sleep(200);
+
+                    if (isOnOut == ErrorCode.NoError)
+                    {
+                        _barrier.ShuttleOutputPort(GATEWAY_OUT_Q1, false);
+                    }
+
+                    Thread.Sleep(200);
+
+                    _barrier.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         public bool OpenBarrierIn()
         {
             var isConnectSuccessed = false;

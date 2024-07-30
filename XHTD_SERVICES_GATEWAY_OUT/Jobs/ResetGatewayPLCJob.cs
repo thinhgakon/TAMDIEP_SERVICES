@@ -46,7 +46,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         private void ResetPLC()
         {
-            DIBootstrapper.Init().Resolve<BarrierControl>().ResetAllOutputPorts();
+            DIBootstrapper.Init().Resolve<S71200Control>().ResetAllOutputPorts();
         }
     }
 }
