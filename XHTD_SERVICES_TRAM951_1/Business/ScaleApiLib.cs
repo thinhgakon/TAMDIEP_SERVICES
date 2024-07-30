@@ -8,9 +8,7 @@ namespace XHTD_SERVICES_TRAM951_1.Business
     {
         public DesicionScaleResponse ScaleIn(string deliveryCode, int weight)
         {
-            var strToken = HttpRequest.GetScaleToken();
-
-            var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, deliveryCode, weight);
+            var updateResponse = HttpRequest.UpdateWeightInWebSale(deliveryCode, weight);
 
             if (updateResponse.StatusDescription.Equals("Unauthorized"))
             {
@@ -29,9 +27,7 @@ namespace XHTD_SERVICES_TRAM951_1.Business
 
         public DesicionScaleResponse ScaleOut(string deliveryCode, int weight)
         {
-            var strToken = HttpRequest.GetScaleToken();
-
-            var updateResponse = HttpRequest.UpdateWeightOutWebSale(strToken, deliveryCode, weight);
+            var updateResponse = HttpRequest.UpdateWeightOutWebSale(deliveryCode, weight);
 
             if (updateResponse.StatusDescription.Equals("Unauthorized"))
             {

@@ -13,9 +13,7 @@ namespace XHTD_SERVICES_TRAM951_2.Business
         {
             logger.Info($"ScaleIn API: deliveryCode={deliveryCode} weight={weight}");
 
-            var strToken = HttpRequest.GetScaleToken();
-
-            var updateResponse = HttpRequest.UpdateWeightInWebSale(strToken, deliveryCode, weight);
+            var updateResponse = HttpRequest.UpdateWeightInWebSale(deliveryCode, weight);
 
             if (updateResponse.StatusDescription.Equals("Unauthorized"))
             {
@@ -36,9 +34,7 @@ namespace XHTD_SERVICES_TRAM951_2.Business
         {
             logger.Info($"ScaleOut API: deliveryCode={deliveryCode} weight={weight}");
 
-            var strToken = HttpRequest.GetScaleToken();
-
-            var updateResponse = HttpRequest.UpdateWeightOutWebSale(strToken, deliveryCode, weight);
+            var updateResponse = HttpRequest.UpdateWeightOutWebSale(deliveryCode, weight);
 
             if (updateResponse.StatusDescription.Equals("Unauthorized"))
             {
