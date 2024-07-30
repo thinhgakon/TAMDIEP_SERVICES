@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_GATEWAY_OUT.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Device.PLCM221;
+using XHTD_SERVICES.Device.PLCS71200;
 using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES.Helper;

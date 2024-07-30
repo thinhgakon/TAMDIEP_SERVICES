@@ -3,7 +3,7 @@ using NDTan;
 using S7.Net;
 using System;
 
-namespace XHTD_SERVICES.Device
+namespace XHTD_SERVICES.Device.PLCS71200
 {
     public class S71200PLCBarrier : S71200
     {
