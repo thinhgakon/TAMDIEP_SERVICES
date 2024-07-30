@@ -279,7 +279,7 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse UpdateWeightInWebSale(string token, string deliveryCode, double weight)
+        public static IRestResponse UpdateWeightInWebSale(string deliveryCode, double weight)
         {
             logger.Info($"UpdateWeightInWebSale API: deliveryCode={deliveryCode} weight={weight}");
 
@@ -296,7 +296,6 @@ namespace XHTD_SERVICES.Helper
 
             request.Method = Method.POST;
             request.AddJsonBody(requestData);
-            request.AddHeader("Authorization", "Bearer " + token);
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.RequestFormat = DataFormat.Json;
@@ -306,7 +305,7 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse UpdateWeightOutWebSale(string token, string deliveryCode, double weight)
+        public static IRestResponse UpdateWeightOutWebSale(string deliveryCode, double weight)
         {
             logger.Info($"UpdateWeightOutWebSale API: deliveryCode={deliveryCode} weight={weight}");
 
@@ -323,7 +322,6 @@ namespace XHTD_SERVICES.Helper
 
             request.Method = Method.POST;
             request.AddJsonBody(requestData);
-            request.AddHeader("Authorization", "Bearer " + token);
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.RequestFormat = DataFormat.Json;

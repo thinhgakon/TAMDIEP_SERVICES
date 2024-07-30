@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Business;
+using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_TRAM951_1.Hubs
 {
@@ -276,7 +277,17 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 5. Gọi iERP API lưu giá trị cân
                                 WriteLogInfo($"5. Goi iERP API luu gia tri can");
-                                var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStation(scaleInfo.Vehicle);
+
+                                var deliveryCodes = scaleInfo.DeliveryCode;
+
+                                if (orders != null && orders.Count != 0)
+                                {
+                                    deliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
+                                }
+
+                                var scaleInfoResult = DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleIn(deliveryCodes, currentScaleValue);
 
                                 if (scaleInfoResult.Code == "01")
                                 {
@@ -359,7 +370,17 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                 // 4. Gọi iERP API lưu giá trị cân
                                 WriteLogInfo($"4. Goi iERP API luu gia tri can");
-                                var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(scaleInfo.DeliveryCode, currentScaleValue);
+
+                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStation(scaleInfo.Vehicle);
+
+                                var deliveryCodes = scaleInfo.DeliveryCode;
+
+                                if (orders != null && orders.Count != 0)
+                                {
+                                    deliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
+                                }
+
+                                var scaleInfoResult = await DIBootstrapper.Init().Resolve<DesicionScaleBusiness>().MakeDecisionScaleOut(deliveryCodes, currentScaleValue);
 
                                 if (scaleInfoResult.Code == "01")
                                 {

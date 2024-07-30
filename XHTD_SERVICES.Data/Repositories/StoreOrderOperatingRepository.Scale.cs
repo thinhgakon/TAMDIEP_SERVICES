@@ -42,6 +42,17 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<tblStoreOrderOperating>> GetOrdersScaleStation(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode && x.IsVoiced == false)
+                                            .ToListAsync();
+                return orders;
+            }
+        }
+
         public async Task<bool> UpdateOrderConfirm3ByDeliveryCode(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
@@ -138,10 +149,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .Where(x => x.CardNo == cardNo
                                                      && x.IsVoiced == false
                                                      && x.Step < (int)OrderStep.DA_CAN_VAO
-                                                     && 
+                                                     &&
                                                      (
-                                                        x.CatId == OrderCatIdCode.CLINKER 
-                                                        || x.TypeXK == OrderTypeXKCode.JUMBO 
+                                                        x.CatId == OrderCatIdCode.CLINKER
+                                                        || x.TypeXK == OrderTypeXKCode.JUMBO
                                                         || x.TypeXK == OrderTypeXKCode.SLING
                                                      )
                                                     )
@@ -359,7 +370,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => x.DeliveryCode == deliveryCode
-                                                         && x.Step >= (int)OrderStep.DA_CAN_VAO 
+                                                         && x.Step >= (int)OrderStep.DA_CAN_VAO
                                                          && x.Step < (int)OrderStep.DA_HOAN_THANH
                                                          && x.WeightOut == null
                                                       )
