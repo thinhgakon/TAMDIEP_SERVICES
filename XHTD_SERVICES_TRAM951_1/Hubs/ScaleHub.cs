@@ -314,11 +314,17 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                         //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
 
-                                    Thread.Sleep(3000);
+                                    //Thread.Sleep(3000);
 
                                     // 8. Bật đèn xanh
-                                    WriteLogInfo($"8. Bat den xanh");
+                                    WriteLogInfo($"8. Bật đèn xanh");
                                     TurnOnGreenTrafficLight();
+
+                                    Thread.Sleep(15000);
+
+                                    // 9. Bật đèn đỏ
+                                    WriteLogInfo($"9. Bật đèn đỏ");
+                                    TurnOnRedTrafficLight();
                                 }
                                 else
                                 {
@@ -379,11 +385,17 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
                                     //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
 
-                                    Thread.Sleep(3000);
+                                    //Thread.Sleep(3000);
 
                                     // 7. Bật đèn xanh
                                     WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
+
+                                    Thread.Sleep(15000);
+
+                                    // 8. Bật đèn đỏ
+                                    WriteLogInfo($"8. Bật đèn đỏ");
+                                    TurnOnRedTrafficLight();
                                 }
                                 else
                                 {
@@ -427,7 +439,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
         public void TurnOnGreenTrafficLight(bool isHasNotification = false)
         {
-            WriteLogInfo($@"Bật den xanh chieu vao");
+            WriteLogInfo($@"Bật đèn xanh chiều vào");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
             {
                 if (isHasNotification)
@@ -449,7 +461,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
 
             Thread.Sleep(500);
 
-            WriteLogInfo($@"Bật den xanh chieu ra");
+            WriteLogInfo($@"Bật đèn xanh chiều ra");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
             {
                 if (isHasNotification)
@@ -465,6 +477,51 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 {
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều ra thất bại");
+                }
+                WriteLogInfo($@"Bật thất bại");
+            }
+        }
+
+        public void TurnOnRedTrafficLight(bool isHasNotification = false)
+        {
+            WriteLogInfo($@"Bật đèn đỏ chiều vào");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn đỏ chiều vào thành công");
+                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều vào thành công");
+                }
+                WriteLogInfo($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn đỏ chiều vào thất bại");
+                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều vào thất bại");
+                }
+                WriteLogInfo($@"Bật thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            WriteLogInfo($@"Bật đèn đỏ chiều ra");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn đỏ chiều ra thành công");
+                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều ra thành công");
+                }
+                WriteLogInfo($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Bật đèn đỏ chiều ra thất bại");
+                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều ra thất bại");
                 }
                 WriteLogInfo($@"Bật thất bại");
             }
