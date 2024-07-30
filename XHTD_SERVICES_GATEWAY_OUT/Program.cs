@@ -21,6 +21,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT
         public static bool IsBarrierOpen = false;
         public static bool IsFirstTimeChange = false;
 
+        public static bool IsBarrierActive = false; // cấu hình tự động mở barrier
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;

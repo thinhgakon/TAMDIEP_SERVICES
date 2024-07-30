@@ -61,6 +61,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         private static bool isActiveService = true;
 
+        protected const string SERVICE_BARRIER_ACTIVE_CODE = "GATEWAY_OUT_BARRIER_ACTIVE";
+
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -137,6 +139,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == CBV_ACTIVE);
+            var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -145,6 +148,15 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             else
             {
                 isActiveService = true;
+            }
+
+            if (barrierActiveParameter == null || barrierActiveParameter.Value == "0")
+            {
+                Program.IsBarrierActive = false;
+            }
+            else
+            {
+                Program.IsBarrierActive = true;
             }
         }
 
@@ -411,8 +423,16 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     await SendNotificationCBV(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
-                    _gatewayLogger.LogInfo($"6. Mở barrier");
-                    isSuccessOpenBarrier = OpenS7Barrier("IN");
+                    if (Program.IsBarrierActive)
+                    {
+                        // 6. Mở barrier
+                        _gatewayLogger.LogInfo($"6. Mở barrier");
+                        isSuccessOpenBarrier = OpenS7Barrier("IN");
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
+                    }
                 }
                 else
                 {
@@ -444,8 +464,16 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     await SendNotificationCBV(3, inout, null, $"Xác thực ra cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
 
-                    _gatewayLogger.LogInfo($"6. Mở barrier");
-                    isSuccessOpenBarrier = OpenS7Barrier("OUT");
+                    if (Program.IsBarrierActive)
+                    {
+                        // 6. Mở barrier
+                        _gatewayLogger.LogInfo($"6. Mở barrier");
+                        isSuccessOpenBarrier = OpenS7Barrier("OUT");
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
+                    }
                 }
                 else
                 {
