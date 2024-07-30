@@ -287,7 +287,7 @@ namespace XHTD_SERVICES.Helper
 
             var requestData = new UpdateWeightRequest
             {
-                deliveryCode = deliveryCode,
+                delivery_Codes = deliveryCode,
                 weight = weight,
             };
 
@@ -313,7 +313,7 @@ namespace XHTD_SERVICES.Helper
 
             var requestData = new UpdateWeightRequest
             {
-                deliveryCode = deliveryCode,
+                delivery_Codes = deliveryCode,
                 weight = weight,
             };
 
@@ -339,7 +339,7 @@ namespace XHTD_SERVICES.Helper
 
             var requestData = new UpdateWeightRequest
             {
-                deliveryCode = deliveryCode,
+                delivery_Codes = deliveryCode,
             };
 
             var client = new RestClient($"{apiUrl["SaleOrder"]}/{deliveryCode}");

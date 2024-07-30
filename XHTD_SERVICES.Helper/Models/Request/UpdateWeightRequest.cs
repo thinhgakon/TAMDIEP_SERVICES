@@ -8,7 +8,7 @@ namespace XHTD_SERVICES.Helper.Models.Request
 {
     public class UpdateWeightRequest
     {
-        public string deliveryCode { get; set; }
+        public string delivery_Codes { get; set; }
         public double weight { get; set; }
     }
 }
