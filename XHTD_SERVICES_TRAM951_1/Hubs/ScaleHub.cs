@@ -278,7 +278,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // 5. Gọi iERP API lưu giá trị cân
                                 WriteLogInfo($"5. Goi iERP API luu gia tri can");
 
-                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStation(scaleInfo.Vehicle);
+                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStationIn(scaleInfo.Vehicle);
 
                                 var deliveryCodes = scaleInfo.DeliveryCode;
 
@@ -371,7 +371,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                 // 4. Gọi iERP API lưu giá trị cân
                                 WriteLogInfo($"4. Goi iERP API luu gia tri can");
 
-                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStation(scaleInfo.Vehicle);
+                                var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersScaleStationOut(scaleInfo.Vehicle);
 
                                 var deliveryCodes = scaleInfo.DeliveryCode;
 

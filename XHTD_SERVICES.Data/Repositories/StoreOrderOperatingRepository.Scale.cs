@@ -42,14 +42,28 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetOrdersScaleStation(string vehicleCode)
+        public async Task<List<tblStoreOrderOperating>> GetOrdersScaleStationIn(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode 
                                             && x.Step >= (int)OrderStep.DA_VAO_CONG 
-                                            && x.Step <= (int)OrderStep.DA_HOAN_THANH 
+                                            && x.Step < (int)OrderStep.DA_CAN_VAO 
+                                            && x.IsVoiced == false)
+                                            .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersScaleStationOut(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                            && x.Step >= (int)OrderStep.DA_CAN_VAO
+                                            && x.Step < (int)OrderStep.DA_CAN_RA
                                             && x.IsVoiced == false)
                                             .ToListAsync();
                 return orders;
