@@ -62,6 +62,8 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
                     new ScaleHub().SendSensorAPI(SCALE_CB_1_CODE, "0");
                 }
 
+                Thread.Sleep(200);
+
                 if (checkCB2)
                 {
                     new ScaleHub().SendSensor(SCALE_CB_2_CODE, "1");
