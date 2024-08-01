@@ -319,7 +319,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if(order.Step < (int)OrderStep.DA_CAN_VAO || order.Step == (int)OrderStep.DA_XAC_THUC) { 
+                    if(order.Step < (int)OrderStep.DA_CAN_VAO || order.Step == (int)OrderStep.DA_XAC_THUC) 
+                    { 
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
@@ -472,7 +473,12 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 string syncTime = DateTime.Now.ToString();
 
-                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == orderId && x.IsVoiced != true && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                var order = _appDbContext.tblStoreOrderOperatings
+                                            .FirstOrDefault(x => x.OrderId == orderId 
+                                                                && x.IsVoiced != true 
+                                                                && x.Step != (int)OrderStep.DA_HOAN_THANH
+                                                                && x.Step != (int)OrderStep.DA_GIAO_HANG
+                                                                );
                 if (order != null)
                 {
                     order.IsVoiced = true;
