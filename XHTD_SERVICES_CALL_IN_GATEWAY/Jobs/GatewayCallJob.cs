@@ -57,8 +57,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 using (var db = new XHTD_Entities())
                 {
                     var callVehicleItem = new tblCallVehicleStatu();
-                    var typeCurrent = Program.roundRobinList.Next();
-
                     callVehicleItem = GetVehicleToCall();
                     if (callVehicleItem == null || callVehicleItem.Id < 1) return;
                     // check xem trong bảng tblStoreOrderOperating xem đơn hàng có đang yêu cầu gọi vào không
@@ -116,8 +114,13 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             {
                 using (var db = new XHTD_Entities())
                 {
+                    // Gọi xe được thêm vào hàng đợi thủ công vào trước
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.ToUpper() == "MANUAL").OrderBy(x => x.Id).FirstOrDefault();
+                    if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
+
                     for (int i = 0; i < 10; i++)
                     {
+                        // Tự động
                         var typeCurrent = Program.roundRobinList.Next();
                         callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent)).OrderBy(x => x.Id).FirstOrDefault();
                         if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
