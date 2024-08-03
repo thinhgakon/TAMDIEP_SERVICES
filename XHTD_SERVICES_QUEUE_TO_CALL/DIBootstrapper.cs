@@ -38,7 +38,10 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallXibaoJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallClinkerJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallJumboJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallRoiJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

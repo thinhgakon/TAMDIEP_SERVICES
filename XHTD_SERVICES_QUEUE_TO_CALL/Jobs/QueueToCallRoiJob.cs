@@ -5,7 +5,7 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 {
-    public class QueueToCallJob : IJob
+    public class QueueToCallRoiJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -15,7 +15,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         protected readonly QueueToCallLogger _queueToCallLogger;
 
-        public QueueToCallJob(
+        public QueueToCallRoiJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
@@ -43,11 +43,12 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCall service");
-            
-            try { 
+            _queueToCallLogger.LogInfo("Start process QueueToCall ROI service");
+
+            try
+            {
                 // 1. Lay danh sach don hang chua duoc xep vao may xuat
-                var orders = await _storeOrderOperatingRepository.GetXiMangBaoOrdersAddToQueueToCall();
+                var orders = await _storeOrderOperatingRepository.GetXiMangRoiOrdersAddToQueueToCall();
                 if (orders == null || orders.Count == 0)
                 {
                     return;
@@ -70,7 +71,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
                     if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
-                    { 
+                    {
                         await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
                     }
                 }
