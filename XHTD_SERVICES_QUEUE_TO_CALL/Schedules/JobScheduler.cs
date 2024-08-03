@@ -26,16 +26,49 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Schedules
         {
             await _scheduler.Start();
 
-            // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<QueueToCallJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            // Xếp số vào máng xi bao
+            IJobDetail queueToCallXibaoJob = JobBuilder.Create<QueueToCallXibaoJob>().Build();
+            ITrigger queueToCallXibaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Call_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+            await _scheduler.ScheduleJob(queueToCallXibaoJob, queueToCallXibaoTrigger);
+
+            // Xếp số vào máng xi rời
+            IJobDetail queueToCallRoiJob = JobBuilder.Create<QueueToCallRoiJob>().Build();
+            ITrigger queueToCallRoiTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Call_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToCallRoiJob, queueToCallRoiTrigger);
+
+            // Xếp số vào máng clinker
+            IJobDetail queueToCallClinkerJob = JobBuilder.Create<QueueToCallClinkerJob>().Build();
+            ITrigger queueToCallClinkerTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Call_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToCallClinkerJob, queueToCallClinkerTrigger);
+
+            // Xếp số vào máng jumbo
+            IJobDetail queueToCallJumboJob = JobBuilder.Create<QueueToCallJumboJob>().Build();
+            ITrigger queueToCallJumboTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Call_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToCallJumboJob, queueToCallJumboTrigger);
         }
     }
 }

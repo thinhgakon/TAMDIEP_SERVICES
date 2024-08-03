@@ -106,7 +106,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\QueueToCallJob.cs" />
+    <Compile Include="Jobs\QueueToCallClinkerJob.cs" />
+    <Compile Include="Jobs\QueueToCallJumboJob.cs" />
+    <Compile Include="Jobs\QueueToCallRoiJob.cs" />
+    <Compile Include="Jobs\QueueToCallXibaoJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

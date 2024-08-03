@@ -436,5 +436,57 @@ namespace XHTD_SERVICES.Data.Repositories
                 return orders;
             }
         }
+
+        public async Task<List<tblStoreOrderOperating>> GetClinkerOrdersAddToQueueToCall()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
+
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                //&& x.CatId == OrderCatIdCode.XI_MANG_BAO
+                                                //&& x.TypeXK != OrderTypeXKCode.JUMBO
+                                                //&& x.TypeXK != OrderTypeXKCode.SLING
+                                                && x.IsVoiced == false
+                                                && x.TimeConfirm3 < timeToAdd
+                                                && !ordersInQueue.Contains(x.DeliveryCode)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetJumboOrdersAddToQueueToCall()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
+
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                //&& x.CatId == OrderCatIdCode.XI_MANG_BAO
+                                                //&& x.TypeXK != OrderTypeXKCode.JUMBO
+                                                //&& x.TypeXK != OrderTypeXKCode.SLING
+                                                && x.IsVoiced == false
+                                                && x.TimeConfirm3 < timeToAdd
+                                                && !ordersInQueue.Contains(x.DeliveryCode)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
     }
 }
