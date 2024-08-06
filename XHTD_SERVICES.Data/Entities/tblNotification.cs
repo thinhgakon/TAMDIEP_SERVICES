@@ -25,5 +25,10 @@ namespace XHTD_SERVICES.Data.Entities
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
+        public Nullable<bool> IsSent { get; set; }
+        public Nullable<int> NotificationGroupId { get; set; }
+        public Nullable<System.DateTime> TimeSent { get; set; }
+        public string NotificationType { get; set; }
+        public string SubTitle { get; set; }
     }
 }

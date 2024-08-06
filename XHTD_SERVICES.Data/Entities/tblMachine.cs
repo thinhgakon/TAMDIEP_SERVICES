@@ -22,5 +22,6 @@ namespace XHTD_SERVICES.Data.Entities
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
+        public string ProductCategory { get; set; }
     }
 }
