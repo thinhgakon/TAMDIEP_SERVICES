@@ -10,7 +10,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
     public class ConnectPegasusJob : IJob
     {
         private byte ComAddr = 0xFF;
-        private int PortHandle = 2000;
+        private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.162";
         protected readonly ConfirmLogger _logger;
 

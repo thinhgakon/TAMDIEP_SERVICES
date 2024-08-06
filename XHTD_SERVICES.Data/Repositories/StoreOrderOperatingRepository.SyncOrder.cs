@@ -26,22 +26,14 @@ namespace XHTD_SERVICES.Data.Repositories
                 string productNameUpper = websaleOrder.productName.ToUpper();
                 string itemCategory = websaleOrder.itemCategory;
 
-                if (itemCategory == OrderCatIdCode.XI_MANG_XA)
-                {
-                    typeProduct = "ROI";
-                }
-                else if (itemCategory == OrderCatIdCode.CLINKER)
+                if (itemCategory == OrderCatIdCode.CLINKER)
                 {
                     typeProduct = OrderCatIdCode.CLINKER;
                 }
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("RỜI"))
-                    {
-                        typeProduct = "ROI";
-                    }
-                    else if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
