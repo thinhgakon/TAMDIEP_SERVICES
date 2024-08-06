@@ -94,8 +94,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         static Stream stream = null;
 
         private byte ComAddr = 0xFF;
-        private int PortHandle = 6001;
-        private string PegasusAdr = "192.168.13.199";
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.181";
 
         public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
