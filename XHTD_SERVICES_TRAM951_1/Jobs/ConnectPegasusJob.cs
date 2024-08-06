@@ -10,8 +10,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
     public class ConnectPegasusJob : IJob
     {
         private byte ComAddr = 0xFF;
-        private int PortHandle = 6001;
-        private string PegasusAdr = "192.168.13.199";
+        private int PortHandle = 6000;
+        private string PegasusAdr = "192.168.13.181";
         protected readonly Logger _logger;
 
         public ConnectPegasusJob(Logger gatewayLogger)
