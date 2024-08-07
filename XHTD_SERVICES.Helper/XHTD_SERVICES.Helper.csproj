@@ -73,6 +73,7 @@
     <Compile Include="BaseLogger.cs" />
     <Compile Include="Models\Request\SendConfirmNotificationRequest.cs" />
     <Compile Include="Models\Request\SendGatewayNotificationRequest.cs" />
+    <Compile Include="Models\Request\SendTroughNotificationRequest.cs" />
     <Compile Include="Models\Request\UpdateWeightRequest.cs" />
     <Compile Include="OrderValidator.cs" />
     <Compile Include="Calculator.cs" />

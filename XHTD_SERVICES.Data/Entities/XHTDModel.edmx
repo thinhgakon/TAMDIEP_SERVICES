@@ -319,6 +319,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -337,16 +338,21 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserNameSender" Type="nvarchar" MaxLength="50" />
-          <Property Name="UserNameReceiver" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserNameSender" Type="varchar" MaxLength="50" />
+          <Property Name="UserNameReceiver" Type="varchar" MaxLength="50" />
           <Property Name="ContentMessage" Type="nvarchar" MaxLength="500" />
           <Property Name="DayCreate" Type="datetime" />
           <Property Name="IsView" Type="bit" />
           <Property Name="TimeView" Type="datetime" />
           <Property Name="CreateDay" Type="datetime" />
-          <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreateBy" Type="varchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
-          <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdateBy" Type="varchar" MaxLength="50" />
+          <Property Name="IsSent" Type="bit" />
+          <Property Name="NotificationGroupId" Type="int" />
+          <Property Name="TimeSent" Type="datetime2" Precision="7" />
+          <Property Name="NotificationType" Type="varchar" MaxLength="50" />
+          <Property Name="SubTitle" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="tblPrintConfig">
           <Key>
@@ -1034,6 +1040,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -1052,16 +1059,21 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserNameSender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UserNameReceiver" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserNameSender" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserNameReceiver" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ContentMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="DayCreate" Type="DateTime" Precision="3" />
           <Property Name="IsView" Type="Boolean" />
           <Property Name="TimeView" Type="DateTime" Precision="3" />
           <Property Name="CreateDay" Type="DateTime" Precision="3" />
-          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
-          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsSent" Type="Boolean" />
+          <Property Name="NotificationGroupId" Type="Int32" />
+          <Property Name="TimeSent" Type="DateTime" Precision="7" />
+          <Property Name="NotificationType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SubTitle" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblPrintConfig">
           <Key>
@@ -1777,6 +1789,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblMachines">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblMachine">
               <MappingFragment StoreEntitySet="tblMachine">
+                <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -1804,6 +1817,11 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblNotifications">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblNotification">
               <MappingFragment StoreEntitySet="tblNotification">
+                <ScalarProperty Name="SubTitle" ColumnName="SubTitle" />
+                <ScalarProperty Name="NotificationType" ColumnName="NotificationType" />
+                <ScalarProperty Name="TimeSent" ColumnName="TimeSent" />
+                <ScalarProperty Name="NotificationGroupId" ColumnName="NotificationGroupId" />
+                <ScalarProperty Name="IsSent" ColumnName="IsSent" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserNameSender" ColumnName="UserNameSender" />
                 <ScalarProperty Name="UserNameReceiver" ColumnName="UserNameReceiver" />

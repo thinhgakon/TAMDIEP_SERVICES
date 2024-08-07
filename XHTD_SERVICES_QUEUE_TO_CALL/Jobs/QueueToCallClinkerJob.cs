@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Quartz;
+using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
@@ -66,7 +67,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                     var sumNumber = (decimal)order.SumNumber;
                     var typeProduct = order.TypeProduct;
 
-                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct);
+                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct, OrderProductCategoryCode.CLINKER);
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 

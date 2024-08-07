@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\MachineCode.cs" />
+    <Compile Include="Common\OrderProductCategoryCode.cs" />
     <Compile Include="Common\OrderTypeXKCode.cs" />
     <Compile Include="Common\OrderCatIdCode.cs" />
     <Compile Include="Common\ScaleCode.cs" />
