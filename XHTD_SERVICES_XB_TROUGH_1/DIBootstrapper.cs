@@ -29,7 +29,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
-            builder.RegisterType<Trough1Logger>().AsSelf();
+            builder.RegisterType<TroughLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -48,7 +48,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(XibaoTrough1Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(TroughJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

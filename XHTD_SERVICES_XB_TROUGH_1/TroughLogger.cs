@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_XB_TROUGH_1
 {
-    public class Trough1Logger : BaseLogger<Jobs.XibaoTrough1Job>
+    public class TroughLogger : BaseLogger<Jobs.TroughJob>
     {
     }
 }

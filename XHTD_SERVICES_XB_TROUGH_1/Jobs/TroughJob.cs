@@ -22,7 +22,7 @@ using XHTD_SERVICES_XB_TROUGH_1.Devices;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 {
-    public class XibaoTrough1Job : IJob
+    public class TroughJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly Trough1Logger _trough1Logger;
+        protected readonly TroughLogger _trough1Logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -71,14 +71,14 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.219";
 
-        public XibaoTrough1Job(
+        public TroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            Trough1Logger trough1Logger
+            TroughLogger trough1Logger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -187,11 +187,11 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             {
                 _trough1Logger.LogInfo($"== Đầu đọc RFID máng 8 đang xử lý => Kết thúc {cardNoCurrent} == ");
 
-                new Trough1Hub().SendMessage("IS_LOCKING_RFID", "1");
+                new TroughHub().SendMessage("IS_LOCKING_RFID", "1");
             }
             else
             {
-                new Trough1Hub().SendMessage("IS_LOCKING_RFID", "0");
+                new TroughHub().SendMessage("IS_LOCKING_RFID", "0");
             }
 
             // Loại bỏ các tag đã check trước đó
@@ -250,7 +250,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         private void SendNotificationHub(string troughType, string machineCode, string troughCode, string vehicle)
         {
-            new Trough1Hub().SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
+            new TroughHub().SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
         }
 
         public void SendNotificationAPI(string troughType, string machineCode, string troughCode, string vehicle)

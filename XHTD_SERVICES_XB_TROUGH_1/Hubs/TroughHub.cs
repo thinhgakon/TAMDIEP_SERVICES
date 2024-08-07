@@ -14,15 +14,15 @@ using XHTD_SERVICES_XB_TROUGH_1.Devices;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Hubs
 {
-    public class Trough1Hub : Hub
+    public class TroughHub : Hub
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(Trough1Hub));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(TroughHub));
 
         public void SendMessage(string name, string message)
         {
             try
             {
-                var broadcast = GlobalHost.ConnectionManager.GetHubContext<Trough1Hub>();
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<TroughHub>();
                 broadcast.Clients.All.SendMessage(name, message);
             }
             catch (Exception ex)
@@ -35,7 +35,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Hubs
         {
             try
             {
-                var broadcast = GlobalHost.ConnectionManager.GetHubContext<Trough1Hub>();
+                var broadcast = GlobalHost.ConnectionManager.GetHubContext<TroughHub>();
                 broadcast.Clients.All.SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
             }
             catch (Exception ex)
