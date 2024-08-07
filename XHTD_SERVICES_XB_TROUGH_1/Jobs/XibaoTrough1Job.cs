@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
         private readonly int CAMERA_NUMBER = 2;
 
         private byte ComAddr = 0xFF;
-        private int PortHandle = 2000;
+        private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.219";
 
         public XibaoTrough1Job(
@@ -185,7 +185,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
         {
             if (Program.IsLockingRfid)
             {
-                _trough1Logger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+                _trough1Logger.LogInfo($"== Đầu đọc RFID máng 8 đang xử lý => Kết thúc {cardNoCurrent} == ");
 
                 new Trough1Hub().SendMessage("IS_LOCKING_RFID", "1");
             }
@@ -202,7 +202,6 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
             {
-                //_trough1Logger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -213,7 +212,6 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
             if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
-                //_trough1Logger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -221,21 +219,18 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             _trough1Logger.LogInfo($"Tag: {cardNoCurrent}");
             _trough1Logger.LogInfo("-----");
 
-            _trough1Logger.LogInfo($"2. Kiem tra tag da check truoc do");
+            _trough1Logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
-                _trough1Logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+                _trough1Logger.LogInfo($"3. Tag hợp lệ: vehicle={vehicleCodeCurrent}");
             }
             else
             {
-                _trough1Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
-
-                SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-                SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
+                _trough1Logger.LogInfo($"3. Tag KHÔNG hợp lệ => Kết thúc.");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -243,86 +238,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                 return;
             }
 
-            // Nếu RFID hợp lệ
-            tblStoreOrderOperating currentOrder = null;
-            var isValidCardNo = false;
-
-            currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
-
-            isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
-
-            // Nếu RFID không có đơn hàng
-            if (currentOrder == null)
-            {
-                _trough1Logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
-
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                return;
-            }
-
-            // Nếu RFID không có đơn hàng hợp lệ
-            else if (isValidCardNo == false)
-            {
-                _trough1Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
-
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                return;
-            }
-
-            // Nếu RFID có đơn hàng hợp lệ
-            else
-            {
-                SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-                SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                tmpValidCardNoLst.Add(newCardNoLog);
-
-                Program.IsLockingRfid = true;
-            }
-
-            var currentDeliveryCode = currentOrder.DeliveryCode;
-            _trough1Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
-
-            // Xác thực
-            bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
-
-            // Xác thực thành công
-            if (isConfirmSuccess)
-            {
-                SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
-                // Xếp số
-                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
-
-                // Chụp ảnh
-                //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
-                //if (!string.IsNullOrEmpty(img))
-                //{
-                //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
-                //}
-            }
-            else
-            {
-                SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
-                _trough1Logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
-            }
-
-            _trough1Logger.LogInfo($"10. Giai phong RFID IN");
+            _trough1Logger.LogInfo($"10. Giải phóng RFID máng 8");
 
             Program.IsLockingRfid = false;
         }
@@ -348,242 +264,5 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                 _trough1Logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
-
-        #region Read RFID by C3-400
-        public void AuthenticateConfirmModule()
-        {
-            // 1. Connect Device
-            while (!DeviceConnected)
-            {
-                ConnectConfirmationPointModule();
-            }
-
-            // 2. Đọc dữ liệu từ thiết bị
-            ReadDataFromC3400();
-        }
-
-        public bool ConnectConfirmationPointModule()
-        {
-            var ipAddress = c3400?.IpAddress;
-            try
-            {
-                string str = $"protocol=TCP,ipaddress={ipAddress},port={c3400?.PortNumber},timeout=2000,passwd=";
-                int ret = 0;
-                if (IntPtr.Zero == h21)
-                {
-                    h21 = Connect(str);
-                    if (h21 != IntPtr.Zero)
-                    {
-                        _trough1Logger.LogInfo($"Connected to C3-400 {ipAddress}");
-
-                        DeviceConnected = true;
-                    }
-                    else
-                    {
-                        _trough1Logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
-                        ret = PullLastError();
-                        DeviceConnected = false;
-                    }
-                }
-                return DeviceConnected;
-            }
-            catch (Exception ex)
-            {
-                _trough1Logger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
-                return false;
-            }
-        }
-
-        public async void ReadDataFromC3400()
-        {
-            _trough1Logger.LogInfo("Reading RFID from C3-400 ...");
-
-            if (DeviceConnected)
-            {
-                while (DeviceConnected)
-                {
-                    int ret = 0, buffersize = 256;
-                    string str = "";
-                    string[] tmp = null;
-                    byte[] buffer = new byte[256];
-
-                    if (IntPtr.Zero != h21)
-                    {
-                        ret = GetRTLog(h21, ref buffer[0], buffersize);
-                        if (ret >= 0)
-                        {
-                            try
-                            {
-                                str = Encoding.Default.GetString(buffer);
-                                tmp = str.Split(',');
-
-                                // Bắt đầu xử lý khi nhận diện được RFID
-                                if (tmp[2] != "0" && tmp[2] != "")
-                                {
-                                    var cardNoCurrent = tmp[2]?.ToString(); // RFID
-                                    var doorCurrent = tmp[3]?.ToString(); // Điểm xác thực
-                                    var timeCurrent = tmp[0]?.ToString(); // Thời gian xác thực
-
-                                    if (Program.IsLockingRfid)
-                                    {
-                                        _trough1Logger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
-
-                                        new Trough1Hub().SendMessage("IS_LOCKING_RFID", "1");
-                                    }
-                                    else
-                                    {
-                                        new Trough1Hub().SendMessage("IS_LOCKING_RFID", "0");
-                                    }
-
-                                    // Loại bỏ các tag đã check trước đó
-                                    if (tmpInvalidCardNoLst.Count > 10)
-                                    {
-                                        tmpInvalidCardNoLst.RemoveRange(0, 3);
-                                    }
-
-                                    if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (tmpValidCardNoLst.Count > 10)
-                                    {
-                                        tmpValidCardNoLst.RemoveRange(0, 3);
-                                    }
-
-                                    if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
-                                    {
-                                        continue;
-                                    }
-
-                                    _trough1Logger.LogInfo("----------------------------");
-                                    _trough1Logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _trough1Logger.LogInfo("-----");
-
-                                    _trough1Logger.LogInfo($"2. Kiem tra tag da check truoc do");
-
-                                    // Kiểm tra RFID có hợp lệ hay không
-                                    string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
-
-                                    if (!String.IsNullOrEmpty(vehicleCodeCurrent))
-                                    {
-                                        _trough1Logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
-                                    }
-                                    else
-                                    {
-                                        _trough1Logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
-
-                                        SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-                                        SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-
-                                    // Nếu RFID hợp lệ
-                                    tblStoreOrderOperating currentOrder = null;
-                                    var isValidCardNo = false;
-
-                                    currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
-
-                                    isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
-
-                                    // Nếu RFID không có đơn hàng
-                                    if (currentOrder == null)
-                                    {
-                                        _trough1Logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
-
-                                        SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                                        SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-
-                                    // Nếu RFID không có đơn hàng hợp lệ
-                                    else if (isValidCardNo == false)
-                                    {
-                                        _trough1Logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
-
-                                        SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                                        SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                                        tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                                        continue;
-                                    }
-
-                                    // Nếu RFID có đơn hàng hợp lệ
-                                    else
-                                    {
-                                        SendNotificationHub("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-                                        SendNotificationAPI("CONFIRM_VEHICLE", 2, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} có đơn hàng hợp lệ", vehicleCodeCurrent);
-
-                                        var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-
-                                        tmpValidCardNoLst.Add(newCardNoLog);
-
-                                        Program.IsLockingRfid = true;
-                                    }
-
-                                    var currentDeliveryCode = currentOrder.DeliveryCode;
-                                    _trough1Logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
-
-                                    // Xác thực
-                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
-
-                                    // Xác thực thành công
-                                    if (isConfirmSuccess)
-                                    {
-                                        SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                                        SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
-                                        // Xếp số
-                                        this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
-                                    }
-                                    else
-                                    {
-                                        SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-                                        SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
-                                        _trough1Logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
-                                    }
-
-                                    _trough1Logger.LogInfo($"10. Giai phong RFID IN");
-
-                                    Program.IsLockingRfid = false;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                _trough1Logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            _trough1Logger.LogWarn("No data. Reconnect ...");
-                            DeviceConnected = false;
-                            h21 = IntPtr.Zero;
-
-                            AuthenticateConfirmModule();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                DeviceConnected = false;
-                h21 = IntPtr.Zero;
-
-                AuthenticateConfirmModule();
-            }
-        }
-        #endregion
     }
 }
