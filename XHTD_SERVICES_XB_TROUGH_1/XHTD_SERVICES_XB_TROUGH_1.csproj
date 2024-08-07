@@ -255,26 +255,17 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business\ScaleApiLib.cs" />
-    <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
-    <Compile Include="Devices\PegasusReader2.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
-    <Compile Include="Devices\PegasusStaticClassReader2.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Trough1Logger.cs" />
     <Compile Include="Hubs\Trough1Hub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
     <Compile Include="Jobs\XibaoTrough1Job.cs" />
-    <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
-    <Compile Include="Models\Response\DesicionScaleResponse.cs" />
     <Compile Include="Models\Response\HUBDataResponse.cs" />
     <Compile Include="Models\Response\HUBResponse.cs" />
-    <Compile Include="Models\Response\FakeRFIDResponse.cs" />
-    <Compile Include="Models\Response\GetTokenResponse.cs" />
-    <Compile Include="PegasusStaticClassReader.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -320,9 +311,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="PK_UHF.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="PK_UHF2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

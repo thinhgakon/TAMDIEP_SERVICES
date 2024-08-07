@@ -9,7 +9,6 @@ using System.Linq;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Common;
 using Autofac;
-using XHTD_SERVICES_XB_TROUGH_1.Business;
 using System.Threading;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
 

@@ -42,7 +42,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Devices
 
         public static void Close(int port)
         {
-            PegasusStaticClassReader2.CloseNetPort(port);
+            PegasusStaticClassReader.CloseNetPort(port);
         }
         public static int Connect(int Port,
                                              string IPaddr,

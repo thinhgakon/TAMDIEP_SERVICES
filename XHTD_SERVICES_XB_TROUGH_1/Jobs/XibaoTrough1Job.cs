@@ -16,11 +16,9 @@ using Microsoft.AspNet.SignalR.Client;
 using System.Threading;
 using XHTD_SERVICES.Data.Common;
 using Autofac;
-using XHTD_SERVICES_XB_TROUGH_1.Business;
 using XHTD_SERVICES_XB_TROUGH_1.Hubs;
 using System.Net.NetworkInformation;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
-using PK_UHF_Test;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 {
@@ -71,7 +69,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 2000;
-        private string PegasusAdr = "192.168.13.191";
+        private string PegasusAdr = "192.168.13.219";
 
         public XibaoTrough1Job(
             StoreOrderOperatingRepository storeOrderOperatingRepository,

@@ -9,7 +9,6 @@ using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES_XB_TROUGH_1.Business;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
 
 namespace XHTD_SERVICES_XB_TROUGH_1
@@ -31,8 +30,6 @@ namespace XHTD_SERVICES_XB_TROUGH_1
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<Trough1Logger>().AsSelf();
-            builder.RegisterType<ScaleApiLib>().AsSelf();
-            builder.RegisterType<BarrierControl>().AsSelf();
 
             RegisterScheduler(builder);
 
