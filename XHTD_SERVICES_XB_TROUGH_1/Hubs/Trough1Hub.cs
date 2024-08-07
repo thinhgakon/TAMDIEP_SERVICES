@@ -31,18 +31,17 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Hubs
             }
         }
 
-        public void SendNotificationConfirmationPoint(string name, int status, string cardNo, string message, string vehicle = "")
+        public void SendNotificationTrough(string troughType, string machineCode, string troughCode, string vehicle)
         {
             try
             {
                 var broadcast = GlobalHost.ConnectionManager.GetHubContext<Trough1Hub>();
-                broadcast.Clients.All.SendNotificationConfirmationPoint(name, status, cardNo, message, vehicle);
+                broadcast.Clients.All.SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
             }
             catch (Exception ex)
             {
 
             }
-            //Clients.All.SendNotificationHub(status, inout, cardNo, message, deliveryCode);
         }
     }
 }

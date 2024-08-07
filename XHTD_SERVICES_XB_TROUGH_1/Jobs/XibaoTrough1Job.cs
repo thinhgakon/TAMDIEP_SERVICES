@@ -248,16 +248,16 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             return BitConverter.ToString(b).Replace("-", "");
         }
 
-        private void SendNotificationHub(string name, int status, string cardNo, string message, string vehicle = "")
+        private void SendNotificationHub(string troughType, string machineCode, string troughCode, string vehicle)
         {
-            new Trough1Hub().SendNotificationConfirmationPoint(name, status, cardNo, message, vehicle);
+            new Trough1Hub().SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
         }
 
-        public void SendNotificationAPI(string name, int status, string cardNo, string message, string vehicle = "")
+        public void SendNotificationAPI(string troughType, string machineCode, string troughCode, string vehicle)
         {
             try
             {
-                _notification.SendConfirmNotification(name, status, cardNo, message, vehicle);
+                _notification.SendTroughNotification(troughType, machineCode, troughCode, vehicle);
             }
             catch (Exception ex)
             {

@@ -93,6 +93,19 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSMsgForGatewayNotification(notification);
         }
 
+        public void SendTroughNotification(string troughType, string machineCode, string troughCode, string vehicle)
+        {
+            SendTroughNotificationRequest notification = new SendTroughNotificationRequest
+            {
+                TroughType = troughType,
+                MachineCode = machineCode,
+                TroughCode = troughCode,
+                Vehicle = vehicle
+            };
+
+            HttpRequest.SendDMSMsgForTroughNotification(notification);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
