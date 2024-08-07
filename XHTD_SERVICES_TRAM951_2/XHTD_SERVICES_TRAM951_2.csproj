@@ -283,7 +283,6 @@
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Jobs\ScaleSocketJob.cs" />
     <Compile Include="Jobs\Tram951ModuleJob.cs" />
-    <Compile Include="Jobs\Tram951ModuleJob2.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
     <Compile Include="Models\Response\DesicionScaleResponse.cs" />
