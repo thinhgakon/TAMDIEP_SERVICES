@@ -22,7 +22,7 @@ using XHTD_SERVICES_XB_TROUGH_1.Devices;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 {
-    public class XibaoTrough1Job : IJob
+    public class TroughJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly Trough1Logger _trough1Logger;
+        protected readonly TroughLogger _trough1Logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -69,16 +69,16 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.219";
+        private string PegasusAdr = "192.168.13.191";
 
-        public XibaoTrough1Job(
+        public TroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
             Notification notification,
-            Trough1Logger trough1Logger
+            TroughLogger trough1Logger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -111,9 +111,6 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                 _trough1Logger.LogInfo("Start Xibao Trough 1 service");
                 _trough1Logger.LogInfo("----------------------------");
 
-                // Get devices info
-                await LoadDevicesInfo();
-
                 AuthenticateConfirmModuleFromPegasus();
             });
         }
@@ -132,13 +129,6 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             {
                 isActiveService = true;
             }
-        }
-
-        public async Task LoadDevicesInfo()
-        {
-            var devices = await _categoriesDevicesRepository.GetDevices("CONFIRM");
-
-            c3400 = devices.FirstOrDefault(x => x.Code == "CONFIRM.C3-400");
         }
 
         public void AuthenticateConfirmModuleFromPegasus()
@@ -174,7 +164,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _trough1Logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        _trough1Logger.LogError($@"Có lỗi xảy ra khi xử lý RFID {ex.StackTrace} {ex.Message} ");
                         continue;
                     }
                 }
@@ -187,11 +177,11 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             {
                 _trough1Logger.LogInfo($"== Đầu đọc RFID máng 8 đang xử lý => Kết thúc {cardNoCurrent} == ");
 
-                new Trough1Hub().SendMessage("IS_LOCKING_RFID", "1");
+                new TroughHub().SendMessage("IS_LOCKING_RFID", "1");
             }
             else
             {
-                new Trough1Hub().SendMessage("IS_LOCKING_RFID", "0");
+                new TroughHub().SendMessage("IS_LOCKING_RFID", "0");
             }
 
             // Loại bỏ các tag đã check trước đó
@@ -226,7 +216,9 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
-                _trough1Logger.LogInfo($"3. Tag hợp lệ: vehicle={vehicleCodeCurrent}");
+                _trough1Logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
+                SendNotificationHub("XI_BAO", "1", "1", vehicleCodeCurrent);
+                SendNotificationAPI("XI_BAO", "1", "1", vehicleCodeCurrent);
             }
             else
             {
@@ -250,7 +242,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
         private void SendNotificationHub(string troughType, string machineCode, string troughCode, string vehicle)
         {
-            new Trough1Hub().SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
+            new TroughHub().SendNotificationTrough(troughType, machineCode, troughCode, vehicle);
         }
 
         public void SendNotificationAPI(string troughType, string machineCode, string troughCode, string vehicle)

@@ -259,10 +259,11 @@
     <Compile Include="Devices\PegasusReader.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Trough1Logger.cs" />
-    <Compile Include="Hubs\Trough1Hub.cs" />
+    <Compile Include="Jobs\ConnectPegasusJob.cs" />
+    <Compile Include="TroughLogger.cs" />
+    <Compile Include="Hubs\TroughHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
-    <Compile Include="Jobs\XibaoTrough1Job.cs" />
+    <Compile Include="Jobs\TroughJob.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
     <Compile Include="Models\Response\HUBDataResponse.cs" />
     <Compile Include="Models\Response\HUBResponse.cs" />
