@@ -68,5 +68,16 @@ namespace XHTD_SERVICES_TRAM951_2.Devices
 
             return _trafficLight.TurnOffGreenOnRed();
         }
+
+        public bool TurnOffTrafficLight(string scaleCode)
+        {
+            var ipAddress = GetIpAddress(scaleCode);
+
+            _logger.Info($"IP đèn: {ipAddress}");
+
+            _trafficLight.Connect(ipAddress);
+
+            return _trafficLight.TurnOffGreenOffRed();
+        }
     }
 }

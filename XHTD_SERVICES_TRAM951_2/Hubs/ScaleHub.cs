@@ -333,8 +333,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     Thread.Sleep(15000);
 
                                     // 9. Bật đèn đỏ
-                                    WriteLogInfo($"9. Bật đèn đỏ");
-                                    TurnOnRedTrafficLight();
+                                    WriteLogInfo($"9. Tắt đèn");
+                                    TurnOffTrafficLight();
                                 }
                                 else
                                 {
@@ -413,9 +413,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
 
                                     Thread.Sleep(15000);
 
-                                    // 8. Bật đèn đỏ
-                                    WriteLogInfo($"8. Bật đèn đỏ");
-                                    TurnOnRedTrafficLight();
+                                    // 8. Tắt đèn
+                                    WriteLogInfo($"8. Tắt đèn");
+                                    TurnOffTrafficLight();
                                 }
                                 else
                                 {
@@ -542,6 +542,51 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                 {
                     SendMessage("Notification", $"Bật đèn đỏ chiều ra thất bại");
                     SendMessageAPI("Notification", $"Bật đèn đỏ chiều ra thất bại");
+                }
+                WriteLogInfo($@"Bật thất bại");
+            }
+        }
+
+        public void TurnOffTrafficLight(bool isHasNotification = false)
+        {
+            WriteLogInfo($@"Tắt đèn chiều vào");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Tắt đèn chiều vào thành công");
+                    SendMessageAPI("Notification", $"Tắt đèn chiều vào thành công");
+                }
+                WriteLogInfo($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Tắt đèn chiều vào thất bại");
+                    SendMessageAPI("Notification", $"Tắt đèn chiều vào thất bại");
+                }
+                WriteLogInfo($@"Bật thất bại");
+            }
+
+            Thread.Sleep(500);
+
+            WriteLogInfo($@"Tắt đèn chiều ra");
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Tắt đèn chiều ra thành công");
+                    SendMessageAPI("Notification", $"Tắt đèn chiều ra thành công");
+                }
+                WriteLogInfo($@"Bật thành công");
+            }
+            else
+            {
+                if (isHasNotification)
+                {
+                    SendMessage("Notification", $"Tắt đèn chiều ra thất bại");
+                    SendMessageAPI("Notification", $"Tắt đèn chiều ra thất bại");
                 }
                 WriteLogInfo($@"Bật thất bại");
             }
