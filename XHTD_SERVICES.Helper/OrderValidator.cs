@@ -48,7 +48,7 @@ namespace XHTD_SERVICES.Helper
             }
             else
             {
-                if (order.Step == (int)OrderStep.DA_XAC_THUC)
+                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
