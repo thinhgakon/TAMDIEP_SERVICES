@@ -40,7 +40,10 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
-                                                     && x.Step == (int)OrderStep.DA_CAN_RA
+                                                     && (x.Step == (int)OrderStep.DA_CAN_VAO
+                                                     || x.Step == (int)OrderStep.DANG_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_CAN_RA)
                                                   )
                                             .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
