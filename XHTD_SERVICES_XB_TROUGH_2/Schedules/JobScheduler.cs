@@ -26,7 +26,6 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Schedules
         {
             await _scheduler.Start();
 
-            // Nhận diện RFID máng 2 xi bao
             IJobDetail xibaoTroughJob = JobBuilder.Create<TroughJob>().Build();
             ITrigger xibaoTroughTrigger = TriggerBuilder.Create()
                 .WithPriority(1)

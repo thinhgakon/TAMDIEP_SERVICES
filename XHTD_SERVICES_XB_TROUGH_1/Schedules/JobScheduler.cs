@@ -26,16 +26,15 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Schedules
         {
             await _scheduler.Start();
 
-            // Nhận diện RFID máng 1 xi bao
-            IJobDetail xibaoTrough1Job = JobBuilder.Create<TroughJob>().Build();
-            ITrigger xibaoTrough1Trigger = TriggerBuilder.Create()
+            IJobDetail xibaoTroughJob = JobBuilder.Create<TroughJob>().Build();
+            ITrigger xibaoTroughTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(xibaoTrough1Job, xibaoTrough1Trigger);
+            await _scheduler.ScheduleJob(xibaoTroughJob, xibaoTroughTrigger);
 
             IJobDetail ConnectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
             ITrigger ConnectPegasusTrigger = TriggerBuilder.Create()

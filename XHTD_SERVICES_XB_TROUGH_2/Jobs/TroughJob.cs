@@ -71,6 +71,9 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.193";
 
+        private readonly string MACHINE_CODE = "1";
+        private readonly string TROUGH_CODE = "2";
+
         public TroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             RfidRepository rfidRepository,
@@ -104,11 +107,11 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
 
                 if (!isActiveService)
                 {
-                    _trough1Logger.LogInfo("Service nhận diện RFID máng 2 xi bao đang TẮT.");
+                    _trough1Logger.LogInfo("Service nhận diện RFID đang TẮT.");
                     return;
                 }
 
-                _trough1Logger.LogInfo("Start Xibao Trough 2 service");
+                _trough1Logger.LogInfo("Start Xibao Trough service");
                 _trough1Logger.LogInfo("----------------------------");
 
                 AuthenticateConfirmModuleFromPegasus();
@@ -175,7 +178,7 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
         {
             if (Program.IsLockingRfid)
             {
-                _trough1Logger.LogInfo($"== Đầu đọc RFID máng 2 đang xử lý => Kết thúc {cardNoCurrent} == ");
+                _trough1Logger.LogInfo($"== Đầu đọc RFID đang xử lý => Kết thúc {cardNoCurrent} == ");
 
                 new TroughHub().SendMessage("IS_LOCKING_RFID", "1");
             }
@@ -217,8 +220,8 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 _trough1Logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                SendNotificationHub("XI_BAO", "1", "1", vehicleCodeCurrent);
-                SendNotificationAPI("XI_BAO", "1", "1", vehicleCodeCurrent);
+                SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
             }
             else
             {
@@ -230,7 +233,7 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
                 return;
             }
 
-            _trough1Logger.LogInfo($"10. Giải phóng RFID máng 8");
+            _trough1Logger.LogInfo($"10. Giải phóng RFID");
 
             Program.IsLockingRfid = false;
         }
