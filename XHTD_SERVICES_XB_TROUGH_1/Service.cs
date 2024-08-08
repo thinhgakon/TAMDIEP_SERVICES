@@ -17,7 +17,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service CONFIRM");
+            log.Info("OnStart service XB TROUGH 1");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
 
@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1
 
         protected override void OnStop()
         {
-            log.Info("OnStop service CONFIRM");
+            log.Info("OnStop service XB TROUGH 1");
         }
     }
 }
