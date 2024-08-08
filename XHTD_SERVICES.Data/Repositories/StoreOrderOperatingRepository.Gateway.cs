@@ -168,6 +168,47 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        // Xác thực vào cổng
+        public async Task<bool> UpdateOrderConfirm2ByVehicleCode(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.Step == (int)OrderStep.DA_XAC_THUC)
+                                            .ToListAsync();
+
+                    if (orders == null)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm2 = (int)ConfirmType.RFID;
+                        order.TimeConfirm2 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_VAO_CONG;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực vào cổng VehicleCode={vehicleCode} error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         // Lấy số lượng xe trong bãi chờ
         public int CountStoreOrderWaitingIntoTroughByType(string typeProduct)
         {
