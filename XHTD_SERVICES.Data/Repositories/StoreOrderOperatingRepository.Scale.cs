@@ -25,13 +25,20 @@ namespace XHTD_SERVICES.Data.Repositories
                                                             (
                                                                 (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
                                                                 &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
+                                                                (
+                                                                x.Step < (int)OrderStep.DA_CAN_RA 
+                                                                ||
+                                                                x.Step == (int)OrderStep.DA_XAC_THUC
+                                                                )
                                                             )
                                                             ||
                                                             (
                                                                 (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
                                                                 &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
+                                                                (x.Step < (int)OrderStep.DA_CAN_RA 
+                                                                ||
+                                                                x.Step == (int)OrderStep.DA_XAC_THUC
+                                                                )
                                                             )
                                                         )
                                                    )
