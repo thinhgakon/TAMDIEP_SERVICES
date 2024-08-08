@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D24B4C75-1C96-41CD-A2C7-0FCACC925ECD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_XB_TROUGH_4</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_XB_TROUGH_4</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_XB_TROUGH_5</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_XB_TROUGH_5</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
