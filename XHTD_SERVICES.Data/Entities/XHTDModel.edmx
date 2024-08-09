@@ -309,7 +309,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
         </EntityType>
         <EntityType Name="tblMachine">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Code" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
@@ -599,6 +599,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -1304,6 +1305,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode" FromRole="tblTrough" ToRole="tblTroughTypeProduct" />
+          <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -2049,6 +2051,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblTroughs">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTrough">
               <MappingFragment StoreEntitySet="tblTrough">
+                <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />

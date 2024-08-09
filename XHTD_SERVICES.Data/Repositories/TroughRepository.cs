@@ -123,9 +123,9 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var query = from t in dbContext.tblMachines where t.State == true && t.ProductCategory == productCategory
-                            join ttp in dbContext.tblMachineTypeProducts
-                            on t.Code equals ttp.MachineCode into typeProducts
+                var query = from t in dbContext.tblTroughs where t.State == true && t.ProductCategory == productCategory
+                            join ttp in dbContext.tblTroughTypeProducts
+                            on t.Code equals ttp.TroughCode into typeProducts
 
                             from typeProductItem in typeProducts.DefaultIfEmpty()
                             where typeProductItem.TypeProduct == typeProduct
