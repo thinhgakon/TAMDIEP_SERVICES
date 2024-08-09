@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             await Task.Run(async () =>
             {
-               
+                await MachineJobProcess();
             });
         }
 
@@ -38,20 +38,20 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             foreach (var machine in machines)
             {
-                if(machine.StartStatus == "PENDING")
+                if (machine.StartStatus == "PENDING")
                 {
                     // call start to PLC
 
                     bool startResult = true;
 
-                    if(startResult == true)
+                    if (startResult == true)
                     {
                         machine.StartStatus = "ON";
                         machine.StopStatus = "OFF";
                     }
                 }
 
-                if(machine.StopStatus == "PENDING")
+                if (machine.StopStatus == "PENDING")
                 {
                     // call stop to PLC
 
