@@ -1031,7 +1031,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
         </EntityType>
         <EntityType Name="tblMachine">
           <Key>
-            <PropertyRef Name="Id" />
+            <PropertyRef Name="Code" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
