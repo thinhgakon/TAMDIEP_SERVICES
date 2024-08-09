@@ -51,7 +51,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10000)
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed1XiBaoJob, showLed1XiBaoTrigger);
