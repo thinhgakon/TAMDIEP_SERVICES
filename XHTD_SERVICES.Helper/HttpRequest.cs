@@ -11,6 +11,7 @@ using XHTD_SERVICES.Helper.Models.Response;
 using RestSharp;
 using Newtonsoft.Json;
 using log4net;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES.Helper
 {
@@ -573,6 +574,32 @@ namespace XHTD_SERVICES.Helper
 
             request.Method = Method.POST;
             request.AddJsonBody(new { name, message });
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse SendPushNotification(string userName, string message)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendPushNotification"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new
+            {
+                ContentMessage = message,
+                NotificationType = "XHTD",
+                SubTitle = "XHTD",
+                UserNameReceiver = userName,
+                UserNameSender = "XHTD"
+            });
+
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.RequestFormat = DataFormat.Json;

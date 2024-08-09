@@ -320,6 +320,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
+          <Property Name="CurrentDeliveryCode" Type="varchar" MaxLength="50" />
+          <Property Name="StartStatus" Type="varchar" MaxLength="50" />
+          <Property Name="StopStatus" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -1042,6 +1045,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CurrentDeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StartStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StopStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -1791,6 +1797,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblMachines">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblMachine">
               <MappingFragment StoreEntitySet="tblMachine">
+                <ScalarProperty Name="StopStatus" ColumnName="StopStatus" />
+                <ScalarProperty Name="StartStatus" ColumnName="StartStatus" />
+                <ScalarProperty Name="CurrentDeliveryCode" ColumnName="CurrentDeliveryCode" />
                 <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />

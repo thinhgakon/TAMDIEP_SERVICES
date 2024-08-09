@@ -23,5 +23,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
         public string ProductCategory { get; set; }
+        public string CurrentDeliveryCode { get; set; }
+        public string StartStatus { get; set; }
+        public string StopStatus { get; set; }
     }
 }

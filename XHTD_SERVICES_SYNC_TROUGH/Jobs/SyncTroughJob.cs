@@ -170,7 +170,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 var isAlmostDone = (countQuantity / planQuantity) > 0.98;
 
                 if (isAlmostDone)
-                {
+                {   
                     await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
                 }
                 else

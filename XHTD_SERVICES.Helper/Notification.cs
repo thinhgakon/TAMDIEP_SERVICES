@@ -10,6 +10,7 @@ using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Helper.Models.Response;
 using RestSharp;
 using Newtonsoft.Json;
+using System.Xml.Linq;
 
 namespace XHTD_SERVICES.Helper
 {
@@ -140,6 +141,12 @@ namespace XHTD_SERVICES.Helper
         public void SendScale2Message(string name, string message)
         {
             HttpRequest.SendScale2Message(name, message);
+        }
+
+        public void SendPushNotification(string userName, string message)
+        {
+            HttpRequest.SendPushNotification(userName, message);
+
         }
     }
 }

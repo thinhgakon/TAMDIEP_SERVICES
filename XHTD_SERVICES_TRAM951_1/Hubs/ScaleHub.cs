@@ -295,6 +295,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
+                                    var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    if (driverUserName != null)
+                                    {
+                                        _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    }
+
                                     WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
@@ -393,6 +399,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
+
+                                    var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    if (driverUserName != null)
+                                    {
+                                        _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    }
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
