@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<SyncTroughLogger>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
 
             RegisterScheduler(builder);
 
