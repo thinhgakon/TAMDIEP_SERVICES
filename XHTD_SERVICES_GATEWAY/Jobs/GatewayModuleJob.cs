@@ -405,7 +405,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 if (isNormalOrder)
                 {
-                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByDeliveryCode(currentDeliveryCode);
+                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByVehicleCode(vehicleCodeCurrent);
 
                     if (isUpdatedOrder)
                     {
