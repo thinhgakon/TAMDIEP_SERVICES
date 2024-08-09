@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_SYNC_TROUGH
 {
-    internal static class Program
+    public static class Program
     {
+        public static bool Machine12Running = false;
+        public static bool SyncTroughRunning = false;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
