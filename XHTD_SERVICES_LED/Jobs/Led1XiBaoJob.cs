@@ -19,10 +19,6 @@ namespace XHTD_SERVICES_LED.Jobs
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected readonly string SCALE_1_LED_IN_CODE = ScaleLedCode.CODE_SCALE_1_LED_IN;
-
-        protected readonly string SCALE_1_LED_OUT_CODE = ScaleLedCode.CODE_SCALE_1_LED_OUT;
-
         protected readonly string IP_ADDRESS = "192.168.13.210";
         private const int BUFFER_SIZE = 1024;
         protected readonly int PORT_NUMBER = 10000;
@@ -39,7 +35,7 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 LEDProcess();
             });
@@ -53,11 +49,11 @@ namespace XHTD_SERVICES_LED.Jobs
                 client.Connect(IP_ADDRESS, PORT_NUMBER);
                 Stream stream = client.GetStream();
 
+                Console.WriteLine($"Connected to PLC {IP_ADDRESS}");
+                Console.WriteLine($"Reading PLC {IP_ADDRESS}...");
+
                 while (true)
                 {
-                    Console.WriteLine($"Connected to PLC {IP_ADDRESS}");
-                    Console.WriteLine($"Reading PLC {IP_ADDRESS}...");
-
                     byte[] data1 = encoding.GetBytes($"*[Count][MX][5]##GET[!]");
                     stream.Write(data1, 0, data1.Length);
 
@@ -93,25 +89,25 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             //log.Info($"Send led: dataCode= {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_IN_CODE, dataCode))
-            {
+            //if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_IN_CODE, dataCode))
+            //{
                 //log.Info("LED IN 1 Job - OK");
-            }
-            else
-            {
-                log.Info($"LED IN 1 Job - FAILED: dataCode={dataCode}");
-            }
+            //}
+            //else
+            //{
+            //    log.Info($"LED IN 1 Job - FAILED: dataCode={dataCode}");
+            //}
 
-            Thread.Sleep(500);
+            //Thread.Sleep(500);
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_OUT_CODE, dataCode))
-            {
+            //if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_OUT_CODE, dataCode))
+            //{
                 //log.Info("LED OUT 1 Job - OK");
-            }
-            else
-            {
-                log.Info($"LED OUT 1 Job - FAILED: dataCode={dataCode}");
-            }
+            //}
+            //else
+            //{
+            //    log.Info($"LED OUT 1 Job - FAILED: dataCode={dataCode}");
+            //}
         }
     }
 }
