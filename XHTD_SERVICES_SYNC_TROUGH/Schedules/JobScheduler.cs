@@ -27,15 +27,35 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
             await _scheduler.Start();
 
             // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<SyncTroughJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            //IJobDetail syncOrderJob = JobBuilder.Create<SyncTroughJob>().Build();
+            //ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+
+            IJobDetail machineJob12 = JobBuilder.Create<MachineJob12>().Build();
+            ITrigger machineJob12Trigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Machine_Job_Interval")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+            await _scheduler.ScheduleJob(machineJob12, machineJob12Trigger);
+
+            IJobDetail machineJob34 = JobBuilder.Create<MachineJob34>().Build();
+            ITrigger machineJob34Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Machine_Job_Interval")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(machineJob12, machineJob12Trigger);
         }
     }
 }
