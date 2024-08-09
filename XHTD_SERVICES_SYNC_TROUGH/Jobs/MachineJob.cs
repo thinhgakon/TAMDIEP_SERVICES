@@ -12,6 +12,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     {
         private readonly MachineRepository _machineRepository;
 
+        public MachineJob(MachineRepository machineRepository)
+        {
+            _machineRepository = machineRepository;
+        }
+
         public async Task Execute(IJobExecutionContext context)
         {
             if (context == null)
