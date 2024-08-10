@@ -37,11 +37,11 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             await Task.Run(async () =>
             {
-                LEDProcess();
+                await LEDProcess();
             });
         }
 
-        public void LEDProcess()
+        public async Task LEDProcess()
         {
             try
             {
