@@ -6,27 +6,37 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_LED.Devices;
 using XHTD_SERVICES_LED.Models.Values;
 
 namespace XHTD_SERVICES_LED.Jobs
 {
-    public class Led1XiBaoJob : IJob
+    [DisallowConcurrentExecution]
+    public class Led1XiBaoJob : IJob, IDisposable
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        protected readonly LedLogger _logger;
+        protected readonly TroughRepository _troughRepository;
 
-        protected readonly string IP_ADDRESS = "192.168.13.210";
-        private const int BUFFER_SIZE = 1024;
-        protected readonly int PORT_NUMBER = 10000;
-
+        static TcpClient client = new TcpClient();
+        static Stream stream = null;
         static ASCIIEncoding encoding = new ASCIIEncoding();
 
-        public Led1XiBaoJob()
+        protected readonly string IP_ADDRESS = "192.168.13.189";
+        protected readonly int PORT_NUMBER = 10000;
+        private const int BUFFER_SIZE = 1024;
+
+        protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
+
+        public Led1XiBaoJob(LedLogger logger, TroughRepository troughRepository)
         {
+            _logger = logger;
+            _troughRepository = troughRepository;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -37,77 +47,147 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             await Task.Run(async () =>
             {
-                await LEDProcess();
+                await ConnectPLC();
             });
         }
 
-        public async Task LEDProcess()
+        public async Task ConnectPLC()
+        {
+            _logger.LogInfo("Thuc hien ket noi machine.");
+            try
+            {
+                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
+
+                var listTroughInThisDevice = new List<string> { "1", "2" };
+
+                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
+
+                if (troughCodes == null || troughCodes.Count == 0)
+                {
+                    return;
+                }
+
+                _logger.LogInfo("Bat dau ket noi machine.");
+                client = new TcpClient();
+                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                stream = client.GetStream();
+                _logger.LogInfo($"Connected to machine : 1|2");
+
+                await MachineJobProcess(troughCodes);
+
+                if (client != null && client.Connected)
+                {
+                    client.Close();
+                    Thread.Sleep(2000);
+                }
+                if (stream != null)
+                {
+                    stream.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo("Ket noi that bai.");
+                _logger.LogInfo(ex.Message);
+                _logger.LogInfo(ex.StackTrace);
+            }
+        }
+
+        public async Task MachineJobProcess(List<string> troughCodes)
         {
             try
             {
-                TcpClient client = new TcpClient();
-                client.Connect(IP_ADDRESS, PORT_NUMBER);
-                Stream stream = client.GetStream();
+                bool anyRunning = false;
 
-                Console.WriteLine($"Connected to PLC {IP_ADDRESS}");
-                Console.WriteLine($"Reading PLC {IP_ADDRESS}...");
-
-                while (true)
+                foreach (var troughCode in troughCodes)
                 {
-                    byte[] data1 = encoding.GetBytes($"*[Count][MX][5]##GET[!]");
+                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]##GET[!]");
                     stream.Write(data1, 0, data1.Length);
 
                     data1 = new byte[BUFFER_SIZE];
                     stream.Read(data1, 0, BUFFER_SIZE);
 
                     var response = encoding.GetString(data1).Trim();
-                    var responseArr = response.Split(';');
 
-                    if (responseArr == null || responseArr.Length == 0)
+                    if (response == null || response.Length == 0)
                     {
-                        Console.WriteLine($"Khong co du lieu tra ve");
+                         _logger.LogInfo($"Khong co du lieu tra ve");
                         return;
                     }
 
-                    Match match = Regex.Match(responseArr.First(), @"\[(\d+)\].*#(\d+)#");
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
 
-                    if (match.Success)
+                    var isRunning = result.Item4 == "Run";
+                    var deliveryCode = result.Item3;
+                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+                    
+                    if (isRunning)
                     {
-                        Console.WriteLine($"Máng {match.Groups[1].Value}: {match.Groups[2].Value} bao");
+                        DisplayScreenLed($"*[H1][C1]BSX-1234[H2][C1][1]{deliveryCode}[2]PCB30[H3][C1][1]LUONG DAT[2]XX[H4][C1][1]LUONG XUAT[2]{countQuantity}[!]");
+                        anyRunning = true;
                     }
+                }
 
-                    Thread.Sleep(5000);
+                if (!anyRunning)
+                {
+                    DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
                 }
             }
             catch (Exception ex)
             {
-                log.Info($"ERROR: {ex.Message}");
+                _logger.LogInfo($"ERROR: {ex.Message}");
             }
+        }
+
+        static (string, string, string, string) GetInfo(string input)
+        {
+            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    match.Groups["gt3"].Value,
+                    match.Groups["gt4"].Value
+                );
+            }
+
+            return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         public void DisplayScreenLed(string dataCode)
         {
-            //log.Info($"Send led: dataCode= {dataCode}");
+            _logger.LogInfo($"Send led: dataCode = {dataCode}");
 
-            //if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_IN_CODE, dataCode))
-            //{
-                //log.Info("LED IN 1 Job - OK");
-            //}
-            //else
-            //{
-            //    log.Info($"LED IN 1 Job - FAILED: dataCode={dataCode}");
-            //}
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_CODE, dataCode))
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_CODE} - OK");
+            }
+            else
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED: dataCode = {dataCode}");
+            }
+        }
 
-            //Thread.Sleep(500);
+        public void Dispose()
+        {
+            try
+            {
+                if (client != null && client?.Connected == true)
+                {
+                    client.Close();
+                }
+                if (stream != null)
+                {
+                    stream.Close();
+                }
+            }
+            catch (Exception)
+            {
 
-            //if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_OUT_CODE, dataCode))
-            //{
-                //log.Info("LED OUT 1 Job - OK");
-            //}
-            //else
-            //{
-            //    log.Info($"LED OUT 1 Job - FAILED: dataCode={dataCode}");
-            //}
+            }
         }
     }
 }

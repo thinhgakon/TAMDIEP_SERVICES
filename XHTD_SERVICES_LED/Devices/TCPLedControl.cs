@@ -14,56 +14,28 @@ namespace XHTD_SERVICES_LED.Devices
 
         protected readonly TCPLed _tcpLed;
 
-        protected readonly string SCALE_1_LED_IN_CODE = ScaleLedCode.CODE_SCALE_1_LED_IN;
-
-        protected readonly string SCALE_1_LED_OUT_CODE = ScaleLedCode.CODE_SCALE_1_LED_OUT;
-
-        protected readonly string SCALE_2_LED_IN_CODE = ScaleLedCode.CODE_SCALE_2_LED_IN;
-
-        protected readonly string SCALE_2_LED_OUT_CODE = ScaleLedCode.CODE_SCALE_2_LED_OUT;
-
-        protected readonly string SCALE_1_LED_IN_URL = "192.168.22.41";
-
-        protected readonly string SCALE_1_LED_OUT_URL = "192.168.22.43";
-
-        protected readonly string SCALE_2_LED_IN_URL = "192.168.22.40";
-
-        protected readonly string SCALE_2_LED_OUT_URL = "192.168.22.42";
+        public readonly Dictionary<string, string> LedIpAddresses = new Dictionary<string, string>()
+        {
+            { MachineCode.MACHINE_XI_BAO_1, "192.168.13.190" },
+            { MachineCode.MACHINE_XI_BAO_2, "192.168.13.195" },
+            { MachineCode.MACHINE_XI_BAO_3, "192.168.13.211" },
+            { MachineCode.MACHINE_XI_BAO_4, "192.168.13.216" },
+        };
 
         public TCPLedControl(TCPLed tcpLed)
         {
             _tcpLed = tcpLed;
         }
 
-        public string GetIpAddress(string scaleLedCode)
+        public string GetIpAddress(string machineCode)
         {
-            var ipAddress = SCALE_1_LED_IN_URL;
-
-            if (scaleLedCode == SCALE_1_LED_IN_CODE)
-            {
-                ipAddress = SCALE_1_LED_IN_URL;
-            }
-            else if (scaleLedCode == SCALE_1_LED_OUT_CODE)
-            {
-                ipAddress = SCALE_1_LED_OUT_URL;
-            }
-            else if (scaleLedCode == SCALE_2_LED_IN_CODE)
-            {
-                ipAddress = SCALE_2_LED_IN_URL;
-            }
-            else if (scaleLedCode == SCALE_2_LED_OUT_CODE)
-            {
-                ipAddress = SCALE_2_LED_OUT_URL;
-            }
-
-            return ipAddress;
+            LedIpAddresses.TryGetValue(machineCode, out string ipAdress);
+            return ipAdress;
         }
 
-        public bool DisplayScreen(string scaleLedCode, string dataCode)
+        public bool DisplayScreen(string machineCode, string dataCode)
         {
-            var ipAddress = GetIpAddress(scaleLedCode);
-
-            //_logger.Info($"IP Led: {ipAddress}");
+            var ipAddress = GetIpAddress(machineCode);
 
             _tcpLed.Connect(ipAddress);
 

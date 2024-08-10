@@ -134,9 +134,8 @@
     <Compile Include="Jobs\LedXiRoi.cs" />
     <Compile Include="Libs\CSDKExport.cs" />
     <Compile Include="Models\Response\StoreOrderForLED12.cs" />
-    <Compile Include="Models\ScaleInfoModel.cs" />
+    <Compile Include="Models\Values\MachineCode.cs" />
     <Compile Include="Models\Values\OrderState.cs" />
-    <Compile Include="Models\Values\ScaleLedCode.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
