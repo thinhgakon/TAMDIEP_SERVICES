@@ -68,10 +68,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             while (Program.Machine12Running == true)
             {
-                Console.WriteLine("Cho sync machine job hoan thanh");
             }
 
-            Program.SyncTroughRunning = true;
+            Program.SyncTrough12Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -90,7 +89,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 await SyncTroughProcess();
             });
-            Program.SyncTroughRunning = false;
+            Program.SyncTrough12Running = false;
         }
 
         public async Task LoadSystemParameters()
@@ -111,18 +110,26 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task SyncTroughProcess()
         {
-            _syncTroughLogger.LogInfo("Thuc hien ket noi trough.");
             try
             {
-                _syncTroughLogger.LogInfo("Bat dau ket noi trough.");
-                Console.WriteLine($"Trang thai ket noi {client.Connected}");
+                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
+
+                var listTroughInThisDevice = new List<string> { "1", "2", "3", "4" };
+
+                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
+
+                if (troughCodes == null || troughCodes.Count == 0)
+                {
+                    return;
+                }
+
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 if (client.Connected)
                 {
                     stream = client.GetStream();
                     _syncTroughLogger.LogInfo($"Connected to count trough : 1|2");
-                    await ReadDataFromTrough();
+                    await ReadDataFromTrough(troughCodes);
                 }
 
                 if (client.Connected)
@@ -130,7 +137,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     client.Close();
                 }
 
-                if(stream != null)
+                if (stream != null)
                 {
                     stream.Close();
                 }
@@ -143,19 +150,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public async Task ReadDataFromTrough()
+        public async Task ReadDataFromTrough(List<string> troughCodes)
         {
-            var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-
-            var listTroughInThisDevice = new List<string> { "1", "2", "3", "4" };
-
-            troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
-
-            if (troughCodes == null || troughCodes.Count == 0)
-            {
-                return;
-            }
-
             foreach (var troughCode in troughCodes)
             {
                 try
@@ -167,7 +163,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
-                    _syncTroughLogger.LogInfo($"Read Trough: {troughCode}");
                     // 2. send 1
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data, 0, data.Length);
@@ -185,22 +180,25 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
-                    var result = GetInfo(response.Replace("\0","").Replace("##","#"));
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
-                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0 ;
+                    var countQuantity = (Double.TryParse(result.Item2, out double i) ? i : 0);
+                    if (countQuantity == 0) continue;
                     var planQuantity = 100;
+
+                    var troughCodeReturn = result.Item1;
 
                     if (status == "True")
                     {
-                        _syncTroughLogger.LogInfo($"Mang {troughCode} dang xuat hang deliveryCode {deliveryCode}");
+                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        await _troughRepository.UpdateTrough(troughCode, deliveryCode, countQuantity, planQuantity);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
 
                         //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
 
-                        await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCode);
+                        await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCodeReturn);
 
                         var isAlmostDone = (countQuantity / planQuantity) > 0.98;
 
@@ -218,14 +216,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         //TODO: xét thêm trường hợp đang xuất dở đơn mà chuyển qua máng khác thì không update được lại trạng thái Đang lấy hàng
 
-                        _syncTroughLogger.LogInfo($"Mang {troughCode} dang nghi");
+                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
                         _syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
                         await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
 
-                        _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCode}");
+                        _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCode, deliveryCode, 100, planQuantity);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 100, planQuantity);
 
                     }
                 }

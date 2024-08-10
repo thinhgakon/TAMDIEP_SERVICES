@@ -29,23 +29,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
             //// Đồng bộ đơn hàng
             IJobDetail syncOrderJob = JobBuilder.Create<SyncTroughJob12>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
-                .StartAt(DateTime.Now.AddSeconds(10))
+                .StartNow()
                 .WithPriority(2)
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
+                     .WithIntervalInSeconds(2)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
-            //IJobDetail syncOrderJob34 = JobBuilder.Create<SyncTroughJob34>().Build();
-            //ITrigger syncOrderTrigger34 = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Machine_Job_Interval")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(syncOrderJob34, syncOrderTrigger34);
+            IJobDetail syncOrderJob34 = JobBuilder.Create<SyncTroughJob34>().Build();
+            ITrigger syncOrderTrigger34 = TriggerBuilder.Create()
+                .WithPriority(2)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(2)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(syncOrderJob34, syncOrderTrigger34);
 
             IJobDetail machineJob12 = JobBuilder.Create<MachineJob12>().Build();
             ITrigger machineJob12Trigger = TriggerBuilder.Create()
@@ -57,15 +57,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                 .Build();
             await _scheduler.ScheduleJob(machineJob12, machineJob12Trigger);
 
-            //IJobDetail machineJob34 = JobBuilder.Create<MachineJob34>().Build();
-            //ITrigger machineJob34Trigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Machine_Job_Interval")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(machineJob34, machineJob34Trigger);
+            IJobDetail machineJob34 = JobBuilder.Create<MachineJob34>().Build();
+            ITrigger machineJob34Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(machineJob34, machineJob34Trigger);
         }
     }
 }
