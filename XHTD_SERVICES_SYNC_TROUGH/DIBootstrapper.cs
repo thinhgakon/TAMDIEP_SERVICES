@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<SyncTroughLogger>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -39,7 +40,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(SyncTroughJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(SyncTroughJob34).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

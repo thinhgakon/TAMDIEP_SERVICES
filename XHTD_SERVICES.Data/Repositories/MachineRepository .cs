@@ -63,6 +63,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     return await dbContext.tblMachines
                         .Where(x => x.State == true && (x.StartStatus == "PENDING" || x.StopStatus == "PENDING"))
+                        .Where(x=>x.ProductCategory == "XI_BAO")
                         .ToListAsync();
                 }
             }
