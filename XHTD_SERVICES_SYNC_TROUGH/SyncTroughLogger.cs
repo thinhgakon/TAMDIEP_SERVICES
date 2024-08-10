@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_SYNC_TROUGH
 {
-    public class SyncTroughLogger : BaseLogger<Jobs.SyncTroughJob>
+    public class SyncTroughLogger : BaseLogger<Jobs.SyncTroughJob34>
     {
     }
 }
