@@ -405,11 +405,23 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                                                    &&
+                                                    (
+                                                    x.Step < (int)OrderStep.DA_HOAN_THANH
+                                                    ||
+                                                    x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    )
+                                                );
+
                     if (order != null)
                     {
                         order.TimeConfirm8 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+
+                        if (order.Step < (int)OrderStep.DA_HOAN_THANH || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        {
+                            order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        }
+
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {syncTime};";
@@ -427,11 +439,21 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && x.Step < (int)OrderStep.DA_GIAO_HANG);
+                                                    && (
+                                                    x.Step < (int)OrderStep.DA_GIAO_HANG)
+                                                    ||
+                                                    x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    );
+
                     if (order != null)
                     {
                         order.TimeConfirm9 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_GIAO_HANG;
+
+                        if (order.Step < (int)OrderStep.DA_GIAO_HANG || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        {
+                            order.Step = (int)OrderStep.DA_GIAO_HANG;
+                        }
+                        
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";
