@@ -63,12 +63,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 _logger.LogInfo($"Connected to machine : 1|2");
                 await MachineJobProcess();
 
-                if (client.Connected)
+                if (client != null && client.Connected)
                 {
                     client.Close();
                     Thread.Sleep(2000);
                 }
-                stream.Close();
+                if(stream != null)
+                {
+                    stream.Close();
+                }
             }
             catch (Exception ex)
             {
