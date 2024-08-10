@@ -27,8 +27,8 @@ namespace XHTD_SERVICES_LED.Jobs
         static Stream stream = null;
         static ASCIIEncoding encoding = new ASCIIEncoding();
 
-        protected readonly string IP_ADDRESS = "192.168.13.189";
-        protected readonly int PORT_NUMBER = 10000;
+        protected readonly string PLC_IP_ADDRESS = "192.168.13.189";
+        protected readonly int PLC_PORT_NUMBER = 10000;
         private const int BUFFER_SIZE = 1024;
 
         protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
@@ -47,13 +47,13 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             await Task.Run(async () =>
             {
+                _logger.LogInfo("Thuc hien ket noi machine.");
                 await ConnectPLC();
             });
         }
 
         public async Task ConnectPLC()
         {
-            _logger.LogInfo("Thuc hien ket noi machine.");
             try
             {
                 var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
@@ -69,7 +69,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 _logger.LogInfo("Bat dau ket noi machine.");
                 client = new TcpClient();
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo($"Connected to machine : 1|2");
 
@@ -101,7 +101,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 foreach (var troughCode in troughCodes)
                 {
-                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]##GET[!]");
+                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data1, 0, data1.Length);
 
                     data1 = new byte[BUFFER_SIZE];
@@ -120,7 +120,9 @@ namespace XHTD_SERVICES_LED.Jobs
                     var isRunning = result.Item4 == "Run";
                     var deliveryCode = result.Item3;
                     var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
-                    
+
+                    if (countQuantity == 0) continue;
+
                     if (isRunning)
                     {
                         DisplayScreenLed($"*[H1][C1]BSX-1234[H2][C1][1]{deliveryCode}[2]PCB30[H3][C1][1]LUONG DAT[2]XX[H4][C1][1]LUONG XUAT[2]{countQuantity}[!]");
@@ -167,7 +169,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             else
             {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED: dataCode = {dataCode}");
+                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED");
             }
         }
 
