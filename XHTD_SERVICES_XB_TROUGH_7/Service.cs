@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
-using XHTD_SERVICES_XB_TROUGH_6.Hubs;
-using XHTD_SERVICES_XB_TROUGH_6.Schedules;
+using XHTD_SERVICES_XB_TROUGH_7.Hubs;
+using XHTD_SERVICES_XB_TROUGH_7.Schedules;
 
-namespace XHTD_SERVICES_XB_TROUGH_6
+namespace XHTD_SERVICES_XB_TROUGH_7
 {
     public partial class Service : ServiceBase
     {
@@ -17,7 +17,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service XB TROUGH 6");
+            log.Info("OnStart service XB TROUGH 7");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
 
@@ -26,7 +26,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6
 
         protected override void OnStop()
         {
-            log.Info("OnStop service XB TROUGH 6");
+            log.Info("OnStop service XB TROUGH 7");
         }
     }
 }
