@@ -33,9 +33,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            while (Program.SyncTroughRunning == true)
+            while (Program.SyncTrough12Running == true)
             {
-                Console.WriteLine("Cho sync trough job hoan thanh");
             }
 
             Program.Machine12Running = true;

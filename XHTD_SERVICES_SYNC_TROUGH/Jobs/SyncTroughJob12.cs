@@ -68,10 +68,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             while (Program.Machine12Running == true)
             {
-                Console.WriteLine("Cho sync machine job hoan thanh");
             }
 
-            Program.SyncTroughRunning = true;
+            Program.SyncTrough12Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -90,7 +89,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 await SyncTroughProcess();
             });
-            Program.SyncTroughRunning = false;
+            Program.SyncTrough12Running = false;
         }
 
         public async Task LoadSystemParameters()
@@ -115,7 +114,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             try
             {
                 _syncTroughLogger.LogInfo("Bat dau ket noi trough.");
-                Console.WriteLine($"Trang thai ket noi {client.Connected}");
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 if (client.Connected)
@@ -130,7 +128,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     client.Close();
                 }
 
-                if(stream != null)
+                if (stream != null)
                 {
                     stream.Close();
                 }
@@ -185,11 +183,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
-                    var result = GetInfo(response.Replace("\0","").Replace("##","#"));
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
-                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0 ;
+                    var countQuantity = (Double.TryParse(result.Item2, out double i) ? i : 0) * 0.05;
                     var planQuantity = 100;
 
                     if (status == "True")
