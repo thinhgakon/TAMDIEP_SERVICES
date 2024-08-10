@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
 using System.Timers;
+using System.Collections.Generic;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -52,25 +54,28 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task ConnectScaleStationModuleFromController()
         {
-            _logger.LogInfo("Thuc hien ket noi machine.");
             try
             {
+                var machines = await _machineRepository.GetPendingMachine();
+
+                if (machines == null || machines.Count == 0)
+                {
+                    return;
+                }
+
                 _logger.LogInfo("Bat dau ket noi machine.");
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo($"Connected to machine : 1|2");
-                await MachineJobProcess();
+                await MachineJobProcess(machines);
 
                 if (client != null && client.Connected)
                 {
                     client.Close();
                     Thread.Sleep(2000);
                 }
-                if(stream != null)
-                {
-                    stream.Close();
-                }
+                stream?.Close();
             }
             catch (Exception ex)
             {
@@ -80,15 +85,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        private async Task MachineJobProcess()
+        private async Task MachineJobProcess(List<tblMachine> machines)
         {
-            var machines = await _machineRepository.GetPendingMachine();
-
-            if (machines == null || machines.Count == 0)
-            {
-                return;
-            }
-
             machines = machines.Where(x => x.Code == "1" || x.Code == "2").ToList();
 
             foreach (var machine in machines)
