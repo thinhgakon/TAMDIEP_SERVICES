@@ -21,7 +21,8 @@ namespace XHTD_SERVICES_LED
             builder.RegisterType<LedLogger>().AsSelf();
             builder.RegisterType<TCPLedControl>().AsSelf();
             builder.RegisterType<TCPLed>().AsSelf();
-
+            builder.RegisterType<TroughRepository>().AsSelf();
+            
             RegisterScheduler(builder);
 
             return builder.Build();

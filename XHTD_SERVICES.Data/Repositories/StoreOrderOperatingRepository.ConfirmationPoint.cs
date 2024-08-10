@@ -33,7 +33,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     Step = 10 ,
                                                     TimeConfirmHistory = GETDATE() ,
                                                     LogHistory = CONCAT(LogHistory, '#confirm by rfid at ', GETDATE()) ,
-                                                    LogProcessOrder = CONCAT(LogProcessOrder, N'#Xác thực thủ công lúc ',
+                                                    LogProcessOrder = CONCAT(LogProcessOrder, N'#Xác thực tự động lúc ',
                                                                                 FORMAT(GETDATE(), 'dd/MM/yyyy HH:mm:ss'))
                                                 WHERE Vehicle = @Vehicle
                                                       AND ISNULL(Step, 0) = 1
