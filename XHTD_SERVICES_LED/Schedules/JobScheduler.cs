@@ -26,25 +26,35 @@ namespace XHTD_SERVICES_LED.Schedules
         {
             await _scheduler.Start();
 
-            IJobDetail showLedBaoJob = JobBuilder.Create<LedXiBao>().Build();
-            ITrigger showLedBaoTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(showLedBaoJob, showLedBaoTrigger);
+            //IJobDetail showLedBaoJob = JobBuilder.Create<LedXiBao>().Build();
+            //ITrigger showLedBaoTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(showLedBaoJob, showLedBaoTrigger);
 
-            IJobDetail showLedRoiJob = JobBuilder.Create<LedXiRoi>().Build();
-            ITrigger showLedRoiTrigger = TriggerBuilder.Create()
+            //IJobDetail showLedRoiJob = JobBuilder.Create<LedXiRoi>().Build();
+            //ITrigger showLedRoiTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(showLedRoiJob, showLedRoiTrigger);
+
+            IJobDetail showLed1XiBaoJob = JobBuilder.Create<Led1XiBaoJob>().Build();
+            ITrigger showLed1XiBaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Led_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(showLedRoiJob, showLedRoiTrigger);
+            await _scheduler.ScheduleJob(showLed1XiBaoJob, showLed1XiBaoTrigger);
         }
     }
 }
