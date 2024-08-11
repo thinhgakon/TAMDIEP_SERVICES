@@ -124,7 +124,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
 
                     var vehicleCode = "BSX-12345";
-                    decimal? planQuantity = 100;
+                    var planQuantity = 100;
                     string typeProduct = "PCB30";
 
                     if (countQuantity == 0) continue;
@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_LED.Jobs
                         var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
                         if (order != null) {
                             vehicleCode = order.Vehicle;
-                            planQuantity = order.SumNumber * 20;
+                            planQuantity = (int)(order.SumNumber * 20);
                             typeProduct = !String.IsNullOrEmpty(order.TypeProduct)? order.TypeProduct : "---";
                         }
 
