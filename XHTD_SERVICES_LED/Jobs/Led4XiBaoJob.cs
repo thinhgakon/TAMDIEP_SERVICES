@@ -22,6 +22,7 @@ namespace XHTD_SERVICES_LED.Jobs
     {
         protected readonly LedLogger _logger;
         protected readonly TroughRepository _troughRepository;
+        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         static TcpClient client = new TcpClient();
         static Stream stream = null;
@@ -33,10 +34,11 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_4;
 
-        public Led4XiBaoJob(LedLogger logger, TroughRepository troughRepository)
+        public Led4XiBaoJob(LedLogger logger, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _logger = logger;
             _troughRepository = troughRepository;
+            _storeOrderOperatingRepository = storeOrderOperatingRepository;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -121,11 +123,24 @@ namespace XHTD_SERVICES_LED.Jobs
                     var deliveryCode = result.Item3;
                     var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
 
+                    var vehicleCode = "BSX-12345";
+                    decimal? planQuantity = 100;
+                    string typeProduct = "PCB30";
+
                     if (countQuantity == 0) continue;
 
                     if (isRunning)
                     {
-                        DisplayScreenLed($"*[H1][C1]BSX-1234[H2][C1][1]{deliveryCode}[2]PCB30[H3][C1][1]LUONG DAT[2]XX[H4][C1][1]LUONG XUAT[2]{countQuantity}[!]");
+
+                        var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                        if (order != null)
+                        {
+                            vehicleCode = order.Vehicle;
+                            planQuantity = order.SumNumber * 20;
+                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                        }
+
+                        DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]");
                         anyRunning = true;
                     }
                 }
