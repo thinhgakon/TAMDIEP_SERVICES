@@ -14,13 +14,15 @@ namespace XHTD_SERVICES_TRAM951_2
         /// </summary>
 
         public static List<int> scaleValues = new List<int>();
+        public static List<int> scaleValuesForResetLight = new List<int>();
+
         public static bool IsScalling = false;
         public static bool IsLockingScale = false;
         public static string InProgressDeliveryCode = null;
         public static string InProgressVehicleCode = null;
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
-        public static bool IsFirstTimeResetTrafficLight = false;
+        public static bool IsFirstTimeResetTrafficLight = true;
 
         public static bool IsLockingRfid = false;
         public static bool IsEnabledRfid = false;
