@@ -62,7 +62,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 using (var dbContext = new XHTD_Entities())
                 {
                     return await dbContext.tblMachines
-                        .Where(x => x.State == true && (x.StartStatus == "PENDING" || x.StopStatus == "PENDING"))
+                        .Where(x => x.StartStatus == "PENDING" || x.StopStatus == "PENDING")
                         .Where(x=>x.ProductCategory == "XI_BAO")
                         .ToListAsync();
                 }
