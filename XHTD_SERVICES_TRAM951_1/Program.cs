@@ -20,6 +20,8 @@ namespace XHTD_SERVICES_TRAM951_1
         public static string InProgressVehicleCode = null;
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
+        public static bool IsFirstTimeResetTrafficLightIn = false;
+        public static bool IsFirstTimeResetTrafficLightOut = false;
 
         public static bool IsLockingRfid = false;
         public static bool IsEnabledRfid = false;
