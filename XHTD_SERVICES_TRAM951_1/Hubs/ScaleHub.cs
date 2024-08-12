@@ -141,7 +141,12 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                     SendMessageAPI($"{SCALE_IS_LOCKING_RFID}", "  ");
 
                     Program.scaleValues.Clear();
+                    Program.scaleValuesForResetLight.Clear();
                     return;
+                }
+                else
+                {
+                    Program.scaleValuesForResetLight.Add(currentScaleValue);
                 }
 
                 if (Program.IsScalling)
