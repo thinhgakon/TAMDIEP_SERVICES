@@ -418,9 +418,9 @@ namespace XHTD_SERVICES.Data.Repositories
                                 .FirstOrDefault(x => x.OrderId == orderId
                                                     &&
                                                     (
-                                                    x.Step < (int)OrderStep.DA_HOAN_THANH
-                                                    ||
-                                                    x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        x.Step < (int)OrderStep.DA_HOAN_THANH
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
                                                     )
                                                 );
 
@@ -450,11 +450,13 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && (
-                                                    x.Step < (int)OrderStep.DA_GIAO_HANG)
-                                                    ||
-                                                    x.Step == (int)OrderStep.DA_XAC_THUC
-                                                    );
+                                                    && 
+                                                    (
+                                                        x.Step < (int)OrderStep.DA_GIAO_HANG
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    )
+                                                );
 
                     if (order != null)
                     {
