@@ -50,7 +50,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         {
             try
             {
-                if (Program.scaleValues == null || Program.scaleValues.Count == 0)
+                if (Program.scaleValuesForResetLight == null || Program.scaleValuesForResetLight.Count == 0)
                 {
                     if (Program.IsFirstTimeResetTrafficLight)
                     {
