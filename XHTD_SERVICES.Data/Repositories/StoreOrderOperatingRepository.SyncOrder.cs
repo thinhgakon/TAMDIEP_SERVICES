@@ -33,7 +33,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("PCB30") 
+                        || productNameUpper.Contains("PCB 30") 
+                        || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
@@ -49,13 +51,22 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC40";
                     }
+                    else if (productNameUpper.Contains("C91"))
+                    {
+                        typeProduct = "C91";
+                    }
+                    else
+                    {
+                        typeProduct = "OTHER";
+                    }
 
                     // Type XK
                     if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
                         typeXK = OrderTypeXKCode.JUMBO;
                     }
-                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING))
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING) 
+                        || productNameUpper.Contains(OrderTypeXKCode.SILING))
                     {
                         typeXK = OrderTypeXKCode.SLING;
                     }
