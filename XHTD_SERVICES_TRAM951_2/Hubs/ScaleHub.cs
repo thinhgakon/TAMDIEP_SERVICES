@@ -143,6 +143,10 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     Program.scaleValues.Clear();
                     return;
                 }
+                else
+                {
+                    Program.scaleValuesForResetLight.Add(currentScaleValue);
+                }
 
                 if (Program.IsScalling)
                 {

@@ -58,7 +58,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                         TurnOffTrafficLight();
 
-                        _logger.LogInfo("Reset traffic light - Scale 951 - 1");
+                        _logger.LogInfo("Reset traffic light - Scale 951 - 2");
                     }
                     else
                     {
