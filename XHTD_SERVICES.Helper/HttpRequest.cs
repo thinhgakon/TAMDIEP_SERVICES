@@ -595,7 +595,7 @@ namespace XHTD_SERVICES.Helper
             {
                 ContentMessage = message,
                 NotificationType = "XHTD",
-                SubTitle = "XHTD",
+                SubTitle = "HỆ THỐNG XUẤT HÀNG TỰ ĐỘNG",
                 UserNameReceiver = userName,
                 UserNameSender = "XHTD"
             });
