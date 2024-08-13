@@ -355,7 +355,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, string docnum = null)
         {
             bool isSynced = false;
 
@@ -381,6 +381,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
                                                         ||
                                                         x.WeightOut == null
+                                                        ||
+                                                        x.DocNum == null
                                                     )
                                                );
 
@@ -400,6 +402,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.WeightOut = (int)(weightOut * 1000);
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+
+                        order.DocNum = docnum;
 
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
