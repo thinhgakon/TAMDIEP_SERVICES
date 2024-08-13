@@ -364,7 +364,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
             }
 
-            Thread.Sleep(10000);
+            Thread.Sleep(15000);
 
             _confirmLogger.LogInfo($"8. Bật đèn đỏ");
             if (TurnOnRedTrafficLight())
