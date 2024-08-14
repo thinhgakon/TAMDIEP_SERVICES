@@ -169,7 +169,10 @@ namespace XHTD_SERVICES.Helper
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                    )
                 {
                     return true;
                 }
@@ -180,7 +183,10 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                    )
                 {
                     return true;
                 }
