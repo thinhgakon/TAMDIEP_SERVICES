@@ -408,11 +408,11 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
                                     SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân ra tự động thành công, vui lòng di chuyển ra cổng bảo vệ, trân trọng!");
 
-                                    var driverUserName = orders.FirstOrDefault()?.DriverUserName;
-                                    if (driverUserName != null)
-                                    {
-                                        _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
-                                    }
+                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    //if (driverUserName != null)
+                                    //{
+                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    //}
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
