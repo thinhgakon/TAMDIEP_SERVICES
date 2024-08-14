@@ -394,6 +394,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             var currentDeliveryCode = currentOrder.DeliveryCode;
             _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
+            /*
+            #region Xử lý đơn hàng hợp lệ
             var isUpdatedOrder = false;
             bool isSuccessOpenBarrier = true;
 
@@ -507,6 +509,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     _gatewayLogger.LogInfo($"9. Mo barrier KHONG thanh cong");
                 }
             }
+            #endregion
+            */
 
             if (isLuongVao)
             {
