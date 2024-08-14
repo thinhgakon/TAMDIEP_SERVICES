@@ -299,12 +299,13 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
+                                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!");
 
-                                    var driverUserName = orders.FirstOrDefault()?.DriverUserName;
-                                    if (driverUserName != null)
-                                    {
-                                        _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
-                                    }
+                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    //if (driverUserName != null)
+                                    //{
+                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    //}
 
                                     WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
@@ -353,6 +354,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thất bại
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    //SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân vào tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
 
                                     WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -404,6 +406,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
+                                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân ra tự động thành công, vui lòng di chuyển ra cổng bảo vệ, trân trọng!");
 
                                     var driverUserName = orders.FirstOrDefault()?.DriverUserName;
                                     if (driverUserName != null)
@@ -440,6 +443,7 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     // Lưu giá trị cân thất bại
                                     SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    //SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân ra tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -619,6 +623,19 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
             catch (Exception ex)
             {
                 WriteLogInfo($"SendMessageAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendPushNotification(string userNameReceiver, string message)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _notification.SendPushNotification(userNameReceiver, message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
