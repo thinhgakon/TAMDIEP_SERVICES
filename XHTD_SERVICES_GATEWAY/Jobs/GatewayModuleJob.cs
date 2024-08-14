@@ -422,6 +422,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     SendNotificationHub(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
+                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực vào cổng tự động thành công, vui lòng di chuyển đến bàn cân, trân trọng!");
 
                     if (Program.IsBarrierActive)
                     {
@@ -438,6 +439,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     SendNotificationHub(4, inout, null, $"Xác thực vào cổng thất bại", null);
                     SendNotificationAPI(inout, 4, null, $"Xác thực vào cổng thất bại", null);
+                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực vào cổng tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
 
                     _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
                 }
@@ -549,6 +551,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             catch (Exception ex)
             {
                 _gatewayLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendPushNotification(string userNameReceiver, string message)
+        {
+            try
+            {
+                _gatewayLogger.LogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _notification.SendPushNotification(userNameReceiver, message);
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

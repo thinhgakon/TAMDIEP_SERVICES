@@ -311,7 +311,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực thành công, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thành công, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -330,7 +330,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực không thành công, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
             }
