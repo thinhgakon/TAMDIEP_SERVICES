@@ -311,7 +311,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thành công, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+
+                var pushMessage = $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
+                SendPushNotification("adminNPP", pushMessage);
+
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    SendPushNotification(driverUserName, pushMessage);
+                }
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -330,7 +338,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-                SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
+
+                var pushMessage = $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                SendPushNotification("adminNPP", pushMessage);
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
             }
@@ -366,7 +376,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
             }
 
-            Thread.Sleep(15000);
+            Thread.Sleep(20000);
 
             _confirmLogger.LogInfo($"8. Bật đèn đỏ");
             if (TurnOnRedTrafficLight())
