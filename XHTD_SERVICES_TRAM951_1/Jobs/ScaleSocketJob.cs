@@ -75,7 +75,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 if (!isConnected)
                 {
                     // connection failure
-                    Console.WriteLine($@"Khong the connect");
+                    _logger.LogInfo($@"Khong the connect");
                     return false;
                 }
 
@@ -145,7 +145,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                             Program.CountScaleZero = 0;
                         }
 
-                        Console.WriteLine($"============= {dateTime} {scaleValue.ToString()}");
+                        _logger.LogInfo($"========= {dateTime} ========= {scaleValue.ToString()} ==========");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
