@@ -131,7 +131,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         if (scaleValue == 0)
                         {
-                            if (Program.CountScaleZero < 3)
+                            if (Program.CountScaleZero < 5)
                             {
                                 Program.CountScaleZero++;
                             }
@@ -148,7 +148,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         Console.WriteLine($"============= {dateTime} {scaleValue.ToString()}");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
-                        //new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
+                        new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 
                 }
