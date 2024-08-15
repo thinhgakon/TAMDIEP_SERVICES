@@ -106,11 +106,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     stream.Read(data, 0, BUFFER_SIZE);
                     var dataStr = encoding.GetString(data);
 
-                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                    //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
                     string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
-
-                    int countZero = 0;
 
                     foreach (var item in parts)
                     {
@@ -133,9 +131,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         if (scaleValue == 0)
                         {
-                            if (countZero < 3)
+                            if (Program.CountScaleZero < 3)
                             {
-                                countZero++;
+                                Program.CountScaleZero++;
                             }
                             else
                             {
@@ -144,8 +142,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         }
                         else
                         {
-                            countZero = 0;
+                            Program.CountScaleZero = 0;
                         }
+
+                        Console.WriteLine($"============= {dateTime} {scaleValue.ToString()}");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         //new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
