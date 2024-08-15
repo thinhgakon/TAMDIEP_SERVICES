@@ -17,17 +17,16 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class ScaleSocketJob : IJob
     {
-        private static bool DeviceConnected = false;
-        protected readonly Logger _logger;
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 2022;
         static ASCIIEncoding encoding = new ASCIIEncoding();
-        static TcpClient client = new TcpClient();
+        static TcpClient client = null;
         static Stream stream = null;
-        private readonly Notification _notification;
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
-
         public const string IP_ADDRESS = "192.168.13.206";
+
+        protected readonly Logger _logger;
+        private readonly Notification _notification;
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {
@@ -66,16 +65,14 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 client = new TcpClient();
 
                 // 1. connect
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                var isConnected = client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo("Connected to controller");
-
-                DeviceConnected = true;
 
                 var data = encoding.GetBytes(START_CONNECTION_STR);
                 stream.Write(data, 0, data.Length);
 
-                return DeviceConnected;
+                return isConnected;
             }
             catch (Exception ex)
             {
@@ -154,7 +151,6 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             else
             {
-                DeviceConnected = false;
                 AuthenticateScaleStationModuleFromController();
             }
         }
