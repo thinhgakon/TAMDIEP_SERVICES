@@ -346,8 +346,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     Thread.Sleep(15000);
 
                                     // 9. Bật đèn đỏ
-                                    WriteLogInfo($"9. Tắt đèn");
-                                    TurnOffTrafficLight();
+                                    //WriteLogInfo($"9. Tắt đèn");
+                                    //TurnOffTrafficLight();
                                 }
                                 else
                                 {
@@ -435,8 +435,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     Thread.Sleep(15000);
 
                                     // 8. Tắt đèn
-                                    WriteLogInfo($"8. Tắt đèn");
-                                    TurnOffTrafficLight();
+                                    //WriteLogInfo($"8. Tắt đèn");
+                                    //TurnOffTrafficLight();
                                 }
                                 else
                                 {
