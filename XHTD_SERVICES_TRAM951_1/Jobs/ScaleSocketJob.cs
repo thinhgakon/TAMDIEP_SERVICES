@@ -49,16 +49,21 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (!client.Connected)
+            while (true)
             {
-                ConnectScaleStationModuleFromController();
+                var isConnected = ConnectScaleStationModuleFromController();
+
+                if (isConnected)
+                {
+                    ReadDataFromController();
+                }
+
+                Thread.Sleep(500);
             }
-            ReadDataFromController();
         }
 
         public bool ConnectScaleStationModuleFromController()
         {
-            _logger.LogInfo("Thuc hien ket noi.");
             try
             {
                 _logger.LogInfo("Bat dau ket noi.");
@@ -66,8 +71,16 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                 // 1. connect
                 var isConnected = client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+
+                if (!isConnected)
+                {
+                    // connection failure
+                    Console.WriteLine($@"Khong the connect");
+                    return false;
+                }
+
                 stream = client.GetStream();
-                _logger.LogInfo("Connected to controller");
+                _logger.LogInfo("Ket noi thanh cong");
 
                 var data = encoding.GetBytes(START_CONNECTION_STR);
                 stream.Write(data, 0, data.Length);
@@ -77,8 +90,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                //_logger.LogInfo(ex.Message);
+                //_logger.LogInfo(ex.StackTrace);
                 return false;
             }
         }
@@ -87,71 +100,76 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         {
             if (client.Connected)
             {
-                while (client.Connected)
+                try
                 {
-                    try
+                    byte[] data = new byte[BUFFER_SIZE];
+                    stream.Read(data, 0, BUFFER_SIZE);
+                    var dataStr = encoding.GetString(data);
+
+                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+
+                    string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
+
+                    int countZero = 0;
+
+                    foreach (var item in parts)
                     {
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        var dataStr = encoding.GetString(data);
-
-                        //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
-
-                        string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
-
-                        int countZero = 0;
-
-                        foreach (var item in parts)
+                        int scaleValue;
+                        System.DateTime dateTime;
+                        try
                         {
-                            int scaleValue;
-                            System.DateTime dateTime;
-                            try
-                            {
-                                string[] dt = item.Split('*');
+                            string[] dt = item.Split('*');
 
-                                // Lấy phần số và ngày tháng giờ
-                                string number = dt[1];
-                                string dateTimeStr = dt[2];
-                                scaleValue = int.TryParse(number, out int i) ? i : 0;
-                                dateTime = System.DateTime.Parse(dateTimeStr);
-                            }
-                            catch (Exception)
-                            {
-                                continue;
-                            }
+                            // Lấy phần số và ngày tháng giờ
+                            string number = dt[1];
+                            string dateTimeStr = dt[2];
+                            scaleValue = int.TryParse(number, out int i) ? i : 0;
+                            dateTime = System.DateTime.Parse(dateTimeStr);
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
 
-                            if (scaleValue == 0)
+                        if (scaleValue == 0)
+                        {
+                            if (countZero < 3)
                             {
-                                if (countZero < 3)
-                                {
-                                    countZero++;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
+                                countZero++;
                             }
                             else
                             {
-                                countZero = 0;
+                                continue;
                             }
-
-                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
-                            new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
+                        }
+                        else
+                        {
+                            countZero = 0;
                         }
 
+                        SendScaleInfoAPI(dateTime, scaleValue.ToString());
+                        //new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
-                        continue;
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                }
+                finally {
+                    // 5. Close
+                    if (stream != null) { 
+                        stream.Close();
+                    }
+
+                    if(client != null) { 
+                        client.Close();
                     }
                 }
-                AuthenticateScaleStationModuleFromController();
             }
             else
             {
-                AuthenticateScaleStationModuleFromController();
+                _logger.LogError($@"Khong co ket noi");
             }
         }
 
