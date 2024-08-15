@@ -199,17 +199,17 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCodeReturn);
 
-                        var isAlmostDone = (countQuantity / planQuantity) > 0.98;
+                        //var isAlmostDone = (countQuantity / planQuantity) > 0.98;
 
-                        if (isAlmostDone)
-                        {
-                            await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
-                        }
-                        else
-                        {
-                            await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
-                        }
-                        //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        //if (isAlmostDone)
+                        //{
+                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                        //}
+                        //else
+                        //{
+                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        //}
+                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
                     }
                     else
                     {
@@ -217,12 +217,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
-                        _syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
-                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                        //_syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
+                        //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
 
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 100, planQuantity);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0);
 
                     }
                 }
