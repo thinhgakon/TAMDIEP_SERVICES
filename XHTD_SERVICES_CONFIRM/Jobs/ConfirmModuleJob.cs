@@ -312,7 +312,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
-                var pushMessage = $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
+                var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
                 SendPushNotification("adminNPP", pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
@@ -339,7 +339,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-                var pushMessage = $"Đơn hàng số hiệu {currentDeliveryCode} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
                 SendPushNotification("adminNPP", pushMessage);
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");

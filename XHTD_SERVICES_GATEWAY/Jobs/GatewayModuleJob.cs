@@ -423,7 +423,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     SendNotificationHub(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
-                    var pushMessage = $"Đơn hàng số hiệu {currentDeliveryCode} xác thực vào cổng tự động thành công, lái xe vui lòng di chuyển đến bàn cân, trân trọng!";
+                    var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực vào cổng tự động thành công, lái xe vui lòng di chuyển đến bàn cân, trân trọng!";
                     SendPushNotification("adminNPP", pushMessage);
 
                     var driverUserName = currentOrder.DriverUserName;
@@ -447,7 +447,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     SendNotificationHub(4, inout, null, $"Xác thực vào cổng thất bại", null);
                     SendNotificationAPI(inout, 4, null, $"Xác thực vào cổng thất bại", null);
-                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {currentDeliveryCode} xác thực vào cổng tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!");
+                    SendPushNotification("adminNPP", $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực vào cổng tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!");
 
                     _gatewayLogger.LogInfo($"5. Confirm 2 failed.");
                 }
