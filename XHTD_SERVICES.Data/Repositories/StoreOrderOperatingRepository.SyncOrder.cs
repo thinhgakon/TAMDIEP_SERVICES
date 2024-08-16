@@ -51,7 +51,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC40";
                     }
-                    else if (productNameUpper.Contains("C91"))
+                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
                     {
                         typeProduct = "C91";
                     }
