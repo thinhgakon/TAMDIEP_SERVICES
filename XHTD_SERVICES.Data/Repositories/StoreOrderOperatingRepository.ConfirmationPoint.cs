@@ -133,5 +133,20 @@ namespace XHTD_SERVICES.Data.Repositories
                 return order;
             }
         }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersConfirmationPoint(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && x.Step == (int)OrderStep.DA_NHAN_DON
+                                                     && (x.DriverUserName ?? "") != ""
+                                                     )
+                                            .ToListAsync();
+                return orders;
+            }
+        }
     }
 }
