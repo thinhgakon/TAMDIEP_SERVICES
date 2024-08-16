@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_CONFIRM
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<ConfirmLogger>().AsSelf();
-            builder.RegisterType<ScaleApiLib>().AsSelf();
+            builder.RegisterType<SaleOrdersApiLib>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
 
             RegisterScheduler(builder);

@@ -303,16 +303,28 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             var currentDeliveryCode = currentOrder.DeliveryCode;
             _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
-            var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersConfirmationPoint(vehicleCodeCurrent);
-
+            // Gọi API ERP kiểm tra điều kiện xác thực
+            var orders = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
             var currentDeliveryCodes = String.Empty;
-
             if (orders != null && orders.Count != 0)
             {
                 currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
             }
+            
+            var erpResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
+            if (erpResponse.Code == "02")
+            {
+                SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-            // Gọi API ERP kiểm tra điều kiện xác thực
+                var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}!";
+                SendPushNotification("adminNPP", pushMessageNPP);
+
+                var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                SendPushNotification(currentOrder.DriverUserName, pushMessageNPP);
+
+                return;
+            }
 
             // Xác thực
             bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
