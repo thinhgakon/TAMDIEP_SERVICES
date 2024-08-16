@@ -41,6 +41,14 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblMachine> GetMachineByMachineCode(string machineCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                return await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == machineCode);
+            }
+        }
+
         public async Task<bool> IsWorkingMachine(string machineCode)
         {
             using (var dbContext = new XHTD_Entities())
