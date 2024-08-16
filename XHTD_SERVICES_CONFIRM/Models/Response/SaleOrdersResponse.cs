@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_CONFIRM.Models.Response
 {
-    public class DesicionScaleResponse
+    public class SaleOrdersResponse
     {
         public string Code { get; set; }
         public string Message { get; set; }

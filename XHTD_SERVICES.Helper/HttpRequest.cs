@@ -376,6 +376,31 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse CheckOrderValidate(string deliveryCodes)
+        {
+            logger.Info($"CheckOrderValidate API: deliveryCode={deliveryCodes}");
+
+            var apiUrl = ConfigurationManager.GetSection("API_SaleOrders/Url") as NameValueCollection;
+
+            var requestData = new CheckOrderValidateRequest
+            {
+                delivery_Codes = deliveryCodes,
+            };
+
+            var client = new RestClient($"{apiUrl["SaleOrder"]}?{deliveryCodes}");
+            var request = new RestRequest();
+
+            request.Method = Method.PUT;
+            //request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static string LoginSMSBrandName()
         {
             var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
