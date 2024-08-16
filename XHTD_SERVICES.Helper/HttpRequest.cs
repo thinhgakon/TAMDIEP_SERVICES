@@ -382,16 +382,10 @@ namespace XHTD_SERVICES.Helper
 
             var apiUrl = ConfigurationManager.GetSection("API_SaleOrders/Url") as NameValueCollection;
 
-            var requestData = new CheckOrderValidateRequest
-            {
-                delivery_Codes = deliveryCodes,
-            };
-
-            var client = new RestClient($"{apiUrl["SaleOrder"]}?{deliveryCodes}");
+            var client = new RestClient($"{apiUrl["SaleOrder"]}?Delivery_Codes={deliveryCodes}");
             var request = new RestRequest();
 
-            request.Method = Method.PUT;
-            //request.AddJsonBody(requestData);
+            request.Method = Method.POST;
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.RequestFormat = DataFormat.Json;
