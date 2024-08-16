@@ -113,7 +113,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
-                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]"))
+                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]") ||
+                            response.Contains($"*[Start][MDB][{machine.Code}]#OK#{machine.CurrentDeliveryCode}[!]"))
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
@@ -146,7 +147,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
-                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]"))
+                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]") ||
+                            response.Contains($"*[Stop][MDB][{machine.Code}]#OK#{machine.CurrentDeliveryCode}[!]"))
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
