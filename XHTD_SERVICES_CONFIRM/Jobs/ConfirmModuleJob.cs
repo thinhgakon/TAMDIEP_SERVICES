@@ -303,6 +303,17 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             var currentDeliveryCode = currentOrder.DeliveryCode;
             _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
+            var orders = await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().GetOrdersConfirmationPoint(vehicleCodeCurrent);
+
+            var currentDeliveryCodes = String.Empty;
+
+            if (orders != null && orders.Count != 0)
+            {
+                currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
+            }
+
+            // Gọi API ERP kiểm tra điều kiện xác thực
+
             // Xác thực
             bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
