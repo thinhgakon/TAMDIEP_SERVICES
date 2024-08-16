@@ -9,12 +9,18 @@ namespace XHTD_SERVICES_CONFIRM.Business
         public SaleOrdersResponse CheckOrderValidate(string deliveryCodes)
         {
             var updateResponse = HttpRequest.CheckOrderValidate(deliveryCodes);
-
             var updateResponseContent = updateResponse.Content;
-
             var response = JsonConvert.DeserializeObject<SaleOrdersResponse>(updateResponseContent);
 
-            return response;
+            var resultResponse = new SaleOrdersResponse
+            {
+                Code = "02",
+                Message = "Xác thực thất bại"
+            };
+            resultResponse.Code = response.Code;
+            resultResponse.Message = response.Message;
+
+            return resultResponse;
         }
     }
 }
