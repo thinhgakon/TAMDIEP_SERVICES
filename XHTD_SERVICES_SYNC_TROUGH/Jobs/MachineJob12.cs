@@ -118,6 +118,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
+
                             await _machineRepository.UpdateMachine(machine);
                             _logger.LogInfo($"Start machine {machine.Code} thanh cong!");
                         }
@@ -152,6 +153,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
+                            machine.CurrentDeliveryCode = null;
+
                             await _machineRepository.UpdateMachine(machine);
                             _logger.LogInfo($"Stop machine {machine.Code} thanh cong!");
                         }
