@@ -166,14 +166,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                     SendMessageAPI($"{SCALE_STATUS}", $"Đang cân thủ công");
 
-                    SendMessage($"{SCALE_BALANCE}", "  ");
-                    SendMessageAPI($"{SCALE_BALANCE}", "");
+                    //SendMessage($"{SCALE_BALANCE}", "  ");
+                    //SendMessageAPI($"{SCALE_BALANCE}", "");
 
-                    SendMessage("Notification", "  ");
-                    SendMessageAPI("Notification", "  ");
+                    //SendMessage("Notification", "  ");
+                    //SendMessageAPI("Notification", "  ");
 
-                    SendMessage("WarningNotification", "  ");
-                    SendMessageAPI("WarningNotification", "  ");
+                    //SendMessage("WarningNotification", "  ");
+                    //SendMessageAPI("WarningNotification", "  ");
                 }
 
                 // TODO: kiểm tra vi phạm cảm biến cân
