@@ -313,6 +313,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     x.Step == (int)OrderStep.DA_XAC_THUC
                                                     ||
                                                     x.WeightIn == null
+                                                    ||
+                                                    x.WeightIn == 0
                                                 )
                                             );
 
@@ -381,6 +383,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
                                                         ||
                                                         x.WeightOut == null
+                                                        ||
+                                                        x.WeightOut == 0
                                                         ||
                                                         x.DocNum == null
                                                     )
