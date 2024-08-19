@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_LED.Jobs
     public class Led4XiBaoJob : IJob, IDisposable
     {
         protected readonly LedLogger _logger;
+        protected readonly MachineRepository _machineRepository;
         protected readonly TroughRepository _troughRepository;
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -34,9 +35,10 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_4;
 
-        public Led4XiBaoJob(LedLogger logger, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led4XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _logger = logger;
+            _machineRepository = machineRepository;
             _troughRepository = troughRepository;
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
         }
@@ -131,7 +133,6 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     if (isRunning)
                     {
-
                         var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
                         if (order != null)
                         {
@@ -147,6 +148,20 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 if (!anyRunning)
                 {
+                    var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
+                    if (machine.StartStatus == "ON" && machine.StopStatus == "OFF" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
+                    {
+                        var order = await _storeOrderOperatingRepository.GetDetail(machine.CurrentDeliveryCode);
+                        if (order != null)
+                        {
+                            var vehicleCode = order.Vehicle;
+                            var planQuantity = (int)(order.SumNumber * 20);
+                            var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]0[!]");
+                        }
+                    }
+
                     DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
                 }
             }

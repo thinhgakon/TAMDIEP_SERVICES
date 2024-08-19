@@ -28,6 +28,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
+        protected readonly MachineRepository _machineRepository;
+
         protected readonly TroughRepository _troughRepository;
 
         protected readonly CallToTroughRepository _callToTroughRepository;
@@ -51,6 +53,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public SyncTroughJob34(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
+            MachineRepository machineRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
@@ -58,6 +61,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
+            _machineRepository = machineRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
@@ -209,7 +213,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         //{
                         //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
                         //}
-                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        var trough = await _troughRepository.GetDetail(troughCode);
+                        var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
+
+                        if (machine.StartStatus == "ON")
+                        {
+                            await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        }
                     }
                     else
                     {

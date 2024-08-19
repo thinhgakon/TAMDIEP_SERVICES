@@ -320,8 +320,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}!";
                 SendPushNotification("adminNPP", pushMessageNPP);
 
-                var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-                SendPushNotification(currentOrder.DriverUserName, pushMessageNPP);
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                    SendPushNotification(currentOrder.DriverUserName, pushMessageDriver);
+                }
 
                 return;
             }

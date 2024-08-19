@@ -17,6 +17,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
