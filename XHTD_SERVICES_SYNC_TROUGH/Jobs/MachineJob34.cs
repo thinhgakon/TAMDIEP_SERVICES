@@ -113,8 +113,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
-                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]") ||
-                            response.Contains($"*[Start][MDB][{machine.Code}]#OK#{machine.CurrentDeliveryCode}[!]"))
+                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
