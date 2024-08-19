@@ -327,6 +327,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     SendPushNotification(currentOrder.DriverUserName, pushMessageDriver);
                 }
 
+                _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
+
                 return;
             }
 
