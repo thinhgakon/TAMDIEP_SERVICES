@@ -299,7 +299,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
-                                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!");
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
                                     //if (driverUserName != null)
@@ -412,7 +413,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
-                                    SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân ra tự động thành công, vui lòng di chuyển ra cổng bảo vệ, trân trọng!");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
                                     //if (driverUserName != null)
