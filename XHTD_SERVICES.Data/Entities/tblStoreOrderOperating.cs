@@ -110,5 +110,9 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> TimeConfirm10 { get; set; }
         public Nullable<System.Guid> ReferenceId { get; set; }
         public string ImgConfirm10 { get; set; }
+        public string DocNum { get; set; }
+        public string ErpOrderId { get; set; }
+        public string InvoiceNo { get; set; }
+        public string InvoiceStatus { get; set; }
     }
 }

@@ -254,6 +254,10 @@
       <Project>{149691c4-7844-4d2c-8260-1945864c1ed3}</Project>
       <Name>XHTD_SERVICES_GATEWAY_OUT</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_GATEWAY_PRINT\XHTD_SERVICES_GATEWAY_PRINT.csproj">
+      <Project>{7a175492-8df5-46dd-ab19-425b895546fb}</Project>
+      <Name>XHTD_SERVICES_GATEWAY_PRINT</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_INIT\XHTD_SERVICES_INIT.csproj">
       <Project>{29ad49ed-e753-4f6d-93c2-21c72265d1ac}</Project>
       <Name>XHTD_SERVICES_INIT</Name>
