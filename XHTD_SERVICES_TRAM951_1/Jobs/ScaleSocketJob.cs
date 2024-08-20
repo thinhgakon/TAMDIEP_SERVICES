@@ -129,21 +129,24 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                             continue;
                         }
 
-                        Console.WriteLine($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
+                        _logger.LogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
-                        //Console.WriteLine($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+                        //_logger.LogInfo($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 
-                    if(Program.LastTimeReceivedScaleSocket != null) { 
+                    if(Program.LastTimeReceivedScaleSocket != null)
+                    { 
                         timeDiffFromLastReceivedScaleSocket = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
 
                         if(timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
                         {
+                            _logger.LogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+
                             if (stream != null) stream.Close();
                             if (client != null) client.Close();
 
