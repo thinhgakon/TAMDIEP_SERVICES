@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2000)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed1XiBaoJob, showLed1XiBaoTrigger);
@@ -41,7 +41,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed2XiBaoJob, showLed2XiBaoTrigger);
@@ -51,7 +51,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed3XiBaoJob, showLed3XiBaoTrigger);
@@ -61,7 +61,7 @@ namespace XHTD_SERVICES_LED.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed4XiBaoJob, showLed4XiBaoTrigger);
