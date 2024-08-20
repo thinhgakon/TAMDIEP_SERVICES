@@ -52,7 +52,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(machineJob12, machineJob12Trigger);
@@ -62,7 +62,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(machineJob34, machineJob34Trigger);

@@ -35,9 +35,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            while (Program.SyncTrough12Running == true)
-            {
-            }
+            //while (Program.SyncTrough12Running == true)
+            //{
+            //}
 
             Program.Machine12Running = true;
             if (context == null)
@@ -109,7 +109,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (response == null || response.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
-                            return;
+                            continue;
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
@@ -124,7 +124,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         else
                         {
                             _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
-                            return;
+                            continue;
                         }
                     }
 
@@ -143,7 +143,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (response == null || response.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
-                            return;
+                            continue;
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
@@ -159,7 +159,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         else
                         {
                             _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
-                            return;
+                            continue;
                         }
                     }
                 }
