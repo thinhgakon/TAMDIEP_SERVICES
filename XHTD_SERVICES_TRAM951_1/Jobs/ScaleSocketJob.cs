@@ -30,6 +30,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public const string IP_ADDRESS = "192.168.13.206";
 
+        TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
+
         public ScaleSocketJob(Logger logger, Notification notification)
         {
             _logger = logger;
@@ -60,16 +62,15 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     ReadDataFromController();
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
             }
         }
 
         public bool ConnectScaleStationModuleFromController()
         {
-            //_logger.LogInfo("Thuc hien ket noi.");
             try
             {
-                _logger.LogInfo("Bat dau ket noi.");
+                _logger.LogInfo("Thuc hien ket noi scale socket");
                 client = new TcpClient();
 
                 // 1. connect
@@ -86,9 +87,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo("Ket noi that bai.");
-                //_logger.LogInfo(ex.Message);
-                //_logger.LogInfo(ex.StackTrace);
+                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
                 return false;
             }
         }
@@ -103,7 +102,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
                     var dataStr = encoding.GetString(data);
 
-                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                    //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
 
                     string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
 
@@ -135,24 +134,30 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
-                        Console.WriteLine($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+                        //Console.WriteLine($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 
-                    TimeSpan span = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
+                    if(Program.LastTimeReceivedScaleSocket != null) { 
+                        timeDiffFromLastReceivedScaleSocket = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
 
-                    Console.WriteLine("Time Difference (seconds): " + span.TotalSeconds);
+                        if(timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
+                        {
+                            if (stream != null) stream.Close();
+                            if (client != null) client.Close();
 
-                    if(span.TotalSeconds > 5)
-                    {
-                        break;
+                            break;
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    if (stream != null) stream.Close();
+                    if (client != null) client.Close();
+
                     break;
                 }
             }
