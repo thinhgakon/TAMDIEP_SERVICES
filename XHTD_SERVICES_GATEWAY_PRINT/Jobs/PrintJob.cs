@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
     public class PrintJob : IJob
     {
         private readonly PrintRepository _printRepository;
-        private readonly string PRINT_NAME = "Brother HL-L2320D series";
+        private readonly string PRINT_NAME = @"\\192.168.13.171\printname";
 
         public PrintJob(PrintRepository printRepository)
         {
@@ -42,7 +42,6 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
 
             foreach (var print in prints)
             {
-
                 var response = HttpRequest.PrintInvoice(print.ErpOrderId);
 
                 string tempFilePath = Path.GetTempFileName() + ".pdf";
