@@ -3,6 +3,7 @@ using Quartz;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -50,16 +51,22 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (!client.Connected)
+            while (true)
             {
-                ConnectScaleStationModuleFromController();
+                var isConnected = ConnectScaleStationModuleFromController();
+
+                if (isConnected)
+                {
+                    ReadDataFromController();
+                }
+
+                Thread.Sleep(500);
             }
-            ReadDataFromController();
         }
 
         public bool ConnectScaleStationModuleFromController()
         {
-            _logger.LogInfo("Thuc hien ket noi.");
+            //_logger.LogInfo("Thuc hien ket noi.");
             try
             {
                 _logger.LogInfo("Bat dau ket noi.");
@@ -80,83 +87,76 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                //_logger.LogInfo(ex.Message);
+                //_logger.LogInfo(ex.StackTrace);
                 return false;
             }
         }
 
         public void ReadDataFromController()
         {
-            if (client.Connected)
+            while (true)
             {
-                while (client.Connected)
+                try
                 {
-                    try
+                    byte[] data = new byte[BUFFER_SIZE];
+                    stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
+                    var dataStr = encoding.GetString(data);
+
+                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+
+                    string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
+
+                    parts = parts.Where(x => !String.IsNullOrEmpty(x.Trim())).ToArray();
+
+                    parts = parts.Where(x => x.Contains("*")).ToArray();
+
+                    if (parts != null && parts.Count() > 0)
                     {
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        var dataStr = encoding.GetString(data);
-
-                        //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
-
-                        string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
-
-                        int countZero = 0;
-
-                        foreach (var item in parts)
+                        var item = parts.First();
+                        int scaleValue;
+                        System.DateTime dateTime;
+                        try
                         {
-                            int scaleValue;
-                            System.DateTime dateTime;
-                            try
-                            {
-                                string[] dt = item.Split('*');
+                            string[] dt = item.Split('*');
 
-                                // Lấy phần số và ngày tháng giờ
-                                string number = dt[1];
-                                string dateTimeStr = dt[2];
-                                scaleValue = int.TryParse(number, out int i) ? i : 0;
-                                dateTime = System.DateTime.Parse(dateTimeStr);
-                            }
-                            catch (Exception)
-                            {
-                                continue;
-                            }
-
-                            if (scaleValue == 0)
-                            {
-                                if (countZero < 3)
-                                {
-                                    countZero++;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                countZero = 0;
-                            }
-
-                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
-                            new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
+                            // Lấy phần số và ngày tháng giờ
+                            string number = dt[1];
+                            string dateTimeStr = dt[2];
+                            scaleValue = int.TryParse(number, out int i) ? i : 0;
+                            dateTime = System.DateTime.Parse(dateTimeStr);
+                        }
+                        catch (Exception)
+                        {
+                            continue;
                         }
 
+                        Console.WriteLine($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
+
+                        Program.LastTimeReceivedScaleSocket = DateTime.Now;
+
+                        Console.WriteLine($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+
+                        SendScaleInfoAPI(dateTime, scaleValue.ToString());
+                        new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
-                    catch (Exception ex)
+
+                    TimeSpan span = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
+
+                    Console.WriteLine("Time Difference (seconds): " + span.TotalSeconds);
+
+                    if(span.TotalSeconds > 5)
                     {
-                        _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        break;
                     }
                 }
-                AuthenticateScaleStationModuleFromController();
+                catch (Exception ex)
+                {
+                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    break;
+                }
             }
-            else
-            {
-                DeviceConnected = false;
-                AuthenticateScaleStationModuleFromController();
-            }
+            AuthenticateScaleStationModuleFromController();
         }
 
         private void SendScaleInfoAPI(DateTime time, string value)
