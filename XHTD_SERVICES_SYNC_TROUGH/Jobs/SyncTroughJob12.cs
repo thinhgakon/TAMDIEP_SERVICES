@@ -44,7 +44,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 10000;
+        private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -70,9 +70,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            while (Program.Machine12Running == true)
-            {
-            }
+            //while (Program.Machine12Running == true)
+            //{
+            //}
 
             Program.SyncTrough12Running = true;
             if (context == null)
@@ -164,7 +164,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (troughInfo == null)
                     {
-                        return;
+                        continue;
                     }
 
                     // Dữ liệu sensor cuối máng
@@ -183,7 +183,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (response == null || response.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
-                        return;
+                        continue;
                     }
 
                     var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
@@ -214,7 +214,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (machineResponse == null || machineResponse.Length == 0)
                         {
                             _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
-                            return;
+                            continue;
                         }
                         var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                         var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
