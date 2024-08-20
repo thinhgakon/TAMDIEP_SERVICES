@@ -166,6 +166,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
+                    // Dữ liệu sensor cuối máng
+
                     // 2. send 1
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data, 0, data.Length);
@@ -183,7 +185,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
@@ -199,6 +201,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         var machineCode = (troughCode == "5" || troughCode == "6") ? "3" : "4";
 
+                        // Dữ liệu sensor đầu máng
+
                         byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
                         stream.Write(machineData, 0, machineData.Length);
 
@@ -211,7 +215,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
                             return;
                         }
-                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"));
+                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                         var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
 
                         await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, firstSensorQuantity);
@@ -262,9 +266,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        static (string, string, string, string) GetInfo(string input)
+        static (string, string, string, string) GetInfo(string input, string type)
         {
-            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
             Match match = Regex.Match(input, pattern);
 
             if (match.Success)
@@ -279,7 +283,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
-
 
         public void Dispose()
         {
