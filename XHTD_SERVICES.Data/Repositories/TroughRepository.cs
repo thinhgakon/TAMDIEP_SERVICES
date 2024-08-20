@@ -28,8 +28,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             join r in dbContext.tblTroughTypeProducts
                             on v.Code equals r.TroughCode
                             where
-                                v.State == true 
-                                &&  (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
+                                 (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
                                 orderby v.Id ascending
                             select v.Code;
 
