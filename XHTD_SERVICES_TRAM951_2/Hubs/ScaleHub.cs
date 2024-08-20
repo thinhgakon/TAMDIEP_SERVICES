@@ -199,6 +199,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     }
                 }
 
+                WriteLogInfo($"IsScalling: {Program.IsScalling} ----- IsLockingScale: {Program.IsLockingScale}");
+
                 if (Program.IsScalling && !Program.IsLockingScale)
                 {
                     Program.scaleValues.Add(currentScaleValue);
