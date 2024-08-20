@@ -237,7 +237,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         var trough = await _troughRepository.GetDetail(troughCode);
                         var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
 
-                        if (machine.StartStatus == "ON")
+                        if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
                             await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
                         }
