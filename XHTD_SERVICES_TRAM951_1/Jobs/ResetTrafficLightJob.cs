@@ -39,8 +39,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
             await Task.Run(() =>
             {
-                _logger.LogInfo("Start tramcan1 reset traffic light service");
-                _logger.LogInfo("----------------------------");
+                //_logger.LogInfo("Start tramcan1 reset traffic light service");
+                //_logger.LogInfo("----------------------------");
 
                 TrafficLightProcess();
             });
