@@ -581,7 +581,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
           <Property Name="Machine" Type="varchar" MaxLength="5" />
@@ -604,6 +603,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" />
+          <Property Name="FirstSensorQuantityCurrent" Type="float" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -1290,7 +1291,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="Machine" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
@@ -1314,6 +1315,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode" FromRole="tblTrough" ToRole="tblTroughTypeProduct" />
           <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FirstSensorQuantityCurrent" Type="Double" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -2063,6 +2065,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblTroughs">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTrough">
               <MappingFragment StoreEntitySet="tblTrough">
+                <ScalarProperty Name="FirstSensorQuantityCurrent" ColumnName="FirstSensorQuantityCurrent" />
                 <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
