@@ -198,7 +198,24 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
+                        var machineCode = (troughCode == "1" || troughCode == "2") ? "1" : "2";
+
+                        byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
+                        stream.Write(machineData, 0, machineData.Length);
+
+                        machineData = new byte[BUFFER_SIZE];
+                        stream.Read(machineData, 0, BUFFER_SIZE);
+
+                        var machineResponse = encoding.GetString(machineData).Trim();
+                        if (machineResponse == null || machineResponse.Length == 0)
+                        {
+                            _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                            return;
+                        }
+                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"));
+                        var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+
+                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, firstSensorQuantity);
 
                         //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
 
@@ -233,7 +250,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
 
                     }
                 }

@@ -63,7 +63,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity, double firstSensorQuantity)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -76,6 +76,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.DeliveryCodeCurrent = deliveryCode;
                         itemToCall.CountQuantityCurrent = countQuantity;
                         itemToCall.PlanQuantityCurrent = planQuantity;
+                        itemToCall.FirstSensorQuantityCurrent = firstSensorQuantity;
 
                         await dbContext.SaveChangesAsync();
 
@@ -104,6 +105,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.DeliveryCodeCurrent = null;
                         itemToCall.CountQuantityCurrent = null;
                         itemToCall.PlanQuantityCurrent = null;
+                        itemToCall.FirstSensorQuantityCurrent = null;
 
                         await dbContext.SaveChangesAsync();
 
