@@ -35,6 +35,9 @@ namespace XHTD_SERVICES_TRAM951_1
         public static int RefPort2 = 6000;
         public static byte RefComAdr2 = 0xFF;
 
+        public static DateTime? LastTimeReceivedUHF = null;
+        public static DateTime? LastTimeReceivedScaleSocket = null;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
