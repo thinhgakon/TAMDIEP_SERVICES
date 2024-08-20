@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Quartz;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -76,7 +75,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 // 1. connect
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-                _logger.LogInfo("Connected to controller");
+                _logger.LogInfo("Ket noi thanh cong");
 
                 DeviceConnected = true;
 
