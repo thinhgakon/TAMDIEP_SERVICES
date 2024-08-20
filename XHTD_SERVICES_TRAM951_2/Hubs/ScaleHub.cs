@@ -365,7 +365,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     // Lưu giá trị cân thất bại
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
-                                    //SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân vào tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -456,7 +458,9 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     // Lưu giá trị cân thất bại
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
-                                    //SendPushNotification("adminNPP", $"Đơn hàng số hiệu {deliveryCodes} cân ra tự động thất bại, vui lòng liên hệ bộ phận điều hành, trân trọng!");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
