@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Drawing.Printing;
 using System.IO;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
-using PdfSharp.Drawing;
 using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_INIT.Models.Values;
 using XHTD_SERVICES.Helper;
-using System.Text;
+using System.Diagnostics;
 
 namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
 {
@@ -17,7 +13,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
     public class PrintJob : IJob
     {
         private readonly PrintRepository _printRepository;
-        private readonly string PRINT_NAME = "";
+        private readonly string PRINT_NAME = "Brother HL-L2320D series";
 
         public PrintJob(PrintRepository printRepository)
         {
@@ -46,46 +42,31 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
 
             foreach (var print in prints)
             {
+
+                var response = HttpRequest.PrintInvoice(print.ErpOrderId);
+
+                string tempFilePath = Path.GetTempFileName() + ".pdf";
+
+                File.WriteAllBytes(tempFilePath, response.RawBytes);
                 try
                 {
-                    var response = HttpRequest.PrintInvoice(print.ErpOrderId);
-
-                    using (MemoryStream stream = new MemoryStream(response.RawBytes))
-                    {
-                        PdfDocument document = PdfReader.Open(stream, PdfDocumentOpenMode.Import);
-
-                        PrintDocument printDocument = new PrintDocument
-                        {
-                            PrinterSettings = new PrinterSettings
-                            {
-                                PrinterName = PRINT_NAME
-                            }
-                        };
-
-                        int currentPageIndex = 0;
-
-                        printDocument.PrintPage += (sender, e) =>
-                        {
-                            if (currentPageIndex < document.PageCount)
-                            {
-                                var page = document.Pages[currentPageIndex];
-
-                                XGraphics gfx = XGraphics.FromPdfPage(page);
-                                gfx.DrawImage(XImage.FromStream(stream), 0, 0, e.PageBounds.Width, e.PageBounds.Height);
-                                gfx.Dispose();
-
-                                currentPageIndex++;
-                                e.HasMorePages = currentPageIndex < document.PageCount;
-                            }
-                        };
-
-                        printDocument.Print();
-                    }
+                    string command = $"/c print /d:\"{PRINT_NAME}\" \"{tempFilePath}\"";
+                    Process printProcess = new Process();
+                    printProcess.StartInfo.FileName = tempFilePath;
+                    printProcess.StartInfo.Verb = "print";
+                    printProcess.StartInfo.CreateNoWindow = true;
+                    printProcess.StartInfo.UseShellExecute = true;
+                    printProcess.Start();
+                    printProcess.WaitForExit();
                     print.Status = PrintStatus.SUCCESS.ToString();
                 }
                 catch (Exception)
                 {
                     continue;
+                }
+                finally
+                {
+                    File.Delete(tempFilePath);
                 }
             }
 
