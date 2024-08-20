@@ -167,6 +167,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
+                    // Dữ liệu sensor cuối máng
+
                     // 2. send 1
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data, 0, data.Length);
@@ -184,7 +186,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         return;
                     }
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
@@ -198,7 +200,26 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
+                        var machineCode = (troughCode == "1" || troughCode == "2") ? "1" : "2";
+
+                        // Dữ liệu sensor đầu máng
+
+                        byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
+                        stream.Write(machineData, 0, machineData.Length);
+
+                        machineData = new byte[BUFFER_SIZE];
+                        stream.Read(machineData, 0, BUFFER_SIZE);
+
+                        var machineResponse = encoding.GetString(machineData).Trim();
+                        if (machineResponse == null || machineResponse.Length == 0)
+                        {
+                            _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                            return;
+                        }
+                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+                        var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+
+                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, firstSensorQuantity);
 
                         //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
 
@@ -233,7 +254,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
 
                     }
                 }
@@ -246,9 +267,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        static (string, string, string, string) GetInfo(string input)
+        static (string, string, string, string) GetInfo(string input, string type)
         {
-            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
             Match match = Regex.Match(input, pattern);
 
             if (match.Success)
@@ -263,7 +284,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
-
 
         public void Dispose()
         {
