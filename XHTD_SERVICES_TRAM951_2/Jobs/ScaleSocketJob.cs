@@ -129,7 +129,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                             continue;
                         }
 
-                        _logger.LogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
+                        //_logger.LogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
