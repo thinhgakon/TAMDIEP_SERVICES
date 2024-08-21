@@ -43,6 +43,9 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCheckInOut" Width="1.5" PointX="3.375" PointY="17.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAttachment" Width="1.5" PointX="1.125" PointY="22.125" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblCheckInOut_tblAttachment" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblMachineTrough" Width="1.5" PointX="11" PointY="17.125" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
