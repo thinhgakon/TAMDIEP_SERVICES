@@ -13,11 +13,12 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
     public class PrintJob : IJob
     {
         private readonly PrintRepository _printRepository;
-        private readonly string PRINT_NAME = @"\\192.168.13.171\printname";
-
-        public PrintJob(PrintRepository printRepository)
+        private readonly string PRINT_NAME = "Brother HL-L2360D series Printer";
+        private readonly PrintLogger _printLogger;
+        public PrintJob(PrintRepository printRepository, PrintLogger printLogger)
         {
             _printRepository = printRepository;
+            _printLogger = printLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -40,6 +41,8 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
             if (prints == null || prints.Count == 0)
                 return;
 
+            _printLogger.LogInfo($"Tim thay lenh in: {prints.Count}");
+
             foreach (var print in prints)
             {
                 var response = HttpRequest.PrintInvoice(print.ErpOrderId);
@@ -47,17 +50,29 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                 string tempFilePath = Path.GetTempFileName() + ".pdf";
 
                 File.WriteAllBytes(tempFilePath, response.RawBytes);
+                _printLogger.LogInfo($"Get file thanh cong {print.DeliveryCode}");
                 try
                 {
-                    string command = $"/c print /d:\"{PRINT_NAME}\" \"{tempFilePath}\"";
-                    Process printProcess = new Process();
-                    printProcess.StartInfo.FileName = tempFilePath;
-                    printProcess.StartInfo.Verb = "print";
-                    printProcess.StartInfo.CreateNoWindow = true;
-                    printProcess.StartInfo.UseShellExecute = true;
+                    string powershellCommand = $"Get-Content \"{tempFilePath}\" | Out-Printer -Name \"{PRINT_NAME}\"";
+
+                    ProcessStartInfo processInfo = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-NoProfile -Command \"{powershellCommand}\"",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    Process printProcess = new Process
+                    {
+                        StartInfo = processInfo
+                    };
                     printProcess.Start();
                     printProcess.WaitForExit();
                     print.Status = PrintStatus.SUCCESS.ToString();
+                    _printLogger.LogInfo($"In thanh cong {print.DeliveryCode}");
                 }
                 catch (Exception)
                 {
@@ -66,6 +81,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                 finally
                 {
                     File.Delete(tempFilePath);
+                    _printLogger.LogInfo($"Xoa file tmp thanh cong");
                 }
             }
 

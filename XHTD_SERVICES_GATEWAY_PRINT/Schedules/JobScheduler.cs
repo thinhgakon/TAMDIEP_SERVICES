@@ -1,12 +1,13 @@
 ﻿using Quartz;
-using System;
-using System.Configuration;
+using log4net;
 using XHTD_SERVICES_GATEWAY_PRINT.Jobs;
 
 namespace XHTD_SERVICES_GATEWAY_PRINT.Schedules
 {
     public class JobScheduler
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IScheduler _scheduler;
 
         public JobScheduler(IScheduler scheduler)
@@ -18,16 +19,15 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Schedules
         {
             await _scheduler.Start();
 
-            // Đồng bộ đơn hàng
-            IJobDetail syncInProgressOrderJob = JobBuilder.Create<PrintJob>().Build();
-            ITrigger syncInProgressOrderTrigger = TriggerBuilder.Create()
+            IJobDetail syncOrderJob = JobBuilder.Create<PrintJob>().Build();
+            ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(30)
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(syncInProgressOrderJob, syncInProgressOrderTrigger);
+            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
         }
     }
 }
