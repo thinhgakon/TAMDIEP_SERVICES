@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_INIT.Models.Values;
 using XHTD_SERVICES.Helper;
 using System.Diagnostics;
+using System.Threading;
 
 namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
 {
@@ -64,6 +65,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                     }
 
                     print.Status = PrintStatus.SUCCESS.ToString();
+                    Thread.Sleep(5000);
                     _printLogger.LogInfo($"In thanh cong {print.DeliveryCode}");
                 }
                 catch (Exception ex)
