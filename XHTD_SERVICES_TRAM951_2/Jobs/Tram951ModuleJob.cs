@@ -11,15 +11,14 @@ using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES.Helper;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Net.Sockets;
-using XHTD_SERVICES_TRAM951_2;
 using XHTD_SERVICES_TRAM951_2.Models.Response;
 using XHTD_SERVICES_TRAM951_2.Hubs;
 using XHTD_SERVICES_TRAM951_2.Business;
 using XHTD_SERVICES_TRAM951_2.Devices;
+using XHTD_SERVICES.Helper;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Net.Sockets;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
@@ -201,8 +200,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
+
             _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
-            DeviceConnected = true;
+
+            Program.UHFConnected = true;
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -211,7 +212,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         public void ReadDataFromPegasus()
         {
             _logger.LogInfo($"Reading Pegasus...");
-            while (DeviceConnected)
+            while (Program.UHFConnected)
             {
                 var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
 
@@ -220,16 +221,23 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     try
                     {
                         var cardNoCurrent = ByteArrayToString(item);
-                        
+
+                        Program.LastTimeReceivedUHF = DateTime.Now;
+
+                        _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                        Program.UHFConnected = false;
+                        break;
                     }
                 }
             }
+
+            AuthenticateGatewayModuleFromPegasus();
         }
 
         public async void ReadDataProcess(string cardNoCurrent)

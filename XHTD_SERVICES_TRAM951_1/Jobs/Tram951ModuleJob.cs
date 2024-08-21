@@ -224,7 +224,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         Program.LastTimeReceivedUHF = DateTime.Now;
 
-                        _logger.LogInfo($"====== abc : {cardNoCurrent}");
+                        _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
 
                         ReadDataProcess(cardNoCurrent);
                     }
