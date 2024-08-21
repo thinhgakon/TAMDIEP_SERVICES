@@ -279,6 +279,7 @@
     <Compile Include="Hubs\ScaleHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
+    <Compile Include="Jobs\ReconnectPegasusJob.cs" />
     <Compile Include="Jobs\ResetTrafficLightJob.cs" />
     <Compile Include="Jobs\ScaleSocketJob.cs" />
     <Compile Include="Jobs\Tram951ModuleJob.cs" />
