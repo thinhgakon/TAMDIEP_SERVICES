@@ -350,17 +350,14 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                         //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
 
-                                    //Thread.Sleep(3000);
-
                                     // 8. Bật đèn xanh
                                     WriteLogInfo($"8. Bật đèn xanh");
                                     TurnOnGreenTrafficLight();
 
-                                    Thread.Sleep(15000);
+                                    //Thread.Sleep(15000);
 
-                                    // 9. Bật đèn đỏ
-                                    WriteLogInfo($"9. Tắt đèn");
-                                    TurnOffTrafficLight();
+                                    //WriteLogInfo($"9. Tắt đèn");
+                                    //TurnOffTrafficLight();
                                 }
                                 else
                                 {
@@ -449,11 +446,10 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                                     WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
 
-                                    Thread.Sleep(15000);
+                                    //Thread.Sleep(15000);
 
-                                    // 8. Tắt đèn
-                                    WriteLogInfo($"8. Tắt đèn");
-                                    TurnOffTrafficLight();
+                                    //WriteLogInfo($"8. Tắt đèn");
+                                    //TurnOffTrafficLight();
                                 }
                                 else
                                 {
