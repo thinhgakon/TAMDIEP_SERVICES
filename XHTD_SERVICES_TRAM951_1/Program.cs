@@ -35,8 +35,10 @@ namespace XHTD_SERVICES_TRAM951_1
         public static int RefPort2 = 6000;
         public static byte RefComAdr2 = 0xFF;
 
-        public static DateTime? LastTimeReceivedUHF = null;
+        public static DateTime? LastTimeReceivedUHF = DateTime.Now;
         public static DateTime? LastTimeReceivedScaleSocket = null;
+
+        public static bool UHFConnected = false;
 
         static void Main()
         {

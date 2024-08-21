@@ -200,8 +200,10 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             {
                 openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
             }
+
             _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
-            DeviceConnected = true;
+
+            Program.UHFConnected = true;
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -210,7 +212,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         public void ReadDataFromPegasus()
         {
             _logger.LogInfo($"Reading Pegasus...");
-            while (DeviceConnected)
+            while (Program.UHFConnected)
             {
                 var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
 
@@ -220,15 +222,22 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     {
                         var cardNoCurrent = ByteArrayToString(item);
 
+                        Program.LastTimeReceivedUHF = DateTime.Now;
+
+                        _logger.LogInfo($"====== abc : {cardNoCurrent}");
+
                         ReadDataProcess(cardNoCurrent);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                        Program.UHFConnected = false;
+                        break;
                     }
                 }
             }
+
+            AuthenticateGatewayModuleFromPegasus();
         }
 
         public async void ReadDataProcess(string cardNoCurrent)
