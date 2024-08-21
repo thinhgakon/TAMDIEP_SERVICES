@@ -107,6 +107,8 @@ namespace XHTD_SERVICES_TRAM951_1.Hubs
                 {
                     Program.IsLockingRfid = false;
                     Program.EnabledRfidTime = null;
+
+                    Program.IsLockingScale = false;
                 }
 
                 if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-1 * TIME_TO_READ_RFID))
