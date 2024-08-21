@@ -40,16 +40,16 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
                 //_logger.LogInfo("Start tramcan2 reset traffic light service");
                 //_logger.LogInfo("----------------------------");
 
-                await TrafficLightProcess();
+                TrafficLightProcess();
             });
         }
 
-        public async Task TrafficLightProcess()
+        public void TrafficLightProcess()
         {
             try
             {
@@ -62,8 +62,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         TurnOffTrafficLight();
                         _logger.LogInfo("Reset traffic light - Scale 951 - 1");
 
-                        _logger.LogInfo("Release Scale");
-                        await ReleaseScale();
+                        //_logger.LogInfo("Release Scale");
+                        //await ReleaseScale();
                     }
                     else
                     {
@@ -108,12 +108,12 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
         }
 
-        public async Task ReleaseScale()
-        {
-            Program.IsScalling = false;
-            Program.IsLockingScale = false;
-            Program.scaleValues.Clear();
-            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
-        }
+        //public async Task ReleaseScale()
+        //{
+        //    Program.IsScalling = false;
+        //    Program.IsLockingScale = false;
+        //    Program.scaleValues.Clear();
+        //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+        //}
     }
 }
