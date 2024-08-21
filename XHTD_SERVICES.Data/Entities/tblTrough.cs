@@ -21,7 +21,6 @@ namespace XHTD_SERVICES.Data.Entities
             this.TblMachineTroughs = new HashSet<TblMachineTrough>();
         }
     
-        public Nullable<int> Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Machine { get; set; }

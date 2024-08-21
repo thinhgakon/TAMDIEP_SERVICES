@@ -29,7 +29,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             on v.Code equals r.TroughCode
                             where
                                  (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
-                                orderby v.Id ascending
+                                //orderby v.Id ascending
                             select v.Code;
 
                 var troughts = await query.Distinct().ToListAsync();
@@ -44,7 +44,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var trough = await dbContext.tblTroughs
                                     .Where(x => x.State == true)
-                                    .OrderBy(x => x.Id)
+                                    //.OrderBy(x => x.Id)
                                     .Select(x => x.Code)
                                     .ToListAsync();
 
