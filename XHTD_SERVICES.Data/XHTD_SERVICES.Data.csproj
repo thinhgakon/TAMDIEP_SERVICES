@@ -125,6 +125,9 @@
     <Compile Include="Entities\tblMachine.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblMachineTrough.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblMachineTypeProduct.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>

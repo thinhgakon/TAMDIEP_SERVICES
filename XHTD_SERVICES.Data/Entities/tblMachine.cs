@@ -14,7 +14,12 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class tblMachine
     {
-        public int Id { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tblMachine()
+        {
+            this.TblMachineTroughs = new HashSet<TblMachineTrough>();
+        }
+    
         public string Code { get; set; }
         public string Name { get; set; }
         public Nullable<bool> State { get; set; }
@@ -26,5 +31,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string CurrentDeliveryCode { get; set; }
         public string StartStatus { get; set; }
         public string StopStatus { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TblMachineTrough> TblMachineTroughs { get; set; }
     }
 }

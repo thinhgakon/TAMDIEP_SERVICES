@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_LED.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES_LED.Devices;
 
 namespace XHTD_SERVICES_LED
 {
@@ -18,6 +19,10 @@ namespace XHTD_SERVICES_LED
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<LedLogger>().AsSelf();
+            builder.RegisterType<TCPLedControl>().AsSelf();
+            builder.RegisterType<TCPLed>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<TroughRepository>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -36,7 +41,7 @@ namespace XHTD_SERVICES_LED
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(LedXiBao).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(Led1XiBaoJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

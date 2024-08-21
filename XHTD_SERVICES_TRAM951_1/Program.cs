@@ -13,13 +13,16 @@ namespace XHTD_SERVICES_TRAM951_1
         /// The main entry point for the application.
         /// </summary>
 
-        public static List<int> scaleValues = new List<int>();
+        public static List<int> scaleValues = new List<int>(); 
+        public static List<int> scaleValuesForResetLight = new List<int>();
+
         public static bool IsScalling = false;
         public static bool IsLockingScale = false;
         public static string InProgressDeliveryCode = null;
         public static string InProgressVehicleCode = null;
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
+        public static bool IsFirstTimeResetTrafficLight = true;
 
         public static bool IsLockingRfid = false;
         public static bool IsEnabledRfid = false;
@@ -31,6 +34,9 @@ namespace XHTD_SERVICES_TRAM951_1
         public static byte RefComAdr1 = 0xFF;
         public static int RefPort2 = 6000;
         public static byte RefComAdr2 = 0xFF;
+
+        public static DateTime? LastTimeReceivedUHF = null;
+        public static DateTime? LastTimeReceivedScaleSocket = null;
 
         static void Main()
         {

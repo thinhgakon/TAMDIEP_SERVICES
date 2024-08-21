@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using XHTD_SERVICES_LED.Models;
 
 namespace XHTD_SERVICES_LED
 {

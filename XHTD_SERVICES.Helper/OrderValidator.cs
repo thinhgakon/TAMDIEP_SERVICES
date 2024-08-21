@@ -26,7 +26,7 @@ namespace XHTD_SERVICES.Helper
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
@@ -37,7 +37,7 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
@@ -72,8 +72,8 @@ namespace XHTD_SERVICES.Helper
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
                 if (
-                    order.Step >= (int)OrderStep.DA_CAN_VAO
-                    && order.Step <= (int)OrderStep.DA_CAN_RA
+                    order.Step == (int)OrderStep.DA_CAN_RA
+                    && (order.DriverUserName ?? "") != ""
                     )
                 {
                     return true;
@@ -85,7 +85,10 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step == (int)OrderStep.DA_CAN_RA)
+                if (
+                    order.Step == (int)OrderStep.DA_CAN_RA
+                    && (order.DriverUserName ?? "") != ""
+                    )
                 {
                     return true;
                 }
@@ -122,7 +125,12 @@ namespace XHTD_SERVICES.Helper
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                if (!string.IsNullOrEmpty(order.DriverUserName)
+                    && order.Step != (int)OrderStep.CHUA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_CAN_RA
+                    && order.Step != (int)OrderStep.DA_HOAN_THANH
+                    && order.Step != (int)OrderStep.DA_GIAO_HANG
+                    )
                 {
                     return true;
                 }
@@ -133,7 +141,12 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_RA)
+                if (!string.IsNullOrEmpty(order.DriverUserName)
+                    && order.Step != (int)OrderStep.CHUA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_CAN_RA
+                    && order.Step != (int)OrderStep.DA_HOAN_THANH
+                    && order.Step != (int)OrderStep.DA_GIAO_HANG
+                    )
                 {
                     return true;
                 }
@@ -145,8 +158,11 @@ namespace XHTD_SERVICES.Helper
             else
             {
                 if (!string.IsNullOrEmpty(order.DriverUserName) 
-                    && order.Step >= (int)OrderStep.DA_NHAN_DON 
-                    && order.Step < (int)OrderStep.DA_CAN_RA)
+                    && order.Step != (int)OrderStep.CHUA_NHAN_DON 
+                    && order.Step != (int)OrderStep.DA_CAN_RA
+                    && order.Step != (int)OrderStep.DA_HOAN_THANH
+                    && order.Step != (int)OrderStep.DA_GIAO_HANG
+                    )
                 {
                     return true;
                 }
@@ -169,7 +185,10 @@ namespace XHTD_SERVICES.Helper
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                    )
                 {
                     return true;
                 }
@@ -180,7 +199,10 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step < (int)OrderStep.DA_CAN_VAO)
+                if (
+                    order.Step == (int)OrderStep.DA_NHAN_DON
+                    && (order.DriverUserName ?? "") != ""
+                    )
                 {
                     return true;
                 }

@@ -32,12 +32,20 @@ namespace XHTD_SERVICES.Data.Repositories
                             where
                                 v.State == true
                                 && (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
-                            orderby v.Id ascending
+                            //orderby v.Id ascending
                             select v.Code;
 
                 var troughts = await query.Distinct().ToListAsync();
 
                 return troughts;
+            }
+        }
+
+        public async Task<tblMachine> GetMachineByMachineCode(string machineCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                return await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == machineCode);
             }
         }
 
@@ -62,7 +70,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 using (var dbContext = new XHTD_Entities())
                 {
                     return await dbContext.tblMachines
-                        .Where(x => x.State == true && (x.StartStatus == "PENDING" || x.StopStatus == "PENDING"))
+                        .Where(x => x.StartStatus == "PENDING" || x.StopStatus == "PENDING")
                         .Where(x=>x.ProductCategory == "XI_BAO")
                         .ToListAsync();
                 }

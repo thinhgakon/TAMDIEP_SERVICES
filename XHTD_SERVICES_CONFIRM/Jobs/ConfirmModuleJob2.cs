@@ -406,7 +406,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     // Xác thực
-                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+                                    bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
                                     // Xác thực thành công
                                     if (isConfirmSuccess)
@@ -637,7 +637,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                             // Xác thực
-                            bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+                            bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
                             // Xác thực thành công
                             if (isConfirmSuccess)

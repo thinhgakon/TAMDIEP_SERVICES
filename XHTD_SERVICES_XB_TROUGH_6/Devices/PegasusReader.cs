@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_1.Devices
+namespace XHTD_SERVICES_XB_TROUGH_6.Devices
 {
-    public static class PegasusReader2
+    public static class PegasusReader
     {
         public static List<byte[]> Inventory_G2(ref byte ConAddr,
                                               byte AdrTID,
@@ -18,7 +18,7 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             var epcBytes = new byte[5000];
             var epcBytesLen = 0;
             var epcCount = 0;
-            PegasusStaticClassReader2.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
+            PegasusStaticClassReader.Inventory_G2(ref ConAddr, AdrTID, LenTID, TIDFlag, epcBytes, ref epcBytesLen, ref epcCount, PortHandle);
 
             var epcList = new List<byte[]>(epcCount);
             using (var epcStream = new MemoryStream(epcBytes, 0, epcBytesLen))
@@ -40,26 +40,25 @@ namespace XHTD_SERVICES_TRAM951_1.Devices
             return epcList;
         }
 
-
+        public static void Close(int port)
+        {
+            PegasusStaticClassReader.CloseNetPort(port);
+        }
         public static int Connect(int Port,
                                              string IPaddr,
                                              ref byte ComAddr,
                                              ref int PortHandle)
         {
-            return PegasusStaticClassReader2.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
+            return PegasusStaticClassReader.OpenNetPort(Port, IPaddr, ref ComAddr, ref PortHandle);
         }
 
-        public static void Close(int port)
-        {
-            PegasusStaticClassReader2.CloseNetPort(port);
-        }
         public static void GetData(int portHandle)
         {
             byte[] ScanModeData = new byte[40960];
             int ValidDatalength, i;
             string temp, temps;
             ValidDatalength = 0;
-            var fCmdRet = PegasusStaticClassReader2.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
+            var fCmdRet = PegasusStaticClassReader.ReadActiveModeData(ScanModeData, ref ValidDatalength, portHandle);
             if (fCmdRet == 0)
             {
                 temp = "";

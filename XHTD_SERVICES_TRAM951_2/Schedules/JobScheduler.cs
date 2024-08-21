@@ -52,6 +52,16 @@ namespace XHTD_SERVICES_TRAM951_2.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
+
+            IJobDetail ResetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
+            ITrigger ResetTrafficLightTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(ResetTrafficLightJob, ResetTrafficLightTrigger);
         }
     }
 }

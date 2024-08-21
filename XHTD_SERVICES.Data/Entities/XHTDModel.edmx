@@ -311,7 +311,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
           <Property Name="State" Type="bit" />
@@ -323,6 +322,15 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CurrentDeliveryCode" Type="varchar" MaxLength="50" />
           <Property Name="StartStatus" Type="varchar" MaxLength="50" />
           <Property Name="StopStatus" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="TblMachineTrough">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MachineCode" Type="varchar" MaxLength="5" />
+          <Property Name="TroughCode" Type="varchar" MaxLength="5" />
+          <Property Name="Status" Type="bit" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -594,7 +602,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Code" Type="varchar" MaxLength="5" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="250" />
           <Property Name="Machine" Type="varchar" MaxLength="5" />
@@ -617,6 +624,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
+          <Property Name="FirstSensorQuantityCurrent" Type="float" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -680,6 +688,30 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TblMachineTrough_tblMachine_MachineCode">
+          <End Role="tblMachine" Type="Self.tblMachine" Multiplicity="0..1" />
+          <End Role="TblMachineTrough" Type="Self.TblMachineTrough" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblMachine">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblMachineTrough">
+              <PropertyRef Name="MachineCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TblMachineTrough_tblTrough_TroughCode">
+          <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="0..1" />
+          <End Role="TblMachineTrough" Type="Self.TblMachineTrough" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTrough">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblMachineTrough">
+              <PropertyRef Name="TroughCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
           <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -728,6 +760,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblFunction" EntityType="Self.tblFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblLongVehicle" EntityType="Self.tblLongVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblMachine" EntityType="Self.tblMachine" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblMachineTrough" EntityType="Self.TblMachineTrough" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblMachineTypeProduct" EntityType="Self.tblMachineTypeProduct" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblNotification" EntityType="Self.tblNotification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TblPrint" EntityType="Self.TblPrint" Schema="dbo" store:Type="Tables" />
@@ -777,6 +810,14 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <AssociationSet Name="FK_tblCheckInOut_tblAttachment" Association="Self.FK_tblCheckInOut_tblAttachment">
             <End Role="tblAttachment" EntitySet="tblAttachment" />
             <End Role="tblCheckInOut" EntitySet="tblCheckInOut" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblMachineTrough_tblMachine_MachineCode" Association="Self.FK_TblMachineTrough_tblMachine_MachineCode">
+            <End Role="tblMachine" EntitySet="tblMachine" />
+            <End Role="TblMachineTrough" EntitySet="TblMachineTrough" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblMachineTrough_tblTrough_TroughCode" Association="Self.FK_TblMachineTrough_tblTrough_TroughCode">
+            <End Role="tblTrough" EntitySet="tblTrough" />
+            <End Role="TblMachineTrough" EntitySet="TblMachineTrough" />
           </AssociationSet>
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
@@ -1051,7 +1092,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="Boolean" />
@@ -1063,6 +1103,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="CurrentDeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="StartStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="StopStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TblMachineTroughs" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" FromRole="tblMachine" ToRole="TblMachineTrough" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -1307,7 +1348,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Key>
             <PropertyRef Name="Code" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Code" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="Machine" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
@@ -1331,6 +1371,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode" FromRole="tblTrough" ToRole="tblTroughTypeProduct" />
           <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FirstSensorQuantityCurrent" Type="Double" />
+          <NavigationProperty Name="TblMachineTroughs" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode" FromRole="tblTrough" ToRole="TblMachineTrough" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -1494,6 +1536,15 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <End Role="tblAttachment" EntitySet="tblAttachments" />
             <End Role="tblCheckInOut" EntitySet="tblCheckInOuts" />
           </AssociationSet>
+          <EntitySet Name="TblMachineTroughs" EntityType="XHTD_SERVICES.Data.Entities.TblMachineTrough" />
+          <AssociationSet Name="FK_TblMachineTrough_tblMachine_MachineCode" Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode">
+            <End Role="tblMachine" EntitySet="tblMachines" />
+            <End Role="TblMachineTrough" EntitySet="TblMachineTroughs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblMachineTrough_tblTrough_TroughCode" Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode">
+            <End Role="tblTrough" EntitySet="tblTroughs" />
+            <End Role="TblMachineTrough" EntitySet="TblMachineTroughs" />
+          </AssociationSet>
           <EntitySet Name="TblPrints" EntityType="XHTD_SERVICES.Data.Entities.TblPrint" />
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
@@ -1533,6 +1584,41 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Principal>
             <Dependent Role="tblCheckInOut">
               <PropertyRef Name="AttactmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TblMachineTrough">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MachineCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="TroughCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" />
+          <NavigationProperty Name="tblMachine" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" FromRole="TblMachineTrough" ToRole="tblMachine" />
+          <NavigationProperty Name="tblTrough" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode" FromRole="TblMachineTrough" ToRole="tblTrough" />
+        </EntityType>
+        <Association Name="FK_TblMachineTrough_tblMachine_MachineCode">
+          <End Type="XHTD_SERVICES.Data.Entities.tblMachine" Role="tblMachine" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.TblMachineTrough" Role="TblMachineTrough" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblMachine">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblMachineTrough">
+              <PropertyRef Name="MachineCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TblMachineTrough_tblTrough_TroughCode">
+          <End Type="XHTD_SERVICES.Data.Entities.tblTrough" Role="tblTrough" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.TblMachineTrough" Role="TblMachineTrough" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTrough">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblMachineTrough">
+              <PropertyRef Name="TroughCode" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1831,7 +1917,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="StartStatus" ColumnName="StartStatus" />
                 <ScalarProperty Name="CurrentDeliveryCode" ColumnName="CurrentDeliveryCode" />
                 <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="State" ColumnName="State" />
@@ -2094,8 +2179,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblTroughs">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTrough">
               <MappingFragment StoreEntitySet="tblTrough">
+                <ScalarProperty Name="FirstSensorQuantityCurrent" ColumnName="FirstSensorQuantityCurrent" />
                 <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Machine" ColumnName="Machine" />
@@ -2232,6 +2317,16 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="Thumbnail" ColumnName="Thumbnail" />
                 <ScalarProperty Name="Url" ColumnName="Url" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblMachineTroughs">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblMachineTrough">
+              <MappingFragment StoreEntitySet="TblMachineTrough">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
+                <ScalarProperty Name="MachineCode" ColumnName="MachineCode" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

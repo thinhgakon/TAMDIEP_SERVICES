@@ -28,6 +28,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
+        protected readonly MachineRepository _machineRepository;
+
         protected readonly TroughRepository _troughRepository;
 
         protected readonly CallToTroughRepository _callToTroughRepository;
@@ -42,7 +44,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 10000;
+        private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -51,6 +53,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public SyncTroughJob12(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
+            MachineRepository machineRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
@@ -58,6 +61,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
+            _machineRepository = machineRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
@@ -66,9 +70,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            while (Program.Machine12Running == true)
-            {
-            }
+            //while (Program.Machine12Running == true)
+            //{
+            //}
 
             Program.SyncTrough12Running = true;
             if (context == null)
@@ -160,8 +164,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (troughInfo == null)
                     {
-                        return;
+                        continue;
                     }
+
+                    // Dữ liệu sensor cuối máng
 
                     // 2. send 1
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
@@ -177,10 +183,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (response == null || response.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
-                        return;
+                        continue;
                     }
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
@@ -194,23 +200,48 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
+                        var machineCode = (troughCode == "1" || troughCode == "2") ? "1" : "2";
+
+                        // Dữ liệu sensor đầu máng
+
+                        byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
+                        stream.Write(machineData, 0, machineData.Length);
+
+                        machineData = new byte[BUFFER_SIZE];
+                        stream.Read(machineData, 0, BUFFER_SIZE);
+
+                        var machineResponse = encoding.GetString(machineData).Trim();
+                        if (machineResponse == null || machineResponse.Length == 0)
+                        {
+                            _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                            continue;
+                        }
+                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+                        var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+
+                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, firstSensorQuantity);
 
                         //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
 
-                        await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCodeReturn);
+                        //await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCodeReturn);
 
-                        var isAlmostDone = (countQuantity / planQuantity) > 0.98;
+                        //var isAlmostDone = (countQuantity / planQuantity) > 0.98;
 
-                        if (isAlmostDone)
-                        {
-                            await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
-                        }
-                        else
+                        //if (isAlmostDone)
+                        //{
+                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                        //}
+                        //else
+                        //{
+                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        //}
+                        var trough = await _troughRepository.GetDetail(troughCode);
+                        var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
+
+                        if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
                             await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
                         }
-                        //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
                     }
                     else
                     {
@@ -218,12 +249,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
-                        _syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
-                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
+                        //_syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
+                        //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
 
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 100, planQuantity);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
 
                     }
                 }
@@ -236,9 +267,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        static (string, string, string, string) GetInfo(string input)
+        static (string, string, string, string) GetInfo(string input, string type)
         {
-            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
             Match match = Regex.Match(input, pattern);
 
             if (match.Success)
@@ -253,7 +284,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
-
 
         public void Dispose()
         {

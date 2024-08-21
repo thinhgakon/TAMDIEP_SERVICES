@@ -15,38 +15,42 @@ namespace XHTD_SERVICES.Data.Repositories
 {
     public partial class StoreOrderOperatingRepository : BaseRepository<tblStoreOrderOperating>
     {
-        public bool UpdateBillOrderConfirm10(string vehicleCode)
+        public async Task<bool> UpdateBillOrderConfirm10(string vehicleCode)
         {
-            bool res = false;
-            try
+            using (var dbContext = new XHTD_Entities())
             {
-                using (var db = new XHTD_Entities())
+                try
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step ?? 0) == 1 && (x.IndexOrder2 ?? 0) == 0 && (x.DriverUserName ?? "") != "").ToList();
-                    if (orders.Count < 1) return false;
-                    
-                    var ordersFist = orders.FirstOrDefault();
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-                    var sqlUpdate = $@"UPDATE tblStoreOrderOperating
-                                                SET Confirm10 = 1 ,
-                                                    TimeConfirm10 = GETDATE() ,
-                                                    Step = 10 ,
-                                                    TimeConfirmHistory = GETDATE() ,
-                                                    LogHistory = CONCAT(LogHistory, '#confirm by rfid at ', GETDATE()) ,
-                                                    LogProcessOrder = CONCAT(LogProcessOrder, N'#Xác thực thủ công lúc ',
-                                                                                FORMAT(GETDATE(), 'dd/MM/yyyy HH:mm:ss'))
-                                                WHERE Vehicle = @Vehicle
-                                                      AND ISNULL(Step, 0) = 1
-                                                      AND ISNULL(DriverUserName, '') != ''";
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.Step == (int)OrderStep.DA_NHAN_DON)
+                                            .ToListAsync();
 
-                    res = db.Database.ExecuteSqlCommand(sqlUpdate, new SqlParameter("@Vehicle", ordersFist.Vehicle)) > 0;
+                    if (orders == null)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm10 = (int)ConfirmType.RFID;
+                        order.TimeConfirm10 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_XAC_THUC;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Xác thực tự động lúc {currentTime} ";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực VehicleCode={vehicleCode} error: " + ex.Message);
+                    return false;
                 }
             }
-            catch (Exception ex)
-            {
-                log.Error($@"UpdateBillOrderConfirm10, vehicle {vehicleCode}, {ex.Message}");
-            }
-            return res;
         }
 
         public void UpdateImgConfirm10(string vehicleCode,string img)
@@ -119,24 +123,29 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
-                                                     && (
-                                                            (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                            ||
-                                                            (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
-                                                                &&
-                                                                x.Step <= (int)OrderStep.DA_CAN_RA
-                                                            )
-                                                        )
+                                                     && (x.Step == (int)OrderStep.DA_XAC_THUC
+                                                     || x.Step == (int)OrderStep.DA_NHAN_DON
+                                                     || x.Step == (int)OrderStep.CHUA_NHAN_DON)
                                                      )
                                             .OrderByDescending(x => x.Step)
                                             .FirstOrDefaultAsync();
 
                 return order;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetOrdersConfirmationPoint(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && x.Step == (int)OrderStep.DA_NHAN_DON
+                                                     && (x.DriverUserName ?? "") != ""
+                                                     )
+                                            .ToListAsync();
+                return orders;
             }
         }
     }

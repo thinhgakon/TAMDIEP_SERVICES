@@ -18,9 +18,9 @@ namespace XHTD_SERVICES.Data.Entities
         public tblTrough()
         {
             this.tblTroughTypeProducts = new HashSet<tblTroughTypeProduct>();
+            this.TblMachineTroughs = new HashSet<TblMachineTrough>();
         }
     
-        public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Machine { get; set; }
@@ -43,8 +43,11 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
         public string ProductCategory { get; set; }
+        public Nullable<double> FirstSensorQuantityCurrent { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblTroughTypeProduct> tblTroughTypeProducts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TblMachineTrough> TblMachineTroughs { get; set; }
     }
 }

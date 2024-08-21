@@ -376,6 +376,25 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse CheckOrderValidate(string deliveryCodes)
+        {
+            logger.Info($"CheckOrderValidate API: deliveryCode={deliveryCodes}");
+
+            var apiUrl = ConfigurationManager.GetSection("API_SaleOrders/Url") as NameValueCollection;
+
+            var client = new RestClient($"{apiUrl["SaleOrder"]}?Delivery_Codes={deliveryCodes}");
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static string LoginSMSBrandName()
         {
             var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
@@ -595,7 +614,7 @@ namespace XHTD_SERVICES.Helper
             {
                 ContentMessage = message,
                 NotificationType = "XHTD",
-                SubTitle = "XHTD",
+                SubTitle = "HỆ THỐNG XUẤT HÀNG TỰ ĐỘNG",
                 UserNameReceiver = userName,
                 UserNameSender = "XHTD"
             });

@@ -28,9 +28,8 @@ namespace XHTD_SERVICES.Data.Repositories
                             join r in dbContext.tblTroughTypeProducts
                             on v.Code equals r.TroughCode
                             where
-                                v.State == true 
-                                &&  (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
-                                orderby v.Id ascending
+                                 (r.TypeProduct == "PCB30" || r.TypeProduct == "PCB40")
+                                //orderby v.Id ascending
                             select v.Code;
 
                 var troughts = await query.Distinct().ToListAsync();
@@ -45,7 +44,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var trough = await dbContext.tblTroughs
                                     .Where(x => x.State == true)
-                                    .OrderBy(x => x.Id)
+                                    //.OrderBy(x => x.Id)
                                     .Select(x => x.Code)
                                     .ToListAsync();
 
@@ -63,7 +62,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity, double firstSensorQuantity)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -76,6 +75,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.DeliveryCodeCurrent = deliveryCode;
                         itemToCall.CountQuantityCurrent = countQuantity;
                         itemToCall.PlanQuantityCurrent = planQuantity;
+                        itemToCall.FirstSensorQuantityCurrent = firstSensorQuantity;
 
                         await dbContext.SaveChangesAsync();
 
@@ -104,6 +104,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.DeliveryCodeCurrent = null;
                         itemToCall.CountQuantityCurrent = null;
                         itemToCall.PlanQuantityCurrent = null;
+                        itemToCall.FirstSensorQuantityCurrent = null;
 
                         await dbContext.SaveChangesAsync();
 

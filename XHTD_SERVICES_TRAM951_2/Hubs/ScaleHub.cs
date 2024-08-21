@@ -138,10 +138,16 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     SendMessageAPI($"{VEHICLE_STATUS}", "    ");
                     SendMessageAPI($"{SCALE_DELIVERY_CODE}", "  ");
                     SendMessageAPI("Notification", "    ");
+                    SendMessageAPI("WarningNotification", "    ");
                     SendMessageAPI($"{SCALE_IS_LOCKING_RFID}", "  ");
 
                     Program.scaleValues.Clear();
+                    Program.scaleValuesForResetLight.Clear();
                     return;
+                }
+                else
+                {
+                    Program.scaleValuesForResetLight.Add(currentScaleValue);
                 }
 
                 if (Program.IsScalling)
@@ -160,11 +166,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                     SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                     SendMessageAPI($"{SCALE_STATUS}", $"Đang cân thủ công");
 
-                    SendMessage($"{SCALE_BALANCE}", "  ");
-                    SendMessageAPI($"{SCALE_BALANCE}", "");
+                    //SendMessage($"{SCALE_BALANCE}", "  ");
+                    //SendMessageAPI($"{SCALE_BALANCE}", "");
 
-                    SendMessage("Notification", "  ");
-                    SendMessageAPI("Notification", "  ");
+                    //SendMessage("Notification", "  ");
+                    //SendMessageAPI("Notification", "  ");
+
+                    //SendMessage("WarningNotification", "  ");
+                    //SendMessageAPI("WarningNotification", "  ");
                 }
 
                 // TODO: kiểm tra vi phạm cảm biến cân
@@ -221,8 +230,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             {
                                 WriteLogInfo($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
-                                SendMessage("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
-                                SendMessageAPI("Notification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
+                                SendMessage("WarningNotification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
+                                SendMessageAPI("WarningNotification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 await ReleaseScale();
@@ -234,8 +243,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                             {
                                 WriteLogInfo($"2. Khong co thong tin don hang dang can voi code = {scaleInfo.DeliveryCode}");
 
-                                SendMessage("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
-                                SendMessageAPI("Notification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
+                                SendMessage("WarningNotification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
+                                SendMessageAPI("WarningNotification", $"Không có thông tin đơn hàng {scaleInfo.DeliveryCode} đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 await ReleaseScale();
@@ -263,8 +272,8 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 {
                                     WriteLogInfo($"2.3. Sai so vuot qua {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
-                                    SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
-                                    SendMessageAPI("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+                                    SendMessage("WarningNotification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("WarningNotification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.UNLADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                     await ReleaseScale();
@@ -294,6 +303,15 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
+                                    SendPushNotification("adminNPP", pushMessage);
+
+                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    //if (driverUserName != null)
+                                    //{
+                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    //}
+
                                     WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
@@ -305,11 +323,17 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     {
                                         WriteLogInfo($"6.1. Don hang CLINKER hoac XK: CatId = {currentOrder.CatId}, TypeXK = {currentOrder.TypeXK}");
 
-                                        WriteLogInfo($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
-                                        await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
+                                        WriteLogInfo($"6.2. Update gia tri can vao");
+                                        await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
-                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
+                                        WriteLogInfo($"6.3. Update trạng thái cân vào");
+                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+
+                                        //WriteLogInfo($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
+                                        //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
+
+                                        //WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                     }
                                     else
                                     {
@@ -339,8 +363,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
-                                    SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
-                                    SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -366,7 +393,7 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 {
                                     WriteLogInfo($"2.3. Sai so vuot qua {ScaleConfig.LADEN_WEIGHT_SAISO}. Nghi ngờ cân nhầm xe. Vui lòng xử lý thủ công!");
 
-                                    SendMessage("Notification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.LADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
+                                    SendMessage("WarningNotification", $"Phát hiện khối lượng cân không hợp lệ, sai số vượt quá {ScaleConfig.LADEN_WEIGHT_SAISO}. Vui lòng xử lý thủ công!");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                     await ReleaseScale();
@@ -392,6 +419,15 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                     // Lưu giá trị cân thành công
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
+                                    SendPushNotification("adminNPP", pushMessage);
+
+                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
+                                    //if (driverUserName != null)
+                                    //{
+                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
+                                    //}
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
@@ -420,8 +456,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
-                                    SendMessage("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
-                                    SendMessageAPI("Notification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
+                                    SendPushNotification("adminNPP", pushMessage);
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -601,6 +640,19 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
             catch (Exception ex)
             {
                 WriteLogInfo($"SendMessageAPI ERROR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendPushNotification(string userNameReceiver, string message)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _notification.SendPushNotification(userNameReceiver, message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

@@ -255,7 +255,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business\ScaleApiLib.cs" />
+    <Compile Include="Business\SaleOrdersApiLib.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
@@ -271,11 +271,11 @@
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
-    <Compile Include="Models\Response\DesicionScaleResponse.cs" />
     <Compile Include="Models\Response\HUBDataResponse.cs" />
     <Compile Include="Models\Response\HUBResponse.cs" />
     <Compile Include="Models\Response\FakeRFIDResponse.cs" />
     <Compile Include="Models\Response\GetTokenResponse.cs" />
+    <Compile Include="Models\Response\SaleOrdersResponse.cs" />
     <Compile Include="PegasusStaticClassReader.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

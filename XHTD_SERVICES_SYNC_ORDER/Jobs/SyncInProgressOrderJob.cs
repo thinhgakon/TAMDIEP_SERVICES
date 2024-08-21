@@ -207,7 +207,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else 
                 { 
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
                 }
             }
             else if (stateId == (int)OrderState.DA_HUY_DON)

@@ -303,14 +303,52 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             var currentDeliveryCode = currentOrder.DeliveryCode;
             _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
+            // Gọi API ERP kiểm tra điều kiện xác thực
+            var orders = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
+            var currentDeliveryCodes = String.Empty;
+            if (orders != null && orders.Count != 0)
+            {
+                currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
+            }
+            
+            var erpResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
+            if (erpResponse.Code == "02")
+            {
+                SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+
+                var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}!";
+                SendPushNotification("adminNPP", pushMessageNPP);
+
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                    SendPushNotification(currentOrder.DriverUserName, pushMessageDriver);
+                }
+
+                _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
+
+                return;
+            }
+
             // Xác thực
-            bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+            bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
             // Xác thực thành công
             if (isConfirmSuccess)
             {
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+
+                var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
+                SendPushNotification("adminNPP", pushMessage);
+
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    SendPushNotification(driverUserName, pushMessage);
+                }
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -329,6 +367,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+
+                var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                SendPushNotification("adminNPP", pushMessage);
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
             }
@@ -364,7 +405,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
             }
 
-            Thread.Sleep(10000);
+            Thread.Sleep(20000);
 
             _confirmLogger.LogInfo($"8. Bật đèn đỏ");
             if (TurnOnRedTrafficLight())
@@ -423,6 +464,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             catch (Exception ex)
             {
                 _confirmLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendPushNotification(string userNameReceiver, string message)
+        {
+            try
+            {
+                _confirmLogger.LogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _notification.SendPushNotification(userNameReceiver, message);
+            }
+            catch (Exception ex)
+            {
+                _confirmLogger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -612,7 +666,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     // Xác thực
-                                    bool isConfirmSuccess = this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+                                    bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
 
                                     // Xác thực thành công
                                     if (isConfirmSuccess)

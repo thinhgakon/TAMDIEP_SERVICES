@@ -33,7 +33,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("PCB 30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("PCB30") 
+                        || productNameUpper.Contains("PCB 30") 
+                        || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
@@ -49,13 +51,22 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC40";
                     }
+                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
+                    {
+                        typeProduct = "C91";
+                    }
+                    else
+                    {
+                        typeProduct = "OTHER";
+                    }
 
                     // Type XK
                     if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
                         typeXK = OrderTypeXKCode.JUMBO;
                     }
-                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING))
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING) 
+                        || productNameUpper.Contains(OrderTypeXKCode.SILING))
                     {
                         typeXK = OrderTypeXKCode.SLING;
                     }
@@ -302,6 +313,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     x.Step == (int)OrderStep.DA_XAC_THUC
                                                     ||
                                                     x.WeightIn == null
+                                                    ||
+                                                    x.WeightIn == 0
                                                 )
                                             );
 
@@ -344,7 +357,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, string docnum = null)
         {
             bool isSynced = false;
 
@@ -370,6 +383,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
                                                         ||
                                                         x.WeightOut == null
+                                                        ||
+                                                        x.WeightOut == 0
+                                                        ||
+                                                        x.DocNum == null
                                                     )
                                                );
 
@@ -390,6 +407,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightOut = (int)(weightOut * 1000);
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
+                        order.DocNum = docnum;
+
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
 
@@ -405,11 +424,23 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && x.Step < (int)OrderStep.DA_HOAN_THANH);
+                                                    &&
+                                                    (
+                                                        x.Step < (int)OrderStep.DA_HOAN_THANH
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    )
+                                                );
+
                     if (order != null)
                     {
                         order.TimeConfirm8 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_HOAN_THANH;
+
+                        if (order.Step < (int)OrderStep.DA_HOAN_THANH || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        {
+                            order.Step = (int)OrderStep.DA_HOAN_THANH;
+                        }
+
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {syncTime};";
@@ -427,11 +458,23 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == orderId
-                                                    && x.Step < (int)OrderStep.DA_GIAO_HANG);
+                                                    && 
+                                                    (
+                                                        x.Step < (int)OrderStep.DA_GIAO_HANG
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
+                                                    )
+                                                );
+
                     if (order != null)
                     {
                         order.TimeConfirm9 = DateTime.Now;
-                        order.Step = (int)OrderStep.DA_GIAO_HANG;
+
+                        if (order.Step < (int)OrderStep.DA_GIAO_HANG || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        {
+                            order.Step = (int)OrderStep.DA_GIAO_HANG;
+                        }
+                        
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";

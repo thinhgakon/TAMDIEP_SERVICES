@@ -35,9 +35,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            while (Program.SyncTrough12Running == true)
-            {
-            }
+            //while (Program.SyncTrough12Running == true)
+            //{
+            //}
 
             Program.Machine12Running = true;
             if (context == null)
@@ -109,21 +109,22 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (response == null || response.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
-                            return;
+                            continue;
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
-                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]"))
+                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
+
                             await _machineRepository.UpdateMachine(machine);
                             _logger.LogInfo($"Start machine {machine.Code} thanh cong!");
                         }
                         else
                         {
                             _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
-                            return;
+                            continue;
                         }
                     }
 
@@ -142,21 +143,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (response == null || response.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
-                            return;
+                            continue;
                         }
                         _logger.LogInfo($"Du lieu tra ve: {response}");
 
-                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK##{machine.CurrentDeliveryCode}[!]"))
+                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
+                            machine.CurrentDeliveryCode = null;
+
                             await _machineRepository.UpdateMachine(machine);
                             _logger.LogInfo($"Stop machine {machine.Code} thanh cong!");
                         }
                         else
                         {
                             _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
-                            return;
+                            continue;
                         }
                     }
                 }

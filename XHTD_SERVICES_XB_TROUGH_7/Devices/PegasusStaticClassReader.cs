@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_2.Devices
+namespace XHTD_SERVICES_XB_TROUGH_7.Devices
 {
-    public static class PegasusStaticClassReader2
+    public static class PegasusStaticClassReader
     {
-        private const string DLLNAME = @"PK_UHF2.dll";
+        private const string DLLNAME = @"PK_UHF.dll";
 
 
         [DllImport(DLLNAME, CallingConvention = CallingConvention.StdCall)]
