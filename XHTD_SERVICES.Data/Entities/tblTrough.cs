@@ -18,6 +18,7 @@ namespace XHTD_SERVICES.Data.Entities
         public tblTrough()
         {
             this.tblTroughTypeProducts = new HashSet<tblTroughTypeProduct>();
+            this.TblMachineTroughs = new HashSet<TblMachineTrough>();
         }
     
         public Nullable<int> Id { get; set; }
@@ -47,5 +48,7 @@ namespace XHTD_SERVICES.Data.Entities
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblTroughTypeProduct> tblTroughTypeProducts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TblMachineTrough> TblMachineTroughs { get; set; }
     }
 }
