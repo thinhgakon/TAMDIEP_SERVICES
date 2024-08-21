@@ -11,6 +11,7 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES_TRAM951_2.Devices;
+using XHTD_SERVICES_TRAM951_2.Business;
 
 namespace XHTD_SERVICES_TRAM951_2.Jobs
 {
@@ -23,6 +24,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
         protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+
+        protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
 
         public ResetTrafficLightJob(TCPTrafficLight trafficLight, Logger logger)
         {
@@ -56,9 +59,11 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                     {
                         Program.IsFirstTimeResetTrafficLight = false;
 
+                        _logger.LogInfo("Reset traffic light - Scale 951 - 2");
                         TurnOffTrafficLight();
 
-                        _logger.LogInfo("Reset traffic light - Scale 951 - 2");
+                        //_logger.LogInfo("Release Scale");
+                        //await ReleaseScale();
                     }
                     else
                     {
@@ -102,5 +107,13 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 _logger.LogInfo($@"Tắt thất bại");
             }
         }
+
+        //public async Task ReleaseScale()
+        //{
+        //    Program.IsScalling = false;
+        //    Program.IsLockingScale = false;
+        //    Program.scaleValues.Clear();
+        //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
+        //}
     }
 }

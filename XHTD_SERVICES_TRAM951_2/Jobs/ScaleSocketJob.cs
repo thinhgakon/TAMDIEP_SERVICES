@@ -1,9 +1,14 @@
-﻿using Quartz;
+﻿using Autofac;
+using Quartz;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_TRAM951_2;
 using XHTD_SERVICES_TRAM951_2.Hubs;
@@ -23,6 +28,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
         public const string IP_ADDRESS = "192.168.13.203";
+
+        TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
         public ScaleSocketJob(Logger logger, Notification notification)
         {
@@ -45,25 +52,30 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
         public void AuthenticateScaleStationModuleFromController()
         {
-            while (!client.Connected)
+            while (true)
             {
-                    ConnectScaleStationModuleFromController();
+                var isConnected = ConnectScaleStationModuleFromController();
+
+                if (isConnected)
+                {
+                    ReadDataFromController();
+                }
+
+                Thread.Sleep(1000);
             }
-            ReadDataFromController();
         }
 
         public bool ConnectScaleStationModuleFromController()
         {
-            _logger.LogInfo("Thuc hien ket noi.");
             try
             {
-                _logger.LogInfo("Bat dau ket noi.");
+                _logger.LogInfo("Thuc hien ket noi scale socket");
                 client = new TcpClient();
 
                 // 1. connect
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-                _logger.LogInfo("Connected to controller");
+                _logger.LogInfo("Ket noi thanh cong");
 
                 DeviceConnected = true;
 
@@ -74,84 +86,84 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
                 return false;
             }
         }
 
         public void ReadDataFromController()
         {
-            if (client.Connected)
+            while (true)
             {
-                while (client.Connected)
+                try
                 {
-                    try
+                    byte[] data = new byte[BUFFER_SIZE];
+                    stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
+                    var dataStr = encoding.GetString(data);
+
+                    //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+
+                    string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
+
+                    parts = parts.Where(x => !String.IsNullOrEmpty(x.Trim())).ToArray();
+
+                    parts = parts.Where(x => x.Contains("*")).ToArray();
+
+                    if (parts != null && parts.Count() > 0)
                     {
-                        byte[] data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-                        var dataStr = encoding.GetString(data);
-
-                        //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
-
-                        string[] parts = dataStr.Split(new string[] { "tdc" }, StringSplitOptions.None);
-
-                        int countZero = 0;
-                        
-                        foreach (var item in parts)
+                        var item = parts.First();
+                        int scaleValue;
+                        System.DateTime dateTime;
+                        try
                         {
-                            int scaleValue;
-                            System.DateTime dateTime;
-                            try
-                            {
-                                string[] dt = item.Split('*');
+                            string[] dt = item.Split('*');
 
-                                // Lấy phần số và ngày tháng giờ
-                                string number = dt[1];
-                                string dateTimeStr = dt[2];
-                                scaleValue = int.TryParse(number, out int i) ? i : 0;
-                                dateTime = System.DateTime.Parse(dateTimeStr);
-                            }
-                            catch (Exception)
-                            {
-                                continue;
-                            }
-
-                            if (scaleValue == 0)
-                            {
-                                if (countZero < 3)
-                                {
-                                    countZero++;
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                countZero = 0;
-                            }
-
-                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
-                            new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
+                            // Lấy phần số và ngày tháng giờ
+                            string number = dt[1];
+                            string dateTimeStr = dt[2];
+                            scaleValue = int.TryParse(number, out int i) ? i : 0;
+                            dateTime = System.DateTime.Parse(dateTimeStr);
+                        }
+                        catch (Exception)
+                        {
+                            continue;
                         }
 
+                        _logger.LogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
+
+                        Program.LastTimeReceivedScaleSocket = DateTime.Now;
+
+                        //_logger.LogInfo($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+
+                        SendScaleInfoAPI(dateTime, scaleValue.ToString());
+                        new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
-                    catch (Exception ex)
+
+                    if (Program.LastTimeReceivedScaleSocket != null)
                     {
-                        _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        timeDiffFromLastReceivedScaleSocket = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
+
+                        if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
+                        {
+                            _logger.LogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+
+                            if (stream != null) stream.Close();
+                            if (client != null) client.Close();
+
+                            break;
+                        }
                     }
                 }
-                AuthenticateScaleStationModuleFromController();
+                catch (Exception ex)
+                {
+                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    if (stream != null) stream.Close();
+                    if (client != null) client.Close();
+
+                    break;
+                }
             }
-            else
-            {
-                DeviceConnected = false;
-                AuthenticateScaleStationModuleFromController();
-            }
+            AuthenticateScaleStationModuleFromController();
         }
 
         private void SendScaleInfoAPI(DateTime time, string value)
