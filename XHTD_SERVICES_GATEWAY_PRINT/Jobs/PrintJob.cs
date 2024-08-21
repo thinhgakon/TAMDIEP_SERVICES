@@ -14,6 +14,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
     {
         private readonly PrintRepository _printRepository;
         private readonly string PRINT_NAME = "Brother HL-L2360D series Printer";
+        private readonly string PRINT_APP = "C:\\Program Files (x86)\\Foxit Software\\Foxit PDF Reader\\FoxitPDFReader.exe";
         private readonly PrintLogger _printLogger;
         public PrintJob(PrintRepository printRepository, PrintLogger printLogger)
         {
@@ -50,32 +51,25 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                 string tempFilePath = Path.GetTempFileName() + ".pdf";
 
                 File.WriteAllBytes(tempFilePath, response.RawBytes);
-                _printLogger.LogInfo($"Get file thanh cong {print.DeliveryCode}");
+                _printLogger.LogInfo($"Get file thanh cong {tempFilePath}");
                 try
                 {
-                    string powershellCommand = $"Get-Content \"{tempFilePath}\" | Out-Printer -Name \"{PRINT_NAME}\"";
-
-                    ProcessStartInfo processInfo = new ProcessStartInfo
+                    using (Process printProcess = new Process())
                     {
-                        FileName = "powershell.exe",
-                        Arguments = $"-NoProfile -Command \"{powershellCommand}\"",
-                        RedirectStandardOutput = true,
-                        RedirectStandardError = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    };
+                        printProcess.StartInfo.FileName = PRINT_APP;
+                        printProcess.StartInfo.Arguments = $"/t \"{tempFilePath}\" \"{PRINT_NAME}\"";
+                        printProcess.StartInfo.CreateNoWindow = true;
+                        printProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        printProcess.Start();
+                    }
 
-                    Process printProcess = new Process
-                    {
-                        StartInfo = processInfo
-                    };
-                    printProcess.Start();
-                    printProcess.WaitForExit();
                     print.Status = PrintStatus.SUCCESS.ToString();
                     _printLogger.LogInfo($"In thanh cong {print.DeliveryCode}");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _printLogger.LogInfo($"{ex.Message}");
+                    _printLogger.LogInfo($"{ex.StackTrace}");
                     continue;
                 }
                 finally

@@ -21,10 +21,9 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Schedules
 
             IJobDetail syncOrderJob = JobBuilder.Create<PrintJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(30)
+                     .WithIntervalInSeconds(10)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
