@@ -27,15 +27,35 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
             await _scheduler.Start();
 
             // Trạm cân 951
-            IJobDetail syncOrderJob = JobBuilder.Create<Tram951ModuleJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            IJobDetail autoScaleJob = JobBuilder.Create<Tram951ModuleJob>().Build();
+            ITrigger autoScaleTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Tram951_Module_Interval_In_Hours")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+            await _scheduler.ScheduleJob(autoScaleJob, autoScaleTrigger);
+
+            IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
+            ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
+
+            IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger connectPegasusrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
 
             IJobDetail scaleSocketJob = JobBuilder.Create<ScaleSocketJob>().Build();
             ITrigger scaleSocketTrigger = TriggerBuilder.Create()
@@ -47,25 +67,15 @@ namespace XHTD_SERVICES_TRAM951_1.Schedules
                 .Build();
             await _scheduler.ScheduleJob(scaleSocketJob, scaleSocketTrigger);
 
-            IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            ITrigger connectPegasusrigger = TriggerBuilder.Create()
+            IJobDetail resetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
+            ITrigger resetTrafficLightTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
-
-            IJobDetail ResetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
-            ITrigger ResetTrafficLightTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(ResetTrafficLightJob, ResetTrafficLightTrigger);
+            await _scheduler.ScheduleJob(resetTrafficLightJob, resetTrafficLightTrigger);
         }
     }
 }
