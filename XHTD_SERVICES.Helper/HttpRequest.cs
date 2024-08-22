@@ -395,13 +395,13 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse UpdateOrderStatus(string deliveryCodes, int userId)
+        public static IRestResponse UpdateOrderStatus(string deliveryCodes)
         {
             logger.Info($"UpdateOrderStatus API: deliveryCode={deliveryCodes}");
 
             var apiUrl = ConfigurationManager.GetSection("API_SaleOrders/Url") as NameValueCollection;
 
-            var client = new RestClient($"{apiUrl["UpdateOrderStatus"]}?Delivery_Codes={deliveryCodes}&User_ID={userId}");
+            var client = new RestClient($"{apiUrl["UpdateOrderStatus"]}?Delivery_Codes={deliveryCodes}");
             var request = new RestRequest();
 
             request.Method = Method.POST;

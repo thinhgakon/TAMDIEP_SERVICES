@@ -364,7 +364,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Xác thực thành công
             if (isConfirmSuccess)
             {
-                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes, 0);
+                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
                 if (erpUpdateStatusResponse.Code == "02")
                 {
                     var pushMessageNPP = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, {erpUpdateStatusResponse.Message}!";

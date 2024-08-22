@@ -23,9 +23,9 @@ namespace XHTD_SERVICES_CONFIRM.Business
             return resultResponse;
         }
 
-        public SaleOrdersResponse UpdateOrderStatus(string deliveryCodes, int userId)
+        public SaleOrdersResponse UpdateOrderStatus(string deliveryCodes)
         {
-            var updateResponse = HttpRequest.UpdateOrderStatus(deliveryCodes, userId);
+            var updateResponse = HttpRequest.UpdateOrderStatus(deliveryCodes);
             var updateResponseContent = updateResponse.Content;
             var response = JsonConvert.DeserializeObject<SaleOrdersResponse>(updateResponseContent);
 
