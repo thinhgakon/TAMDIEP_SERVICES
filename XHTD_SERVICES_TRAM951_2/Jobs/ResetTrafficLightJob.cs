@@ -61,9 +61,6 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                         _logger.LogInfo("Reset traffic light - Scale 951 - 2");
                         TurnOffTrafficLight();
-
-                        //_logger.LogInfo("Release Scale");
-                        //await ReleaseScale();
                     }
                     else
                     {
@@ -79,7 +76,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"ERROR: {ex.Message}");
+                _logger.LogInfo($"RESET DGT: {ex.Message}");
             }
         }
 
@@ -107,13 +104,5 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
                 _logger.LogInfo($@"Tắt thất bại");
             }
         }
-
-        //public async Task ReleaseScale()
-        //{
-        //    Program.IsScalling = false;
-        //    Program.IsLockingScale = false;
-        //    Program.scaleValues.Clear();
-        //    await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
-        //}
     }
 }
