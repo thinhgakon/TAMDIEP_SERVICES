@@ -23,6 +23,10 @@ namespace XHTD_SERVICES_GATEWAY
 
         public static bool IsBarrierActive = false; // cấu hình tự động mở barrier
 
+        public static DateTime? LastTimeReceivedUHF = DateTime.Now;
+
+        public static bool UHFConnected = false;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
