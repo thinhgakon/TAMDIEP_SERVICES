@@ -58,7 +58,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"Ping ERROR: {ex.Message}");
+                _logger.LogWarn($"RECONNECT ERROR: {ex.Message}");
             }
         }
     }
