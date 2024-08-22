@@ -67,18 +67,16 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
 
                     print.Status = PrintStatus.SUCCESS.ToString();
                     _printLogger.LogInfo($"In thanh cong {print.DeliveryCode}");
+
+                    Thread.Sleep(5000);
+                    File.Delete(tempFilePath);
+                    _printLogger.LogInfo($"Xoa file tmp thanh cong");
                 }
                 catch (Exception ex)
                 {
                     _printLogger.LogInfo($"{ex.Message}");
                     _printLogger.LogInfo($"{ex.StackTrace}");
                     continue;
-                }
-                finally
-                {
-                    Thread.Sleep(5000);
-                    File.Delete(tempFilePath);
-                    _printLogger.LogInfo($"Xoa file tmp thanh cong");
                 }
             }
 
