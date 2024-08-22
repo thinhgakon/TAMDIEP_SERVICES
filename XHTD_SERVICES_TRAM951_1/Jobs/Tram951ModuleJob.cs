@@ -212,28 +212,38 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         public void ReadDataFromPegasus()
         {
             _logger.LogInfo($"Reading Pegasus...");
+
             while (Program.UHFConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
-
-                foreach (var item in data)
+                try
                 {
-                    try
+                    var data = PegasusReader.Inventory_G2(ref Program.RefComAdr1, 0, 0, 0, Program.RefPort2);
+
+                    foreach (var item in data)
                     {
-                        var cardNoCurrent = ByteArrayToString(item);
+                        try
+                        {
+                            var cardNoCurrent = ByteArrayToString(item);
 
-                        Program.LastTimeReceivedUHF = DateTime.Now;
+                            Program.LastTimeReceivedUHF = DateTime.Now;
 
-                        _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
 
-                        ReadDataProcess(cardNoCurrent);
+                            ReadDataProcess(cardNoCurrent);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                            Program.UHFConnected = false;
+                            break;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
-                        Program.UHFConnected = false;
-                        break;
-                    }
+                }
+                catch(Exception err) 
+                {
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    Program.UHFConnected = false;
+                    break;
                 }
             }
 
