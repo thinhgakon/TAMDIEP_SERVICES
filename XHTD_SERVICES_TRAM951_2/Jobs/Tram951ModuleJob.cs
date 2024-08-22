@@ -195,10 +195,17 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         {
             // 1. Connect Device
             int port = PortHandle;
-            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            var openResult = 1;
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                try
+                {
+                    openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                }
             }
 
             _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
