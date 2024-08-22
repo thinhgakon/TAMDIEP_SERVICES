@@ -22,5 +22,22 @@ namespace XHTD_SERVICES_CONFIRM.Business
 
             return resultResponse;
         }
+
+        public SaleOrdersResponse UpdateOrderStatus(string deliveryCodes, int userId)
+        {
+            var updateResponse = HttpRequest.UpdateOrderStatus(deliveryCodes, userId);
+            var updateResponseContent = updateResponse.Content;
+            var response = JsonConvert.DeserializeObject<SaleOrdersResponse>(updateResponseContent);
+
+            var resultResponse = new SaleOrdersResponse
+            {
+                Code = "02",
+                Message = "Cập nhật trạng thái in phiếu thất bại"
+            };
+            resultResponse.Code = response.Code;
+            resultResponse.Message = response.Message;
+
+            return resultResponse;
+        }
     }
 }

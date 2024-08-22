@@ -337,23 +337,23 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
             }
             
-            var erpResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
-            if (erpResponse.Code == "02")
+            var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
+            if (erpValidateResponse.Code == "02")
             {
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-                var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}!";
+                var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message}!";
                 SendPushNotification("adminNPP", pushMessageNPP);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
                 {
-                    var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                    var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
                     SendPushNotification(currentOrder.DriverUserName, pushMessageDriver);
                 }
 
-                _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
+                _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
 
                 return;
             }
@@ -364,6 +364,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Xác thực thành công
             if (isConfirmSuccess)
             {
+                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes, 0);
+                if (erpUpdateStatusResponse.Code == "02")
+                {
+                    var pushMessageNPP = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, {erpUpdateStatusResponse.Message}!";
+                    SendPushNotification("adminNPP", pushMessageNPP);
+
+                    _confirmLogger.LogInfo($"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, {erpUpdateStatusResponse.Message}!");
+                }
+
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
