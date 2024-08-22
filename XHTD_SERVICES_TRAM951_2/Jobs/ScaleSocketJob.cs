@@ -26,6 +26,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         static Stream stream = null;
         private readonly Notification _notification;
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
+        private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
         public const string IP_ADDRESS = "192.168.13.203";
 
@@ -79,8 +80,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                 DeviceConnected = true;
 
-                var data = encoding.GetBytes(START_CONNECTION_STR);
-                stream.Write(data, 0, data.Length);
+                //var data = encoding.GetBytes(START_CONNECTION_STR);
+                //stream.Write(data, 0, data.Length);
 
                 return DeviceConnected;
             }
@@ -97,8 +98,15 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 try
                 {
-                    byte[] data = new byte[BUFFER_SIZE];
-                    stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
+                    // send
+                    byte[] data = encoding.GetBytes(SEND_TO_RECEIVED_SCALE_CODE);
+                    stream.Write(data, 0, data.Length);
+
+                    // receive
+                    data = new byte[BUFFER_SIZE];
+                    stream.Read(data, 0, BUFFER_SIZE);
+                    //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
+
                     var dataStr = encoding.GetString(data);
 
                     //_logger.LogInfo($"Nhan tin hieu can: {dataStr}");
@@ -162,7 +170,10 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
                     break;
                 }
+
+                Thread.Sleep(500);
             }
+
             AuthenticateScaleStationModuleFromController();
         }
 
