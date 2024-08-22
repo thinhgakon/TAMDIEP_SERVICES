@@ -52,6 +52,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                 string tempFilePath = Path.GetTempFileName() + ".pdf";
 
                 File.WriteAllBytes(tempFilePath, response.RawBytes);
+                Thread.Sleep(1000);
                 _printLogger.LogInfo($"Get file thanh cong {tempFilePath}");
                 try
                 {
@@ -65,7 +66,6 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                     }
 
                     print.Status = PrintStatus.SUCCESS.ToString();
-                    Thread.Sleep(5000);
                     _printLogger.LogInfo($"In thanh cong {print.DeliveryCode}");
                 }
                 catch (Exception ex)
@@ -76,6 +76,7 @@ namespace XHTD_SERVICES_GATEWAY_PRINT.Jobs
                 }
                 finally
                 {
+                    Thread.Sleep(5000);
                     File.Delete(tempFilePath);
                     _printLogger.LogInfo($"Xoa file tmp thanh cong");
                 }
