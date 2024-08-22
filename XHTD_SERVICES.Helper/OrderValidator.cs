@@ -123,10 +123,31 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang tai can: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}, WeightIn = {order.WeightIn}, SumNumber = {order.SumNumber}");
 
-            if (order.CatId == OrderCatIdCode.CLINKER)
+            if (order.CatId == OrderCatIdCode.XI_MANG_XA)
             {
                 if (!string.IsNullOrEmpty(order.DriverUserName)
                     && order.Step != (int)OrderStep.CHUA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_CAN_VAO
+                    && order.Step != (int)OrderStep.DANG_LAY_HANG
+                    && order.Step != (int)OrderStep.DA_LAY_HANG
+                    && order.Step != (int)OrderStep.DA_CAN_RA
+                    && order.Step != (int)OrderStep.DA_HOAN_THANH
+                    && order.Step != (int)OrderStep.DA_GIAO_HANG
+                    )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (order.CatId == OrderCatIdCode.CLINKER)
+            {
+                if (!string.IsNullOrEmpty(order.DriverUserName)
+                    && order.Step != (int)OrderStep.CHUA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_NHAN_DON
                     && order.Step != (int)OrderStep.DA_CAN_RA
                     && order.Step != (int)OrderStep.DA_HOAN_THANH
                     && order.Step != (int)OrderStep.DA_GIAO_HANG
@@ -143,6 +164,7 @@ namespace XHTD_SERVICES.Helper
             {
                 if (!string.IsNullOrEmpty(order.DriverUserName)
                     && order.Step != (int)OrderStep.CHUA_NHAN_DON
+                    && order.Step != (int)OrderStep.DA_NHAN_DON
                     && order.Step != (int)OrderStep.DA_CAN_RA
                     && order.Step != (int)OrderStep.DA_HOAN_THANH
                     && order.Step != (int)OrderStep.DA_GIAO_HANG
@@ -159,6 +181,7 @@ namespace XHTD_SERVICES.Helper
             {
                 if (!string.IsNullOrEmpty(order.DriverUserName) 
                     && order.Step != (int)OrderStep.CHUA_NHAN_DON 
+                    && order.Step != (int)OrderStep.DA_NHAN_DON
                     && order.Step != (int)OrderStep.DA_CAN_RA
                     && order.Step != (int)OrderStep.DA_HOAN_THANH
                     && order.Step != (int)OrderStep.DA_GIAO_HANG
