@@ -267,7 +267,6 @@
     <Compile Include="Hubs\ConfirmHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
     <Compile Include="Jobs\ConfirmModuleJob.cs" />
-    <Compile Include="Jobs\ConfirmModuleJob2.cs" />
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
     <Compile Include="Models\Response\CardNoLog.cs" />
