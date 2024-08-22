@@ -181,13 +181,22 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
         {
             // 1. Connect Device
             int port = PortHandle;
-            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            var openResult = 1;
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                try
+                {
+                    openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                }
+                catch (Exception ex)
+                {
+                    _gatewayLogger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                }
             }
+
             _gatewayLogger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
-            DeviceConnected = true;
+
+            Program.UHFConnected = true;
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
@@ -196,30 +205,46 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
         public async void ReadDataFromPegasus()
         {
             _gatewayLogger.LogInfo("Reading Pegasus...");
-            while (DeviceConnected)
+
+            while (Program.UHFConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
-
-                foreach (var item in data)
+                try
                 {
-                    try
-                    {
-                        var cardNoCurrent = ByteArrayToString(item);
+                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
 
-                        // Xác định xe cân vào / ra
-                        var isLuongVao = false;
-                        var isLuongRa = true;
-
-                        await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
-                    }
-                    catch (Exception ex)
+                    foreach (var item in data)
                     {
-                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        try
+                        {
+                            var cardNoCurrent = ByteArrayToString(item);
+
+                            // Xác định xe cân vào / ra
+                            var isLuongVao = false;
+                            var isLuongRa = true;
+
+                            Program.LastTimeReceivedUHF = DateTime.Now;
+
+                            _gatewayLogger.LogInfo($"====== CardNo : {cardNoCurrent}");
+
+                            await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
+                        }
+                        catch (Exception ex)
+                        {
+                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                            Program.UHFConnected = false;
+                            continue;
+                        }
                     }
+                }
+                catch (Exception err)
+                {
+                    _gatewayLogger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    Program.UHFConnected = false;
+                    break;
                 }
             }
 
+            AuthenticateGatewayModuleFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)
