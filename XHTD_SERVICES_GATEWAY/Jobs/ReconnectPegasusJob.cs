@@ -15,11 +15,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.168";
-        protected readonly GatewayLogger _gatewayLogger;
+        protected readonly GatewayLogger _logger;
+
+        protected const int TIME_TO_RESET = 10;
+
+        TimeSpan timeDiffFromLastReceivedUHF = new TimeSpan();
 
         public ReconnectPegasusJob(GatewayLogger gatewayLogger)
         {
-            _gatewayLogger = gatewayLogger;
+            _logger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -39,29 +43,23 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         {
             try
             {
-                Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr);
+                if (Program.LastTimeReceivedUHF != null)
+                {
+                    timeDiffFromLastReceivedUHF = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedUHF);
 
-                if (reply.Status == IPStatus.Success)
-                {
-                    Console.WriteLine("Connection ok");
-                    return;
-                }
-                else
-                {
-                    int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
+                    if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        Thread.Sleep(1000);
+                        _logger.LogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+
+                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+
+                        Program.UHFConnected = false;
                     }
-                    _gatewayLogger.LogWarn("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogWarn($"Ping ERROR: {ex.Message}");
+                _logger.LogWarn($"RECONNECT ERROR: {ex.Message}");
             }
         }
     }
