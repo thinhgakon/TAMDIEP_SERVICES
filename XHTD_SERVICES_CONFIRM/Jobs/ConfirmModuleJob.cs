@@ -364,15 +364,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Xác thực thành công
             if (isConfirmSuccess)
             {
-                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
-                if (erpUpdateStatusResponse.Code == "02")
-                {
-                    var pushMessageNPP = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, {erpUpdateStatusResponse.Message}!";
-                    SendPushNotification("adminNPP", pushMessageNPP);
-
-                    _confirmLogger.LogInfo($"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, {erpUpdateStatusResponse.Message}!");
-                }
-
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
@@ -397,6 +388,16 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 // Bật đèn xanh - đỏ
                 TurnOnTrafficLight();
+
+                // Cập nhật trạng thái in phiếu
+                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
+                if (erpUpdateStatusResponse.Code == "02")
+                {
+                    var pushMessageNPP = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, chi tiết: {erpUpdateStatusResponse.Message}!";
+                    SendPushNotification("adminNPP", pushMessageNPP);
+
+                    _confirmLogger.LogInfo($"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, chi tiết: {erpUpdateStatusResponse.Message}!");
+                }
             }
             else
             {
