@@ -32,7 +32,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                 .StartNow()
                 .WithPriority(2)
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
@@ -42,7 +42,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                 .WithPriority(2)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(2)
+                     .WithIntervalInSeconds(1)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob34, syncOrderTrigger34);
