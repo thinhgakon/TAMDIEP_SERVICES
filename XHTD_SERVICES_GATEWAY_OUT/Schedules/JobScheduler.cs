@@ -43,7 +43,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
+                     .WithIntervalInSeconds(10)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
