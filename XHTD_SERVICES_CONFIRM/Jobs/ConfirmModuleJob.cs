@@ -343,14 +343,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-                var pushMessageNPP = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message}!";
-                SendPushNotification("adminNPP", pushMessageNPP);
+                var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+                SendPushNotification("adminNPP", pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
                 {
-                    var pushMessageDriver = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message}, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-                    SendPushNotification(currentOrder.DriverUserName, pushMessageDriver);
+                    SendPushNotification(currentOrder.DriverUserName, pushMessage);
                 }
 
                 _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
@@ -391,12 +390,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 // Cập nhật trạng thái in phiếu
                 var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
-                if (erpUpdateStatusResponse.Code == "02")
+                if (erpUpdateStatusResponse.Code == "01")
                 {
-                    var pushMessageNPP = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, chi tiết: {erpUpdateStatusResponse.Message}!";
-                    SendPushNotification("adminNPP", pushMessageNPP);
+                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
+                    SendPushNotification("adminNPP", pushMessagePrintStatus);
 
-                    _confirmLogger.LogInfo($"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại, chi tiết: {erpUpdateStatusResponse.Message}!");
+                    _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
+                }
+                else if (erpUpdateStatusResponse.Code == "02")
+                {
+                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
+                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+
+                    _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
             }
             else
