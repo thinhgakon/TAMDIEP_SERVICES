@@ -281,6 +281,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="tblExportHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="DeliveryCode" Type="nvarchar(max)" />
+          <Property Name="TroughCode" Type="nvarchar(max)" />
+          <Property Name="MachineCode" Type="nvarchar(max)" />
+          <Property Name="CountQuantityStart" Type="float" />
+          <Property Name="CountQuantityEnd" Type="float" />
+          <Property Name="TimeStart" Type="datetime2" Precision="7" />
+          <Property Name="TimeEnd" Type="datetime2" Precision="7" />
+        </EntityType>
         <EntityType Name="tblFunction">
           <Key>
             <PropertyRef Name="Id" />
@@ -691,6 +705,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
+          <End Role="tblStoreOrderOperating" Type="Self.tblStoreOrderOperating" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblExportHistory" Type="Self.tblExportHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblStoreOrderOperating">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tblExportHistory">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TblMachineTrough_tblMachine_MachineCode">
           <End Role="tblMachine" Type="Self.tblMachine" Multiplicity="0..1" />
           <End Role="TblMachineTrough" Type="Self.TblMachineTrough" Multiplicity="*" />
@@ -788,6 +816,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblDeviceOperating" EntityType="Self.tblDeviceOperating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblDriver" EntityType="Self.tblDriver" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblDriverVehicle" EntityType="Self.tblDriverVehicle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblExportHistory" EntityType="Self.tblExportHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblFunction" EntityType="Self.tblFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblLongVehicle" EntityType="Self.tblLongVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblMachine" EntityType="Self.tblMachine" Schema="dbo" store:Type="Tables" />
@@ -841,6 +870,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <AssociationSet Name="FK_tblCheckInOut_tblAttachment" Association="Self.FK_tblCheckInOut_tblAttachment">
             <End Role="tblAttachment" EntitySet="tblAttachment" />
             <End Role="tblCheckInOut" EntitySet="tblCheckInOut" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId" Association="Self.FK_tblExportHistory_tblStoreOrderOperating_OrderId">
+            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperating" />
+            <End Role="tblExportHistory" EntitySet="tblExportHistory" />
           </AssociationSet>
           <AssociationSet Name="FK_TblMachineTrough_tblMachine_MachineCode" Association="Self.FK_TblMachineTrough_tblMachine_MachineCode">
             <End Role="tblMachine" EntitySet="tblMachine" />
@@ -1363,6 +1396,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ExportedNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblExportHistories" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblStoreOrderOperating" ToRole="tblExportHistory" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1600,6 +1634,11 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <End Role="tblTypeProduct" EntitySet="tblTypeProducts" />
             <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProducts" />
           </AssociationSet>
+          <EntitySet Name="tblExportHistories" EntityType="XHTD_SERVICES.Data.Entities.tblExportHistory" />
+          <AssociationSet Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId" Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId">
+            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
+            <End Role="tblExportHistory" EntitySet="tblExportHistories" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -1711,6 +1750,35 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Principal>
             <Dependent Role="tblMachineTypeProduct">
               <PropertyRef Name="TypeProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblExportHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MachineCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CountQuantityStart" Type="Double" />
+          <Property Name="CountQuantityEnd" Type="Double" />
+          <Property Name="TimeStart" Type="DateTime" Precision="7" />
+          <Property Name="TimeEnd" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="tblStoreOrderOperating" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblExportHistory" ToRole="tblStoreOrderOperating" />
+        </EntityType>
+        <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
+          <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.tblExportHistory" Role="tblExportHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblStoreOrderOperating">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tblExportHistory">
+              <PropertyRef Name="OrderId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2423,6 +2491,21 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblExportHistories">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblExportHistory">
+              <MappingFragment StoreEntitySet="tblExportHistory">
+                <ScalarProperty Name="TimeEnd" ColumnName="TimeEnd" />
+                <ScalarProperty Name="TimeStart" ColumnName="TimeStart" />
+                <ScalarProperty Name="CountQuantityEnd" ColumnName="CountQuantityEnd" />
+                <ScalarProperty Name="CountQuantityStart" ColumnName="CountQuantityStart" />
+                <ScalarProperty Name="MachineCode" ColumnName="MachineCode" />
+                <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
+                <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

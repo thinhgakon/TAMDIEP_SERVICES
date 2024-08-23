@@ -14,6 +14,12 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class tblStoreOrderOperating
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tblStoreOrderOperating()
+        {
+            this.tblExportHistories = new HashSet<tblExportHistory>();
+        }
+    
         public int Id { get; set; }
         public string Vehicle { get; set; }
         public string DriverName { get; set; }
@@ -117,5 +123,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<decimal> ExportedNumber { get; set; }
         public Nullable<decimal> ExtraNumber { get; set; }
         public string ExtraReason { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
     }
 }
