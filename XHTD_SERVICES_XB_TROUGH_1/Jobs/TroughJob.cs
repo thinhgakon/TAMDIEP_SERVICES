@@ -162,25 +162,42 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
         public async void ReadDataFromPegasus()
         {
             _logger.LogInfo($"Reading Pegasus...");
-            while (DeviceConnected)
+
+            while (Program.UHFConnected)
             {
-                var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
-
-                foreach (var item in data)
+                try
                 {
-                    try
-                    {
-                        var cardNoCurrent = ByteArrayToString(item);
+                    var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
 
-                        await ReadDataProcess(cardNoCurrent);
-                    }
-                    catch (Exception ex)
+                    foreach (var item in data)
                     {
-                        _logger.LogError($@"Có lỗi xảy ra khi xử lý RFID {ex.StackTrace} {ex.Message} ");
-                        continue;
+                        try
+                        {
+                            var cardNoCurrent = ByteArrayToString(item);
+
+                            Program.LastTimeReceivedUHF = DateTime.Now;
+
+                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+
+                            await ReadDataProcess(cardNoCurrent);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                            Program.UHFConnected = false;
+                            break;
+                        }
                     }
                 }
+                catch (Exception err)
+                {
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    Program.UHFConnected = false;
+                    break;
+                }
             }
+
+            AuthenticateConfirmModuleFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)
