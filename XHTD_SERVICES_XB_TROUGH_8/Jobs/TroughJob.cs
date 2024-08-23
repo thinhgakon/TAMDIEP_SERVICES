@@ -138,13 +138,22 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
         {
             // 1. Connect Device
             int port = PortHandle;
-            var openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+            var openResult = 1;
             while (openResult != 0)
             {
-                openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                try
+                {
+                    openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                }
+                catch (Exception ex)
+                {
+                    _trough1Logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                }
             }
+
             _trough1Logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
-            DeviceConnected = true;
+
+            Program.UHFConnected = true;
 
             // 2. Đọc dữ liệu từ thiết bị
             ReadDataFromPegasus();
