@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly TroughLogger _trough1Logger;
+        protected readonly TroughLogger _logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -90,7 +90,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
             _notification = notification;
-            _trough1Logger = trough1Logger;
+            _logger = trough1Logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -107,12 +107,12 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
 
                 if (!isActiveService)
                 {
-                    _trough1Logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                    _logger.LogInfo("Service nhận diện RFID đang TẮT.");
                     return;
                 }
 
-                _trough1Logger.LogInfo("Start Xibao Trough service");
-                _trough1Logger.LogInfo("----------------------------");
+                _logger.LogInfo("Start Xibao Trough service");
+                _logger.LogInfo("----------------------------");
 
                 AuthenticateConfirmModuleFromPegasus();
             });
@@ -147,11 +147,11 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _trough1Logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                    _logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
                 }
             }
 
-            _trough1Logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
 
             Program.UHFConnected = true;
 
@@ -161,7 +161,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _trough1Logger.LogInfo($"Reading Pegasus...");
+            _logger.LogInfo($"Reading Pegasus...");
             while (DeviceConnected)
             {
                 var data = PegasusReader.Inventory_G2(ref ComAddr, 0, 0, 0, PortHandle);
@@ -176,7 +176,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _trough1Logger.LogError($@"Có lỗi xảy ra khi xử lý RFID {ex.StackTrace} {ex.Message} ");
+                        _logger.LogError($@"Có lỗi xảy ra khi xử lý RFID {ex.StackTrace} {ex.Message} ");
                         continue;
                     }
                 }
@@ -187,7 +187,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
         {
             if (Program.IsLockingRfid)
             {
-                _trough1Logger.LogInfo($"== Đầu đọc RFID đang xử lý => Kết thúc {cardNoCurrent} == ");
+                _logger.LogInfo($"== Đầu đọc RFID đang xử lý => Kết thúc {cardNoCurrent} == ");
 
                 new TroughHub().SendMessage("IS_LOCKING_RFID", "1");
             }
@@ -217,24 +217,24 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
                 return;
             }
 
-            _trough1Logger.LogInfo("----------------------------");
-            _trough1Logger.LogInfo($"Tag: {cardNoCurrent}");
-            _trough1Logger.LogInfo("-----");
+            _logger.LogInfo("----------------------------");
+            _logger.LogInfo($"Tag: {cardNoCurrent}");
+            _logger.LogInfo("-----");
 
-            _trough1Logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
+            _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
-                _trough1Logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
+                _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
                 SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
             }
             else
             {
-                _trough1Logger.LogInfo($"3. Tag KHÔNG hợp lệ => Kết thúc.");
+                _logger.LogInfo($"3. Tag KHÔNG hợp lệ => Kết thúc.");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
@@ -242,7 +242,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
                 return;
             }
 
-            _trough1Logger.LogInfo($"10. Giải phóng RFID");
+            _logger.LogInfo($"10. Giải phóng RFID");
 
             Program.IsLockingRfid = false;
         }
@@ -265,7 +265,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
             }
             catch (Exception ex)
             {
-                _trough1Logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
