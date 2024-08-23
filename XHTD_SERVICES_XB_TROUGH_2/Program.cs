@@ -22,6 +22,9 @@ namespace XHTD_SERVICES_XB_TROUGH_2
         public static int RefPort2 = 2000;
         public static byte RefComAdr2 = 0xFF;
 
+        public static DateTime? LastTimeReceivedUHF = DateTime.Now;
+
+        public static bool UHFConnected = false;
 
         static void Main()
         {
