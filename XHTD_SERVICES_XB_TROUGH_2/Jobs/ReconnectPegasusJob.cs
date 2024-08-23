@@ -14,6 +14,10 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
         private string PegasusAdr = "192.168.13.193";
         protected readonly TroughLogger _logger;
 
+        protected const int TIME_TO_RESET = 10;
+
+        TimeSpan timeDiffFromLastReceivedUHF = new TimeSpan();
+
         public ReconnectPegasusJob(TroughLogger logger)
         {
             _logger = logger;
@@ -36,29 +40,23 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
         {
             try
             {
-                Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr);
+                if (Program.LastTimeReceivedUHF != null)
+                {
+                    timeDiffFromLastReceivedUHF = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedUHF);
 
-                if (reply.Status == IPStatus.Success)
-                {
-                    Console.WriteLine("Connection ok");
-                    return;
-                }
-                else
-                {
-                    int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
+                    if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        Thread.Sleep(1000);
+                        _logger.LogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+
+                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+
+                        Program.UHFConnected = false;
                     }
-                    _logger.LogWarn("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"Ping ERROR: {ex.Message}");
+                _logger.LogWarn($"RECONNECT ERROR: {ex.Message}");
             }
         }
     }
