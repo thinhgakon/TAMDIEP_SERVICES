@@ -265,9 +265,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"Khong the xu ly {troughCode}");
-                    _syncTroughLogger.LogError($"{ex.Message}");
-                    _syncTroughLogger.LogError($"{ex.StackTrace}");
+                    _syncTroughLogger.LogInfo($"ReadDataFromTrough ERROR {troughCode} -- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
