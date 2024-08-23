@@ -126,16 +126,24 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     return;
                 }
+
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
-                if (client.Connected)
-                {
-                    stream = client.GetStream();
-                    _syncTroughLogger.LogInfo($"Connected to count trough : 1|2");
-                    await ReadDataFromTrough(troughCodes);
-                }
 
                 if (client.Connected)
+                {
+                    _syncTroughLogger.LogInfo($"Trough Job Ket noi thanh cong MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+
+                    stream = client.GetStream();
+
+                    await ReadDataFromTrough(troughCodes);
+                }
+                else
+                {
+                    _syncTroughLogger.LogInfo($"Trough Job Ket noi that bai MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                }
+
+                if (client != null)
                 {
                     client.Close();
                 }

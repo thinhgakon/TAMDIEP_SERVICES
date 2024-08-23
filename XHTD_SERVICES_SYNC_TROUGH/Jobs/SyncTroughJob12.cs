@@ -129,6 +129,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+
                 if (client.Connected)
                 {
                     _syncTroughLogger.LogInfo($"Trough Job Ket noi thanh cong MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");

@@ -63,25 +63,36 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     return;
                 }
 
-                _logger.LogInfo("Bat dau ket noi machine.");
                 client = new TcpClient();
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
-                stream = client.GetStream();
-                _logger.LogInfo($"Connected to machine : 3|4");
-                await MachineJobProcess(machines);
 
-                if (client != null && client.Connected)
+                if (client.Connected)
+                {
+                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+
+                    stream = client.GetStream();
+
+                    await MachineJobProcess(machines);
+                }
+                else
+                {
+                    _logger.LogInfo($"Machine Job Ket noi that bai MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                }
+
+                if (client != null)
                 {
                     client.Close();
                     Thread.Sleep(2000);
                 }
-                stream?.Close();
+
+                if (stream != null)
+                {
+                    stream.Close();
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                _logger.LogInfo($"Machine Job ERROR IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
         }
 
