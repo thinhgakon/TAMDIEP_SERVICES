@@ -131,12 +131,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 if (client.Connected)
                 {
+                    _syncTroughLogger.LogInfo($"Trough Job Ket noi thanh cong MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+
                     stream = client.GetStream();
-                    _syncTroughLogger.LogInfo($"Connected to count trough : 1|2");
+
                     await ReadDataFromTrough(troughCodes);
                 }
+                else
+                {
+                    _syncTroughLogger.LogInfo($"Trough Job Ket noi that bai MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                }
 
-                if (client.Connected)
+                if (client != null)
                 {
                     client.Close();
                 }
@@ -148,9 +154,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo("Ket noi that bai.");
-                _syncTroughLogger.LogInfo(ex.Message);
-                _syncTroughLogger.LogInfo(ex.StackTrace);
+                _syncTroughLogger.LogInfo($"Trough Job ERROR IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
         }
 
