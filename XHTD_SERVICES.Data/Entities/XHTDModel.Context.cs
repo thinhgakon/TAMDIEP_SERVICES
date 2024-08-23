@@ -61,5 +61,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblCheckInOut> tblCheckInOuts { get; set; }
         public virtual DbSet<tblAttachment> tblAttachments { get; set; }
         public virtual DbSet<TblMachineTrough> TblMachineTroughs { get; set; }
+        public virtual DbSet<TblPrint> TblPrints { get; set; }
     }
 }

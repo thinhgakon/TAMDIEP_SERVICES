@@ -646,5 +646,24 @@ namespace XHTD_SERVICES.Helper
 
             return response;
         }
+
+        public static IRestResponse PrintInvoice(string erpOrderId)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient($"{apiUrl["PrintInvoice"]}?erpOrderId={erpOrderId}");
+
+            var request = new RestRequest
+            {
+                Method = Method.GET
+            };
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
     }
 }

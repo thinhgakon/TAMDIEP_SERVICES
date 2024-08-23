@@ -134,6 +134,9 @@
     <Compile Include="Entities\tblNotification.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblPrint.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblPrintConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -201,6 +204,7 @@
     <Compile Include="Repositories\CallToTroughRepository.cs" />
     <Compile Include="Repositories\CheckInOutRepository.cs" />
     <Compile Include="Repositories\MachineRepository .cs" />
+    <Compile Include="Repositories\PrintRepository.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.ConfirmationPoint.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Led.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Scale.cs" />
