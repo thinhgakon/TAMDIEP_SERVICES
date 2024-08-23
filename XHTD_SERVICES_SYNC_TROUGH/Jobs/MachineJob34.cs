@@ -176,9 +176,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogInfo($"Khong the xu ly {machine.Code}");
-                    _logger.LogError($"{ex.Message}");
-                    _logger.LogError($"{ex.StackTrace}");
+                    _logger.LogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
