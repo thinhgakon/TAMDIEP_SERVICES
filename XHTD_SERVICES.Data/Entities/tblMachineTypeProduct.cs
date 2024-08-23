@@ -21,5 +21,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
+    
+        public virtual tblMachine tblMachine { get; set; }
+        public virtual tblTypeProduct tblTypeProduct { get; set; }
     }
 }

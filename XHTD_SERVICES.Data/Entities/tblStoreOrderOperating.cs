@@ -114,5 +114,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string ErpOrderId { get; set; }
         public string InvoiceNo { get; set; }
         public string InvoiceStatus { get; set; }
+        public Nullable<decimal> ExportedNumber { get; set; }
+        public Nullable<decimal> ExtraNumber { get; set; }
+        public string ExtraReason { get; set; }
     }
 }

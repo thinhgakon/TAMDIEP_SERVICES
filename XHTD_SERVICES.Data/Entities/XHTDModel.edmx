@@ -555,6 +555,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ErpOrderId" Type="varchar" MaxLength="50" />
           <Property Name="InvoiceNo" Type="varchar" MaxLength="50" />
           <Property Name="InvoiceStatus" Type="varchar" MaxLength="50" />
+          <Property Name="ExportedNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ExtraReason" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -712,6 +715,34 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblMachineTypeProduct_tblMachine_MachineCode">
+          <End Role="tblMachine" Type="Self.tblMachine" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblMachineTypeProduct" Type="Self.tblMachineTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblMachine">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblMachineTypeProduct">
+              <PropertyRef Name="MachineCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct">
+          <End Role="tblTypeProduct" Type="Self.tblTypeProduct" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblMachineTypeProduct" Type="Self.tblMachineTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTypeProduct">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblMachineTypeProduct">
+              <PropertyRef Name="TypeProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
           <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -818,6 +849,14 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <AssociationSet Name="FK_TblMachineTrough_tblTrough_TroughCode" Association="Self.FK_TblMachineTrough_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
             <End Role="TblMachineTrough" EntitySet="TblMachineTrough" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblMachineTypeProduct_tblMachine_MachineCode" Association="Self.FK_tblMachineTypeProduct_tblMachine_MachineCode">
+            <End Role="tblMachine" EntitySet="tblMachine" />
+            <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" Association="Self.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct">
+            <End Role="tblTypeProduct" EntitySet="tblTypeProduct" />
+            <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProduct" />
           </AssociationSet>
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
@@ -1104,6 +1143,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="StartStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="StopStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TblMachineTroughs" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" FromRole="tblMachine" ToRole="TblMachineTrough" />
+          <NavigationProperty Name="tblMachineTypeProducts" Relationship="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblMachine_MachineCode" FromRole="tblMachine" ToRole="tblMachineTypeProduct" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -1116,6 +1156,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblMachine" Relationship="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblMachine_MachineCode" FromRole="tblMachineTypeProduct" ToRole="tblMachine" />
+          <NavigationProperty Name="tblTypeProduct" Relationship="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" FromRole="tblMachineTypeProduct" ToRole="tblTypeProduct" />
         </EntityType>
         <EntityType Name="tblNotification">
           <Key>
@@ -1318,6 +1360,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ErpOrderId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ExportedNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1401,6 +1446,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="DateTime" Precision="3" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblTroughTypeProducts" Relationship="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" FromRole="tblTypeProduct" ToRole="tblTroughTypeProduct" />
+          <NavigationProperty Name="tblMachineTypeProducts" Relationship="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" FromRole="tblTypeProduct" ToRole="tblMachineTypeProduct" />
         </EntityType>
         <EntityType Name="tblVehicle">
           <Key>
@@ -1546,6 +1592,14 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <End Role="TblMachineTrough" EntitySet="TblMachineTroughs" />
           </AssociationSet>
           <EntitySet Name="TblPrints" EntityType="XHTD_SERVICES.Data.Entities.TblPrint" />
+          <AssociationSet Name="FK_tblMachineTypeProduct_tblMachine_MachineCode" Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblMachine_MachineCode">
+            <End Role="tblMachine" EntitySet="tblMachines" />
+            <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct">
+            <End Role="tblTypeProduct" EntitySet="tblTypeProducts" />
+            <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProducts" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -1632,6 +1686,34 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ErpOrderId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <Association Name="FK_tblMachineTypeProduct_tblMachine_MachineCode">
+          <End Type="XHTD_SERVICES.Data.Entities.tblMachine" Role="tblMachine" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.tblMachineTypeProduct" Role="tblMachineTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblMachine">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblMachineTypeProduct">
+              <PropertyRef Name="MachineCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct">
+          <End Type="XHTD_SERVICES.Data.Entities.tblTypeProduct" Role="tblTypeProduct" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.tblMachineTypeProduct" Role="tblMachineTypeProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblTypeProduct">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblMachineTypeProduct">
+              <PropertyRef Name="TypeProduct" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2046,6 +2128,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="ExtraReason" ColumnName="ExtraReason" />
+                <ScalarProperty Name="ExtraNumber" ColumnName="ExtraNumber" />
+                <ScalarProperty Name="ExportedNumber" ColumnName="ExportedNumber" />
                 <ScalarProperty Name="InvoiceStatus" ColumnName="InvoiceStatus" />
                 <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
                 <ScalarProperty Name="ErpOrderId" ColumnName="ErpOrderId" />

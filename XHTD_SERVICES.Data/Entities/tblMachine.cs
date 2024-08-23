@@ -18,6 +18,7 @@ namespace XHTD_SERVICES.Data.Entities
         public tblMachine()
         {
             this.TblMachineTroughs = new HashSet<TblMachineTrough>();
+            this.tblMachineTypeProducts = new HashSet<tblMachineTypeProduct>();
         }
     
         public string Code { get; set; }
@@ -34,5 +35,7 @@ namespace XHTD_SERVICES.Data.Entities
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TblMachineTrough> TblMachineTroughs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblMachineTypeProduct> tblMachineTypeProducts { get; set; }
     }
 }

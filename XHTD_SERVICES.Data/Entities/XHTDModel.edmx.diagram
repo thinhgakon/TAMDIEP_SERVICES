@@ -47,6 +47,8 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblPrint" Width="1.5" PointX="11.375" PointY="17.75" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblMachine_MachineCode" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
