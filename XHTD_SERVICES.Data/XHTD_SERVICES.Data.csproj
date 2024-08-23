@@ -222,6 +222,7 @@
     <Compile Include="Repositories\StoreOrderOperatingRepository.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\AccountRepository.cs" />
+    <Compile Include="tblExportHistory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
