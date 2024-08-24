@@ -107,8 +107,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
                         _logger.LogInfo($"Start machine: {machine.Code}");
+
+                        var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
+                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
+                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
+
                         // 2. send 1
-                        byte[] data = encoding.GetBytes($"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]");
+                        byte[] data = encoding.GetBytes(command);
                         stream.Write(data, 0, data.Length);
 
                         // 3. receive 1
