@@ -116,6 +116,9 @@
     <Compile Include="Entities\tblDriverVehicle.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblExportHistory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblFunction.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>

@@ -32,6 +32,7 @@ namespace XHTD_SERVICES.Data.Entities
         public string CurrentDeliveryCode { get; set; }
         public string StartStatus { get; set; }
         public string StopStatus { get; set; }
+        public Nullable<double> StartCountingFrom { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TblMachineTrough> TblMachineTroughs { get; set; }
