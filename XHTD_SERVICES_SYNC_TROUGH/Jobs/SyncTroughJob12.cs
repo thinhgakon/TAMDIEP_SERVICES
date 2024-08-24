@@ -124,6 +124,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (troughCodes == null || troughCodes.Count == 0)
                 {
+                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Khong tim thay mang xuat --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+
                     return;
                 }
 
@@ -132,7 +134,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client.Connected)
                 {
-                    _syncTroughLogger.LogInfo($"Trough Job Ket noi thanh cong MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     stream = client.GetStream();
 
@@ -140,7 +142,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 }
                 else
                 {
-                    _syncTroughLogger.LogInfo($"Trough Job Ket noi that bai MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi that bai --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
 
                 if (client != null)
@@ -155,7 +157,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo($"Trough Job ERROR IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
+                _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
         }
 
