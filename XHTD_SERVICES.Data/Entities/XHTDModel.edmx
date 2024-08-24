@@ -336,6 +336,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CurrentDeliveryCode" Type="varchar" MaxLength="50" />
           <Property Name="StartStatus" Type="varchar" MaxLength="50" />
           <Property Name="StopStatus" Type="varchar" MaxLength="50" />
+          <Property Name="StartCountingFrom" Type="float" />
         </EntityType>
         <EntityType Name="TblMachineTrough">
           <Key>
@@ -1177,6 +1178,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="StopStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TblMachineTroughs" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblMachine_MachineCode" FromRole="tblMachine" ToRole="TblMachineTrough" />
           <NavigationProperty Name="tblMachineTypeProducts" Relationship="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblMachine_MachineCode" FromRole="tblMachine" ToRole="tblMachineTypeProduct" />
+          <Property Name="StartCountingFrom" Type="Double" />
         </EntityType>
         <EntityType Name="tblMachineTypeProduct">
           <Key>
@@ -2063,6 +2065,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblMachines">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblMachine">
               <MappingFragment StoreEntitySet="tblMachine">
+                <ScalarProperty Name="StartCountingFrom" ColumnName="StartCountingFrom" />
                 <ScalarProperty Name="StopStatus" ColumnName="StopStatus" />
                 <ScalarProperty Name="StartStatus" ColumnName="StartStatus" />
                 <ScalarProperty Name="CurrentDeliveryCode" ColumnName="CurrentDeliveryCode" />
