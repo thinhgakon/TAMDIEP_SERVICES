@@ -19,6 +19,8 @@ using Autofac;
 using XHTD_SERVICES_XB_TROUGH_7.Hubs;
 using System.Net.NetworkInformation;
 using XHTD_SERVICES_XB_TROUGH_7.Devices;
+using XHTD_SERVICES.Helper.Models.Request;
+using XHTD_SERVICES_XB_TROUGH_7.Business;
 
 namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
 {
@@ -33,6 +35,10 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
         protected readonly CategoriesDevicesLogRepository _categoriesDevicesLogRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected readonly CallToTroughRepository _callToTroughRepository;
+
+        protected readonly MachineRepository _machineRepository;
 
         protected readonly Notification _notification;
 
@@ -71,7 +77,7 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.217";
 
-        private readonly string MACHINE_CODE = "7";
+        private readonly string MACHINE_CODE = "4";
         private readonly string TROUGH_CODE = "7";
 
         public TroughJob(
@@ -80,6 +86,8 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
+            MachineRepository machineRepository,
+            CallToTroughRepository callToTroughRepository,
             Notification notification,
             TroughLogger trough1Logger
             )
@@ -89,6 +97,8 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
+            _machineRepository = machineRepository;
+            _callToTroughRepository = callToTroughRepository;
             _notification = notification;
             _logger = trough1Logger;
         }
@@ -240,18 +250,50 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
 
             _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
+            var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
+
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+
+            // Phương tiện đầu tiên hiện tại trong máng
+            string vehicleInTrough = _callToTroughRepository.GetCurrentFirstVehicle(TROUGH_CODE);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
                 SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+
+                if (vehicleCodeCurrent.ToUpper() == vehicleInTrough.ToUpper())
+                {
+                    if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
+                    {
+                        var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
+                        var requestData = new MachineControlRequest
+                        {
+                            MachineCode = MACHINE_CODE,
+                            TroughCode = TROUGH_CODE,
+                            CurrentDeliveryCode = currentOrder.DeliveryCode
+                        };
+
+                        var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
+
+                        if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                        {
+                            _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thành công!");
+                        }
+
+                        else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
+                    }
+
+                    else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Máy đang chạy hoặc đang PENDING!");
+                }
+
+                else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng!");
             }
             else
             {
-                _logger.LogInfo($"3. Tag KHÔNG hợp lệ => Kết thúc.");
+                _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Tag KHÔNG hợp lệ!");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
