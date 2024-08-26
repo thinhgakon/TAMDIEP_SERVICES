@@ -255,8 +255,8 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
-            // Phương tiện đầu tiên hiện tại trong máng
-            string vehicleInTrough = _callToTroughRepository.GetCurrentFirstVehicle(TROUGH_CODE);
+            // Đơn hàng đầu tiên hiện tại trong máng
+            var orderInTrough = _callToTroughRepository.GetCurrentFirstOrderInTrough(TROUGH_CODE);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
@@ -264,16 +264,15 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                 SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
 
-                if (vehicleCodeCurrent.ToUpper() == vehicleInTrough.ToUpper())
+                if (orderInTrough != null && vehicleCodeCurrent.ToUpper() == orderInTrough.Vehicle.ToUpper())
                 {
                     if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
                     {
-                        var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
                         var requestData = new MachineControlRequest
                         {
                             MachineCode = MACHINE_CODE,
                             TroughCode = TROUGH_CODE,
-                            CurrentDeliveryCode = currentOrder.DeliveryCode
+                            CurrentDeliveryCode = orderInTrough.DeliveryCode
                         };
 
                         var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
@@ -283,17 +282,17 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                             _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thành công!");
                         }
 
-                        else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
+                        else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {orderInTrough.DeliveryCode}");
                     }
 
-                    else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Máy đang chạy hoặc đang PENDING!");
+                    else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
                 }
 
-                else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng!");
+                else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
             }
             else
             {
-                _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Tag KHÔNG hợp lệ!");
+                _logger.LogInfo($"3. Tag KHÔNG hợp lệ! => Kết thúc");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
