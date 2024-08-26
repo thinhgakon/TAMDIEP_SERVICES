@@ -167,10 +167,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
+                    _syncTroughLogger.LogInfo($"==========Lay du lieu cuối máng: {troughCode} =========");
+
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
 
                     if (troughInfo == null)
                     {
+                        _syncTroughLogger.LogInfo($"Mang khong ton tai: {troughCode} => Thoat");
+
                         continue;
                     }
 
@@ -192,13 +196,21 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
                         continue;
                     }
+                    else
+                    {
+                        _syncTroughLogger.LogInfo($"Trả về: {response}");
+                    }
 
                     var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
                     var countQuantity = (Double.TryParse(result.Item2, out double i) ? i : 0);
-                    if (countQuantity == 0) continue;
+                    if (countQuantity == 0)
+                    {
+                        continue;
+                    }
+
                     var planQuantity = 100;
 
                     var troughCodeReturn = result.Item1;
