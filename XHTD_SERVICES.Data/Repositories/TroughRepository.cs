@@ -56,7 +56,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             using (var dbContext = new XHTD_Entities())
             {
-                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == code && x.State == true);
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == code);
 
                 return trough;
             }
