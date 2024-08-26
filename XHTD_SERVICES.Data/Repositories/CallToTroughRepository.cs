@@ -416,7 +416,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public string GetCurrentFirstVehicle(string troughCode)
+        public tblCallToTrough GetCurrentFirstOrderInTrough(string troughCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -427,10 +427,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (callToTrough != null)
                 {
-                    return callToTrough.Vehicle;
+                    return callToTrough;
                 }
 
-                return string.Empty;
+                return null;
             }
         }
     }
