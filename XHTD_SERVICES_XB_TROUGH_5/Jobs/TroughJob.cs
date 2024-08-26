@@ -86,6 +86,8 @@ namespace XHTD_SERVICES_XB_TROUGH_5.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
+            MachineRepository machineRepository,
+            CallToTroughRepository callToTroughRepository,
             Notification notification,
             TroughLogger trough1Logger
             )
@@ -95,6 +97,8 @@ namespace XHTD_SERVICES_XB_TROUGH_5.Jobs
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
+            _machineRepository = machineRepository;
+            _callToTroughRepository = callToTroughRepository;
             _notification = notification;
             _logger = trough1Logger;
         }
