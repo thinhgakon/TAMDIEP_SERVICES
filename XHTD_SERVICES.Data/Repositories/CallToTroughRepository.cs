@@ -415,5 +415,23 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public string GetCurrentFirstVehicle(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var callToTrough = dbContext.tblCallToTroughs
+                                            .Where(x => x.Machine == troughCode && x.IsDone == false)
+                                            .OrderBy(x => x.IndexTrough)
+                                            .FirstOrDefault();
+
+                if (callToTrough != null)
+                {
+                    return callToTrough.Vehicle;
+                }
+
+                return string.Empty;
+            }
+        }
     }
 }
