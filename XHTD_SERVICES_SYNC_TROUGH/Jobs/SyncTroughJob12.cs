@@ -307,7 +307,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             try
             {
-                if (client != null && client?.Connected == true)
+                if (client != null)
                 {
                     client.Close();
                 }
@@ -316,9 +316,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     stream.Close();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                _syncTroughLogger.LogInfo($"SyncTroughJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }
