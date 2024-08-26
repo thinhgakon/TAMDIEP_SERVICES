@@ -229,7 +229,7 @@ namespace XHTD_SERVICES_XB_TROUGH_4.Jobs
                 tmpInvalidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
             {
                 return;
             }
@@ -239,7 +239,7 @@ namespace XHTD_SERVICES_XB_TROUGH_4.Jobs
                 tmpValidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
             {
                 return;
             }
@@ -260,6 +260,9 @@ namespace XHTD_SERVICES_XB_TROUGH_4.Jobs
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpValidCardNoLst.Add(newCardNoLog);
+
                 _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
                 SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
