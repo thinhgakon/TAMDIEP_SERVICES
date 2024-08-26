@@ -255,12 +255,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Businsess\MachineApiLib.cs" />
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Jobs\ReconnectPegasusJob.cs" />
+    <Compile Include="Models\Response\MachineResponse.cs" />
     <Compile Include="TroughLogger.cs" />
     <Compile Include="Hubs\TroughHub.cs" />
     <Compile Include="Hubs\SignalRService.cs" />
