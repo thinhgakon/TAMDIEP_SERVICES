@@ -144,7 +144,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi that bai --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
-
+            }
+            catch (Exception ex)
+            {
+                _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
+            }
+            finally {
                 if (client != null)
                 {
                     client.Close();
@@ -154,10 +159,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     stream.Close();
                 }
-            }
-            catch (Exception ex)
-            {
-                _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
         }
 
