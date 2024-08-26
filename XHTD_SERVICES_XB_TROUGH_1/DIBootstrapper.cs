@@ -10,6 +10,7 @@ using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
+using XHTD_SERVICES_XB_TROUGH_1.Business;
 
 namespace XHTD_SERVICES_XB_TROUGH_1
 {
@@ -30,6 +31,9 @@ namespace XHTD_SERVICES_XB_TROUGH_1
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<TroughLogger>().AsSelf();
+            builder.RegisterType<CallToTroughRepository>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<MachineApiLib>().AsSelf();
 
             RegisterScheduler(builder);
 

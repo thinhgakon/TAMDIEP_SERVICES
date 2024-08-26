@@ -19,6 +19,8 @@ using Autofac;
 using XHTD_SERVICES_XB_TROUGH_1.Hubs;
 using System.Net.NetworkInformation;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
+using XHTD_SERVICES_XB_TROUGH_1.Business;
+using XHTD_SERVICES.Helper.Models.Request;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 {
@@ -33,6 +35,10 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
         protected readonly CategoriesDevicesLogRepository _categoriesDevicesLogRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected readonly CallToTroughRepository _callToTroughRepository;
+
+        protected readonly MachineRepository _machineRepository;
 
         protected readonly Notification _notification;
 
@@ -80,6 +86,8 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             CategoriesDevicesRepository categoriesDevicesRepository,
             CategoriesDevicesLogRepository categoriesDevicesLogRepository,
             SystemParameterRepository systemParameterRepository,
+            MachineRepository machineRepository,
+            CallToTroughRepository callToTroughRepository,
             Notification notification,
             TroughLogger trough1Logger
             )
@@ -89,6 +97,8 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
             _categoriesDevicesRepository = categoriesDevicesRepository;
             _categoriesDevicesLogRepository = categoriesDevicesLogRepository;
             _systemParameterRepository = systemParameterRepository;
+            _machineRepository = machineRepository;
+            _callToTroughRepository = callToTroughRepository;
             _notification = notification;
             _logger = trough1Logger;
         }
@@ -240,18 +250,40 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
             _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
+            var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
+
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
-            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            // Phương tiện đầu tiên hiện tại trong máng
+            string vehicleInTrough = _callToTroughRepository.GetCurrentFirstVehicle(TROUGH_CODE);
+
+            if (!String.IsNullOrEmpty(vehicleCodeCurrent) && vehicleCodeCurrent.ToUpper() == vehicleInTrough.ToUpper() && 
+                machine.StartStatus == "OFF" && machine.StopStatus == "ON")
             {
                 _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
-                SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+
+                var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
+                var requestData = new MachineControlRequest
+                {
+                    MachineCode = MACHINE_CODE,
+                    TroughCode = TROUGH_CODE,
+                    CurrentDeliveryCode = currentOrder.DeliveryCode
+                };
+
+                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
+
+                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                {
+                    SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                    SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                }
+
+                else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
             }
             else
             {
-                _logger.LogInfo($"3. Tag KHÔNG hợp lệ => Kết thúc.");
+                _logger.LogInfo($"3. Tag KHÔNG hợp lệ hoặc máy {MACHINE_CODE} đang chạy => Kết thúc.");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
