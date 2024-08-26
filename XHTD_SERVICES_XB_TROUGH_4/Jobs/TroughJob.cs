@@ -71,7 +71,7 @@ namespace XHTD_SERVICES_XB_TROUGH_4.Jobs
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.198";
 
-        private readonly string MACHINE_CODE = "4";
+        private readonly string MACHINE_CODE = "2";
         private readonly string TROUGH_CODE = "4";
 
         public TroughJob(
