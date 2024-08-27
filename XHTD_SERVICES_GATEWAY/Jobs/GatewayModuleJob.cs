@@ -391,27 +391,62 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                             if (isConfirmSuccess)
                             {
+                                var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
+                                SendPushNotification("adminNPP", pushMessage);
+
+                                var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
+                                if (driverUserName != null)
+                                {
+                                    SendPushNotification(driverUserName, pushMessage);
+                                }
+
                                 // Xác thực thành công
                                 // Cập nhật trạng thái in phiếu
                                 var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodesToConfirm);
                                 if (erpUpdateStatusResponse.Code == "01")
                                 {
                                     // Cập nhật in phiếu thành công
+                                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
+                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+
+                                    _gatewayLogger.LogInfo($"{pushMessagePrintStatus}");
                                 }
                                 else if (erpUpdateStatusResponse.Code == "02")
                                 {
                                     // Cập nhật in phiếu thất bại
+                                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
+                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+
+                                    _gatewayLogger.LogInfo($"{pushMessagePrintStatus}");
                                 }
                             }
                             else
                             {
                                 // Xác thực thất bại
+                                var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                                SendPushNotification("adminNPP", pushMessage);
+
+                                _gatewayLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
                             }
                         }
                         else
                         {
                             // Không đủ điều kiện xác thực
+                            var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+                            SendPushNotification("adminNPP", pushMessage);
+
+                            var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
+                            if (driverUserName != null)
+                            {
+                                SendPushNotification(driverUserName, pushMessage);
+                            }
+
+                            _gatewayLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodesToConfirm}!");
                         }
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"3.1.1. Không có đơn hàng cần xác thực");
                     }
                 }
             }
