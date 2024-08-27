@@ -44,7 +44,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 11000;
+        private const int PORT_NUMBER = 13000;
         private int TimeInterVal = 2000;
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
