@@ -378,13 +378,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
-                // Chụp ảnh
-                //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
-                //if (!string.IsNullOrEmpty(img))
-                //{
-                //    _storeOrderOperatingRepository.UpdateImgConfirm10(vehicleCodeCurrent, img);
-                //}
-
                 // Bật đèn xanh - đỏ
                 TurnOnTrafficLight();
 
