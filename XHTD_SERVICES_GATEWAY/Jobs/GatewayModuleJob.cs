@@ -395,6 +395,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
                                 SendPushNotification("adminNPP", pushMessage);
 
+                                _gatewayLogger.LogInfo($"{pushMessage}");
+
                                 var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
                                 if (driverUserName != null)
                                 {
