@@ -385,6 +385,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodesToConfirm);
                         if (erpValidateResponse.Code == "01")
                         {
+                            _gatewayLogger.LogInfo($"Phương tiện: {vehicleCodeCurrent} - deliveryCodes: {currentDeliveryCodesToConfirm} ĐỦ điều kiện xác thực.!");
                             // Đủ điều kiện xác thực
                             // Xác thực
                             bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
@@ -441,7 +442,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 SendPushNotification(driverUserName, pushMessage);
                             }
 
-                            _gatewayLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodesToConfirm}!");
+                            _gatewayLogger.LogInfo($"Phương tiện: {vehicleCodeCurrent} - deliveryCodes: {currentDeliveryCodesToConfirm} KHÔNG ĐỦ điều kiện xác thực. Chi tiết: {erpValidateResponse.Message}!");
                         }
                     }
                     else
