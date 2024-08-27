@@ -11,6 +11,7 @@ using NDTan;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_GATEWAY.Business;
 using XHTD_SERVICES_GATEWAY.Devices;
+using XHTD_SERVICES_CONFIRM.Business;
 
 namespace XHTD_SERVICES_GATEWAY
 {
@@ -32,6 +33,7 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<PLC>().AsSelf();
             builder.RegisterType<GatewayLogger>().AsSelf();
             builder.RegisterType<ScaleApiLib>().AsSelf();
+            builder.RegisterType<SaleOrdersApiLib>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
             builder.RegisterType<S71200Control>().AsSelf();
             builder.RegisterType<AttachmentRepository>().AsSelf();
