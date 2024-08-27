@@ -102,15 +102,13 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo($"Start Sync In Progress Order From View: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} Updated");
-
-            //GetToken();
+            _syncOrderLogger.LogInfo($"Start Sync Changed Order From View: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} Updated");
 
             List<OrderItemResponse> websaleOrders = GetWebsaleOrderFromView();
 
             if (websaleOrders == null || websaleOrders.Count == 0)
             {
-                _syncOrderLogger.LogInfo($"Sync In Progress Order From View: Khong co don hang");
+                _syncOrderLogger.LogInfo($"Sync Changed Order From View: Khong co don hang");
                 return;
             }
 
@@ -125,25 +123,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                     if (!isChanged) isChanged = isSynced;
                 }
-            }
-
-            //_syncOrderLogger.LogInfo($"Done Sync In Progress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-        }
-
-        public void GetToken()
-        {
-            try
-            {
-                IRestResponse response = HttpRequest.GetWebsaleToken();
-
-                var content = response.Content;
-
-                var responseData = JsonConvert.DeserializeObject<GetTokenResponse>(content);
-                strToken = responseData.access_token;
-            }
-            catch (Exception ex)
-            {
-                _syncOrderLogger.LogInfo("getToken error: " + ex.Message);
             }
         }
 
