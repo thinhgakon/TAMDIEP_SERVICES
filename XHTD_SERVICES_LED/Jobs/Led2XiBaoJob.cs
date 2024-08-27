@@ -30,7 +30,7 @@ namespace XHTD_SERVICES_LED.Jobs
         static ASCIIEncoding encoding = new ASCIIEncoding();
 
         protected readonly string PLC_IP_ADDRESS = "192.168.13.189";
-        protected readonly int PLC_PORT_NUMBER = 13000;
+        protected readonly int PLC_PORT_NUMBER = 11000;
         private const int BUFFER_SIZE = 1024;
 
         protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_2;
