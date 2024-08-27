@@ -157,8 +157,9 @@ namespace XHTD_SERVICES_LED.Jobs
                             var vehicleCode = order.Vehicle;
                             var planQuantity = (int)(order.SumNumber * 20);
                             var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                            var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
-                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]0[!]");
+                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]");
                         }
                     }
 
