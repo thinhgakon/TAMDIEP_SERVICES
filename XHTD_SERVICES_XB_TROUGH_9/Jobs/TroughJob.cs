@@ -75,10 +75,10 @@ namespace XHTD_SERVICES_XB_TROUGH_9.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.219";
+        private string PegasusAdr = "192.168.13.242";
 
         private readonly string MACHINE_CODE = "4";
-        private readonly string TROUGH_CODE = "8";
+        private readonly string TROUGH_CODE = "9";
 
         public TroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,

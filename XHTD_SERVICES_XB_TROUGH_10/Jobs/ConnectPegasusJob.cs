@@ -11,7 +11,7 @@ namespace XHTD_SERVICES_XB_TROUGH_10.Jobs
     {
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.219";
+        private string PegasusAdr = "192.168.13.244";
         protected readonly TroughLogger _logger;
 
         public ConnectPegasusJob(TroughLogger logger)
