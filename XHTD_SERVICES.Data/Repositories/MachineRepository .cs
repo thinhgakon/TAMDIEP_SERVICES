@@ -57,7 +57,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                            x.Status != null && 
                                                                            x.Status == true)
                                                                .FirstOrDefaultAsync();
-                return machine.MachineCode;
+                if (machine != null) return machine.MachineCode;
+                return null;
             }
         }
 
