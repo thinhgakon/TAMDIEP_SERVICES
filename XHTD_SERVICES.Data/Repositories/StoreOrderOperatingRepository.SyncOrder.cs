@@ -290,8 +290,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error("=========================== ChangedAsync Error: " + ex.Message + " ========== " + ex.StackTrace + " === " + ex.InnerException); ;
-                Console.WriteLine("ChangedAsync Error: " + ex.Message);
+                log.Error("=========================== ChangedAsync Error: " + websaleOrder.deliveryCode + " ========== " + ex.Message + " ========== " + ex.StackTrace + " === " + ex.InnerException);
+                Console.WriteLine("ChangedAsync Error: " + websaleOrder.deliveryCode + " ========== " + ex.Message + " ========== " + ex.StackTrace + " === " + ex.InnerException);
 
                 return isSynced;
             }
