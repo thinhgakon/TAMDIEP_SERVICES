@@ -22,6 +22,7 @@ namespace XHTD_SERVICES_GATEWAY
         public static bool IsFirstTimeChange = false;
 
         public static bool IsBarrierActive = false; // cấu hình tự động mở barrier
+        public static bool IsConfirmAtGatewayActive = false; // cấu hình xác thực tại cổng
 
         public static DateTime? LastTimeReceivedUHF = DateTime.Now;
 
