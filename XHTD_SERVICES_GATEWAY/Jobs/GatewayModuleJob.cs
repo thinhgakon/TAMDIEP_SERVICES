@@ -379,39 +379,39 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 if (ordersToConfirm != null && ordersToConfirm.Count != 0)
                 {
                     currentDeliveryCodesToConfirm = string.Join(";", ordersToConfirm.Select(x => x.DeliveryCode).Distinct().ToList());
-                }
 
-                if (!String.IsNullOrEmpty(currentDeliveryCodesToConfirm))
-                {
-                    var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodesToConfirm);
-                    if (erpValidateResponse.Code == "01")
+                    if (!String.IsNullOrEmpty(currentDeliveryCodesToConfirm))
                     {
-                        // Đủ điều kiện xác thực
-                        // Xác thực
-                        bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
-
-                        if (isConfirmSuccess)
+                        var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodesToConfirm);
+                        if (erpValidateResponse.Code == "01")
                         {
-                            // Xác thực thành công
-                            // Cập nhật trạng thái in phiếu
-                            var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodesToConfirm);
-                            if (erpUpdateStatusResponse.Code == "01")
+                            // Đủ điều kiện xác thực
+                            // Xác thực
+                            bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+
+                            if (isConfirmSuccess)
                             {
-                                // Cập nhật in phiếu thành công
+                                // Xác thực thành công
+                                // Cập nhật trạng thái in phiếu
+                                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodesToConfirm);
+                                if (erpUpdateStatusResponse.Code == "01")
+                                {
+                                    // Cập nhật in phiếu thành công
+                                }
+                                else if (erpUpdateStatusResponse.Code == "02")
+                                {
+                                    // Cập nhật in phiếu thất bại
+                                }
                             }
-                            else if (erpUpdateStatusResponse.Code == "02")
+                            else
                             {
-                                // Cập nhật in phiếu thất bại
+                                // Xác thực thất bại
                             }
                         }
                         else
                         {
-                            // Xác thực thất bại
+                            // Không đủ điều kiện xác thực
                         }
-                    }
-                    else
-                    {
-                        // Không đủ điều kiện xác thực
                     }
                 }
             }
