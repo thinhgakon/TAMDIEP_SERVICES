@@ -79,6 +79,16 @@ namespace XHTD_SERVICES_SYNC_ORDER.Schedules
                      .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(syncInProgressOrderFromViewJob, syncInProgressOrderFromViewTrigger);
+
+            IJobDetail syncChangedOrderFromViewJob = JobBuilder.Create<SyncChangedOrderFromViewJob>().Build();
+            ITrigger syncChangedOrderFromViewTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Changed_Interval_In_Seconds")))
+                     .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(syncChangedOrderFromViewJob, syncChangedOrderFromViewTrigger);
         }
     }
 }

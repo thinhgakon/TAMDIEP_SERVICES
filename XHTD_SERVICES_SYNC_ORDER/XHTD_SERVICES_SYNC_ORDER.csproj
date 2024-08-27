@@ -141,6 +141,7 @@
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Jobs\SyncBookedOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncBookedOrderJob.cs" />
+    <Compile Include="Jobs\SyncChangedOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncChangedOrderJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderJob.cs" />
