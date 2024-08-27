@@ -220,8 +220,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        var machineCode = (troughCode == "1" || troughCode == "2") ? "1" : "2";
-
+                        var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
+                        if (machineCode == null) continue;
                         // Dữ liệu sensor đầu máng
 
                         byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");

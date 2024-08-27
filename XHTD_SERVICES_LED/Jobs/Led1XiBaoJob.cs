@@ -161,10 +161,13 @@ namespace XHTD_SERVICES_LED.Jobs
                         }
                     }
 
-                    DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
+                    else
+                    {
+                        DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
+                    }
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex)         
             {
                 _logger.LogInfo($"ERROR: {ex.Message}");
             }

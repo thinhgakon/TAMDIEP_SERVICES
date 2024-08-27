@@ -49,6 +49,19 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<string> GetMachineCodeByTroughCode(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var machine = await dbContext.TblMachineTroughs.Where(x => x.TroughCode == troughCode && 
+                                                                           x.Status != null && 
+                                                                           x.Status == true)
+                                                               .FirstOrDefaultAsync();
+                if (machine != null) return machine.MachineCode;
+                return null;
+            }
+        }
+
         public async Task<bool> IsWorkingMachine(string machineCode)
         {
             using (var dbContext = new XHTD_Entities())
