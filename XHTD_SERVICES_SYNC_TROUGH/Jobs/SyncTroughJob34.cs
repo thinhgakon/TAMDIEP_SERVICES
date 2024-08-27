@@ -44,7 +44,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private const string IP_ADDRESS = "192.168.13.210";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 12000;
+        private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -137,6 +137,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     _syncTroughLogger.LogInfo($"Trough Job MDB 3|4: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     stream = client.GetStream();
+                    stream.ReadTimeout = 2000;
 
                     await ReadDataFromTrough(troughCodes);
                 }
