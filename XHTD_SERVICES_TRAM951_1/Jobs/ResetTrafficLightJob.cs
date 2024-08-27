@@ -15,6 +15,7 @@ using XHTD_SERVICES_TRAM951_1.Business;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ResetTrafficLightJob : IJob
     {
         protected readonly TCPTrafficLight _trafficLight;
