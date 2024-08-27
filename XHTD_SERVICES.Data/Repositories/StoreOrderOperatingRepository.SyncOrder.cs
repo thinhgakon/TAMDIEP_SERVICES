@@ -190,18 +190,16 @@ namespace XHTD_SERVICES.Data.Repositories
                 string productNameUpper = websaleOrder.productName.ToUpper();
                 string itemCategory = websaleOrder.itemCategory;
 
-                if (itemCategory == OrderCatIdCode.XI_MANG_XA)
-                {
-                    typeProduct = "ROI";
-                }
-                else if (itemCategory == OrderCatIdCode.CLINKER)
+                if (itemCategory == OrderCatIdCode.CLINKER)
                 {
                     typeProduct = OrderCatIdCode.CLINKER;
                 }
                 else
                 {
                     // Type Product
-                    if (productNameUpper.Contains("PCB30") || productNameUpper.Contains("MAX PRO"))
+                    if (productNameUpper.Contains("PCB30")
+                        || productNameUpper.Contains("PCB 30")
+                        || productNameUpper.Contains("MAX PRO"))
                     {
                         typeProduct = "PCB30";
                     }
@@ -209,7 +207,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC30";
                     }
-                    else if (productNameUpper.Contains("PCB40"))
+                    else if (productNameUpper.Contains("PCB40") || productNameUpper.Contains("PCB 40"))
                     {
                         typeProduct = "PCB40";
                     }
@@ -217,13 +215,22 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProduct = "PC40";
                     }
+                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
+                    {
+                        typeProduct = "C91";
+                    }
+                    else
+                    {
+                        typeProduct = "OTHER";
+                    }
 
                     // Type XK
                     if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
                         typeXK = OrderTypeXKCode.JUMBO;
                     }
-                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING))
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING)
+                        || productNameUpper.Contains(OrderTypeXKCode.SILING))
                     {
                         typeXK = OrderTypeXKCode.SLING;
                     }
