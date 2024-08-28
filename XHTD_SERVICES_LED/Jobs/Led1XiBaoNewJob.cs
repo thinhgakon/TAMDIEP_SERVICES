@@ -25,22 +25,13 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly LedLogger _logger;
 
-        protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
-
-        private static bool isActiveService = true;
-
-        private int TimeInterVal = 2000;
-
-        private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 10000;
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static TcpClient client = new TcpClient();
         static Stream stream = null;
-        private readonly Notification _notification;
-        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
-        private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
-        public const string IP_ADDRESS = "192.168.13.210";
+        public const string PLC_IP_ADDRESS = "192.168.13.189";
+        private const int PLC_PORT_NUMBER = 13000;
+        private const int BUFFER_SIZE = 1024;
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -87,7 +78,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 client = new TcpClient();
 
                 // 1. connect
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo("Ket noi thanh cong");
 
