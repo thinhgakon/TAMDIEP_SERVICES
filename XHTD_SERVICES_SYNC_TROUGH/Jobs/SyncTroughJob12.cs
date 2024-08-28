@@ -151,7 +151,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
-            finally {
+            finally 
+            {
                 if (client != null)
                 {
                     client.Close();
@@ -206,8 +207,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data, 0, data.Length);
 
-                    //*[Count][MX][1]#0#123456#Run[!]
-                    // 3. receive 1
+                    // 3. receive
                     data = new byte[BUFFER_SIZE];
                     stream.Read(data, 0, BUFFER_SIZE);
 
@@ -243,20 +243,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, 0);
 
-                        //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
-
-                        //await _storeOrderOperatingRepository.UpdateTroughLine(deliveryCode, troughCodeReturn);
-
-                        //var isAlmostDone = (countQuantity / planQuantity) > 0.98;
-
-                        //if (isAlmostDone)
-                        //{
-                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
-                        //}
-                        //else
-                        //{
-                        //    await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
-                        //}
                         var trough = await _troughRepository.GetDetail(troughCode);
                         var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
 
@@ -271,13 +257,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
-                        //_syncTroughLogger.LogInfo($"Cap nhat trang thai DA LAY HANG deliveryCode {deliveryCode}");
-                        //await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DA_LAY_HANG);
-
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
                         await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
-
                     }
                     #endregion
                 }
