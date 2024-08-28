@@ -153,7 +153,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         //_logger.LogInfo($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
 
                         SendScaleInfoAPI(dateTime, scaleValue.ToString());
-                        new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
+                        //new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 
                     if (Program.LastTimeReceivedScaleSocket != null)
