@@ -1,19 +1,18 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
 using System.Collections.Specialized;
-using XHTD_SERVICES_GATEWAY.Schedules;
+using XHTD_SERVICES_CLK_TROUGH_1.Schedules;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_GATEWAY.Jobs;
+using XHTD_SERVICES_CLK_TROUGH_1.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device;
 using NDTan;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES_GATEWAY.Business;
-using XHTD_SERVICES_GATEWAY.Devices;
-using XHTD_SERVICES_CONFIRM.Business;
+using XHTD_SERVICES_CLK_TROUGH_1.Devices;
+using XHTD_SERVICES_CLK_TROUGH_1.Business;
 
-namespace XHTD_SERVICES_GATEWAY
+namespace XHTD_SERVICES_CLK_TROUGH_1
 {
     public static class DIBootstrapper
     {
@@ -31,13 +30,10 @@ namespace XHTD_SERVICES_GATEWAY
             builder.RegisterType<TCPTrafficLight>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<PLC>().AsSelf();
-            builder.RegisterType<GatewayLogger>().AsSelf();
-            builder.RegisterType<ScaleApiLib>().AsSelf();
-            builder.RegisterType<SaleOrdersApiLib>().AsSelf();
-            builder.RegisterType<BarrierControl>().AsSelf();
-            builder.RegisterType<S71200Control>().AsSelf();
-            builder.RegisterType<AttachmentRepository>().AsSelf();
-            builder.RegisterType<CheckInOutRepository>().AsSelf();
+            builder.RegisterType<TroughLogger>().AsSelf();
+            builder.RegisterType<CallToTroughRepository>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<MachineApiLib>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -56,7 +52,7 @@ namespace XHTD_SERVICES_GATEWAY
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(GatewayModuleJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(TroughJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

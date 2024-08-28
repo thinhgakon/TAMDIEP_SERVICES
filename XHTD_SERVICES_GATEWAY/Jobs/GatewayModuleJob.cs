@@ -24,6 +24,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using XHTD_SERVICES_GATEWAY.Devices;
+using XHTD_SERVICES_CONFIRM.Business;
+using XHTD_SERVICES_CONFIRM;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -62,6 +64,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
         private static bool isActiveService = true;
 
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "GATEWAY_IN_BARRIER_ACTIVE";
+
+        protected const string CONFIRM_AT_GATEWAY_CODE = "CONFIRM_AT_GATEWAY";
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
@@ -140,6 +144,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == CBV_ACTIVE);
             var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
+            var confirmAtGatewayParameter = parameters.FirstOrDefault(x => x.Code == CONFIRM_AT_GATEWAY_CODE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -157,6 +162,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             else
             {
                 Program.IsBarrierActive = true;
+            }
+
+            if (confirmAtGatewayParameter == null || confirmAtGatewayParameter.Value == "0")
+            {
+                Program.IsConfirmAtGatewayActive = false;
+            }
+            else
+            {
+                Program.IsConfirmAtGatewayActive = true;
             }
         }
 
@@ -352,6 +366,96 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
+            }
+
+            // Xác thực ngay tại cổng
+            if (Program.IsConfirmAtGatewayActive)
+            {
+                _gatewayLogger.LogInfo($"3.1. Xác thực tại cổng: BẬT");
+
+                // Gọi API ERP kiểm tra điều kiện xác thực
+                var ordersToConfirm = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
+                var currentDeliveryCodesToConfirm = String.Empty;
+                if (ordersToConfirm != null && ordersToConfirm.Count != 0)
+                {
+                    currentDeliveryCodesToConfirm = string.Join(";", ordersToConfirm.Select(x => x.DeliveryCode).Distinct().ToList());
+
+                    if (!String.IsNullOrEmpty(currentDeliveryCodesToConfirm))
+                    {
+                        var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodesToConfirm);
+                        if (erpValidateResponse.Code == "01")
+                        {
+                            _gatewayLogger.LogInfo($"Phương tiện: {vehicleCodeCurrent} - deliveryCodes: {currentDeliveryCodesToConfirm} ĐỦ điều kiện xác thực.!");
+                            // Đủ điều kiện xác thực
+                            // Xác thực
+                            bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+
+                            if (isConfirmSuccess)
+                            {
+                                var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
+                                SendPushNotification("adminNPP", pushMessage);
+
+                                _gatewayLogger.LogInfo($"{pushMessage}");
+
+                                var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
+                                if (driverUserName != null)
+                                {
+                                    SendPushNotification(driverUserName, pushMessage);
+                                }
+
+                                // Xác thực thành công
+                                // Cập nhật trạng thái in phiếu
+                                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodesToConfirm);
+                                if (erpUpdateStatusResponse.Code == "01")
+                                {
+                                    // Cập nhật in phiếu thành công
+                                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
+                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+
+                                    _gatewayLogger.LogInfo($"{pushMessagePrintStatus}");
+                                }
+                                else if (erpUpdateStatusResponse.Code == "02")
+                                {
+                                    // Cập nhật in phiếu thất bại
+                                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
+                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+
+                                    _gatewayLogger.LogInfo($"{pushMessagePrintStatus}");
+                                }
+                            }
+                            else
+                            {
+                                // Xác thực thất bại
+                                var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+                                SendPushNotification("adminNPP", pushMessage);
+
+                                _gatewayLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
+                            }
+                        }
+                        else
+                        {
+                            // Không đủ điều kiện xác thực
+                            var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+                            SendPushNotification("adminNPP", pushMessage);
+
+                            var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
+                            if (driverUserName != null)
+                            {
+                                SendPushNotification(driverUserName, pushMessage);
+                            }
+
+                            _gatewayLogger.LogInfo($"Phương tiện: {vehicleCodeCurrent} - deliveryCodes: {currentDeliveryCodesToConfirm} KHÔNG ĐỦ điều kiện xác thực. Chi tiết: {erpValidateResponse.Message}!");
+                        }
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"3.1.1. Không có đơn hàng cần xác thực");
+                    }
+                }
+            }
+            else
+            {
+                _gatewayLogger.LogInfo($"3.1. Xác thực tại cổng: TẮT");
             }
 
             // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
