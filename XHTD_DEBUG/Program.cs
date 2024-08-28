@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using log4net;
-using XHTD_SERVICES_GATEWAY;
-using XHTD_SERVICES_GATEWAY.Schedules;
+using XHTD_SERVICES_LED;
+using XHTD_SERVICES_LED.Schedules;
 
 namespace XHTD_DEBUG
 {
