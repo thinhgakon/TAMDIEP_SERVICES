@@ -46,6 +46,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
+        private List<string> machineCodes = new List<string>() { "1", "2" };
 
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static TcpClient client = new TcpClient();
@@ -140,7 +141,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     stream.ReadTimeout = 2000;
                     stream.WriteTimeout = 2000;
 
-                    await ReadDataFromMachine(new List<string>() { "1", "2" });
+                    await ReadDataFromMachine(machineCodes);
                     await ReadDataFromTrough(troughCodes);
                 }
                 else
