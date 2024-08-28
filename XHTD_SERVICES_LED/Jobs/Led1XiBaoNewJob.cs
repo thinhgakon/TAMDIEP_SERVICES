@@ -122,6 +122,14 @@ namespace XHTD_SERVICES_LED.Jobs
                     }
 
                     var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
+
+                    var isRunning = result.Item4 == "Run";
+                    var deliveryCode = result.Item3;
+                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+
+                    var troughCode = result.Item1;
+
+                    _logger.LogInfo($"Trough: {troughCode} -- Count: {countQuantity} -- DeliveryCode: {deliveryCode} -- Runing: {isRunning}");
                 }
                 catch (Exception ex)
                 {
