@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
+using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_LED.Devices;
 using XHTD_SERVICES_LED.Models.Values;
 
@@ -20,27 +21,34 @@ namespace XHTD_SERVICES_LED.Jobs
     [DisallowConcurrentExecution]
     public class Led1XiBaoNewJob : IJob, IDisposable
     {
-        protected readonly LedLogger _logger;
-        protected readonly MachineRepository _machineRepository;
-        protected readonly TroughRepository _troughRepository;
-        protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
+        private static bool DeviceConnected = false;
 
+        protected readonly LedLogger _logger;
+
+        protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
+
+        private static bool isActiveService = true;
+
+        private int TimeInterVal = 2000;
+
+        private const int BUFFER_SIZE = 1024;
+        private const int PORT_NUMBER = 10000;
+        static ASCIIEncoding encoding = new ASCIIEncoding();
         static TcpClient client = new TcpClient();
         static Stream stream = null;
-        static ASCIIEncoding encoding = new ASCIIEncoding();
+        private readonly Notification _notification;
+        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
+        private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
-        protected readonly string PLC_IP_ADDRESS = "192.168.13.189";
-        protected readonly int PLC_PORT_NUMBER = 12000;
-        private const int BUFFER_SIZE = 1024;
+        public const string IP_ADDRESS = "192.168.13.210";
 
-        protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
+        TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
-        public Led1XiBaoNewJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led1XiBaoNewJob(
+            LedLogger syncTroughLogger
+            )
         {
-            _logger = logger;
-            _machineRepository = machineRepository;
-            _troughRepository = troughRepository;
-            _storeOrderOperatingRepository = storeOrderOperatingRepository;
+            _logger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -49,162 +57,86 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            await Task.Run(async () =>
+
+            await Task.Run(() =>
             {
-                _logger.LogInfo("Thuc hien ket noi machine.");
-                await ConnectPLC();
+                AuthenticateScaleStationModuleFromController();
             });
         }
 
-        public async Task ConnectPLC()
+        public void AuthenticateScaleStationModuleFromController()
+        {
+            while (true)
+            {
+                var isConnected = ConnectScaleStationModuleFromController();
+
+                if (isConnected)
+                {
+                    ReadDataFromController();
+                }
+
+                Thread.Sleep(1000);
+            }
+        }
+
+        public bool ConnectScaleStationModuleFromController()
         {
             try
             {
-                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-
-                var listTroughInThisDevice = new List<string> { "1", "2" };
-
-                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
-
-                if (troughCodes == null || troughCodes.Count == 0)
-                {
-                    return;
-                }
-
-                _logger.LogInfo("Bat dau ket noi machine.");
+                _logger.LogInfo("Thuc hien ket noi scale socket");
                 client = new TcpClient();
-                client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
+
+                // 1. connect
+                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-                _logger.LogInfo($"Connected to machine : 1|2");
+                _logger.LogInfo("Ket noi thanh cong");
 
-                await MachineJobProcess(troughCodes);
+                DeviceConnected = true;
 
-                if (client != null && client.Connected)
-                {
-                    client.Close();
-                    Thread.Sleep(2000);
-                }
-                if (stream != null)
-                {
-                    stream.Close();
-                }
+                //var data = encoding.GetBytes(START_CONNECTION_STR);
+                //stream.Write(data, 0, data.Length);
+
+                return DeviceConnected;
             }
             catch (Exception ex)
             {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
+                return false;
             }
         }
 
-        public async Task MachineJobProcess(List<string> troughCodes)
+        public void ReadDataFromController()
         {
-            try
+            while (true)
             {
-                bool anyRunning = false;
-
-                foreach (var troughCode in troughCodes)
+                try
                 {
-                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
-                    stream.Write(data1, 0, data1.Length);
+                    // send
+                    //byte[] data = encoding.GetBytes(SEND_TO_RECEIVED_SCALE_CODE);
+                    //stream.Write(data, 0, data.Length);
 
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
+                    // receive
+                    byte[] data = new byte[BUFFER_SIZE];
+                    stream.Read(data, 0, BUFFER_SIZE);
+                    //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
 
-                    var response = encoding.GetString(data1).Trim();
+                    var dataStr = encoding.GetString(data);
 
-                    if (response == null || response.Length == 0)
-                    {
-                        _logger.LogInfo($"Khong co du lieu tra ve");
-                        return;
-                    }
+                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    if (stream != null) stream.Close();
+                    if (client != null) client.Close();
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
-
-                    var isRunning = result.Item4 == "Run";
-                    var deliveryCode = result.Item3;
-                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
-
-                    var vehicleCode = "BSX-12345";
-                    var planQuantity = 100;
-                    string typeProduct = "PCB30";
-
-                    if (countQuantity == 0) continue;
-
-                    if (isRunning)
-                    {
-                        var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
-                        if (order != null)
-                        {
-                            vehicleCode = order.Vehicle;
-                            planQuantity = (int)(order.SumNumber * 20);
-                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
-                        }
-
-                        DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]");
-                        anyRunning = true;
-                    }
+                    break;
                 }
 
-                if (!anyRunning)
-                {
-                    var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
-                    if (machine.StartStatus == "ON" && machine.StopStatus == "OFF" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
-                    {
-                        var order = await _storeOrderOperatingRepository.GetDetail(machine.CurrentDeliveryCode);
-                        if (order != null)
-                        {
-                            var vehicleCode = order.Vehicle;
-                            var planQuantity = (int)(order.SumNumber * 20);
-                            var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
-                            var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
-
-                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]");
-                        }
-                    }
-
-                    else
-                    {
-                        DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogInfo($"ERROR: {ex.Message}");
-            }
-        }
-
-        static (string, string, string, string) GetInfo(string input)
-        {
-            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
-            Match match = Regex.Match(input, pattern);
-
-            if (match.Success)
-            {
-                return (
-                    match.Groups["gt1"].Value,
-                    match.Groups["gt2"].Value,
-                    match.Groups["gt3"].Value,
-                    match.Groups["gt4"].Value
-                );
+                Thread.Sleep(500);
             }
 
-            return (string.Empty, string.Empty, string.Empty, string.Empty);
-        }
-
-        public void DisplayScreenLed(string dataCode)
-        {
-            _logger.LogInfo($"Send led: dataCode = {dataCode}");
-
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_CODE, dataCode))
-            {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - OK");
-            }
-            else
-            {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED");
-            }
+            AuthenticateScaleStationModuleFromController();
         }
 
         public void Dispose()
