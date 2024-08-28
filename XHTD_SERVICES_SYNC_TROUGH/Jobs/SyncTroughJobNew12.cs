@@ -26,6 +26,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     [DisallowConcurrentExecution]
     public class SyncTroughJobNew12 : IJob, IDisposable
     {
+        private static bool DeviceConnected = false;
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly MachineRepository _machineRepository;
@@ -36,7 +37,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly SyncTroughLogger _syncTroughLogger;
+        protected readonly SyncTroughLogger _logger;
 
         protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
 
@@ -65,227 +66,95 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _syncTroughLogger = syncTroughLogger;
+            _logger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            //while (Program.Machine12Running == true)
-            //{
-            //}
-
-            Program.SyncTrough12Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
-                // Get System Parameters
-                await LoadSystemParameters();
+                AuthenticateScaleStationModuleFromController();
+            });
+        }
 
-                if (!isActiveService)
+        public void AuthenticateScaleStationModuleFromController()
+        {
+            while (true)
+            {
+                var isConnected = ConnectScaleStationModuleFromController();
+
+                if (isConnected)
                 {
-                    _syncTroughLogger.LogInfo("Service lay thong tin mang xuat SYNC TROUGH dang TAT.");
-                    return;
+                    ReadDataFromController();
                 }
 
-                await SyncTroughProcess();
-            });
-            Program.SyncTrough12Running = false;
-        }
-
-        public async Task LoadSystemParameters()
-        {
-            var parameters = await _systemParameterRepository.GetSystemParameters();
-
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
-
-            if (activeParameter == null || activeParameter.Value == "0")
-            {
-                isActiveService = false;
-            }
-            else
-            {
-                isActiveService = true;
+                Thread.Sleep(1000);
             }
         }
 
-        public async Task SyncTroughProcess()
+        public bool ConnectScaleStationModuleFromController()
         {
             try
             {
-                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-
-                var listTroughInThisDevice = new List<string> { "1", "2", "3", "4" };
-
-                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
-
-                if (troughCodes == null || troughCodes.Count == 0)
-                {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Khong tim thay mang xuat --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
-
-                    return;
-                }
-
+                _logger.LogInfo("Thuc hien ket noi scale socket");
                 client = new TcpClient();
+
+                // 1. connect
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                stream = client.GetStream();
+                _logger.LogInfo("Ket noi thanh cong");
 
-                if (client.Connected)
-                {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                DeviceConnected = true;
 
-                    stream = client.GetStream();
-                    stream.ReadTimeout = 2000;
-                    stream.WriteTimeout = 2000;
+                //var data = encoding.GetBytes(START_CONNECTION_STR);
+                //stream.Write(data, 0, data.Length);
 
-                    await ReadDataFromTrough(troughCodes);
-                }
-                else
-                {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi that bai --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
-                }
+                return DeviceConnected;
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
-            }
-            finally
-            {
-                if (client != null)
-                {
-                    client.Close();
-                }
-
-                if (stream != null)
-                {
-                    stream.Close();
-                }
+                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
+                return false;
             }
         }
 
-        public async Task ReadDataFromTrough(List<string> troughCodes)
+        public void ReadDataFromController()
         {
-            foreach (var troughCode in troughCodes)
+            while (true)
             {
                 try
                 {
-                    #region Đọc dữ liệu đầu máng
-                    _syncTroughLogger.LogInfo($"==========Lay du lieu đầu máng: {troughCode} =========");
+                    // send
+                    //byte[] data = encoding.GetBytes(SEND_TO_RECEIVED_SCALE_CODE);
+                    //stream.Write(data, 0, data.Length);
 
-                    var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
-                    if (machineCode == null) continue;
-
-                    byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
-                    stream.Write(machineData, 0, machineData.Length);
-
-                    machineData = new byte[BUFFER_SIZE];
-                    stream.Read(machineData, 0, BUFFER_SIZE);
-
-                    var machineResponse = encoding.GetString(machineData).Trim();
-                    if (machineResponse == null || machineResponse.Length == 0)
-                    {
-                        _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
-                    }
-                    var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
-                    var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
-                    #endregion
-
-                    #region Đọc dữ liệu cuối máng
-                    _syncTroughLogger.LogInfo($"==========Lay du lieu cuối máng: {troughCode} =========");
-
-                    var troughInfo = await _troughRepository.GetDetail(troughCode);
-                    if (troughInfo == null)
-                    {
-                        _syncTroughLogger.LogInfo($"Mang khong ton tai: {troughCode} => Thoat");
-                        continue;
-                    }
-
-                    // Dữ liệu sensor cuối máng
-                    // 2. send 1
-                    byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
-                    stream.Write(data, 0, data.Length);
-
-                    // 3. receive
-                    data = new byte[BUFFER_SIZE];
+                    // receive
+                    byte[] data = new byte[BUFFER_SIZE];
                     stream.Read(data, 0, BUFFER_SIZE);
+                    //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
 
-                    var response = encoding.GetString(data).Trim();
+                    var dataStr = encoding.GetString(data);
 
-                    if (response == null || response.Length == 0)
-                    {
-                        _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
-                        continue;
-                    }
-                    else
-                    {
-                        _syncTroughLogger.LogInfo($"Trả về: {response}");
-                    }
-
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
-
-                    var status = result.Item4 == "Run" ? "True" : "False";
-                    var deliveryCode = result.Item3;
-                    var countQuantity = (Double.TryParse(result.Item2, out double i) ? i : 0);
-                    if (countQuantity == 0)
-                    {
-                        continue;
-                    }
-
-                    var planQuantity = 100;
-
-                    var troughCodeReturn = result.Item1;
-
-                    if (status == "True")
-                    {
-                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
-
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, 0);
-
-                        var trough = await _troughRepository.GetDetail(troughCode);
-                        var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
-
-                        if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
-                        {
-                            await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
-                        }
-                    }
-                    else
-                    {
-                        //TODO: xét thêm trường hợp đang xuất dở đơn mà chuyển qua máng khác thì không update được lại trạng thái Đang lấy hàng
-
-                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
-
-                        _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
-                        //await _troughRepository.ResetTrough(troughCode);
-                        await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
-                    }
-                    #endregion
+                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"ReadDataFromTrough ERROR {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    if (stream != null) stream.Close();
+                    if (client != null) client.Close();
+
+                    break;
                 }
-            }
-        }
 
-        static (string, string, string, string) GetInfo(string input, string type)
-        {
-            string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
-            Match match = Regex.Match(input, pattern);
-
-            if (match.Success)
-            {
-                return (
-                    match.Groups["gt1"].Value,
-                    match.Groups["gt2"].Value,
-                    match.Groups["gt3"].Value,
-                    match.Groups["gt4"].Value
-                );
+                Thread.Sleep(500);
             }
 
-            return (string.Empty, string.Empty, string.Empty, string.Empty);
+            AuthenticateScaleStationModuleFromController();
         }
 
         public void Dispose()
@@ -303,7 +172,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo($"SyncTroughJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                _logger.LogInfo($"SyncTroughJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }
