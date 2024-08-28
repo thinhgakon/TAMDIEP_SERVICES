@@ -165,14 +165,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public async Task ReadDataFromTrough(List<string> troughCodes)
+        public async Task ReadDataFromMachine(List<string> troughCodes)
         {
             foreach (var troughCode in troughCodes)
             {
                 try
                 {
                     #region Đọc dữ liệu đầu máng
-                    _syncTroughLogger.LogInfo($"==========Lay du lieu đầu máng: {troughCode} =========");
+                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu đầu máng: {troughCode} =========");
 
                     var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
                     if (machineCode == null) continue;
@@ -190,10 +190,35 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     }
                     var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+                    var deliveryCode = machineResult.Item3;
                     #endregion
 
+                    _syncTroughLogger.LogInfo($"May {machineCode} dang xuat hang deliveryCode");
+
+                    await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
+
+                    var trough = await _troughRepository.GetDetail(troughCode);
+                    var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
+                    if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
+                    {
+                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _syncTroughLogger.LogInfo($"ReadDataFromMachine ERROR {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                }
+            }
+        }
+
+        public async Task ReadDataFromTrough(List<string> troughCodes)
+        {
+            foreach (var troughCode in troughCodes)
+            {
+                try
+                {
                     #region Đọc dữ liệu cuối máng
-                    _syncTroughLogger.LogInfo($"==========Lay du lieu cuối máng: {troughCode} =========");
+                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu cuối máng: {troughCode} =========");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
                     if (troughInfo == null)
@@ -212,7 +237,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     stream.Read(data, 0, BUFFER_SIZE);
 
                     var response = encoding.GetString(data).Trim();
-
                     if (response == null || response.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
@@ -234,9 +258,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     }
 
                     var planQuantity = 100;
-
                     var troughCodeReturn = result.Item1;
-
                     if (status == "True")
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
@@ -254,7 +276,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     else
                     {
                         //TODO: xét thêm trường hợp đang xuất dở đơn mà chuyển qua máng khác thì không update được lại trạng thái Đang lấy hàng
-
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
                         _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
