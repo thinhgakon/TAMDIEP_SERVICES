@@ -98,7 +98,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 try
                 {
                     var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
-                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.DeliveryCodeCurrent == deliveryCode && x.Code == callToTrough.Machine);
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
                     if (itemToCall != null)
                     {
                         itemToCall.Working = true;
@@ -107,8 +107,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"Update Machine Sensor Trough {troughCode} success");
-                        Console.WriteLine($@"Update Machine Sensor Trough {troughCode} Success");
+                        log.Info($@"Update Machine Sensor Trough {itemToCall.Code} success");
+                        Console.WriteLine($@"Update Machine Sensor Trough {itemToCall.Code} Success");
                     }
                 }
                 catch (Exception ex)

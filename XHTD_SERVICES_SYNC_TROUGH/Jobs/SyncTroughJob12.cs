@@ -140,6 +140,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     stream.ReadTimeout = 2000;
                     stream.WriteTimeout = 2000;
 
+                    await ReadDataFromMachine(new List<string>() { "1", "2" });
                     await ReadDataFromTrough(troughCodes);
                 }
                 else
@@ -165,17 +166,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public async Task ReadDataFromMachine(List<string> troughCodes)
+        public async Task ReadDataFromMachine(List<string> machineCodes)
         {
-            foreach (var troughCode in troughCodes)
+            foreach (var machineCode in machineCodes)
             {
                 try
                 {
-                    #region Đọc dữ liệu đầu máng
-                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu đầu máng: {troughCode} =========");
-
-                    var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
-                    if (machineCode == null) continue;
+                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu đầu máng: {machineCode} =========");
 
                     byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
                     stream.Write(machineData, 0, machineData.Length);
@@ -191,22 +188,20 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
                     var deliveryCode = machineResult.Item3;
-                    #endregion
 
                     _syncTroughLogger.LogInfo($"May {machineCode} dang xuat hang deliveryCode");
 
                     await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
 
-                    var trough = await _troughRepository.GetDetail(troughCode);
-                    var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
+                    var machine = await _machineRepository.GetMachineByMachineCode(machineCode);
                     if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                     {
-                        await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        await _storeOrderOperatingRepository.UpdateStepInTrough(machine.CurrentDeliveryCode, (int)OrderStep.DANG_LAY_HANG);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"ReadDataFromMachine ERROR {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                    _syncTroughLogger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
@@ -217,7 +212,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    #region Đọc dữ liệu cuối máng
                     _syncTroughLogger.LogInfo($"==========Lấy dữ liệu cuối máng: {troughCode} =========");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
@@ -263,7 +257,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, 0);
+                        await _troughRepository.UpdateTroughSensor(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
 
                         var trough = await _troughRepository.GetDetail(troughCode);
                         var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
@@ -282,11 +276,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         //await _troughRepository.ResetTrough(troughCode);
                         await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
                     }
-                    #endregion
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"ReadDataFromTrough ERROR {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                    _syncTroughLogger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
