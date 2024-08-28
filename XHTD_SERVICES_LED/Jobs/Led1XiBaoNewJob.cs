@@ -29,8 +29,8 @@ namespace XHTD_SERVICES_LED.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
 
-        public const string PLC_IP_ADDRESS = "192.168.13.189";
-        private const int PLC_PORT_NUMBER = 13000;
+        public const string PLC_IP_ADDRESS = "192.168.13.210";
+        private const int PLC_PORT_NUMBER = 10000;
         private const int BUFFER_SIZE = 1024;
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
