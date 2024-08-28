@@ -138,6 +138,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     stream = client.GetStream();
                     stream.ReadTimeout = 2000;
+                    stream.WriteTimeout = 2000;
 
                     await ReadDataFromTrough(troughCodes);
                 }
@@ -169,6 +170,28 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
+                    // Dữ liệu sensor đầu máng
+                    _syncTroughLogger.LogInfo($"==========Lay du lieu đầu máng: {troughCode} =========");
+
+                    var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
+                    if (machineCode == null) continue;
+
+                    byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
+                    stream.Write(machineData, 0, machineData.Length);
+
+                    machineData = new byte[BUFFER_SIZE];
+                    stream.Read(machineData, 0, BUFFER_SIZE);
+
+                    var machineResponse = encoding.GetString(machineData).Trim();
+                    if (machineResponse == null || machineResponse.Length == 0)
+                    {
+                        _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                        continue;
+                    }
+                    var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+                    var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+                    ///////////////////////////
+
                     _syncTroughLogger.LogInfo($"==========Lay du lieu cuối máng: {troughCode} =========");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
@@ -221,26 +244,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
-                        var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
-                        if (machineCode == null) continue;
-                        // Dữ liệu sensor đầu máng
-
-                        byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
-                        stream.Write(machineData, 0, machineData.Length);
-
-                        machineData = new byte[BUFFER_SIZE];
-                        stream.Read(machineData, 0, BUFFER_SIZE);
-
-                        var machineResponse = encoding.GetString(machineData).Trim();
-                        if (machineResponse == null || machineResponse.Length == 0)
-                        {
-                            _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
-                            continue;
-                        }
-                        var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
-                        var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
-
-                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, firstSensorQuantity);
+                        await _troughRepository.UpdateTrough(troughCodeReturn, deliveryCode, countQuantity, planQuantity, 0);
 
                         //await _callToTroughRepository.UpdateWhenIntoTrough(deliveryCode, troughInfo.Machine);
 
