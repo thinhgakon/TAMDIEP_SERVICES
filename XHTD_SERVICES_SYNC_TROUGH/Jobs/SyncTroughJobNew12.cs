@@ -43,14 +43,20 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private static bool isActiveService = true;
 
-        private const string IP_ADDRESS = "192.168.13.189";
-        private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
 
+        private const int BUFFER_SIZE = 1024;
+        private const int PORT_NUMBER = 10000;
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static TcpClient client = new TcpClient();
         static Stream stream = null;
+        private readonly Notification _notification;
+        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
+        private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
+
+        public const string IP_ADDRESS = "192.168.13.210";
+
+        TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
         public SyncTroughJobNew12(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
