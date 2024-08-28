@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_LED.Devices;
 using XHTD_SERVICES_LED.Models.Values;
 
@@ -32,6 +31,8 @@ namespace XHTD_SERVICES_LED.Jobs
         public const string PLC_IP_ADDRESS = "192.168.13.210";
         private const int PLC_PORT_NUMBER = 10000;
         private const int BUFFER_SIZE = 1024;
+
+        protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -162,6 +163,20 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        public void DisplayScreenLed(string dataCode)
+        {
+            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_CODE, dataCode))
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_CODE} - OK");
+            }
+            else
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED");
+            }
         }
 
         public void Dispose()
