@@ -171,7 +171,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    // Dữ liệu sensor đầu máng
+                    #region Đọc dữ liệu đầu máng
                     _syncTroughLogger.LogInfo($"==========Lay du lieu đầu máng: {troughCode} =========");
 
                     var machineCode = _machineRepository.GetMachineCodeByTroughCode(troughCode);
@@ -187,24 +187,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machineResponse == null || machineResponse.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
-                        continue;
                     }
                     var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
+                    #endregion
 
+                    #region Đọc dữ liệu cuối máng
                     _syncTroughLogger.LogInfo($"==========Lay du lieu cuối máng: {troughCode} =========");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
-
                     if (troughInfo == null)
                     {
                         _syncTroughLogger.LogInfo($"Mang khong ton tai: {troughCode} => Thoat");
-
                         continue;
                     }
 
                     // Dữ liệu sensor cuối máng
-                    // 2. send
+                    // 2. send 1
                     byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
                     stream.Write(data, 0, data.Length);
 
@@ -262,6 +261,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         //await _troughRepository.ResetTrough(troughCode);
                         await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
                     }
+                    #endregion
                 }
                 catch (Exception ex)
                 {
