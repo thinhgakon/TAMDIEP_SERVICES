@@ -111,9 +111,17 @@ namespace XHTD_SERVICES_LED.Jobs
                     stream.Read(data, 0, BUFFER_SIZE);
                     //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
 
-                    var dataStr = encoding.GetString(data);
+                    var response = encoding.GetString(data);
 
-                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                    _logger.LogInfo($"Nhan tin hieu can: {response}");
+
+                    if (response == null || response.Length == 0)
+                    {
+                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        return;
+                    }
+
+                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
                 }
                 catch (Exception ex)
                 {
@@ -128,6 +136,24 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             AuthenticateScaleStationModuleFromController();
+        }
+
+        static (string, string, string, string) GetInfo(string input)
+        {
+            string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    match.Groups["gt3"].Value,
+                    match.Groups["gt4"].Value
+                );
+            }
+
+            return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         public void Dispose()
