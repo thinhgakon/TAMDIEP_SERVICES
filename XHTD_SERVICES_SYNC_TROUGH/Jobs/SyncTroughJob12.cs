@@ -137,7 +137,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     stream.ReadTimeout = 2000;
                     stream.WriteTimeout = 2000;
 
-                    await ReadDataFromMachine(machineCodes);
+                    //await ReadDataFromMachine(machineCodes);
                     await ReadDataFromTrough(troughCodes);
                 }
                 else
