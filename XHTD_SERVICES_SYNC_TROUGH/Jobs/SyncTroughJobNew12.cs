@@ -195,7 +195,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private async Task MachineJobProcess(List<tblMachine> machines)
         {
-            machines = machines.Where(x => x.Code == "1" || x.Code == "2").ToList();
+            machines = machines.Where(x => x.Code == "3" || x.Code == "4").ToList();
 
             foreach (var machine in machines)
             {
