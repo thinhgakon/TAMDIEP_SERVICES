@@ -26,7 +26,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
         {
             await _scheduler.Start();
 
-            //// Đồng bộ đơn hàng
             IJobDetail syncOrderJob = JobBuilder.Create<SyncTroughJob12>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .StartNow()
