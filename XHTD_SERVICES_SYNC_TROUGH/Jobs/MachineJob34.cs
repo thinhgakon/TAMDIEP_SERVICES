@@ -28,6 +28,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const int PORT_NUMBER = 10000;
         private const int BUFFER_SIZE = 1024;
 
+        private const string MACHINE_1_CODE = "1";
+        private const string MACHINE_2_CODE = "2";
+
         public MachineJob34(MachineRepository machineRepository, SyncTroughLogger logger)
         {
             _machineRepository = machineRepository;
@@ -98,7 +101,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private async Task MachineJobProcess(List<tblMachine> machines)
         {
-            machines = machines.Where(x => x.Code == "3" || x.Code == "4").ToList();
+            machines = machines.Where(x => x.Code == MACHINE_1_CODE || x.Code == MACHINE_2_CODE).ToList();
 
             foreach (var machine in machines)
             {
