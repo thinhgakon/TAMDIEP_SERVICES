@@ -20,6 +20,8 @@ using System.IO;
 using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
+using SuperSimpleTcp;
+using System.Data;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -49,8 +51,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private List<string> machineCodes = new List<string>() { "1", "2" };
         private List<string> listTroughInThisDevice = new List<string> { "1", "2", "3", "4" };
         static ASCIIEncoding encoding = new ASCIIEncoding();
-        static TcpClient client = new TcpClient();
-        static Stream stream = null;
+        static SimpleTcpClient client;
+        static string MachineResponse = string.Empty;
+        static string TroughResponse = string.Empty;
 
         public SyncTroughJob12(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -126,18 +129,20 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     return;
                 }
 
-                client = new TcpClient();
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
+                client.Keepalive.EnableTcpKeepAlives = true;
+                client.Settings.MutuallyAuthenticate = false;
+                client.Settings.AcceptInvalidCertificates = true;
+                client.Settings.ConnectTimeoutMs = 2000;
+                client.Settings.NoDelay = true;
 
-                if (client.Connected)
+                client.ConnectWithRetries(2000);
+
+                if (client.IsConnected)
                 {
                     _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
-                    stream = client.GetStream();
-                    stream.ReadTimeout = 2000;
-                    stream.WriteTimeout = 2000;
-
-                    //await ReadDataFromMachine(machineCodes);
+                    await ReadDataFromMachine(machineCodes);
                     await ReadDataFromTrough(troughCodes);
                 }
                 else
@@ -153,12 +158,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 if (client != null)
                 {
-                    client.Close();
-                }
-
-                if (stream != null)
-                {
-                    stream.Close();
+                    client.Disconnect();
                 }
             }
         }
@@ -171,18 +171,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     _syncTroughLogger.LogInfo($"==========Lấy dữ liệu đầu máng: {machineCode} =========");
 
-                    byte[] machineData = encoding.GetBytes($"*[Count][MDB][{machineCode}]#GET[!]");
-                    stream.Write(machineData, 0, machineData.Length);
+                    client.Send($"*[Count][MDB][{machineCode}]#GET[!]");
+                    client.Events.DataReceived += Machine_DataReceived;
+                    Thread.Sleep(200);
 
-                    machineData = new byte[BUFFER_SIZE];
-                    stream.Read(machineData, 0, BUFFER_SIZE);
-
-                    var machineResponse = encoding.GetString(machineData).Trim();
-                    if (machineResponse == null || machineResponse.Length == 0)
+                    if (MachineResponse == null || MachineResponse.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
                     }
-                    var machineResult = GetInfo(machineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+                    var machineResult = GetInfo(MachineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
                     var deliveryCode = machineResult.Item3;
 
@@ -218,27 +215,21 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         continue;
                     }
 
-                    // Dữ liệu sensor cuối máng
-                    // 2. send 1
-                    byte[] data = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
-                    stream.Write(data, 0, data.Length);
+                    client.Send($"*[Count][MX][{troughCode}]#GET[!]");
+                    client.Events.DataReceived += Trough_DataReceived;
+                    Thread.Sleep(200);
 
-                    // 3. receive
-                    data = new byte[BUFFER_SIZE];
-                    stream.Read(data, 0, BUFFER_SIZE);
-
-                    var response = encoding.GetString(data).Trim();
-                    if (response == null || response.Length == 0)
+                    if (TroughResponse == null || TroughResponse.Length == 0)
                     {
                         _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
                         continue;
                     }
                     else
                     {
-                        _syncTroughLogger.LogInfo($"Trả về: {response}");
+                        _syncTroughLogger.LogInfo($"Trả về: {TroughResponse}");
                     }
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"), "MX");
+                    var result = GetInfo(TroughResponse.Replace("\0", "").Replace("##", "#"), "MX");
 
                     var status = result.Item4 == "Run" ? "True" : "False";
                     var deliveryCode = result.Item3;
@@ -281,6 +272,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
+        private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
+        private void Trough_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            TroughResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
         static (string, string, string, string) GetInfo(string input, string type)
         {
             string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
@@ -305,11 +306,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 if (client != null)
                 {
-                    client.Close();
-                }
-                if (stream != null)
-                {
-                    stream.Close();
+                    client.Dispose();
                 }
             }
             catch (Exception ex)

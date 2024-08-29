@@ -10,6 +10,7 @@ using System.Threading;
 using System.Timers;
 using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
+using SuperSimpleTcp;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -19,9 +20,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private readonly MachineRepository _machineRepository;
         protected readonly SyncTroughLogger _logger;
 
-        static TcpClient client = new TcpClient();
-        static Stream stream = null;
+        static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
+        static string MachineResponse = string.Empty;
 
         private const string IP_ADDRESS = "192.168.13.189";
         private const int PORT_NUMBER = 10000;
@@ -63,14 +64,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     return;
                 }
 
-                client = new TcpClient();
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
+                client.Keepalive.EnableTcpKeepAlives = true;
+                client.Settings.MutuallyAuthenticate = false;
+                client.Settings.AcceptInvalidCertificates = true;
+                client.Settings.ConnectTimeoutMs = 2000;
+                client.Settings.NoDelay = true;
 
-                if (client.Connected)
+                client.ConnectWithRetries(2000);
+
+                if (client.IsConnected)
                 {
                     _logger.LogInfo($"Machine Job Ket noi thanh cong MDB 1|2 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
-
-                    stream = client.GetStream();
 
                     await MachineJobProcess(machines);
                 }
@@ -81,13 +86,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client != null)
                 {
-                    client.Close();
+                    client.Disconnect();
                     Thread.Sleep(2000);
-                }
-
-                if (stream != null)
-                {
-                    stream.Close();
                 }
             }
             catch (Exception ex)
@@ -112,24 +112,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
 
-                        // 2. send 1
-                        byte[] data = encoding.GetBytes(command);
-                        stream.Write(data, 0, data.Length);
+                        client.Send(command);
+                        client.Events.DataReceived += Machine_DataReceived;
+                        Thread.Sleep(200);
 
-                        // 3. receive 1
-                        data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-
-                        var response = encoding.GetString(data).Trim();
-
-                        if (response == null || response.Length == 0)
+                        if (MachineResponse == null || MachineResponse.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {response}");
+                        _logger.LogInfo($"Du lieu tra ve: {MachineResponse}");
 
-                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
+                        if (MachineResponse.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
@@ -148,22 +142,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _logger.LogInfo($"Stop machine: {machine.Code}");
 
-                        byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
-                        stream.Write(data, 0, data.Length);
+                        client.Send($"*[Stop][MDB][{machine.Code}][!]");
+                        client.Events.DataReceived += Machine_DataReceived;
+                        Thread.Sleep(200);
 
-                        data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-
-                        var response = encoding.GetString(data).Trim();
-
-                        if (response == null || response.Length == 0)
+                        if (MachineResponse == null || MachineResponse.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {response}");
+                        _logger.LogInfo($"Du lieu tra ve: {MachineResponse}");
 
-                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
+                        if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
@@ -186,22 +176,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
+        private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
         public void Dispose()
         {
             try
             {
                 if (client != null)
                 {
-                    client.Close();
-                }
-                if (stream != null)
-                {
-                    stream.Close();
+                    client.Dispose();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"MachineJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                _logger.LogInfo($"MachineJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }
