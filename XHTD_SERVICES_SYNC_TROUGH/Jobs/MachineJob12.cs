@@ -39,11 +39,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            //while (Program.SyncTrough12Running == true)
-            //{
-            //}
-
-            Program.Machine12Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -53,7 +48,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 await ConnectScaleStationModuleFromController();
             });
-            Program.Machine12Running = false;
         }
 
         public async Task ConnectScaleStationModuleFromController()

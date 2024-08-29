@@ -73,11 +73,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            //while (Program.Machine34Running == true)
-            //{
-            //}
-
-            Program.SyncTrough34Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -96,7 +91,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 await SyncTroughProcess();
             });
-            Program.SyncTrough34Running = false;
         }
 
         public async Task LoadSystemParameters()
