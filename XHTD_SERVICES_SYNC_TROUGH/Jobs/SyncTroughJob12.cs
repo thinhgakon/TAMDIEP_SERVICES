@@ -21,7 +21,6 @@ using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
 using SuperSimpleTcp;
-using System.Data;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -39,10 +38,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         protected readonly SystemParameterRepository _systemParameterRepository;
 
         protected readonly SyncTroughLogger _syncTroughLogger;
-
-        protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
-
-        private static bool isActiveService = true;
 
         private const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
@@ -81,33 +76,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             await Task.Run(async () =>
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
-                {
-                    _syncTroughLogger.LogInfo("Service lay thong tin mang xuat SYNC TROUGH dang TAT.");
-                    return;
-                }
-
                 await SyncTroughProcess();
             });
-        }
-
-        public async Task LoadSystemParameters()
-        {
-            var parameters = await _systemParameterRepository.GetSystemParameters();
-
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
-
-            if (activeParameter == null || activeParameter.Value == "0")
-            {
-                isActiveService = false;
-            }
-            else
-            {
-                isActiveService = true;
-            }
         }
 
         public async Task SyncTroughProcess()
