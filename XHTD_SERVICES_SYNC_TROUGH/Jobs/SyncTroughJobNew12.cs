@@ -28,6 +28,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     public class SyncTroughJobNew12 : IJob, IDisposable
     {
         private static bool DeviceConnected = false;
+
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly MachineRepository _machineRepository;
@@ -42,24 +43,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         Thread controlPLCThread;
 
-        protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
-
-        private static bool isActiveService = true;
-
-        private int TimeInterVal = 2000;
-
+        public const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static SimpleTcpClient client;
         static string MachineResponse = string.Empty;
         static string TroughResponse = string.Empty;
-        static Stream stream = null;
-        private readonly Notification _notification;
-        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
-        private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
-        public const string IP_ADDRESS = "192.168.13.189";
+        private readonly Notification _notification;
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -121,11 +113,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             try
             {
                 _logger.LogInfo("Thuc hien ket noi scale socket");
-                //client = new TcpClient();
-
-                //// 1. connect
-                //client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
-                //stream = client.GetStream();
 
                 client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
                 client.Keepalive.EnableTcpKeepAlives = true;
@@ -143,9 +130,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     DeviceConnected = true;
                 }
 
-                //var data = encoding.GetBytes(START_CONNECTION_STR);
-                //stream.Write(data, 0, data.Length);
-
                 return DeviceConnected;
             }
             catch (Exception ex)
@@ -161,15 +145,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    // send
-                    //byte[] data = encoding.GetBytes(SEND_TO_RECEIVED_SCALE_CODE);
-                    //stream.Write(data, 0, data.Length);
-
-                    // receive
-                    //byte[] data = new byte[BUFFER_SIZE];
-                    //stream.Read(data, 0, BUFFER_SIZE);
-                    //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
-
                     client.Events.DataReceived += Trough_DataReceived;
                     Thread.Sleep(200);
 
@@ -186,12 +161,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
-                    if (stream != null) stream.Close();
-                    if (client != null) client.Disconnect();
+
+                    if (client != null)
+                    {
+                        client.Disconnect();
+                    }
 
                     break;
                 }
-                finally {
+                finally 
+                {
                     TroughResponse = null;
                 }
 
@@ -237,16 +216,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
 
-                        // 2. send 1
-                        //byte[] data = encoding.GetBytes(command);
-                        //stream.Write(data, 0, data.Length);
-
-                        //// 3. receive 1
-                        //data = new byte[BUFFER_SIZE];
-                        //stream.Read(data, 0, BUFFER_SIZE);
-
-                        //var response = encoding.GetString(data).Trim();
-
                         client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
                         Thread.Sleep(200);
@@ -276,14 +245,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machine.StopStatus == "PENDING")
                     {
                         _logger.LogInfo($"Stop machine: {machine.Code}");
-
-                        //byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
-                        //stream.Write(data, 0, data.Length);
-
-                        //data = new byte[BUFFER_SIZE];
-                        //stream.Read(data, 0, BUFFER_SIZE);
-
-                        //var response = encoding.GetString(data).Trim();
 
                         var command = $"*[Stop][MDB][{machine.Code}][!]";
 
@@ -338,10 +299,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 if (client != null)
                 {
                     client.Dispose();
-                }
-                if (stream != null)
-                {
-                    stream.Close();
                 }
             }
             catch (Exception ex)
