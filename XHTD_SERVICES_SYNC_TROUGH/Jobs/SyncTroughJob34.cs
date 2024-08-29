@@ -20,6 +20,7 @@ using System.IO;
 using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
+using XHTD_SERVICES_SYNC_TROUGH.Hubs;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -297,6 +298,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        private void SendDataTrough(string deliveryCode, string troughCode, string machineCode, int firstQuantity, int lastQuantity)
+        {
+            new TroughHub().SendDataTrough(deliveryCode, machineCode, troughCode, firstQuantity, lastQuantity);
         }
 
         public void Dispose()
