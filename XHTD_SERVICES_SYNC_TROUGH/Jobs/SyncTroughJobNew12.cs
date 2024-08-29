@@ -39,6 +39,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected readonly SyncTroughLogger _logger;
 
+        Thread controlPLCThread;
+
         protected const string SERVICE_ACTIVE_CODE = "SYNC_TROUGH_ACTIVE";
 
         private static bool isActiveService = true;
@@ -96,6 +98,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (isConnected)
                 {
+
+                    controlPLCThread = new Thread(() =>
+                    {
+                        ProcessPendingStatusPlc();
+                    });
+                    controlPLCThread.IsBackground = true;
+                    controlPLCThread.Start();
+
                     ReadDataFromController();
                 }
 
@@ -161,6 +171,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
 
             AuthenticateScaleStationModuleFromController();
+        }
+
+        public void ProcessPendingStatusPlc()
+        {
+            while (true)
+            {
+                Console.WriteLine("process pending plc");
+                Thread.Sleep(1000);
+            }
         }
 
         public void Dispose()

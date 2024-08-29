@@ -66,6 +66,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(machineJob34, machineJob34Trigger);
+
+            //IJobDetail syncTroughJobNew12Job = JobBuilder.Create<SyncTroughJobNew12>().Build();
+            //ITrigger syncTroughJobNew12Trigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInHours(87600)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(syncTroughJobNew12Job, syncTroughJobNew12Trigger);
         }
     }
 }
