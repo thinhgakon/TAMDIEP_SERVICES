@@ -133,29 +133,43 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    _logger.LogInfo($"==========Lấy dữ liệu đầu máng: {machineCode} =========");
+                    _logger.LogInfo($"Đếm đầu máng: {machineCode} ============================================================");
 
-                    client.Send($"*[Count][MDB][{machineCode}]#GET[!]");
+                    var command = $"*[Count][MDB][{machineCode}]#GET[!]";
+
+                    _logger.LogInfo($"1. Gửi lệnh: {command}");
+                    client.Send(command);
                     client.Events.DataReceived += Machine_DataReceived;
                     Thread.Sleep(200);
 
                     if (MachineResponse == null || MachineResponse.Length == 0)
                     {
-                        _logger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                        _logger.LogInfo($"2. Không có phản hồi");
+                        continue;
                     }
+                    else
+                    {
+                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
+                    }
+
                     var machineResult = GetInfo(MachineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+
+                    var status = machineResult.Item4 == "Run" ? "True" : "False";
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
                     var deliveryCode = machineResult.Item3;
 
-                    _logger.LogInfo($"May {machineCode} dang xuat hang deliveryCode");
-
-                    await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
-
-                    var machine = await _machineRepository.GetMachineByMachineCode(machineCode);
-                    if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
+                    if (firstSensorQuantity == 0)
                     {
-                        await _storeOrderOperatingRepository.UpdateStepInTrough(machine.CurrentDeliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                        continue;
                     }
+
+                    if (status == "False")
+                    {
+                        continue;
+                    }
+
+                    _logger.LogInfo($"3. Cập nhật dữ liệu đầu máng: msgh={deliveryCode} -- firstSensor={firstSensorQuantity}");
+                    await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
                 }
                 catch (Exception ex)
                 {
@@ -170,7 +184,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    _logger.LogInfo($"==========Lấy dữ liệu cuối máng: {troughCode} =========");
+                    _logger.LogInfo($"Đếm cuối máng: {troughCode} ============================================================");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
                     if (troughInfo == null)
@@ -179,18 +193,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         continue;
                     }
 
-                    client.Send($"*[Count][MX][{troughCode}]#GET[!]");
+                    var command = $"*[Count][MX][{troughCode}]#GET[!]";
+
+                    _logger.LogInfo($"1. Gửi lệnh: {command}");
+                    client.Send(command);
+
+                    client.Send(command);
                     client.Events.DataReceived += Trough_DataReceived;
                     Thread.Sleep(200);
 
                     if (TroughResponse == null || TroughResponse.Length == 0)
                     {
-                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        _logger.LogInfo($"2. Không có phản hồi");
                         continue;
                     }
                     else
                     {
-                        _logger.LogInfo($"Trả về: {TroughResponse}");
+                        _logger.LogInfo($"2. Phản hồi: {TroughResponse}");
                     }
 
                     var result = GetInfo(TroughResponse.Replace("\0", "").Replace("##", "#"), "MX");
@@ -209,6 +228,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _logger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
+                        _logger.LogInfo($"3. Cập nhật dữ liệu cuối máng: msgh={deliveryCode} -- trough: {troughCodeReturn} -- countQuantity={countQuantity}");
                         await _troughRepository.UpdateTroughSensor(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
 
                         var trough = await _troughRepository.GetDetail(troughCode);
