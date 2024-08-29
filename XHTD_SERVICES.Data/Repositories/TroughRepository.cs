@@ -98,6 +98,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 try
                 {
                     var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (callToTrough == null) return;
+                    
                     var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
                     if (itemToCall != null)
                     {
