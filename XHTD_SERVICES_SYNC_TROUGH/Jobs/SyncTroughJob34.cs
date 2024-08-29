@@ -37,7 +37,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly SyncTroughLogger _syncTroughLogger;
+        protected readonly SyncTroughLogger _logger;
 
         private const string IP_ADDRESS = "192.168.13.210";
         private const int BUFFER_SIZE = 1024;
@@ -64,7 +64,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _syncTroughLogger = syncTroughLogger;
+            _logger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -88,7 +88,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
                 if (troughCodes == null || troughCodes.Count == 0)
                 {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Khong tim thay mang xuat --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Trough Job MDB 1|2: Khong tim thay mang xuat --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     return;
                 }
@@ -104,19 +104,19 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client.IsConnected)
                 {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Trough Job MDB 1|2: Ket noi thanh cong --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     await ReadDataFromMachine(machineCodes);
                     await ReadDataFromTrough(troughCodes);
                 }
                 else
                 {
-                    _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: Ket noi that bai --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Trough Job MDB 1|2: Ket noi that bai --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
+                _logger.LogInfo($"Trough Job MDB 1|2: ERROR --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
             finally
             {
@@ -133,7 +133,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu đầu máng: {machineCode} =========");
+                    _logger.LogInfo($"==========Lấy dữ liệu đầu máng: {machineCode} =========");
 
                     client.Send($"*[Count][MDB][{machineCode}]#GET[!]");
                     client.Events.DataReceived += Machine_DataReceived;
@@ -141,13 +141,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (MachineResponse == null || MachineResponse.Length == 0)
                     {
-                        _syncTroughLogger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
+                        _logger.LogInfo($"Khong co du lieu dau mang tra ve - May {machineCode}");
                     }
                     var machineResult = GetInfo(MachineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
                     var deliveryCode = machineResult.Item3;
 
-                    _syncTroughLogger.LogInfo($"May {machineCode} dang xuat hang deliveryCode");
+                    _logger.LogInfo($"May {machineCode} dang xuat hang deliveryCode");
 
                     await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
 
@@ -159,7 +159,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
+                    _logger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
@@ -170,12 +170,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 try
                 {
-                    _syncTroughLogger.LogInfo($"==========Lấy dữ liệu cuối máng: {troughCode} =========");
+                    _logger.LogInfo($"==========Lấy dữ liệu cuối máng: {troughCode} =========");
 
                     var troughInfo = await _troughRepository.GetDetail(troughCode);
                     if (troughInfo == null)
                     {
-                        _syncTroughLogger.LogInfo($"Mang khong ton tai: {troughCode} => Thoat");
+                        _logger.LogInfo($"Mang khong ton tai: {troughCode} => Thoat");
                         continue;
                     }
 
@@ -185,12 +185,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (TroughResponse == null || TroughResponse.Length == 0)
                     {
-                        _syncTroughLogger.LogInfo($"Khong co du lieu tra ve");
+                        _logger.LogInfo($"Khong co du lieu tra ve");
                         continue;
                     }
                     else
                     {
-                        _syncTroughLogger.LogInfo($"Trả về: {TroughResponse}");
+                        _logger.LogInfo($"Trả về: {TroughResponse}");
                     }
 
                     var result = GetInfo(TroughResponse.Replace("\0", "").Replace("##", "#"), "MX");
@@ -207,7 +207,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     var troughCodeReturn = result.Item1;
                     if (status == "True")
                     {
-                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
+                        _logger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
                         await _troughRepository.UpdateTroughSensor(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
 
@@ -222,16 +222,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     else
                     {
                         //TODO: xét thêm trường hợp đang xuất dở đơn mà chuyển qua máng khác thì không update được lại trạng thái Đang lấy hàng
-                        _syncTroughLogger.LogInfo($"Mang {troughCodeReturn} dang nghi");
+                        _logger.LogInfo($"Mang {troughCodeReturn} dang nghi");
 
-                        _syncTroughLogger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
+                        _logger.LogInfo($"Reset trough troughCode {troughCodeReturn}");
                         //await _troughRepository.ResetTrough(troughCode);
                         await _troughRepository.UpdateTrough(troughCodeReturn, null, 0, 0, 0);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _syncTroughLogger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                    _logger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
@@ -275,7 +275,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _syncTroughLogger.LogInfo($"SyncTroughJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                _logger.LogInfo($"SyncTroughJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }
