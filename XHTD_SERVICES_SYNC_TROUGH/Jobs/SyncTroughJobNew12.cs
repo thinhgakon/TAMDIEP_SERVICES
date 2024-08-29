@@ -173,12 +173,113 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             AuthenticateScaleStationModuleFromController();
         }
 
-        public void ProcessPendingStatusPlc()
+        public async Task ProcessPendingStatusPlc()
         {
             while (true)
             {
                 Console.WriteLine("process pending plc");
+
+                var machines = await _machineRepository.GetPendingMachine();
+
+                if (machines == null || machines.Count == 0)
+                {
+                    Thread.Sleep(1000);
+                    continue;
+                }
+
+                await MachineJobProcess(machines);
+
                 Thread.Sleep(1000);
+            }
+        }
+
+        private async Task MachineJobProcess(List<tblMachine> machines)
+        {
+            machines = machines.Where(x => x.Code == "1" || x.Code == "2").ToList();
+
+            foreach (var machine in machines)
+            {
+                try
+                {
+                    if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
+                    {
+                        _logger.LogInfo($"Start machine: {machine.Code}");
+
+                        var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
+                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
+                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
+
+                        // 2. send 1
+                        byte[] data = encoding.GetBytes(command);
+                        stream.Write(data, 0, data.Length);
+
+                        // 3. receive 1
+                        data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+
+                        var response = encoding.GetString(data).Trim();
+
+                        if (response == null || response.Length == 0)
+                        {
+                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            continue;
+                        }
+                        _logger.LogInfo($"Du lieu tra ve: {response}");
+
+                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
+                        {
+                            machine.StartStatus = "ON";
+                            machine.StopStatus = "OFF";
+
+                            await _machineRepository.UpdateMachine(machine);
+                            _logger.LogInfo($"Start machine {machine.Code} thanh cong!");
+                        }
+                        else
+                        {
+                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            continue;
+                        }
+                    }
+
+                    if (machine.StopStatus == "PENDING")
+                    {
+                        _logger.LogInfo($"Stop machine: {machine.Code}");
+
+                        byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
+                        stream.Write(data, 0, data.Length);
+
+                        data = new byte[BUFFER_SIZE];
+                        stream.Read(data, 0, BUFFER_SIZE);
+
+                        var response = encoding.GetString(data).Trim();
+
+                        if (response == null || response.Length == 0)
+                        {
+                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            continue;
+                        }
+                        _logger.LogInfo($"Du lieu tra ve: {response}");
+
+                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
+                        {
+                            machine.StartStatus = "OFF";
+                            machine.StopStatus = "ON";
+                            machine.CurrentDeliveryCode = null;
+
+                            await _machineRepository.UpdateMachine(machine);
+                            _logger.LogInfo($"Stop machine {machine.Code} thanh cong!");
+                        }
+                        else
+                        {
+                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            continue;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
+                }
             }
         }
 
