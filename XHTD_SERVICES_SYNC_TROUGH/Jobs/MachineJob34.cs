@@ -103,22 +103,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
-                        _logger.LogInfo($"Start machine: {machine.Code}");
+                        _logger.LogInfo($"Start machine code: {machine.Code} - msgh: {machine.CurrentDeliveryCode}============================================");
 
                         var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
 
+                        _logger.LogInfo($"1. Gửi lệnh: {command}");
                         client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
                         Thread.Sleep(200);
 
                         if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            _logger.LogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {MachineResponse}");
+                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
 
                         if (MachineResponse.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
@@ -126,29 +127,33 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             machine.StopStatus = "OFF";
 
                             await _machineRepository.UpdateMachine(machine);
-                            _logger.LogInfo($"Start machine {machine.Code} thanh cong!");
+
+                            _logger.LogInfo($"2.1. Start thành công");
                         }
                         else
                         {
-                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            _logger.LogInfo($"2.1. Start thất bại");
                             continue;
                         }
                     }
 
                     if (machine.StopStatus == "PENDING")
                     {
-                        _logger.LogInfo($"Stop machine: {machine.Code}");
+                        _logger.LogInfo($"Stop machine code: {machine.Code} ============================================");
 
-                        client.Send($"*[Stop][MDB][{machine.Code}][!]");
+                        var command = $"*[Stop][MDB][{machine.Code}][!]";
+
+                        _logger.LogInfo($"1. Gửi lệnh: {command}");
+                        client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
                         Thread.Sleep(200);
 
                         if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            _logger.LogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {MachineResponse}");
+                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
 
                         if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
@@ -157,11 +162,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             machine.CurrentDeliveryCode = null;
 
                             await _machineRepository.UpdateMachine(machine);
-                            _logger.LogInfo($"Stop machine {machine.Code} thanh cong!");
+
+                            _logger.LogInfo($"2.1. Stop thành công");
                         }
                         else
                         {
-                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            _logger.LogInfo($"2.1. Stop thất bại");
                             continue;
                         }
                     }
