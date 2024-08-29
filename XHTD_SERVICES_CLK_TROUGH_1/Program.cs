@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_GATEWAY
+namespace XHTD_SERVICES_CLK_TROUGH_1
 {
     internal static class Program
     {
@@ -13,16 +13,14 @@ namespace XHTD_SERVICES_GATEWAY
         /// The main entry point for the application.
         /// </summary>
 
-        public static bool IsLockingRfidIn = false;
-        public static bool IsLockingRfidOut = false;
-        public static DateTime? SendSmsLastTime = null;
-        public static bool IsCapturing = false;
+        public static bool IsLockingRfid = false;
 
-        public static bool IsBarrierOpen = false;
-        public static bool IsFirstTimeChange = false;
-
-        public static bool IsBarrierActive = false; // cấu hình tự động mở barrier
-        public static bool IsConfirmAtGatewayActive = false; // cấu hình xác thực tại cổng
+        public static string PegasusIP1 = "192.168.13.161";
+        public static string PegasusIP2 = "192.168.13.162";
+        public static int RefPort1 = 6000;
+        public static byte RefComAdr1 = 0xFF;
+        public static int RefPort2 = 2000;
+        public static byte RefComAdr2 = 0xFF;
 
         public static DateTime? LastTimeReceivedUHF = DateTime.Now;
 

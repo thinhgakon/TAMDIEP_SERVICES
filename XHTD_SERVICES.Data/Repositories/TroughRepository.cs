@@ -91,6 +91,64 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task UpdateMachineSensor(string deliveryCode, double firstSensorQuantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
+                    if (callToTrough == null) return;
+                    
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.Working = true;
+                        itemToCall.DeliveryCodeCurrent = deliveryCode;
+                        itemToCall.FirstSensorQuantityCurrent = firstSensorQuantity;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Update Machine Sensor Trough {itemToCall.Code} success");
+                        Console.WriteLine($@"Update Machine Sensor Trough {itemToCall.Code} Success");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"=================== Update Machine Sensor Trough Error: " + ex.Message);
+                    Console.WriteLine($@"Update Machine Sensor Trough Error: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task UpdateTroughSensor(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    if (itemToCall != null)
+                    {
+                        itemToCall.Working = true;
+                        itemToCall.DeliveryCodeCurrent = deliveryCode;
+                        itemToCall.CountQuantityCurrent = countQuantity;
+                        itemToCall.PlanQuantityCurrent = planQuantity;
+
+                        await dbContext.SaveChangesAsync();
+
+                        log.Info($@"Update Trough Sensor Trough {troughCode} success");
+                        Console.WriteLine($@"Update Trough Sensor Trough {troughCode} Success");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"=================== Update Trough Sensor Trough Error: " + ex.Message);
+                    Console.WriteLine($@"Update Trough Sensor Trough Error: " + ex.Message);
+                }
+            }
+        }
+
         public async Task ResetTrough(string troughCode)
         {
             using (var dbContext = new XHTD_Entities())

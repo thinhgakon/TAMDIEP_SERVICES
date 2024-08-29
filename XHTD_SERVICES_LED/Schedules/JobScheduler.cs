@@ -26,6 +26,16 @@ namespace XHTD_SERVICES_LED.Schedules
         {
             await _scheduler.Start();
 
+            //IJobDetail led1XiBaoNewJob = JobBuilder.Create<Led1XiBaoNewJob>().Build();
+            //ITrigger ed1XiBaoNewTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInHours(87600)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(led1XiBaoNewJob, ed1XiBaoNewTrigger);
+
             IJobDetail showLed1XiBaoJob = JobBuilder.Create<Led1XiBaoJob>().Build();
             ITrigger showLed1XiBaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
