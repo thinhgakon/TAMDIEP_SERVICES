@@ -59,7 +59,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
         private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
-        public const string IP_ADDRESS = "192.168.13.210";
+        public const string IP_ADDRESS = "192.168.13.189";
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -166,11 +166,20 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     //stream.Write(data, 0, data.Length);
 
                     // receive
-                    byte[] data = new byte[BUFFER_SIZE];
-                    stream.Read(data, 0, BUFFER_SIZE);
+                    //byte[] data = new byte[BUFFER_SIZE];
+                    //stream.Read(data, 0, BUFFER_SIZE);
                     //stream.ReadAsync(data, 0, BUFFER_SIZE).Wait(1000);
 
-                    var dataStr = encoding.GetString(data);
+                    client.Events.DataReceived += Trough_DataReceived;
+                    Thread.Sleep(200);
+
+                    if (TroughResponse == null || TroughResponse.Length == 0)
+                    {
+                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        continue;
+                    }
+
+                    var dataStr = TroughResponse;
 
                     _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
                 }
@@ -181,6 +190,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (client != null) client.Disconnect();
 
                     break;
+                }
+                finally {
+                    TroughResponse = null;
                 }
 
                 Thread.Sleep(500);
@@ -211,7 +223,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private async Task MachineJobProcess(List<tblMachine> machines)
         {
-            machines = machines.Where(x => x.Code == "3" || x.Code == "4").ToList();
+            machines = machines.Where(x => x.Code == "1" || x.Code == "2").ToList();
 
             foreach (var machine in machines)
             {
@@ -265,22 +277,28 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         _logger.LogInfo($"Stop machine: {machine.Code}");
 
-                        byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
-                        stream.Write(data, 0, data.Length);
+                        //byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
+                        //stream.Write(data, 0, data.Length);
 
-                        data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
+                        //data = new byte[BUFFER_SIZE];
+                        //stream.Read(data, 0, BUFFER_SIZE);
 
-                        var response = encoding.GetString(data).Trim();
+                        //var response = encoding.GetString(data).Trim();
 
-                        if (response == null || response.Length == 0)
+                        var command = $"*[Stop][MDB][{machine.Code}][!]";
+
+                        client.Send(command);
+                        client.Events.DataReceived += Machine_DataReceived;
+                        Thread.Sleep(200);
+
+                        if (MachineResponse == null || MachineResponse.Length == 0)
                         {
                             _logger.LogInfo($"Khong co du lieu tra ve");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {response}");
+                        _logger.LogInfo($"Du lieu tra ve: {MachineResponse}");
 
-                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
+                        if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
@@ -306,6 +324,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
         {
             MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
+        private void Trough_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            TroughResponse = Encoding.UTF8.GetString(e.Data.ToArray());
         }
 
         public void Dispose()
