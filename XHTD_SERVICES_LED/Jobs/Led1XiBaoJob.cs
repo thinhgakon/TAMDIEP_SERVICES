@@ -210,8 +210,6 @@ namespace XHTD_SERVICES_LED.Jobs
                     var planQuantity = 100;
                     string typeProduct = "PCB30";
 
-                    if (countQuantity == 0) continue;
-
                     if (isRunning)
                     {
                         var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
