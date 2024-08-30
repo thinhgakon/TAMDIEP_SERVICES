@@ -130,6 +130,9 @@
     <Compile Include="Jobs\MachineJob34.cs" />
     <Compile Include="Jobs\SyncTroughJob34.cs" />
     <Compile Include="Jobs\ControlPlc12AndRealtime.cs" />
+    <Compile Include="Leds\TCPLed.cs" />
+    <Compile Include="Leds\TCPLedControl.cs" />
+    <Compile Include="Models\Values\MachineCode.cs" />
     <Compile Include="SyncTroughLogger.cs" />
     <Compile Include="Jobs\SyncTroughJob12.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />

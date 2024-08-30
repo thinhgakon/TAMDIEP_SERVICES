@@ -21,6 +21,8 @@ using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
 using SuperSimpleTcp;
+using XHTD_SERVICES_SYNC_TROUGH.Leds;
+using Autofac;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -148,7 +150,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public void ReadDataFromController()
+        public async Task ReadDataFromController()
         {
             while (true)
             {
@@ -167,6 +169,34 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         var dataStr = TroughResponse;
 
                         // xử lý LED
+
+                        var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
+
+                        var isRunning = result.Item4 == "Run";
+                        var deliveryCode = result.Item3;
+                        var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+                        var troughCode = result.Item1;
+
+                        var vehicleCode = "BSX-12345";
+                        var planQuantity = 100;
+                        string typeProduct = "PCB30";
+
+                        if (countQuantity == 0) continue;
+
+                        if (isRunning)
+                        {
+                            var machineCode = await _machineRepository.GetMachineCodeByTroughCode(troughCode);
+
+                            var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                            if (order != null)
+                            {
+                                vehicleCode = order.Vehicle;
+                                planQuantity = (int)(order.SumNumber * 20);
+                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                            }
+
+                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]", machineCode);
+                        }
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
@@ -309,6 +339,38 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     _logger.LogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
                 }
+            }
+        }
+
+        static (string, string, string, string) GetInfo(string input, string type)
+        {
+            string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    match.Groups["gt3"].Value,
+                    match.Groups["gt4"].Value
+                );
+            }
+
+            return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        public void DisplayScreenLed(string dataCode, string machineCode)
+        {
+            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(dataCode, machineCode))
+            {
+                _logger.LogInfo($"LED Máy {machineCode} - OK");
+            }
+            else
+            {
+                _logger.LogInfo($"LED Máy {machineCode} - FAILED");
             }
         }
 
