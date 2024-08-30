@@ -166,6 +166,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         var dataStr = TroughResponse;
 
+                        // xử lý LED
+
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
                         _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
