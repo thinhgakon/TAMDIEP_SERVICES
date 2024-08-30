@@ -21,7 +21,6 @@ using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
 using SuperSimpleTcp;
-using XHTD_SERVICES_SYNC_TROUGH.Hubs;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -37,6 +36,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected readonly Notification _notification;
 
         protected readonly SyncTroughLogger _logger;
 
@@ -57,6 +58,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
+            Notification notification,
             SyncTroughLogger syncTroughLogger
             )
         {
@@ -65,6 +67,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
+            _notification = notification;
             _logger = syncTroughLogger;
         }
 
@@ -123,7 +126,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 if (client != null)
                 {
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
@@ -176,7 +179,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
@@ -256,14 +259,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
 
         private void SendNotificationHub(string troughType, string deliveryCode, string machineCode, string troughCode, int? firstQuantity, int? lastQuantity)
         {
-            new TroughHub().SendTroughData(troughType, deliveryCode, machineCode, troughCode, firstQuantity, lastQuantity);
+            _notification.SendTroughData(troughType, deliveryCode, machineCode, troughCode, firstQuantity, lastQuantity);
         }
 
         private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
