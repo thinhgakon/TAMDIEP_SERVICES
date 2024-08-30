@@ -61,6 +61,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
+        private const int TIME_TO_RESET = 30;
+
         public ControlPlc12AndRealtime(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             MachineRepository machineRepository,
@@ -209,9 +211,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     {
                         timeDiffFromLastReceivedScaleSocket = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
 
-                        if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
+                        if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > TIME_TO_RESET)
                         {
-                            _logger.LogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+                            _logger.LogInfo($"Quá {TIME_TO_RESET}s không nhận được tín hiệu => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
                             break;
                         }
                     }
