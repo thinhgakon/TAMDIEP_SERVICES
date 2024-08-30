@@ -9,8 +9,8 @@ namespace XHTD_SERVICES_TRACE
 {
     public static class Program
     {
-        public static Dictionary<string, int> ListService = new Dictionary<string, int>();
-        /// <summary>
+        public static string SignalRUrl = "https://localhost:4008/SystemTraceRequest";
+            /// <summary>
         /// The main entry point for the application.
         /// </summary>
         static void Main()

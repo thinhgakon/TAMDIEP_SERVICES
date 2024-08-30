@@ -34,7 +34,7 @@ namespace XHTD_SERVICES_TRACE
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(TraceJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(TraceServiceJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

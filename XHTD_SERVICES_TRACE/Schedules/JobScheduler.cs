@@ -1,13 +1,19 @@
 ﻿using Quartz.Impl;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net;
 using XHTD_SERVICES_TRACE.Jobs;
-using System.Configuration;
+using System.Web;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
+using System.ServiceProcess;
+using System.Linq;
+using XHTD_SERVICES_TRACE.Models.Request;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Net;
+using System.Collections.Generic;
+using System;
+using System.Threading;
 
 namespace XHTD_SERVICES_TRACE.Schedules
 {
@@ -16,7 +22,7 @@ namespace XHTD_SERVICES_TRACE.Schedules
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IScheduler _scheduler;
-
+        private static List<SystemTraceServiceInfoDto> data = new List<SystemTraceServiceInfoDto>();
         public JobScheduler(IScheduler scheduler)
         {
             _scheduler = scheduler;
@@ -24,71 +30,163 @@ namespace XHTD_SERVICES_TRACE.Schedules
 
         public async void Start()
         {
+            await GetJob();
             await _scheduler.Start();
 
-            //// Đồng bộ đơn hàng
-            //IJobDetail syncInProgressOrderJob = JobBuilder.Create<SyncInProgressOrderJob>().Build();
-            //ITrigger syncInProgressOrderTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(syncInProgressOrderJob, syncInProgressOrderTrigger);
+            while (data.Count == 0)
+            {
+            }
 
-            //// Đồng bộ đơn hàng booked
-            //IJobDetail syncBookedOrderJob = JobBuilder.Create<SyncBookedOrderJob>().Build();
-            //ITrigger syncBookedOrderTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Order_Interval_In_Seconds")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(syncBookedOrderJob, syncBookedOrderTrigger);
+            foreach (var item in data)
+            {
+                IJobDetail detail = JobBuilder.Create<TraceServiceJob>()
+                    .WithIdentity($"{item.Code}_Job")
+                    .SetJobData(new JobDataMap() { new KeyValuePair<string, object>("ServiceName", item.Code) })
+                    .Build();
 
-            //// Đồng bộ đơn hàng changed
-            //IJobDetail syncChangedOrderJob = JobBuilder.Create<SyncChangedOrderJob>().Build();
-            //ITrigger syncChangedOrderTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Changed_Interval_In_Seconds")))
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(syncChangedOrderJob, syncChangedOrderTrigger);
+                ITrigger trigger = TriggerBuilder.Create()
+                     .StartNow()
+                     .WithIdentity($"{item.Code}_Trigger")
+                     .WithSimpleSchedule(x => x
+                          .WithIntervalInMinutes(item.Interval)
+                         .RepeatForever())
+                    .Build();
+                await _scheduler.ScheduleJob(detail, trigger);
+            }
+        }
 
-            // Đồng bộ đơn hàng từ View Oracle
-            IJobDetail syncBookedOrderFromViewJob = JobBuilder.Create<SyncBookedOrderFromViewJob>().Build();
-            ITrigger syncBookedOrderFromViewTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Order_Interval_In_Seconds")))
-                     .RepeatForever())
+        public async Task GetJob()
+        {
+            var connection = new HubConnectionBuilder()
+                .WithUrl(Program.SignalRUrl)
                 .Build();
-            await _scheduler.ScheduleJob(syncBookedOrderFromViewJob, syncBookedOrderFromViewTrigger);
 
-            IJobDetail syncInProgressOrderFromViewJob = JobBuilder.Create<SyncInProgressOrderFromViewJob>().Build();
-            ITrigger syncInProgressOrderFromViewTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
-                     .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(syncInProgressOrderFromViewJob, syncInProgressOrderFromViewTrigger);
+            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            string IPAddress = Environment.MachineName;
+            foreach (NetworkInterface networkInterface in networkInterfaces)
+            {
+                if (networkInterface.OperationalStatus == OperationalStatus.Up &&
+                    networkInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
+                    networkInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel)
+                {
+                    var ipProps = networkInterface.GetIPProperties();
+                    var ipAddresses = ipProps.UnicastAddresses;
+                    IPAddress += " | " + ipAddresses.FirstOrDefault(ipAddress => ipAddress.Address.AddressFamily == AddressFamily.InterNetwork)?.Address?.ToString();
+                }
+            }
 
-            IJobDetail syncChangedOrderFromViewJob = JobBuilder.Create<SyncChangedOrderFromViewJob>().Build();
-            ITrigger syncChangedOrderFromViewTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Booked_Changed_Interval_In_Seconds")))
-                     .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(syncChangedOrderFromViewJob, syncChangedOrderFromViewTrigger);
+            var services = ServiceController.GetServices().Where(x => x.ServiceName.StartsWith("XHTD")).ToList();
+
+            connection.StartAsync().Wait();
+            await connection.SendAsync("SyncJob", services.Select(x => new SystemTraceSyncDto()
+            {
+                Code = x.ServiceName,
+                Status = x.Status == ServiceControllerStatus.Running,
+                Address = IPAddress
+            }));
+
+            connection.On<List<SystemTraceServiceInfoDto>>("SyncJob", (message) =>
+            {
+                data = message;
+            });
+
+            connection.On<SystemTraceStartStopDto>("Start", async (model) =>
+            {
+                try
+                {
+                    var serviceName = model.Code;
+                    if (model.MachineName.Trim() != Environment.MachineName.Trim())
+                    {
+                        return;
+                    }
+                    if (string.IsNullOrEmpty(serviceName))
+                    {
+                        return;
+                    }
+                    using (ServiceController service = new ServiceController(serviceName))
+                    {
+                        if (service.Status == ServiceControllerStatus.Stopped)
+                        {
+                            service.Start();
+                            await connection.SendAsync("Trace", new SystemTraceDto()
+                            {
+                                Code = service.ServiceName,
+                                MachineName = Environment.MachineName,
+                                Status = true,
+                                Log = service.Status.ToString()
+                            });
+                        }
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await connection.SendAsync("Trace", new SystemTraceDto()
+                    {
+                        Code = model.Code,
+                        MachineName = Environment.MachineName,
+                        Status = null,
+                        Log = ex.Message
+                    });
+                }
+
+            });
+
+            connection.On<SystemTraceStartStopDto>("Stop", async (model) =>
+            {
+                try
+                {
+                    var serviceName = model.Code;
+                    if (string.IsNullOrEmpty(serviceName))
+                    {
+                        return;
+                    }
+                    if (model.MachineName.Trim() != Environment.MachineName.Trim())
+                    {
+                        return;
+                    }
+                    using (ServiceController service = new ServiceController(serviceName))
+                    {
+                        if (service.Status == ServiceControllerStatus.Running)
+                        {
+                            service.Stop();
+                            await connection.SendAsync("Trace", new SystemTraceDto()
+                            {
+                                Code = service.ServiceName,
+                                MachineName = Environment.MachineName,
+                                Status = false,
+                                Log = service.Status.ToString()
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await connection.SendAsync("Trace", new SystemTraceDto()
+                    {
+                        Code = model.Code,
+                        MachineName = Environment.MachineName,
+                        Status = null,
+                        Log = ex.Message
+                    });
+                }
+
+            });
+
+            connection.On<SystemTraceServiceInfoDto>("Update", (message) =>
+            {
+                TriggerKey oldTriggerKey = new TriggerKey($"{message.Code}_Trigger");
+                _scheduler.UnscheduleJob(oldTriggerKey);
+
+                ITrigger trigger = TriggerBuilder.Create()
+                      .StartNow()
+                      .WithSimpleSchedule(x => x
+                           .WithIntervalInMinutes(message.Interval)
+                          .RepeatForever())
+                     .Build();
+                _scheduler.ScheduleJob(trigger);
+            });
         }
     }
 }

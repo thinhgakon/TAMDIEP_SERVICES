@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace XHTD_SERVICES_TRACE.Models.Response
 {
-    public class SystemTraceRequestDto
+    public class SystemTraceSyncDto
     {
         public string Code { get; set; }
 
-        public string Request { get; set; }
+        public bool Status { get; set; }
+
+        public string Address { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_TRACE
 {
-    public class TraceLogger : BaseLogger<Jobs.TraceJob>
+    public class TraceLogger : BaseLogger<Jobs.TraceServiceJob>
     {
     }
 }
