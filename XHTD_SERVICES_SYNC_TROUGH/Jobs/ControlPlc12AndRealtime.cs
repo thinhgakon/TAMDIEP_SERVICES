@@ -217,6 +217,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
+                            if (client != null)
+                            {
+                                client.Disconnect();
+                                client.Dispose();
+                                client = null;
+                            }
+
                             break;
                         }
                     }
@@ -225,16 +232,17 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
 
+                    if (client != null)
+                    {
+                        client.Disconnect();
+                        client.Dispose();
+                        client = null;
+                    }
+
                     break;
                 }
                 finally 
                 {
-                    if (client != null)
-                    {
-                        client.Disconnect();
-                        //client.Dispose();
-                    }
-
                     TroughResponse = null;
                 }
 
@@ -249,6 +257,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             while (true)
             {
                 Console.WriteLine("process pending plc");
+
+                if(client == null)
+                {
+                    Console.WriteLine("client null => Exit");
+                    continue;
+                }
 
                 var machines = await _machineRepository.GetPendingMachine();
 
