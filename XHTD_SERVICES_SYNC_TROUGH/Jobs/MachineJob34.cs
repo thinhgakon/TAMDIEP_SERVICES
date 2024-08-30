@@ -46,16 +46,15 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             await Task.Run(async () =>
             {
-                await ConnectScaleStationModuleFromController();
+                await ConnectPLC();
             });
         }
 
-        public async Task ConnectScaleStationModuleFromController()
+        public async Task ConnectPLC()
         {
             try
             {
                 var machines = await _machineRepository.GetPendingMachine();
-
                 if (machines == null || machines.Count == 0)
                 {
                     return;
@@ -83,7 +82,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client != null)
                 {
-                    client.Disconnect();
+                    client.Dispose();
                     Thread.Sleep(2000);
                 }
             }
