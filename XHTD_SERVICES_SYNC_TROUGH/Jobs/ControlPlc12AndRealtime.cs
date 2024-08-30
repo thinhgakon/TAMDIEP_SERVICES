@@ -130,7 +130,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 //var data = encoding.GetBytes(START_CONNECTION_STR);
                 //stream.Write(data, 0, data.Length);
 
-                client.Send(START_CONNECTION_STR);
+                //client.Send(START_CONNECTION_STR);
 
                 if (client.IsConnected)
                 {
