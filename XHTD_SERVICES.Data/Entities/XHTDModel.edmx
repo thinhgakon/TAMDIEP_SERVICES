@@ -294,7 +294,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CountQuantityEnd" Type="float" />
           <Property Name="TimeStart" Type="datetime2" Precision="7" />
           <Property Name="TimeEnd" Type="datetime2" Precision="7" />
-          <Property Name="MachineExportedNumber" Type="float" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tblFunction">
           <Key>
@@ -574,7 +574,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="nvarchar(max)" />
-          <Property Name="MachineExportedNumber" Type="float" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
