@@ -160,12 +160,27 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (TroughResponse == null || TroughResponse.Length == 0)
                     {
                         _logger.LogInfo($"Khong co du lieu tra ve");
-                        continue;
+                        //continue;
+                    }
+                    else
+                    {
+                        var dataStr = TroughResponse;
+
+                        Program.LastTimeReceivedScaleSocket = DateTime.Now;
+
+                        _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
                     }
 
-                    var dataStr = TroughResponse;
+                    if (Program.LastTimeReceivedScaleSocket != null)
+                    {
+                        timeDiffFromLastReceivedScaleSocket = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedScaleSocket);
 
-                    _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
+                        if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
+                        {
+                            _logger.LogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+                            break;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

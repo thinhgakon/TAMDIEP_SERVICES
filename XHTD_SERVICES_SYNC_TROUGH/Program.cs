@@ -9,7 +9,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH
 {
     public static class Program
     {
-        public static DateTime? LastTimeReceivedScaleSocket = null;
+        public static DateTime? LastTimeReceivedScaleSocket = DateTime.Now;
 
         /// <summary>
         /// The main entry point for the application.
