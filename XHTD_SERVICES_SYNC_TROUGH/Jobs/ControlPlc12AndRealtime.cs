@@ -25,7 +25,7 @@ using SuperSimpleTcp;
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
     [DisallowConcurrentExecution]
-    public class SyncTroughJobNew12 : IJob, IDisposable
+    public class ControlPlc12AndRealtime : IJob, IDisposable
     {
         private static bool DeviceConnected = false;
 
@@ -59,7 +59,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
-        public SyncTroughJobNew12(
+        public ControlPlc12AndRealtime(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             MachineRepository machineRepository,
             TroughRepository troughRepository,

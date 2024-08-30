@@ -129,7 +129,7 @@
     <Compile Include="Jobs\MachineJob12.cs" />
     <Compile Include="Jobs\MachineJob34.cs" />
     <Compile Include="Jobs\SyncTroughJob34.cs" />
-    <Compile Include="Jobs\SyncTroughJobNew12.cs" />
+    <Compile Include="Jobs\ControlPlc12AndRealtime.cs" />
     <Compile Include="SyncTroughLogger.cs" />
     <Compile Include="Jobs\SyncTroughJob12.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
