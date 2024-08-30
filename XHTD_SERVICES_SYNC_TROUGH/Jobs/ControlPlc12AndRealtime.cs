@@ -87,13 +87,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                AuthenticateScaleStationModuleFromController();
+               await AuthenticateScaleStationModuleFromController();
             });
         }
 
-        public void AuthenticateScaleStationModuleFromController()
+        public async Task AuthenticateScaleStationModuleFromController()
         {
             while (true)
             {
@@ -109,7 +109,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     //controlPLCThread.IsBackground = true;
                     //controlPLCThread.Start();
 
-                    ReadDataFromController();
+                    await ReadDataFromController();
                 }
 
                 Thread.Sleep(1000);
@@ -130,11 +130,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 client.Settings.NoDelay = true;
 
                 client.ConnectWithRetries(2000);
-
-                //var data = encoding.GetBytes(START_CONNECTION_STR);
-                //stream.Write(data, 0, data.Length);
-
-                //client.Send(START_CONNECTION_STR);
 
                 if (client.IsConnected)
                 {
@@ -249,7 +244,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 Thread.Sleep(500);
             }
 
-            AuthenticateScaleStationModuleFromController();
+            await AuthenticateScaleStationModuleFromController();
         }
 
         public async Task ProcessPendingStatusPlc()
