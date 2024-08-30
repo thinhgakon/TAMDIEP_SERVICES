@@ -21,6 +21,7 @@ using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices.ComTypes;
 using SuperSimpleTcp;
+using XHTD_SERVICES_SYNC_TROUGH.Hubs;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -122,7 +123,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 if (client != null)
                 {
-                    client.Disconnect();
+                    client.Dispose();
                 }
             }
         }
@@ -170,10 +171,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     _logger.LogInfo($"3. Cập nhật dữ liệu đầu máng: msgh={deliveryCode} -- firstSensor={firstSensorQuantity}");
                     await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
+                    SendNotificationHub("XI_BAO", deliveryCode, machineCode, null, (int?)firstSensorQuantity, null);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
+                    client.Dispose();
                 }
             }
         }
@@ -237,6 +240,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
                             await _storeOrderOperatingRepository.UpdateStepInTrough(deliveryCode, (int)OrderStep.DANG_LAY_HANG);
+                            SendNotificationHub("XI_BAO", deliveryCode, machine.Code, troughCode, null, (int?)countQuantity);
                         }
                     }
                     else
@@ -252,8 +256,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
+                    client.Dispose();
                 }
             }
+        }
+
+        private void SendNotificationHub(string troughType, string deliveryCode, string machineCode, string troughCode, int? firstQuantity, int? lastQuantity)
+        {
+            new TroughHub().SendTroughData(troughType, deliveryCode, machineCode, troughCode, firstQuantity, lastQuantity);
         }
 
         private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
