@@ -48,9 +48,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         static string MachineResponse = string.Empty;
         static string TroughResponse = string.Empty;
 
-        public const string IP_ADDRESS = "192.168.13.189";
+        public const string IP_ADDRESS = "192.168.13.203";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 10000;
+        private const int PORT_NUMBER = 2022;
+
+        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
         private const string MACHINE_1_CODE = "1";
         private const string MACHINE_2_CODE = "2";
@@ -96,12 +98,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 if (isConnected)
                 {
 
-                    controlPLCThread = new Thread(() =>
-                    {
-                        ProcessPendingStatusPlc();
-                    });
-                    controlPLCThread.IsBackground = true;
-                    controlPLCThread.Start();
+                    //controlPLCThread = new Thread(() =>
+                    //{
+                    //    ProcessPendingStatusPlc();
+                    //});
+                    //controlPLCThread.IsBackground = true;
+                    //controlPLCThread.Start();
 
                     ReadDataFromController();
                 }
@@ -124,6 +126,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 client.Settings.NoDelay = true;
 
                 client.ConnectWithRetries(2000);
+
+                //var data = encoding.GetBytes(START_CONNECTION_STR);
+                //stream.Write(data, 0, data.Length);
+
+                client.Send(START_CONNECTION_STR);
 
                 if (client.IsConnected)
                 {
