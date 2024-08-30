@@ -20,6 +20,7 @@ namespace XHTD_SERVICES_LED.Devices
             { MachineCode.MACHINE_XI_BAO_2, "192.168.13.195" },
             { MachineCode.MACHINE_XI_BAO_3, "192.168.13.211" },
             { MachineCode.MACHINE_XI_BAO_4, "192.168.13.216" },
+            { MachineCode.MACHINE_MDB_1, "192.168.13.222" },
         };
 
         public TCPLedControl(TCPLed tcpLed)
