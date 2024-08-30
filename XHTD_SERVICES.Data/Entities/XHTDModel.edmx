@@ -1401,7 +1401,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblExportHistories" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblStoreOrderOperating" ToRole="tblExportHistory" />
-          <Property Name="MachineExportedNumber" Type="Double" />
+          <Property Name="MachineExportedNumber" Type="Decimal" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1772,7 +1772,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="TimeStart" Type="DateTime" Precision="7" />
           <Property Name="TimeEnd" Type="DateTime" Precision="7" />
           <NavigationProperty Name="tblStoreOrderOperating" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblExportHistory" ToRole="tblStoreOrderOperating" />
-          <Property Name="MachineExportedNumber" Type="Double" />
+          <Property Name="MachineExportedNumber" Type="Decimal" />
         </EntityType>
         <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
           <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="1">
