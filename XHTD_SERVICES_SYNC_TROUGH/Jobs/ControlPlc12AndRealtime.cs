@@ -195,7 +195,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                 typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             }
 
-                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]", machineCode);
+                            var ledCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+
+                            DisplayScreenLed(machineCode, ledCode);
                         }
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
@@ -360,11 +362,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        public void DisplayScreenLed(string dataCode, string machineCode)
+        public void DisplayScreenLed(string machineCode, string dataCode)
         {
             _logger.LogInfo($"Send led: dataCode = {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(dataCode, machineCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(machineCode, dataCode))
             {
                 _logger.LogInfo($"LED Máy {machineCode} - OK");
             }
