@@ -61,7 +61,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
-        private const int TIME_TO_RESET = 30;
+        private const int TIME_TO_RESET = 10;
 
         public ControlPlc12AndRealtime(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -102,12 +102,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 if (isConnected)
                 {
 
-                    controlPLCThread = new Thread(() =>
-                    {
-                        ProcessPendingStatusPlc();
-                    });
-                    controlPLCThread.IsBackground = true;
-                    controlPLCThread.Start();
+                    //controlPLCThread = new Thread(() =>
+                    //{
+                    //    ProcessPendingStatusPlc();
+                    //});
+                    //controlPLCThread.IsBackground = true;
+                    //controlPLCThread.Start();
 
                     ReadDataFromController();
                 }
@@ -214,6 +214,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > TIME_TO_RESET)
                         {
                             _logger.LogInfo($"Quá {TIME_TO_RESET}s không nhận được tín hiệu => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+
+                            Program.LastTimeReceivedScaleSocket = DateTime.Now;
+
+                            if (client != null)
+                            {
+                                client.Disconnect();
+                                client.Dispose();
+                                client = null;
+                            }
+
                             break;
                         }
                     }
@@ -225,6 +235,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (client != null)
                     {
                         client.Disconnect();
+                        client.Dispose();
+                        client = null;
                     }
 
                     break;
@@ -245,6 +257,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             while (true)
             {
                 Console.WriteLine("process pending plc");
+
+                if(client == null)
+                {
+                    Console.WriteLine("client null => Exit");
+                    continue;
+                }
 
                 var machines = await _machineRepository.GetPendingMachine();
 
@@ -313,7 +331,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         _logger.LogInfo($"1. Gửi lệnh: {command}");
                         client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
-                        Thread.Sleep(200);
+                        Thread.Sleep(2000);
 
                         if (MachineResponse == null || MachineResponse.Length == 0)
                         {
