@@ -126,7 +126,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             {
                 if (client != null)
                 {
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
@@ -179,7 +179,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromMachine ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
@@ -259,7 +259,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 catch (Exception ex)
                 {
                     _logger.LogInfo($"ReadDataFromTrough ERROR: Trough {troughCode} -- {ex.Message} --- {ex.StackTrace}");
-                    client.Dispose();
+                    client.Disconnect();
                 }
             }
         }
