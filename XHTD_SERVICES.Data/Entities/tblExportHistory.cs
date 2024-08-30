@@ -23,7 +23,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<double> CountQuantityEnd { get; set; }
         public Nullable<System.DateTime> TimeStart { get; set; }
         public Nullable<System.DateTime> TimeEnd { get; set; }
-        public Nullable<double> MachineExportedNumber { get; set; }
+        public Nullable<decimal> MachineExportedNumber { get; set; }
     
         public virtual tblStoreOrderOperating tblStoreOrderOperating { get; set; }
     }
