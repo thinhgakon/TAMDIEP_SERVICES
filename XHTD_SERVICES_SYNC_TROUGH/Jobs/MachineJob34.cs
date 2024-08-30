@@ -72,13 +72,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client.IsConnected)
                 {
-                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     await MachineJobProcess(machines);
                 }
                 else
                 {
-                    _logger.LogInfo($"Machine Job Ket noi that bai MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Machine Job Ket noi that bai MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
 
                 if (client != null)
@@ -195,7 +195,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"MachineJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                _logger.LogInfo($"MachineJob {MACHINE_1_CODE}|{MACHINE_2_CODE}: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }
