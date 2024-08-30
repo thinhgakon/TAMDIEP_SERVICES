@@ -250,7 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Hubs\TroughHub.cs" />
     <Compile Include="Jobs\ControlPlc34AndRealtime.cs" />
     <Compile Include="Jobs\MachineJob12.cs" />
     <Compile Include="Jobs\MachineJob34.cs" />
