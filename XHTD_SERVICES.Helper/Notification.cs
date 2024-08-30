@@ -112,6 +112,7 @@ namespace XHTD_SERVICES.Helper
             SendTroughDataRequest data = new SendTroughDataRequest
             {
                 TroughType = troughType,
+                DeliveryCode = deliveryCode,
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 FirstQuantity = firstQuantity,
