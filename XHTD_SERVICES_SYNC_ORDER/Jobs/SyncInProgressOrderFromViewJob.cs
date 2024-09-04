@@ -258,6 +258,23 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 else
                 {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
+                
+                    if (isSynced)
+                    {
+                        if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
+                        {
+                            double? weightIn = double.Parse(websaleOrder.loadweightnull);
+                            double? weightOut = double.Parse(websaleOrder.loadweightfull);
+
+                            var tolerance = ((decimal)(weightOut - weightIn)) / (decimal)websaleOrder.bookQuantity;
+                            tolerance = tolerance < 0 ? -1 * tolerance : tolerance;
+
+                            if (tolerance > (decimal)0.01)
+                            {
+                                SendToleranceWarning(websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity, (int?)(weightIn * 1000), (int?)(weightOut), (double?)tolerance);
+                            }
+                        }
+                    }
                 }
             }
             else if (stateId == (int)OrderState.DA_HUY_DON)
@@ -298,6 +315,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 _syncOrderLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
+        }
+
+        private void SendToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
+        {
+            _notification.SendOrderSendOrderToleranceWarning(deliveryCode, vehicle, sumNumber, weightIn, weightOut, tolerance);
         }
     }
 }
