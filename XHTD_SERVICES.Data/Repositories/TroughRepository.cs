@@ -97,6 +97,9 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
+                    var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
+                    if (order == null) return;
+
                     var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (callToTrough == null) return;
                     
@@ -106,6 +109,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.Working = true;
                         itemToCall.DeliveryCodeCurrent = deliveryCode;
                         itemToCall.FirstSensorQuantityCurrent = firstSensorQuantity;
+
+                        order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 20);
 
                         await dbContext.SaveChangesAsync();
 
@@ -127,6 +132,9 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 try
                 {
+                    var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
+                    if (order == null) return;
+
                     var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
                     if (itemToCall != null)
                     {
@@ -134,6 +142,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         itemToCall.DeliveryCodeCurrent = deliveryCode;
                         itemToCall.CountQuantityCurrent = countQuantity;
                         itemToCall.PlanQuantityCurrent = planQuantity;
+
+                        order.ExportedNumber = (decimal?)(countQuantity / 20);
 
                         await dbContext.SaveChangesAsync();
 

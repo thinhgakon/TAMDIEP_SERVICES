@@ -107,6 +107,21 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSMsgForTroughNotification(notification);
         }
 
+        public void SendTroughData(string troughType, string deliveryCode, string machineCode, string troughCode, int? firstQuantity, int? lastQuantity)
+        {
+            SendTroughDataRequest data = new SendTroughDataRequest
+            {
+                TroughType = troughType,
+                DeliveryCode = deliveryCode,
+                MachineCode = machineCode,
+                TroughCode = troughCode,
+                FirstQuantity = firstQuantity,
+                LastQuantity = lastQuantity
+            };
+
+            HttpRequest.SendDMSMsgForTroughData(data);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
