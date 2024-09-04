@@ -14,6 +14,7 @@ using System.Net;
 using System.Collections.Generic;
 using System;
 using System.Threading;
+using System.Data.Common;
 
 namespace XHTD_SERVICES_TRACE.Schedules
 {
@@ -77,7 +78,20 @@ namespace XHTD_SERVICES_TRACE.Schedules
 
             var services = ServiceController.GetServices().Where(x => x.ServiceName.StartsWith("XHTD")).ToList();
 
-            connection.StartAsync().Wait();
+            while(connection.State != HubConnectionState.Connected)
+            {
+                try
+                {
+                    connection.StartAsync().Wait();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("SignalR fail");
+                    Thread.Sleep(2000);
+                }
+            }
+            Console.WriteLine("Connected to signalR");
+
             await connection.SendAsync("SyncJob", services.Select(x => new SystemTraceSyncDto()
             {
                 Code = x.ServiceName,
@@ -187,6 +201,37 @@ namespace XHTD_SERVICES_TRACE.Schedules
                      .Build();
                 _scheduler.ScheduleJob(trigger);
             });
+
+            connection.Reconnecting += async (exception) =>
+            {
+                Console.WriteLine("Reconnecting...");
+                await Task.CompletedTask;
+            };
+
+            connection.Reconnected += async (connectionId) =>
+            {
+                Console.WriteLine("Reconnected!");
+                await Task.CompletedTask;
+            };
+
+            connection.Closed += async (exception) =>
+            {
+                Console.WriteLine("Connection closed. Reconnecting in 5 seconds...");
+                await Task.Delay(5000);
+                while(connection.State != HubConnectionState.Connected)
+                {
+                    try
+                    {
+                        Console.WriteLine("Try to re-connect!");
+                        connection.StartAsync().Wait();
+                    }
+                    catch (Exception)
+                    {
+                        Thread.Sleep(2000);
+                        continue;
+                    }
+                }
+            };
         }
     }
 }
