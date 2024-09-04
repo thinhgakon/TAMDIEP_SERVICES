@@ -122,6 +122,21 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSMsgForTroughData(data);
         }
 
+        public void SendOrderSendOrderToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
+        {
+            SendOrderToleranceWarningRequest warning = new SendOrderToleranceWarningRequest
+            {
+                DeliveryCode = deliveryCode,
+                Vehicle = vehicle,
+                SumNumber = sumNumber,
+                WeightIn = weightIn,
+                WeightOut = weightOut,
+                Tolerance = tolerance
+            };
+
+            HttpRequest.SendDMSOrderToleranceWarning(warning);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
