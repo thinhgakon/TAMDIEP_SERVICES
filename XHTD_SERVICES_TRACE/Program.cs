@@ -9,7 +9,7 @@ namespace XHTD_SERVICES_TRACE
 {
     public static class Program
     {
-        public static string SignalRUrl = "http://42.1.65.237:8099/SystemTraceRequest";
+        public static string SignalRUrl = "http://mmesuat.vicemtamdiep.vn:7000/SystemTraceRequest";
             /// <summary>
         /// The main entry point for the application.
         /// </summary>
