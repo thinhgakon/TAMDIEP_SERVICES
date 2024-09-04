@@ -34,6 +34,7 @@ namespace XHTD_SERVICES_LED.Jobs
         private const int BUFFER_SIZE = 1024;
 
         protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
+        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
 
         public Led1XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
@@ -78,6 +79,9 @@ namespace XHTD_SERVICES_LED.Jobs
                 _logger.LogInfo($"Connected to machine : 1|2");
 
                 await MachineJobProcess(troughCodes);
+
+                var machineCodes = new List<string>() { "1", "2" };
+                await ReadDataFromMachine(machineCodes);
 
                 if (client != null && client.Connected)
                 {
@@ -174,6 +178,63 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
+        public async Task ReadDataFromMachine(List<string> machineCodes)
+        {
+            foreach (var machineCode in machineCodes)
+            {
+                try
+                {
+                    // *[Count][MDB][1]#GET[!]
+                    var command = $"*[Count][MDB][{machineCode}]#GET[!]";
+                    byte[] data1 = encoding.GetBytes($"{command}");
+                    stream.Write(data1, 0, data1.Length);
+
+                    data1 = new byte[BUFFER_SIZE];
+                    stream.Read(data1, 0, BUFFER_SIZE);
+
+                    var response = encoding.GetString(data1).Trim();
+
+                    if (response == null || response.Length == 0)
+                    {
+                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        return;
+                    }
+
+                    var result = GetMDBInfo(response.Replace("\0", "").Replace("##", "#"));
+
+                    var isRunning = result.Item4 == "Run";
+                    var deliveryCode = result.Item3;
+                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+
+                    var vehicleCode = "BSX-12345";
+                    var planQuantity = 100;
+                    string typeProduct = "PCB30";
+
+                    if (isRunning)
+                    {
+                        var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                        if (order != null)
+                        {
+                            vehicleCode = order.Vehicle;
+                            planQuantity = (int)(order.SumNumber * 20);
+                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                        }
+
+                        DisplayScreenMDBLed($"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]");
+                    }
+                    else
+                    {
+
+                        DisplayScreenMDBLed($"*[H1][C1]MDB[H2][C1]---[H3][C1]---[H4][Cy]---[!]");
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+        }
+
         static (string, string, string, string) GetInfo(string input)
         {
             string pattern = @"\*\[Count\]\[MX\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
@@ -190,6 +251,38 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        static (string, string, string, string) GetMDBInfo(string input)
+        {
+            string pattern = @"\*\[Count\]\[MDB\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    match.Groups["gt3"].Value,
+                    match.Groups["gt4"].Value
+                );
+            }
+
+            return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        public void DisplayScreenMDBLed(string dataCode)
+        {
+            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_MDB_CODE, dataCode))
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - OK");
+            }
+            else
+            {
+                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - FAILED");
+            }
         }
 
         public void DisplayScreenLed(string dataCode)

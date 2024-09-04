@@ -10,6 +10,7 @@ using System.Threading;
 using System.Timers;
 using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
+using SuperSimpleTcp;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -19,13 +20,16 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private readonly MachineRepository _machineRepository;
         protected readonly SyncTroughLogger _logger;
 
-        static TcpClient client = new TcpClient();
-        static Stream stream = null;
+        static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
+        static string MachineResponse = string.Empty;
 
         private const string IP_ADDRESS = "192.168.13.210";
         private const int PORT_NUMBER = 10000;
         private const int BUFFER_SIZE = 1024;
+
+        private const string MACHINE_1_CODE = "3";
+        private const string MACHINE_2_CODE = "4";
 
         public MachineJob34(MachineRepository machineRepository, SyncTroughLogger logger)
         {
@@ -35,11 +39,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            //while (Program.SyncTrough34Running == true)
-            //{
-            //}
-
-            Program.Machine34Running = true;
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
@@ -47,47 +46,44 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
             await Task.Run(async () =>
             {
-                await ConnectScaleStationModuleFromController();
+                await ConnectPLC();
             });
-            Program.Machine34Running = false;
         }
 
-        public async Task ConnectScaleStationModuleFromController()
+        public async Task ConnectPLC()
         {
             try
             {
                 var machines = await _machineRepository.GetPendingMachine();
-
                 if (machines == null || machines.Count == 0)
                 {
                     return;
                 }
 
-                client = new TcpClient();
-                client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
+                client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
+                client.Keepalive.EnableTcpKeepAlives = true;
+                client.Settings.MutuallyAuthenticate = false;
+                client.Settings.AcceptInvalidCertificates = true;
+                client.Settings.ConnectTimeoutMs = 2000;
+                client.Settings.NoDelay = true;
 
-                if (client.Connected)
+                client.ConnectWithRetries(2000);
+
+                if (client.IsConnected)
                 {
-                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
-
-                    stream = client.GetStream();
+                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     await MachineJobProcess(machines);
                 }
                 else
                 {
-                    _logger.LogInfo($"Machine Job Ket noi that bai MDB 3|4 --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    _logger.LogInfo($"Machine Job Ket noi that bai MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
 
                 if (client != null)
                 {
-                    client.Close();
+                    client.Dispose();
                     Thread.Sleep(2000);
-                }
-
-                if (stream != null)
-                {
-                    stream.Close();
                 }
             }
             catch (Exception ex)
@@ -98,7 +94,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
         private async Task MachineJobProcess(List<tblMachine> machines)
         {
-            machines = machines.Where(x => x.Code == "3" || x.Code == "4").ToList();
+            machines = machines.Where(x => x.Code == MACHINE_1_CODE || x.Code == MACHINE_2_CODE).ToList();
 
             foreach (var machine in machines)
             {
@@ -106,75 +102,71 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
-                        _logger.LogInfo($"Start machine: {machine.Code}");
+                        _logger.LogInfo($"Start machine code: {machine.Code} - msgh: {machine.CurrentDeliveryCode}============================================");
 
                         var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
 
-                        // 2. send 1
-                        byte[] data = encoding.GetBytes(command);
-                        stream.Write(data, 0, data.Length);
+                        _logger.LogInfo($"1. Gửi lệnh: {command}");
+                        client.Send(command);
+                        client.Events.DataReceived += Machine_DataReceived;
+                        Thread.Sleep(200);
 
-                        // 3. receive 1
-                        data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
-
-                        var response = encoding.GetString(data).Trim();
-
-                        if (response == null || response.Length == 0)
+                        if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            _logger.LogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {response}");
+                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
 
-                        if (response.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
+                        if (MachineResponse.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "ON";
                             machine.StopStatus = "OFF";
 
                             await _machineRepository.UpdateMachine(machine);
-                            _logger.LogInfo($"Start machine {machine.Code} thanh cong!");
+
+                            _logger.LogInfo($"2.1. Start thành công");
                         }
                         else
                         {
-                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            _logger.LogInfo($"2.1. Start thất bại");
                             continue;
                         }
                     }
 
                     if (machine.StopStatus == "PENDING")
                     {
-                        _logger.LogInfo($"Stop machine: {machine.Code}");
+                        _logger.LogInfo($"Stop machine code: {machine.Code} ============================================");
 
-                        byte[] data = encoding.GetBytes($"*[Stop][MDB][{machine.Code}][!]");
-                        stream.Write(data, 0, data.Length);
+                        var command = $"*[Stop][MDB][{machine.Code}][!]";
 
-                        data = new byte[BUFFER_SIZE];
-                        stream.Read(data, 0, BUFFER_SIZE);
+                        _logger.LogInfo($"1. Gửi lệnh: {command}");
+                        client.Send(command);
+                        client.Events.DataReceived += Machine_DataReceived;
+                        Thread.Sleep(200);
 
-                        var response = encoding.GetString(data).Trim();
-
-                        if (response == null || response.Length == 0)
+                        if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"Khong co du lieu tra ve");
+                            _logger.LogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"Du lieu tra ve: {response}");
+                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
 
-                        if (response.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
+                        if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
                             machine.CurrentDeliveryCode = null;
 
                             await _machineRepository.UpdateMachine(machine);
-                            _logger.LogInfo($"Stop machine {machine.Code} thanh cong!");
+
+                            _logger.LogInfo($"2.1. Stop thành công");
                         }
                         else
                         {
-                            _logger.LogInfo($"Tin hieu phan hoi khong thanh cong");
+                            _logger.LogInfo($"2.1. Stop thất bại");
                             continue;
                         }
                     }
@@ -186,22 +178,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
+        private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
         public void Dispose()
         {
             try
             {
                 if (client != null)
                 {
-                    client.Close();
-                }
-                if (stream != null)
-                {
-                    stream.Close();
+                    client.Dispose();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"MachineJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                _logger.LogInfo($"MachineJob {MACHINE_1_CODE}|{MACHINE_2_CODE}: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
     }

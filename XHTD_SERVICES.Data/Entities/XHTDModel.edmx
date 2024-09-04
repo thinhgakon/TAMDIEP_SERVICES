@@ -294,7 +294,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CountQuantityEnd" Type="float" />
           <Property Name="TimeStart" Type="datetime2" Precision="7" />
           <Property Name="TimeEnd" Type="datetime2" Precision="7" />
-          <Property Name="MachineExportedNumber" Type="float" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tblFunction">
           <Key>
@@ -478,7 +478,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ItemId" Type="float" />
           <Property Name="NameProduct" Type="nvarchar" MaxLength="250" />
           <Property Name="CatId" Type="nvarchar" MaxLength="50" />
-          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="1" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="TimeIn33" Type="datetime" />
           <Property Name="CardNo" Type="nvarchar" MaxLength="50" />
           <Property Name="OrderId" Type="int" />
@@ -574,7 +574,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="nvarchar(max)" />
-          <Property Name="MachineExportedNumber" Type="float" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1304,7 +1304,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ItemId" Type="Double" />
           <Property Name="NameProduct" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="CatId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="1" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="TimeIn33" Type="DateTime" Precision="3" />
           <Property Name="CardNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="OrderId" Type="Int32" />
@@ -1401,7 +1401,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblExportHistories" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblStoreOrderOperating" ToRole="tblExportHistory" />
-          <Property Name="MachineExportedNumber" Type="Double" />
+          <Property Name="MachineExportedNumber" Type="Decimal" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1772,7 +1772,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="TimeStart" Type="DateTime" Precision="7" />
           <Property Name="TimeEnd" Type="DateTime" Precision="7" />
           <NavigationProperty Name="tblStoreOrderOperating" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblExportHistory" ToRole="tblStoreOrderOperating" />
-          <Property Name="MachineExportedNumber" Type="Double" />
+          <Property Name="MachineExportedNumber" Type="Decimal" />
         </EntityType>
         <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
           <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="1">

@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_SYNC_TROUGH.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES_SYNC_TROUGH.Leds;
 
 namespace XHTD_SERVICES_SYNC_TROUGH
 {
@@ -21,8 +22,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
+            builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<SyncTroughLogger>().AsSelf();
             builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<TCPLedControl>().AsSelf();
+            builder.RegisterType<TCPLed>().AsSelf();
 
             RegisterScheduler(builder);
 
