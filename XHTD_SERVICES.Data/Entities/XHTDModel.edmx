@@ -297,6 +297,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="FirstSensorCountQuantity" Type="float" />
           <Property Name="LastSensorCountQuantity" Type="float" />
+          <Property Name="RemainingCountQuantity" Type="int" />
         </EntityType>
         <EntityType Name="tblFunction">
           <Key>
@@ -1777,6 +1778,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="FirstSensorCountQuantity" Type="Double" />
           <Property Name="LastSensorCountQuantity" Type="Double" />
+          <Property Name="RemainingCountQuantity" Type="Int32" />
         </EntityType>
         <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
           <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="1">
@@ -2510,6 +2512,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblExportHistories">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblExportHistory">
               <MappingFragment StoreEntitySet="tblExportHistory">
+                <ScalarProperty Name="RemainingCountQuantity" ColumnName="RemainingCountQuantity" />
                 <ScalarProperty Name="LastSensorCountQuantity" ColumnName="LastSensorCountQuantity" />
                 <ScalarProperty Name="FirstSensorCountQuantity" ColumnName="FirstSensorCountQuantity" />
                 <ScalarProperty Name="MachineExportedNumber" ColumnName="MachineExportedNumber" />

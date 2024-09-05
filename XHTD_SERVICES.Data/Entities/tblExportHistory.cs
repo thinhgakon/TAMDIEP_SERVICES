@@ -26,6 +26,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<decimal> MachineExportedNumber { get; set; }
         public Nullable<double> FirstSensorCountQuantity { get; set; }
         public Nullable<double> LastSensorCountQuantity { get; set; }
+        public Nullable<int> RemainingCountQuantity { get; set; }
     
         public virtual tblStoreOrderOperating tblStoreOrderOperating { get; set; }
     }
