@@ -21,7 +21,6 @@ using System.Net.NetworkInformation;
 using XHTD_SERVICES_XB_TROUGH_1.Devices;
 using XHTD_SERVICES_XB_TROUGH_1.Business;
 using XHTD_SERVICES.Helper.Models.Request;
-using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 {
