@@ -149,39 +149,11 @@ namespace XHTD_SERVICES_LED.Jobs
 
                         WriteLogInfo($"Nhan duoc du lieu: {dataStr}");
 
-                        // xử lý LED
-                        var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
+                        // Hử lý LED tại MX
+                        await ProcessMXData(dataStr);
 
-                        var isRunning = result.Item4 == "Run";
-                        var deliveryCode = result.Item3;
-                        var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
-                        var troughCode = result.Item1;
-
-                        var vehicleCode = "BSX-12345";
-                        var planQuantity = 100;
-                        string typeProduct = "PCB30";
-
-                        if (countQuantity == 0)
-                        {
-                            continue;
-                        }
-
-                        if (isRunning)
-                        {
-                            var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
-
-                            var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
-                            if (order != null)
-                            {
-                                vehicleCode = order.Vehicle;
-                                planQuantity = (int)(order.SumNumber * 20);
-                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
-                            }
-
-                            var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
-
-                            DisplayScreenLed(sendCode, machine.Code);
-                        }
+                        // Hiển thị LED đếm lùi tại MDB
+                        await ProcessMDBData(dataStr);
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
                     }
@@ -231,6 +203,71 @@ namespace XHTD_SERVICES_LED.Jobs
             await ProcessLedRealtime();
         }
 
+        public async Task ProcessMXData(string dataStr)
+        {
+            var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
+
+            var isRunning = result.Item4 == "Run";
+            var deliveryCode = result.Item3;
+            var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+            var troughCode = result.Item1;
+
+            var vehicleCode = "BSX-12345";
+            var planQuantity = 100;
+            string typeProduct = "PCB30";
+
+            if (countQuantity == 0)
+            {
+                return;
+            }
+
+            if (isRunning)
+            {
+                var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
+
+                var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                if (order != null)
+                {
+                    vehicleCode = order.Vehicle;
+                    planQuantity = (int)(order.SumNumber * 20);
+                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                }
+
+                var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+
+                DisplayScreenLed(sendCode, machine.Code);
+            }
+        }
+
+        public async Task ProcessMDBData(string dataStr) 
+        {
+            var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MDB");
+
+            var isRunning = result.Item4 == "Run";
+            var deliveryCode = result.Item3;
+            var countQuantity = int.TryParse(result.Item2, out int i) ? i : 0;
+
+            var vehicleCode = "BSX-12345";
+            var planQuantity = 100;
+            string typeProduct = "PCB30";
+
+            if (isRunning)
+            {
+                var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                if (order != null)
+                {
+                    vehicleCode = order.Vehicle;
+                    planQuantity = (int)(order.SumNumber * 20);
+                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                }
+
+                var sendCode = $"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]";
+
+                DisplayScreenMDBLed(sendCode, "1");
+            }
+        }
+
         static (string, string, string, string) GetInfo(string input, string type)
         {
             string pattern = $@"\*\[Count\]\[{type}\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
@@ -247,6 +284,20 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        public void DisplayScreenMDBLed(string dataCode, string ledCode)
+        {
+            WriteLogInfo($"Send led: dataCode = {dataCode}");
+
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
+            {
+                WriteLogInfo($"LED Máy {ledCode} - OK");
+            }
+            else
+            {
+                WriteLogInfo($"LED Máy {ledCode} - FAILED");
+            }
         }
 
         public void DisplayScreenLed(string dataCode, string ledCode)
