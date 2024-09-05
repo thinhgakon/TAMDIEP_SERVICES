@@ -266,12 +266,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                             double? weightIn = double.Parse(websaleOrder.loadweightnull);
                             double? weightOut = double.Parse(websaleOrder.loadweightfull);
 
-                            var tolerance = ((decimal)(weightOut - weightIn)) / (decimal)websaleOrder.bookQuantity;
+                            var tolerance = ((decimal)(weightOut - weightIn) - (decimal)websaleOrder.bookQuantity) / (decimal)websaleOrder.bookQuantity;
                             tolerance = tolerance < 0 ? -1 * tolerance : tolerance;
 
                             if (tolerance > (decimal)0.01)
                             {
-                                SendToleranceWarning(websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity, (int?)(weightIn * 1000), (int?)(weightOut), (double?)tolerance);
+                                SendToleranceWarning(websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity * 1000, (int?)(weightIn * 1000), (int?)(weightOut * 1000), (double?)tolerance);
                             }
                         }
                     }
