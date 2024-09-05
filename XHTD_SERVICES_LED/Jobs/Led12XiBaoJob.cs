@@ -71,8 +71,12 @@ namespace XHTD_SERVICES_LED.Jobs
                 var trough12Codes = new List<string> { "1", "2" };
                 await ReadMXData(trough12Codes, MACHINE_1_CODE);
 
+                Thread.Sleep(200);
+
                 var trough34Codes = new List<string> { "3", "4" };
                 await ReadMXData(trough34Codes, MACHINE_2_CODE);
+
+                Thread.Sleep(200);
 
                 var machineCodes = new List<string> { "1" };
                 await ReadMDBData(machineCodes);
@@ -124,7 +128,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     var isRunning = result.Item4 == "Run";
                     var deliveryCode = result.Item3;
-                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+                    var countQuantity = int.TryParse(result.Item2, out int i) ? i : 0;
 
                     var vehicleCode = "BSX-12345";
                     var planQuantity = 100;
@@ -204,7 +208,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     var isRunning = result.Item4 == "Run";
                     var deliveryCode = result.Item3;
-                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+                    var countQuantity = int.TryParse(result.Item2, out int i) ? i : 0;
 
                     var vehicleCode = "BSX-12345";
                     var planQuantity = 100;

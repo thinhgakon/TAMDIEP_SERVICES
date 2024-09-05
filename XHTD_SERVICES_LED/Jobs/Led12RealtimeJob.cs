@@ -45,7 +45,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
         public const string IP_ADDRESS = "192.168.13.189";
         private const int BUFFER_SIZE = 1024;
-        private const int PORT_NUMBER = 10000;
+        private const int PORT_NUMBER = 13000;
 
         private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
 
