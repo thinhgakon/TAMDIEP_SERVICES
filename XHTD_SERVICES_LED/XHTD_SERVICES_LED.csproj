@@ -125,6 +125,7 @@
     <Compile Include="Devices\TCPLed.cs" />
     <Compile Include="Devices\TCPLedControl.cs" />
     <Compile Include="DIBootstrapper.cs" />
+    <Compile Include="Jobs\Led12RealtimeJob.cs" />
     <Compile Include="Jobs\Led12XiBaoJob.cs" />
     <Compile Include="Jobs\Led2XiBaoJob.cs" />
     <Compile Include="Jobs\Led34XiBaoJob.cs" />
