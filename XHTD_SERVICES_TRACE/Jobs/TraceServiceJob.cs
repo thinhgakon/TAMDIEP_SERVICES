@@ -31,11 +31,7 @@ namespace XHTD_SERVICES_TRACE.Jobs
         {
             try
             {
-                var connection = new HubConnectionBuilder()
-                  .WithUrl(Program.SignalRUrl)
-                  .Build();
-
-                connection.StartAsync().Wait();
+                var connection = Program.HubConnection;
                 try
                 {
                     using (ServiceController service = new ServiceController(ServiceName))

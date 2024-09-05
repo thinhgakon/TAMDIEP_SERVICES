@@ -58,9 +58,7 @@ namespace XHTD_SERVICES_TRACE.Schedules
 
         public async Task GetJob()
         {
-            var connection = new HubConnectionBuilder()
-                .WithUrl(Program.SignalRUrl)
-                .Build();
+            var connection = Program.HubConnection;
 
             NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
             string IPAddress = Environment.MachineName;
