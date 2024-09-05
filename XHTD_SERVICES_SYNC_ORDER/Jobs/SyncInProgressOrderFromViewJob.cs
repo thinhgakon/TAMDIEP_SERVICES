@@ -12,6 +12,9 @@ using XHTD_SERVICES_SYNC_ORDER.Models.Values;
 using XHTD_SERVICES.Helper;
 using System.Data;
 using System.Globalization;
+using XHTD_SERVICES.Helper.Models.Request;
+using Autofac;
+using XHTD_SERVICES_SYNC_ORDER.Business;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -24,6 +27,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected readonly MachineRepository _machineRepository;
+        
+        protected readonly TroughRepository _troughRepository;
 
         protected readonly Notification _notification;
 
@@ -44,6 +51,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             VehicleRepository vehicleRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
+            MachineRepository machineRepository,
+            TroughRepository troughRepository,
             Notification notification,
             SyncOrderLogger syncOrderLogger
             )
@@ -52,6 +61,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             _vehicleRepository = vehicleRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
+            _machineRepository = machineRepository;
+            _troughRepository = troughRepository;
             _notification = notification;
             _syncOrderLogger = syncOrderLogger;
         }
@@ -258,9 +269,36 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 else
                 {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
-                
+
                     if (isSynced)
                     {
+                        var troughCode = await _troughRepository.GetTroughCodeByDeliveryCode(websaleOrder.deliveryCode);
+                        if (!string.IsNullOrEmpty(troughCode))
+                        {
+                            var machineCode = await _machineRepository.GetMachineCodeByTroughCode(troughCode);
+
+                            if (!string.IsNullOrEmpty(machineCode))
+                            {
+                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {troughCode} - máy {machineCode}");
+
+                                var requestData = new MachineControlRequest
+                                {
+                                    MachineCode = machineCode,
+                                    TroughCode = troughCode,
+                                    CurrentDeliveryCode = websaleOrder.deliveryCode
+                                };
+
+                                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
+
+                                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                                {
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machineCode} thành công!");
+                                }
+
+                                else _syncOrderLogger.LogInfo($"3. Start Machine {machineCode} thất bại! => Trough: {troughCode} - DeliveryCode: {websaleOrder.deliveryCode}");
+                            }
+                        }
+
                         if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
                         {
                             double? weightIn = double.Parse(websaleOrder.loadweightnull);

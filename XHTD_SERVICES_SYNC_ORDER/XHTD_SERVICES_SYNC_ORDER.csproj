@@ -137,6 +137,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\MachineApiLib.cs" />
     <Compile Include="Common\OracleHelper.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Jobs\SyncBookedOrderFromViewJob.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Jobs\SyncChangedOrderJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderJob.cs" />
+    <Compile Include="Models\Response\MachineResponse.cs" />
     <Compile Include="SyncOrderLogger.cs" />
     <Compile Include="Jobs\SyncOrderJob.cs" />
     <Compile Include="Models\Request\GetTokenRequest.cs" />
