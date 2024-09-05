@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using log4net;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,8 @@ namespace XHTD_SERVICES_LED.Jobs
     [DisallowConcurrentExecution]
     public class Led34XiBaoJob : IJob, IDisposable
     {
-        protected readonly LedLogger _logger;
+        ILog _logger = LogManager.GetLogger("Led34XiBaoFileAppender");
+
         protected readonly MachineRepository _machineRepository;
         protected readonly TroughRepository _troughRepository;
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -37,9 +39,8 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
         protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
 
-        public Led34XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led34XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
-            _logger = logger;
             _machineRepository = machineRepository;
             _troughRepository = troughRepository;
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -53,7 +54,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             await Task.Run(async () =>
             {
-                _logger.LogInfo("Thuc hien ket noi machine.");
+                WriteLogInfo("Thuc hien ket noi machine.");
                 await ConnectPLC();
             });
         }
@@ -62,11 +63,13 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             try
             {
-                _logger.LogInfo("Bat dau ket noi machine.");
+                WriteLogInfo($"Bat dau ket noi PLC --- IP:{PLC_IP_ADDRESS} - PORT:{PLC_PORT_NUMBER}");
+
                 client = new TcpClient();
                 client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-                _logger.LogInfo($"Connected to machine : 3|4");
+
+                WriteLogInfo($"Connected to machine : 3|4");
 
                 var trough12Codes = new List<string> { "5", "6" };
                 await ReadMXData(trough12Codes, MACHINE_3_CODE);
@@ -92,9 +95,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo("Ket noi that bai.");
-                _logger.LogInfo(ex.Message);
-                _logger.LogInfo(ex.StackTrace);
+                WriteLogInfo($"Ket noi that bai: {ex.Message} --- {ex.InnerException} -- {ex.StackTrace}");
             }
         }
 
@@ -118,7 +119,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     if (response == null || response.Length == 0)
                     {
-                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        WriteLogInfo($"Khong co du lieu tra ve");
                         return;
                     }
 
@@ -176,7 +177,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"ERROR: {ex.Message}");
+                WriteLogInfo($"ERROR: {ex.Message}");
             }
         }
 
@@ -198,7 +199,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     if (response == null || response.Length == 0)
                     {
-                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        WriteLogInfo($"Khong co du lieu tra ve");
                         return;
                     }
 
@@ -275,29 +276,29 @@ namespace XHTD_SERVICES_LED.Jobs
 
         public void DisplayScreenMDBLed(string dataCode)
         {
-            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+            WriteLogInfo($"Send led: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_MDB_CODE, dataCode))
             {
-                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - OK");
+                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - FAILED");
+                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} - FAILED");
             }
         }
 
         public void DisplayScreenLed(string dataCode, string ledCode)
         {
-            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+            WriteLogInfo($"Send led: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
             {
-                _logger.LogInfo($"LED Máy {ledCode} - OK");
+                WriteLogInfo($"LED Máy {ledCode} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {ledCode} - FAILED");
+                WriteLogInfo($"LED Máy {ledCode} - FAILED");
             }
         }
 
@@ -318,6 +319,12 @@ namespace XHTD_SERVICES_LED.Jobs
             {
 
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

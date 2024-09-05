@@ -23,6 +23,8 @@ namespace XHTD_SERVICES_LED.Jobs
     [DisallowConcurrentExecution]
     public class Led12RealtimeJob : IJob, IDisposable
     {
+        ILog _logger = LogManager.GetLogger("Led12RealtimeFileAppender");
+
         private static bool DeviceConnected = false;
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -34,12 +36,6 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
-
-        //protected readonly LedLogger _logger;
-
-        ILog _logger = LogManager.GetLogger("SecondFileAppender");
-
-        Thread controlPLCThread;
 
         static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
