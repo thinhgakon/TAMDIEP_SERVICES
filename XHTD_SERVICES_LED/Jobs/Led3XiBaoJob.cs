@@ -33,7 +33,9 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly int PLC_PORT_NUMBER = 12000;
         private const int BUFFER_SIZE = 1024;
 
-        protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_3;
+        protected readonly string MACHINE_3_CODE = MachineCode.MACHINE_XI_BAO_3;
+        protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
+        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
 
         public Led3XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
@@ -60,30 +62,27 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             try
             {
-                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-
-                var listTroughInThisDevice = new List<string> { "5", "6" };
-
-                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
-
-                if (troughCodes == null || troughCodes.Count == 0)
-                {
-                    return;
-                }
-
                 _logger.LogInfo("Bat dau ket noi machine.");
                 client = new TcpClient();
                 client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo($"Connected to machine : 3|4");
 
-                await MachineJobProcess(troughCodes);
+                var trough12Codes = new List<string> { "5", "6" };
+                await ReadMXData(trough12Codes, MACHINE_3_CODE);
+
+                var trough34Codes = new List<string> { "7", "8" };
+                await ReadMXData(trough34Codes, MACHINE_4_CODE);
+
+                //var machineCodes = new List<string> { "1" };
+                //await ReadMDBData(machineCodes);
 
                 if (client != null && client.Connected)
                 {
                     client.Close();
                     Thread.Sleep(2000);
                 }
+
                 if (stream != null)
                 {
                     stream.Close();
@@ -97,15 +96,17 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public async Task MachineJobProcess(List<string> troughCodes)
+        public async Task ReadMXData(List<string> troughCodes, string machineCode)
         {
             try
             {
                 bool anyRunning = false;
+                var sendCode = "";
 
                 foreach (var troughCode in troughCodes)
                 {
-                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
+                    var command = $"*[Count][MX][{troughCode}]#GET[!]";
+                    byte[] data1 = encoding.GetBytes($"{command}");
                     stream.Write(data1, 0, data1.Length);
 
                     data1 = new byte[BUFFER_SIZE];
@@ -116,7 +117,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     if (response == null || response.Length == 0)
                     {
                         _logger.LogInfo($"Khong co du lieu tra ve");
-                        continue;
+                        return;
                     }
 
                     var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
@@ -141,14 +142,15 @@ namespace XHTD_SERVICES_LED.Jobs
                             typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                         }
 
-                        DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]");
+                        sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+                        DisplayScreenLed(sendCode, machineCode);
                         anyRunning = true;
                     }
                 }
 
                 if (!anyRunning)
                 {
-                    var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
+                    var machine = await _machineRepository.GetMachineByMachineCode(machineCode);
                     if (machine.StartStatus == "ON" && machine.StopStatus == "OFF" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
                         var order = await _storeOrderOperatingRepository.GetDetail(machine.CurrentDeliveryCode);
@@ -159,19 +161,77 @@ namespace XHTD_SERVICES_LED.Jobs
                             var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
-                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]");
+                            sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
+                            DisplayScreenLed(sendCode, machineCode);
                         }
                     }
-
                     else
                     {
-                        DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
+                        sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
+                        DisplayScreenLed(sendCode, machineCode);
                     }
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogInfo($"ERROR: {ex.Message}");
+            }
+        }
+
+        public async Task ReadMDBData(List<string> machineCodes)
+        {
+            foreach (var machineCode in machineCodes)
+            {
+                try
+                {
+                    // *[Count][MDB][1]#GET[!]
+                    var command = $"*[Count][MDB][{machineCode}]#GET[!]";
+                    byte[] data1 = encoding.GetBytes($"{command}");
+                    stream.Write(data1, 0, data1.Length);
+
+                    data1 = new byte[BUFFER_SIZE];
+                    stream.Read(data1, 0, BUFFER_SIZE);
+
+                    var response = encoding.GetString(data1).Trim();
+
+                    if (response == null || response.Length == 0)
+                    {
+                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        return;
+                    }
+
+                    var result = GetMDBInfo(response.Replace("\0", "").Replace("##", "#"));
+
+                    var isRunning = result.Item4 == "Run";
+                    var deliveryCode = result.Item3;
+                    var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+
+                    var vehicleCode = "BSX-12345";
+                    var planQuantity = 100;
+                    string typeProduct = "PCB30";
+
+                    if (isRunning)
+                    {
+                        var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                        if (order != null)
+                        {
+                            vehicleCode = order.Vehicle;
+                            planQuantity = (int)(order.SumNumber * 20);
+                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                        }
+
+                        DisplayScreenMDBLed($"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]");
+                    }
+                    else
+                    {
+
+                        DisplayScreenMDBLed($"*[H1][C1]MDB[H2][C1]---[H3][C1]---[H4][Cy]---[!]");
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
 
@@ -193,17 +253,49 @@ namespace XHTD_SERVICES_LED.Jobs
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        public void DisplayScreenLed(string dataCode)
+        static (string, string, string, string) GetMDBInfo(string input)
+        {
+            string pattern = @"\*\[Count\]\[MDB\]\[(?<gt1>[^\]]+)\]#(?<gt2>[^#]*)#(?<gt3>[^#]+)#(?<gt4>[^#]+)\[!\]";
+            Match match = Regex.Match(input, pattern);
+
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    match.Groups["gt3"].Value,
+                    match.Groups["gt4"].Value
+                );
+            }
+
+            return (string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+
+        public void DisplayScreenMDBLed(string dataCode)
         {
             _logger.LogInfo($"Send led: dataCode = {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_CODE, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_MDB_CODE, dataCode))
             {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - OK");
+                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED");
+                _logger.LogInfo($"LED Máy {MACHINE_MDB_CODE} - FAILED");
+            }
+        }
+
+        public void DisplayScreenLed(string dataCode, string ledCode)
+        {
+            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
+            {
+                _logger.LogInfo($"LED Máy {ledCode} - OK");
+            }
+            else
+            {
+                _logger.LogInfo($"LED Máy {ledCode} - FAILED");
             }
         }
 
