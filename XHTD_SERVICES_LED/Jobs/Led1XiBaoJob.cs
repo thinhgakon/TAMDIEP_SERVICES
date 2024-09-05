@@ -139,7 +139,7 @@ namespace XHTD_SERVICES_LED.Jobs
                         }
 
                         sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
-                        DisplayScreenLed(sendCode);
+                        DisplayScreenLed(sendCode, MACHINE_CODE);
                         anyRunning = true;
                     }
                 }
@@ -158,13 +158,13 @@ namespace XHTD_SERVICES_LED.Jobs
                             var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
-                            DisplayScreenLed(sendCode);
+                            DisplayScreenLed(sendCode, MACHINE_CODE);
                         }
                     }
                     else
                     {
                         sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
-                        DisplayScreenLed(sendCode);
+                        DisplayScreenLed(sendCode, MACHINE_CODE);
                     }
                 }
             }
@@ -281,17 +281,17 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public void DisplayScreenLed(string dataCode)
+        public void DisplayScreenLed(string dataCode, string ledCode)
         {
             _logger.LogInfo($"Send led: dataCode = {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_CODE, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
             {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - OK");
+                _logger.LogInfo($"LED Máy {ledCode} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {MACHINE_CODE} - FAILED");
+                _logger.LogInfo($"LED Máy {ledCode} - FAILED");
             }
         }
 
