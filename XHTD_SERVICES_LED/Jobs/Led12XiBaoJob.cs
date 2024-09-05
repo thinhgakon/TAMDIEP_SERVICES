@@ -53,7 +53,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             await Task.Run(async () =>
             {
-                _logger.LogInfo("Thuc hien ket noi machine.");
+                //_logger.LogInfo("Thuc hien ket noi machine.");
                 await ConnectPLC();
             });
         }
