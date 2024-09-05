@@ -272,26 +272,29 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
                 SendNotificationHub("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
 
-                var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
-                if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent)
+                if (!string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
                 {
-                    if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
+                    var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
+                    if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent.ToUpper())
                     {
-                        var requestData = new MachineControlRequest
+                        if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
-                            MachineCode = machine.Code,
-                            TroughCode = TROUGH_CODE,
-                            CurrentDeliveryCode = oldOrder.DeliveryCode
-                        };
+                            var requestData = new MachineControlRequest
+                            {
+                                MachineCode = machine.Code,
+                                TroughCode = TROUGH_CODE,
+                                CurrentDeliveryCode = oldOrder.DeliveryCode
+                            };
 
-                        var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
+                            var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
 
-                        if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                        {
-                            _logger.LogInfo($"3. Stop Machine {machine.Code} thành công cho đơn hàng {oldOrder.DeliveryCode} đã cân ra!");
+                            if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                            {
+                                _logger.LogInfo($"3. Stop Machine {machine.Code} thành công cho đơn hàng {oldOrder.DeliveryCode} đã cân ra!");
+                            }
+
+                            else _logger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {oldOrder.Vehicle} - DeliveryCode: {oldOrder.DeliveryCode}");
                         }
-
-                        else _logger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {oldOrder.Vehicle} - DeliveryCode: {oldOrder.DeliveryCode}");
                     }
                 }
 
