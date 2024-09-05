@@ -276,7 +276,7 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                 var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
                 if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent)
                 {
-                    if (oldOrder.ExportedNumber == oldOrder.SumNumber)
+                    if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                     {
                         var requestData = new MachineControlRequest
                         {
