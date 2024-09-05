@@ -31,5 +31,25 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Business
 
             return resultResponse;
         }
+
+        public MachineResponse StopMachine(MachineControlRequest requestData)
+        {
+            var stopMachineResponse = HttpRequest.StopMachine(requestData);
+            var stopMachineResponseContent = stopMachineResponse.Content;
+            var response = JsonConvert.DeserializeObject<MachineResponse>(stopMachineResponseContent);
+
+            var resultResponse = new MachineResponse
+            {
+                Status = false,
+                MessageObject = new MessageObject
+                {
+                    Code = "0104"
+                }
+            };
+            resultResponse.Status = response.Status;
+            resultResponse.MessageObject.Code = response.MessageObject.Code;
+
+            return resultResponse;
+        }
     }
 }
