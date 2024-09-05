@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using log4net;
 using Quartz;
 using SuperSimpleTcp;
 using System;
@@ -34,7 +35,9 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly LedLogger _logger;
+        //protected readonly LedLogger _logger;
+
+        ILog _logger = LogManager.GetLogger("SecondFileAppender");
 
         Thread controlPLCThread;
 
@@ -59,8 +62,8 @@ namespace XHTD_SERVICES_LED.Jobs
             MachineRepository machineRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            SystemParameterRepository systemParameterRepository,
-            LedLogger syncTroughLogger
+            SystemParameterRepository systemParameterRepository
+            //LedLogger syncTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -68,7 +71,7 @@ namespace XHTD_SERVICES_LED.Jobs
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _logger = syncTroughLogger;
+            //_logger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -104,7 +107,7 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             try
             {
-                _logger.LogInfo($"Bat dau ket noi PLC --- IP:{IP_ADDRESS} - PORT:{PORT_NUMBER}");
+                WriteLogInfo($"Bat dau ket noi PLC --- IP:{IP_ADDRESS} - PORT:{PORT_NUMBER}");
 
                 client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
                 client.Keepalive.EnableTcpKeepAlives = true;
@@ -117,7 +120,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 if (client.IsConnected)
                 {
-                    _logger.LogInfo("Ket noi thanh cong");
+                    WriteLogInfo("Ket noi thanh cong");
 
                     DeviceConnected = true;
                 }
@@ -126,7 +129,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Ket noi that bai: {ex.Message} --- {ex.InnerException} -- {ex.StackTrace}");
+                WriteLogInfo($"Ket noi that bai: {ex.Message} --- {ex.InnerException} -- {ex.StackTrace}");
                 return false;
             }
         }
@@ -142,13 +145,13 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     if (TroughResponse == null || TroughResponse.Length == 0)
                     {
-                        _logger.LogInfo($"Khong co du lieu tra ve");
+                        WriteLogInfo($"Khong co du lieu tra ve");
                     }
                     else
                     {
                         var dataStr = TroughResponse;
 
-                        _logger.LogInfo($"Nhan duoc du lieu: {dataStr}");
+                        WriteLogInfo($"Nhan duoc du lieu: {dataStr}");
 
                         // xử lý LED
                         var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
@@ -193,7 +196,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                         if (timeDiffFromLastReceivedScaleSocket.TotalSeconds > TIME_TO_RESET)
                         {
-                            _logger.LogInfo($"Quá {TIME_TO_RESET}s không nhận được tín hiệu => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+                            WriteLogInfo($"Quá {TIME_TO_RESET}s không nhận được tín hiệu => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
 
                             Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
@@ -210,7 +213,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($@"ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+                    WriteLogInfo($@"ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
 
                     if (client != null)
                     {
@@ -252,15 +255,15 @@ namespace XHTD_SERVICES_LED.Jobs
 
         public void DisplayScreenLed(string dataCode, string ledCode)
         {
-            _logger.LogInfo($"Send led: dataCode = {dataCode}");
+            WriteLogInfo($"Send led: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
             {
-                _logger.LogInfo($"LED Máy {ledCode} - OK");
+                WriteLogInfo($"LED Máy {ledCode} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {ledCode} - FAILED");
+                WriteLogInfo($"LED Máy {ledCode} - FAILED");
             }
         }
 
@@ -285,8 +288,14 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SyncTroughJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                WriteLogInfo($"SyncTroughJob12: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }
