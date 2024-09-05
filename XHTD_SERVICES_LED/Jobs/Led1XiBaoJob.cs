@@ -67,6 +67,8 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
 
+                var machineCodes = new List<string>() { "1", "2" };
+
                 if (troughCodes == null || troughCodes.Count == 0)
                 {
                     return;
@@ -78,10 +80,9 @@ namespace XHTD_SERVICES_LED.Jobs
                 stream = client.GetStream();
                 _logger.LogInfo($"Connected to machine : 1|2");
 
-                await MachineJobProcess(troughCodes);
+                await ReadMXData(troughCodes);
 
-                var machineCodes = new List<string>() { "1", "2" };
-                await ReadDataFromMachine(machineCodes);
+                await ReadMDBData(machineCodes);
 
                 if (client != null && client.Connected)
                 {
@@ -101,7 +102,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public async Task MachineJobProcess(List<string> troughCodes)
+        public async Task ReadMXData(List<string> troughCodes)
         {
             try
             {
@@ -178,7 +179,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public async Task ReadDataFromMachine(List<string> machineCodes)
+        public async Task ReadMDBData(List<string> machineCodes)
         {
             foreach (var machineCode in machineCodes)
             {
