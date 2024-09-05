@@ -38,6 +38,16 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblTrough> GetTroughByTroughCode(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code.ToUpper() == troughCode.ToUpper());
+                if (trough == null) return null;
+                return trough;
+            }
+        }
+
         public async Task<string> GetTroughCodeByDeliveryCode(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
