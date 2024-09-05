@@ -6,6 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_SYNC_ORDER.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES_SYNC_ORDER.Business;
 
 namespace XHTD_SERVICES_SYNC_ORDER
 {
@@ -22,6 +23,9 @@ namespace XHTD_SERVICES_SYNC_ORDER
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
             builder.RegisterType<SyncOrderLogger>().AsSelf();
+            builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<TroughRepository>().AsSelf();
+            builder.RegisterType<MachineApiLib>().AsSelf();
 
             RegisterScheduler(builder);
 
