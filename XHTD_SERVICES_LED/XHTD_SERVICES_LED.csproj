@@ -131,6 +131,7 @@
     <Compile Include="Jobs\Led12RealtimeJob.cs" />
     <Compile Include="Jobs\Led12XiBaoJob.cs" />
     <Compile Include="Jobs\Led2XiBaoJob.cs" />
+    <Compile Include="Jobs\Led34RealtimeJob.cs" />
     <Compile Include="Jobs\Led34XiBaoJob.cs" />
     <Compile Include="Jobs\Led4XiBaoJob.cs" />
     <Compile Include="LedLogger.cs" />

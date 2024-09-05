@@ -75,6 +75,16 @@ namespace XHTD_SERVICES_LED.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(led12RealtimeJob, led12RealtimeTrigger);
+
+            IJobDetail led34RealtimeJob = JobBuilder.Create<Led34RealtimeJob>().Build();
+            ITrigger led34RealtimeTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInHours(87600)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(led34RealtimeJob, led34RealtimeTrigger);
         }
     }
 }
