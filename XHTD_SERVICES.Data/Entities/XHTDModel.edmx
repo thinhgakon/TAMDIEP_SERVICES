@@ -648,6 +648,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="ProductCategory" Type="varchar" MaxLength="50" />
           <Property Name="FirstSensorQuantityCurrent" Type="float" />
+          <Property Name="FirstCountFirstSensor" Type="datetime2" Precision="7" />
+          <Property Name="FirstCountLastSensor" Type="datetime2" Precision="7" />
+          <Property Name="LastCountLastSensor" Type="datetime2" Precision="7" />
+          <Property Name="LastCountFirstSensor" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -1460,6 +1464,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ProductCategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="FirstSensorQuantityCurrent" Type="Double" />
           <NavigationProperty Name="TblMachineTroughs" Relationship="XHTD_SERVICES.Data.Entities.FK_TblMachineTrough_tblTrough_TroughCode" FromRole="tblTrough" ToRole="TblMachineTrough" />
+          <Property Name="FirstCountFirstSensor" Type="DateTime" Precision="7" />
+          <Property Name="FirstCountLastSensor" Type="DateTime" Precision="7" />
+          <Property Name="LastCountLastSensor" Type="DateTime" Precision="7" />
+          <Property Name="LastCountFirstSensor" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityType Name="tblTroughTypeProduct">
           <Key>
@@ -2346,6 +2354,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblTroughs">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTrough">
               <MappingFragment StoreEntitySet="tblTrough">
+                <ScalarProperty Name="LastCountFirstSensor" ColumnName="LastCountFirstSensor" />
+                <ScalarProperty Name="LastCountLastSensor" ColumnName="LastCountLastSensor" />
+                <ScalarProperty Name="FirstCountLastSensor" ColumnName="FirstCountLastSensor" />
+                <ScalarProperty Name="FirstCountFirstSensor" ColumnName="FirstCountFirstSensor" />
                 <ScalarProperty Name="FirstSensorQuantityCurrent" ColumnName="FirstSensorQuantityCurrent" />
                 <ScalarProperty Name="ProductCategory" ColumnName="ProductCategory" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
