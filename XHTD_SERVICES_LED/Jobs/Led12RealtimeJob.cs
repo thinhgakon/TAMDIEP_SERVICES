@@ -95,13 +95,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 if (isConnected)
                 {
 
-                    //controlPLCThread = new Thread(() =>
-                    //{
-                    //    ProcessPendingStatusPlc();
-                    //});
-                    //controlPLCThread.IsBackground = true;
-                    //controlPLCThread.Start();
-
                     await ReadDataFromController();
                 }
 
@@ -159,7 +152,6 @@ namespace XHTD_SERVICES_LED.Jobs
                         var dataStr = TroughResponse;
 
                         // xử lý LED
-
                         var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
 
                         var isRunning = result.Item4 == "Run";
@@ -238,118 +230,6 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             await AuthenticateScaleStationModuleFromController();
-        }
-
-        public async Task ProcessPendingStatusPlc()
-        {
-            while (true)
-            {
-                Console.WriteLine("process pending plc");
-
-                if (client == null)
-                {
-                    Console.WriteLine("client null => Exit");
-                    continue;
-                }
-
-                var machines = await _machineRepository.GetPendingMachine();
-
-                if (machines == null || machines.Count == 0)
-                {
-                    Thread.Sleep(1000);
-                    continue;
-                }
-
-                await MachineJobProcess(machines);
-
-                Thread.Sleep(1000);
-            }
-        }
-
-        private async Task MachineJobProcess(List<tblMachine> machines)
-        {
-            machines = machines.Where(x => x.Code == MACHINE_1_CODE || x.Code == MACHINE_2_CODE).ToList();
-
-            foreach (var machine in machines)
-            {
-                try
-                {
-                    if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
-                    {
-                        _logger.LogInfo($"Start machine code: {machine.Code} - msgh: {machine.CurrentDeliveryCode}============================================");
-
-                        var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
-                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
-                                      $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
-
-                        _logger.LogInfo($"1. Gửi lệnh: {command}");
-                        client.Send(command);
-                        client.Events.DataReceived += Machine_DataReceived;
-                        Thread.Sleep(200);
-
-                        if (MachineResponse == null || MachineResponse.Length == 0)
-                        {
-                            _logger.LogInfo($"2. Không có phản hồi");
-                            continue;
-                        }
-                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
-
-                        if (MachineResponse.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
-                        {
-                            machine.StartStatus = "ON";
-                            machine.StopStatus = "OFF";
-
-                            await _machineRepository.UpdateMachine(machine);
-
-                            _logger.LogInfo($"2.1. Start thành công");
-                        }
-                        else
-                        {
-                            _logger.LogInfo($"2.1. Start thất bại");
-                            continue;
-                        }
-                    }
-
-                    if (machine.StopStatus == "PENDING")
-                    {
-                        _logger.LogInfo($"Stop machine code: {machine.Code} ============================================");
-
-                        var command = $"*[Stop][MDB][{machine.Code}][!]";
-
-                        _logger.LogInfo($"1. Gửi lệnh: {command}");
-                        client.Send(command);
-                        client.Events.DataReceived += Machine_DataReceived;
-                        Thread.Sleep(2000);
-
-                        if (MachineResponse == null || MachineResponse.Length == 0)
-                        {
-                            _logger.LogInfo($"2. Không có phản hồi");
-                            continue;
-                        }
-                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
-
-                        if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
-                        {
-                            machine.StartStatus = "OFF";
-                            machine.StopStatus = "ON";
-                            machine.CurrentDeliveryCode = null;
-
-                            await _machineRepository.UpdateMachine(machine);
-
-                            _logger.LogInfo($"2.1. Stop thành công");
-                        }
-                        else
-                        {
-                            _logger.LogInfo($"2.1. Stop thất bại");
-                            continue;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
-                }
-            }
         }
 
         static (string, string, string, string) GetInfo(string input, string type)
