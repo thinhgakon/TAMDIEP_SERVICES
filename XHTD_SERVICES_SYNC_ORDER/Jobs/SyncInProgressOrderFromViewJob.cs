@@ -275,15 +275,15 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                         var troughCode = await _troughRepository.GetTroughCodeByDeliveryCode(websaleOrder.deliveryCode);
                         if (!string.IsNullOrEmpty(troughCode))
                         {
-                            var machineCode = await _machineRepository.GetMachineCodeByTroughCode(troughCode);
+                            var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
 
-                            if (!string.IsNullOrEmpty(machineCode))
+                            if (machine != null)
                             {
-                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {troughCode} - máy {machineCode}");
+                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {troughCode} - máy {machine.Code}");
 
                                 var requestData = new MachineControlRequest
                                 {
-                                    MachineCode = machineCode,
+                                    MachineCode = machine.Code,
                                     TroughCode = troughCode,
                                     CurrentDeliveryCode = websaleOrder.deliveryCode
                                 };
@@ -292,10 +292,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                                 if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
                                 {
-                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machineCode} thành công!");
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thành công!");
                                 }
 
-                                else _syncOrderLogger.LogInfo($"3. Start Machine {machineCode} thất bại! => Trough: {troughCode} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                else _syncOrderLogger.LogInfo($"3. Start Machine {machine.Code} thất bại! => Trough: {troughCode} - DeliveryCode: {websaleOrder.deliveryCode}");
                             }
                         }
 

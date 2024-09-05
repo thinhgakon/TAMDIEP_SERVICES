@@ -187,7 +187,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         if (isRunning)
                         {
-                            var machineCode = await _machineRepository.GetMachineCodeByTroughCode(troughCode);
+                            var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
 
                             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
                             if (order != null)
@@ -199,7 +199,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             var ledCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
 
-                            DisplayScreenLed(machineCode, ledCode);
+                            DisplayScreenLed(machine.Code, ledCode);
                         }
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
