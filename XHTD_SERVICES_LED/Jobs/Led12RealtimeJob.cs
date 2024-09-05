@@ -246,6 +246,7 @@ namespace XHTD_SERVICES_LED.Jobs
             var isRunning = result.Item4 == "Run";
             var deliveryCode = result.Item3;
             var countQuantity = int.TryParse(result.Item2, out int i) ? i : 0;
+            var machineCode = result.Item1;
 
             var vehicleCode = "BSX-12345";
             var planQuantity = 100;
@@ -264,7 +265,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 var sendCode = $"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]";
 
-                DisplayScreenMDBLed(sendCode, "1");
+                DisplayScreenMDBLed(sendCode, machineCode);
             }
         }
 
@@ -288,6 +289,13 @@ namespace XHTD_SERVICES_LED.Jobs
 
         public void DisplayScreenMDBLed(string dataCode, string ledCode)
         {
+            if(ledCode != MACHINE_1_CODE)
+            {
+                return;
+            }
+
+            ledCode = $"MDB-{ledCode}";
+
             WriteLogInfo($"Send led: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
