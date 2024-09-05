@@ -95,7 +95,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 if (isConnected)
                 {
 
-                    await ReadDataFromController();
+                    await ReadDataFromPlc();
                 }
 
                 Thread.Sleep(1000);
@@ -133,7 +133,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public async Task ReadDataFromController()
+        public async Task ReadDataFromPlc()
         {
             while (true)
             {
@@ -163,7 +163,10 @@ namespace XHTD_SERVICES_LED.Jobs
                         var planQuantity = 100;
                         string typeProduct = "PCB30";
 
-                        if (countQuantity == 0) continue;
+                        if (countQuantity == 0)
+                        {
+                            continue;
+                        }
 
                         if (isRunning)
                         {
@@ -177,9 +180,9 @@ namespace XHTD_SERVICES_LED.Jobs
                                 typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             }
 
-                            var ledCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+                            var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
 
-                            DisplayScreenLed(machine.Code, ledCode);
+                            DisplayScreenLed(sendCode, machine.Code);
                         }
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
@@ -250,17 +253,17 @@ namespace XHTD_SERVICES_LED.Jobs
             return (string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
-        public void DisplayScreenLed(string machineCode, string dataCode)
+        public void DisplayScreenLed(string dataCode, string ledCode)
         {
             _logger.LogInfo($"Send led: dataCode = {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(machineCode, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
             {
-                _logger.LogInfo($"LED Máy {machineCode} - OK");
+                _logger.LogInfo($"LED Máy {ledCode} - OK");
             }
             else
             {
-                _logger.LogInfo($"LED Máy {machineCode} - FAILED");
+                _logger.LogInfo($"LED Máy {ledCode} - FAILED");
             }
         }
 
