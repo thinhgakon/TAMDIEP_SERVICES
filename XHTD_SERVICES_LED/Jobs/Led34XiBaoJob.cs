@@ -18,7 +18,7 @@ using XHTD_SERVICES_LED.Models.Values;
 namespace XHTD_SERVICES_LED.Jobs
 {
     [DisallowConcurrentExecution]
-    public class Led3XiBaoJob : IJob, IDisposable
+    public class Led34XiBaoJob : IJob, IDisposable
     {
         protected readonly LedLogger _logger;
         protected readonly MachineRepository _machineRepository;
@@ -37,7 +37,7 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
         protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
 
-        public Led3XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led34XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _logger = logger;
             _machineRepository = machineRepository;
