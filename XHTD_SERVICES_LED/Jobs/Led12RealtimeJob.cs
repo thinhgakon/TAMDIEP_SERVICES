@@ -47,8 +47,6 @@ namespace XHTD_SERVICES_LED.Jobs
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 13000;
 
-        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
-
         private const string MACHINE_1_CODE = "1";
         private const string MACHINE_2_CODE = "2";
 
@@ -82,15 +80,15 @@ namespace XHTD_SERVICES_LED.Jobs
 
             await Task.Run(async () =>
             {
-                await AuthenticateScaleStationModuleFromController();
+                await ProcessLedRealtime();
             });
         }
 
-        public async Task AuthenticateScaleStationModuleFromController()
+        public async Task ProcessLedRealtime()
         {
             while (true)
             {
-                var isConnected = ConnectScaleStationModuleFromController();
+                var isConnected = ConnectPlc();
 
                 if (isConnected)
                 {
@@ -102,7 +100,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public bool ConnectScaleStationModuleFromController()
+        public bool ConnectPlc()
         {
             try
             {
@@ -232,7 +230,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 Thread.Sleep(500);
             }
 
-            await AuthenticateScaleStationModuleFromController();
+            await ProcessLedRealtime();
         }
 
         static (string, string, string, string) GetInfo(string input, string type)
