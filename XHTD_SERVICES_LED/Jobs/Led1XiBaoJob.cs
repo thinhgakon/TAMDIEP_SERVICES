@@ -68,16 +68,9 @@ namespace XHTD_SERVICES_LED.Jobs
                 _logger.LogInfo($"Connected to machine : 1|2");
 
                 var troughCodes = new List<string> { "1", "2" };
-
-                var machineCodes = new List<string> { "1" };
-
-                if (troughCodes == null || troughCodes.Count == 0)
-                {
-                    return;
-                }
-
                 await ReadMXData(troughCodes);
 
+                var machineCodes = new List<string> { "1" };
                 await ReadMDBData(machineCodes);
 
                 if (client != null && client.Connected)
@@ -104,10 +97,12 @@ namespace XHTD_SERVICES_LED.Jobs
             try
             {
                 bool anyRunning = false;
+                var sendCode = "";
 
                 foreach (var troughCode in troughCodes)
                 {
-                    byte[] data1 = encoding.GetBytes($"*[Count][MX][{troughCode}]#GET[!]");
+                    var command = $"*[Count][MX][{troughCode}]#GET[!]";
+                    byte[] data1 = encoding.GetBytes($"{command}");
                     stream.Write(data1, 0, data1.Length);
 
                     data1 = new byte[BUFFER_SIZE];
@@ -136,13 +131,15 @@ namespace XHTD_SERVICES_LED.Jobs
                     if (isRunning)
                     {
                         var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
-                        if (order != null) {
+                        if (order != null) 
+                        {
                             vehicleCode = order.Vehicle;
                             planQuantity = (int)(order.SumNumber * 20);
                             typeProduct = !String.IsNullOrEmpty(order.TypeProduct)? order.TypeProduct : "---";
                         }
 
-                        DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]");
+                        sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+                        DisplayScreenLed(sendCode);
                         anyRunning = true;
                     }
                 }
@@ -160,13 +157,14 @@ namespace XHTD_SERVICES_LED.Jobs
                             var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
-                            DisplayScreenLed($"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]");
+                            sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
+                            DisplayScreenLed(sendCode);
                         }
                     }
-
                     else
                     {
-                        DisplayScreenLed($"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]");
+                        sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
+                        DisplayScreenLed(sendCode);
                     }
                 }
             }
