@@ -104,7 +104,7 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             try
             {
-                _logger.LogInfo("Thuc hien ket noi scale socket");
+                _logger.LogInfo($"Bat dau ket noi PLC --- IP:{IP_ADDRESS} - PORT:{PORT_NUMBER}");
 
                 client = new SimpleTcpClient(IP_ADDRESS, PORT_NUMBER);
                 client.Keepalive.EnableTcpKeepAlives = true;
@@ -126,7 +126,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
+                _logger.LogInfo($"Ket noi that bai: {ex.Message} --- {ex.InnerException} -- {ex.StackTrace}");
                 return false;
             }
         }
@@ -143,11 +143,12 @@ namespace XHTD_SERVICES_LED.Jobs
                     if (TroughResponse == null || TroughResponse.Length == 0)
                     {
                         _logger.LogInfo($"Khong co du lieu tra ve");
-                        //continue;
                     }
                     else
                     {
                         var dataStr = TroughResponse;
+
+                        _logger.LogInfo($"Nhan duoc du lieu: {dataStr}");
 
                         // xử lý LED
                         var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
@@ -184,8 +185,6 @@ namespace XHTD_SERVICES_LED.Jobs
                         }
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
-
-                        _logger.LogInfo($"Nhan tin hieu can: {dataStr}");
                     }
 
                     if (Program.LastTimeReceivedScaleSocket != null)
@@ -211,7 +210,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    _logger.LogError($@"ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
 
                     if (client != null)
                     {
