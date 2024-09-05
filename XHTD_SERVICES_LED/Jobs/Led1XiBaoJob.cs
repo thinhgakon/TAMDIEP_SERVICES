@@ -61,24 +61,20 @@ namespace XHTD_SERVICES_LED.Jobs
         {
             try
             {
-                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-
-                var listTroughInThisDevice = new List<string> { "1", "2" };
-
-                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
-
-                var machineCodes = new List<string>() { "1", "2" };
-
-                if (troughCodes == null || troughCodes.Count == 0)
-                {
-                    return;
-                }
-
                 _logger.LogInfo("Bat dau ket noi machine.");
                 client = new TcpClient();
                 client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
                 _logger.LogInfo($"Connected to machine : 1|2");
+
+                var troughCodes = new List<string> { "1", "2" };
+
+                var machineCodes = new List<string> { "1" };
+
+                if (troughCodes == null || troughCodes.Count == 0)
+                {
+                    return;
+                }
 
                 await ReadMXData(troughCodes);
 
@@ -89,6 +85,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     client.Close();
                     Thread.Sleep(2000);
                 }
+
                 if (stream != null)
                 {
                     stream.Close();
