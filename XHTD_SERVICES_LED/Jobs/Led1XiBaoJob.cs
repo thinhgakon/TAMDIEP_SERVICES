@@ -33,7 +33,7 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly int PLC_PORT_NUMBER = 12000;
         private const int BUFFER_SIZE = 1024;
 
-        protected readonly string MACHINE_CODE = MachineCode.MACHINE_XI_BAO_1;
+        protected readonly string MACHINE_1_CODE = MachineCode.MACHINE_XI_BAO_1;
         protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
 
         public Led1XiBaoJob(LedLogger logger, MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 _logger.LogInfo($"Connected to machine : 1|2");
 
                 var troughCodes = new List<string> { "1", "2" };
-                await ReadMXData(troughCodes, MACHINE_CODE);
+                await ReadMXData(troughCodes, MACHINE_1_CODE);
 
                 var machineCodes = new List<string> { "1" };
                 await ReadMDBData(machineCodes);
