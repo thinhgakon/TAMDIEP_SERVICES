@@ -173,7 +173,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     }
 
                     _logger.LogInfo($"3. Cập nhật dữ liệu đầu máng: msgh={deliveryCode} -- firstSensor={firstSensorQuantity}");
-                    await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity);
+                    await _troughRepository.UpdateMachineSensor(deliveryCode, firstSensorQuantity, DateTime.Now, DateTime.Now);
                     SendNotificationAPI("XI_BAO", deliveryCode, machineCode, null, (int?)firstSensorQuantity, null);
                 }
                 catch (Exception ex)
@@ -235,7 +235,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                         _logger.LogInfo($"Mang {troughCodeReturn} dang xuat hang deliveryCode {deliveryCode}");
 
                         _logger.LogInfo($"3. Cập nhật dữ liệu cuối máng: msgh={deliveryCode} -- trough: {troughCodeReturn} -- countQuantity={countQuantity}");
-                        await _troughRepository.UpdateTroughSensor(troughCodeReturn, deliveryCode, countQuantity, planQuantity);
+                        await _troughRepository.UpdateTroughSensor(troughCodeReturn, deliveryCode, countQuantity, planQuantity, DateTime.Now, DateTime.Now);
 
                         var trough = await _troughRepository.GetDetail(troughCode);
                         var machine = await _machineRepository.GetMachineByMachineCode(trough.Machine);
