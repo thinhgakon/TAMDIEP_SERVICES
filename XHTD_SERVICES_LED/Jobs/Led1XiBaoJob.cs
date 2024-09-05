@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_LED.Jobs
                 _logger.LogInfo($"Connected to machine : 1|2");
 
                 var troughCodes = new List<string> { "1", "2" };
-                await ReadMXData(troughCodes);
+                await ReadMXData(troughCodes, MACHINE_CODE);
 
                 var machineCodes = new List<string> { "1" };
                 await ReadMDBData(machineCodes);
@@ -92,7 +92,7 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public async Task ReadMXData(List<string> troughCodes)
+        public async Task ReadMXData(List<string> troughCodes, string machineCode)
         {
             try
             {
@@ -139,14 +139,14 @@ namespace XHTD_SERVICES_LED.Jobs
                         }
 
                         sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
-                        DisplayScreenLed(sendCode, MACHINE_CODE);
+                        DisplayScreenLed(sendCode, machineCode);
                         anyRunning = true;
                     }
                 }
 
                 if (!anyRunning)
                 {
-                    var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
+                    var machine = await _machineRepository.GetMachineByMachineCode(machineCode);
                     if (machine.StartStatus == "ON" && machine.StopStatus == "OFF" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
                         var order = await _storeOrderOperatingRepository.GetDetail(machine.CurrentDeliveryCode);
@@ -158,13 +158,13 @@ namespace XHTD_SERVICES_LED.Jobs
                             var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
-                            DisplayScreenLed(sendCode, MACHINE_CODE);
+                            DisplayScreenLed(sendCode, machineCode);
                         }
                     }
                     else
                     {
                         sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
-                        DisplayScreenLed(sendCode, MACHINE_CODE);
+                        DisplayScreenLed(sendCode, machineCode);
                     }
                 }
             }
