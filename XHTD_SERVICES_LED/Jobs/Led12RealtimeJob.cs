@@ -149,7 +149,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                         WriteLogInfo($"Nhan duoc du lieu: {dataStr}");
 
-                        // Hử lý LED tại MX
+                        // Hiển thị LED tại MX
                         await ProcessMXData(dataStr);
 
                         // Hiển thị LED đếm lùi tại MDB

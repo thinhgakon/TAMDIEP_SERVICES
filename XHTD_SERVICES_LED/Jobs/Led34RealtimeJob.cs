@@ -149,39 +149,8 @@ namespace XHTD_SERVICES_LED.Jobs
 
                         WriteLogInfo($"Nhan duoc du lieu: {dataStr}");
 
-                        // xử lý LED
-                        var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
-
-                        var isRunning = result.Item4 == "Run";
-                        var deliveryCode = result.Item3;
-                        var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
-                        var troughCode = result.Item1;
-
-                        var vehicleCode = "BSX-12345";
-                        var planQuantity = 100;
-                        string typeProduct = "PCB30";
-
-                        if (countQuantity == 0)
-                        {
-                            continue;
-                        }
-
-                        if (isRunning)
-                        {
-                            var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
-
-                            var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
-                            if (order != null)
-                            {
-                                vehicleCode = order.Vehicle;
-                                planQuantity = (int)(order.SumNumber * 20);
-                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
-                            }
-
-                            var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
-
-                            DisplayScreenLed(sendCode, machine.Code);
-                        }
+                        // Hiển thị LED tại MX
+                        await ProcessMXData(dataStr);
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
                     }
@@ -229,6 +198,42 @@ namespace XHTD_SERVICES_LED.Jobs
             }
 
             await ProcessLedRealtime();
+        }
+
+        public async Task ProcessMXData(string dataStr)
+        {
+            var result = GetInfo(dataStr.Replace("\0", "").Replace("##", "#"), "MX");
+
+            var isRunning = result.Item4 == "Run";
+            var deliveryCode = result.Item3;
+            var countQuantity = Double.TryParse(result.Item2, out double i) ? i : 0;
+            var troughCode = result.Item1;
+
+            var vehicleCode = "BSX-12345";
+            var planQuantity = 100;
+            string typeProduct = "PCB30";
+
+            if (countQuantity == 0)
+            {
+                return;
+            }
+
+            if (isRunning)
+            {
+                var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
+
+                var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
+                if (order != null)
+                {
+                    vehicleCode = order.Vehicle;
+                    planQuantity = (int)(order.SumNumber * 20);
+                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                }
+
+                var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
+
+                DisplayScreenLed(sendCode, machine.Code);
+            }
         }
 
         static (string, string, string, string) GetInfo(string input, string type)
