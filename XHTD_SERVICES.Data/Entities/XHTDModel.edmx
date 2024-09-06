@@ -298,6 +298,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="FirstSensorCountQuantityEnd" Type="float" />
           <Property Name="FirstSensorCountQuantityStart" Type="float" />
           <Property Name="RemainingCountQuantity" Type="int" />
+          <Property Name="LastTimeChangeTrough" Type="datetime2" Precision="7" />
+          <Property Name="TimeGetInTrough" Type="datetime2" Precision="7" />
+          <Property Name="TimeGetOutTrough" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="tblFunction">
           <Key>
@@ -1787,6 +1790,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="RemainingCountQuantity" Type="Int32" />
           <Property Name="FirstSensorCountQuantityEnd" Type="Double" />
           <Property Name="FirstSensorCountQuantityStart" Type="Double" />
+          <Property Name="LastTimeChangeTrough" Type="DateTime" Precision="7" />
+          <Property Name="TimeGetInTrough" Type="DateTime" Precision="7" />
+          <Property Name="TimeGetOutTrough" Type="DateTime" Precision="7" />
         </EntityType>
         <Association Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId">
           <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="1">
@@ -2524,6 +2530,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblExportHistories">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblExportHistory">
               <MappingFragment StoreEntitySet="tblExportHistory">
+                <ScalarProperty Name="TimeGetOutTrough" ColumnName="TimeGetOutTrough" />
+                <ScalarProperty Name="TimeGetInTrough" ColumnName="TimeGetInTrough" />
+                <ScalarProperty Name="LastTimeChangeTrough" ColumnName="LastTimeChangeTrough" />
                 <ScalarProperty Name="FirstSensorCountQuantityStart" ColumnName="FirstSensorCountQuantityStart" />
                 <ScalarProperty Name="FirstSensorCountQuantityEnd" ColumnName="FirstSensorCountQuantityEnd" />
                 <ScalarProperty Name="RemainingCountQuantity" ColumnName="RemainingCountQuantity" />
