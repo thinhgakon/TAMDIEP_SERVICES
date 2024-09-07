@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_LED
 {
-    public class LedLogger : BaseLogger<Jobs.Led1XiBaoJob>
+    public class LedLogger : BaseLogger<Jobs.Led12XiBaoJob>
     {
     }
 }
