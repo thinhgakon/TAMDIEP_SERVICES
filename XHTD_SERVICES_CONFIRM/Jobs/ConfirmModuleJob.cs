@@ -363,15 +363,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Xác thực thành công
             if (isConfirmSuccess)
             {
+                SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
 
                 var parameters = await _systemParameterRepository.GetSystemParameters();
                 var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
                 var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
-
-                SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
                 var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
