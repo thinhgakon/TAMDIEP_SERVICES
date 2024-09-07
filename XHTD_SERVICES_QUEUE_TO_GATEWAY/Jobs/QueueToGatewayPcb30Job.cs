@@ -44,26 +44,26 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
         {
             try
             {
-                var LimitVehicle = 5;
-                var IsCall = true;
+                var limitVehicle = 5;
+                var isCall = true;
 
                 using (var db = new XHTD_Entities())
                 {
-                    var isCallClinker = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"IS_CALL_{TYPE_PRODUCT}");
-                    IsCall = isCallClinker.Value == "1" ? true : false;
+                    var isCallConfig = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"IS_CALL_{TYPE_PRODUCT}");
+                    isCall = isCallConfig.Value == "1" ? true : false;
 
-                    var maxVehicleClinker = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"MAX_VEHICLE_{TYPE_PRODUCT}");
-                    LimitVehicle = int.Parse(maxVehicleClinker.Value);
+                    var maxVehicleConfig = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"MAX_VEHICLE_{TYPE_PRODUCT}");
+                    limitVehicle = int.Parse(maxVehicleConfig.Value);
                 }
 
-                if (!IsCall)
+                if (!isCall)
                 {
                     _logger.LogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
                     return;
                 }
 
-                _logger.LogInfo($"Số xe {TYPE_PRODUCT} tối đa: {LimitVehicle}");
-                ProcessPushToDBCall(LimitVehicle);
+                _logger.LogInfo($"Số xe {TYPE_PRODUCT} tối đa: {limitVehicle}");
+                ProcessPushToDBCall(limitVehicle);
             }
             catch (Exception ex)
             {
