@@ -14,21 +14,21 @@ using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
 using System.Data.Entity;
+using log4net;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayClinkerJob : IJob
     {
-        private const string TYPE_PRODUCT = "CLINKER";
+        ILog _logger = LogManager.GetLogger("ClinkerFileAppender");
 
-        protected readonly QueueToGatewayLogger _logger;
+        private const string TYPE_PRODUCT = "CLINKER";
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        public QueueToGatewayClinkerJob(StoreOrderOperatingRepository storeOrderOperatingRepository, QueueToGatewayLogger logger)
+        public QueueToGatewayClinkerJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -40,7 +40,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                _logger.LogInfo($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                WriteLogInfo($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
                 await PushToDbCallProccesss();
             });
@@ -64,16 +64,16 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                 if (!isCall)
                 {
-                    _logger.LogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
+                    WriteLogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
                     return;
                 }
 
-                _logger.LogInfo($"Số xe {TYPE_PRODUCT} tối đa: {limitVehicle}");
+                WriteLogInfo($"Số xe {TYPE_PRODUCT} tối đa: {limitVehicle}");
                 ProcessPushToDBCall(limitVehicle);
             }
             catch (Exception ex)
             {
-                _logger.LogInfo(ex.Message);
+                WriteLogInfo(ex.Message);
             }
         }
         public void ProcessPushToDBCall(int LimitVehicle)
@@ -83,7 +83,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
 
-                _logger.LogInfo($"Số xe {TYPE_PRODUCT} đang trong bãi chờ: {vehicleFrontYard}");
+                WriteLogInfo($"Số xe {TYPE_PRODUCT} đang trong bãi chờ: {vehicleFrontYard}");
 
                 if (vehicleFrontYard < LimitVehicle)
                 {
@@ -92,12 +92,12 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                 else
                 {
-                    _logger.LogInfo($"Số xe {TYPE_PRODUCT} trong nhà máy đã đạt tối đa => Kết thúc");
+                    WriteLogInfo($"Số xe {TYPE_PRODUCT} trong nhà máy đã đạt tối đa => Kết thúc");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message}");
+                WriteLogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message}");
             }
         }
         public void ProcessUpdateStepIntoYard(int topX)
@@ -137,8 +137,14 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: " + ex.Message);
+                WriteLogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: " + ex.Message);
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }
