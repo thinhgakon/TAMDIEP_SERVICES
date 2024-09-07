@@ -1,6 +1,7 @@
 ﻿using Quartz;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -12,15 +13,16 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayPcb40Job : IJob
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("QueueToGatewayPcb40FileAppender");
-
         private const string TYPE_PRODUCT = "PCB40";
+
+        protected readonly QueueToGatewayLogger _logger;
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        public QueueToGatewayPcb40Job(StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public QueueToGatewayPcb40Job(StoreOrderOperatingRepository storeOrderOperatingRepository, QueueToGatewayLogger logger)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
+            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -32,13 +34,13 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                log.Info($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                _logger.LogInfo($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-                PushToDbCallProccesss();
+                await PushToDbCallProccesss();
             });
         }
 
-        public void PushToDbCallProccesss()
+        public async Task PushToDbCallProccesss()
         {
             try
             {
@@ -47,20 +49,25 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                 using (var db = new XHTD_Entities())
                 {
-                    var isCallPcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "IS_CALL_PCB40");
-                    IsCall = isCallPcb40.Value == "1" ? true : false;
+                    var isCallClinker = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"IS_CALL_{TYPE_PRODUCT}");
+                    IsCall = isCallClinker.Value == "1" ? true : false;
 
-                    var maxVehiclePcb40 = db.tblSystemParameters.FirstOrDefault(x => x.Code == "MAX_VEHICLE_PCB40");
-                    LimitVehicle = int.Parse(maxVehiclePcb40.Value);
+                    var maxVehicleClinker = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"MAX_VEHICLE_{TYPE_PRODUCT}");
+                    LimitVehicle = int.Parse(maxVehicleClinker.Value);
                 }
 
-                if (!IsCall) return;
+                if (!IsCall)
+                {
+                    _logger.LogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
+                    return;
+                }
 
+                _logger.LogInfo($"Số xe {TYPE_PRODUCT} tối đa: {LimitVehicle}");
                 ProcessPushToDBCall(LimitVehicle);
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                _logger.LogInfo(ex.Message);
             }
         }
         public void ProcessPushToDBCall(int LimitVehicle)
@@ -69,14 +76,22 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             {
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
+
+                _logger.LogInfo($"Số xe {TYPE_PRODUCT} đang trong bãi chờ: {vehicleFrontYard}");
+
                 if (vehicleFrontYard < LimitVehicle)
                 {
                     ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
+
+                else
+                {
+                    _logger.LogInfo($"Số xe {TYPE_PRODUCT} trong nhà máy đã đạt tối đa => Kết thúc");
+                }
             }
             catch (Exception ex)
             {
-                log.Error($@"ProcessPushToDBCall error: {ex.Message}");
+                _logger.LogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message}");
             }
         }
         public void ProcessUpdateStepIntoYard(int topX)
@@ -116,7 +131,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error($"ProcessUpdateStepIntoYard error: " + ex.Message);
+                _logger.LogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: " + ex.Message);
             }
         }
     }

@@ -17,6 +17,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
 
             builder.RegisterType<XHTD_Entities>().AsSelf();
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
+            builder.RegisterType<QueueToGatewayLogger>().AsSelf();
             builder.RegisterType<QueueToGatewayClinkerJob>().AsSelf();
             builder.RegisterType<QueueToGatewayRoiJob>().AsSelf();
             builder.RegisterType<QueueToGatewayPcb40Job>().AsSelf();

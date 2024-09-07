@@ -133,6 +133,7 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="QueueToGatewayLogger.cs" />
     <Compile Include="Schedules\JobScheduler.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
