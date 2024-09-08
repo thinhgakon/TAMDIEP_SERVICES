@@ -36,16 +36,6 @@ namespace XHTD_SERVICES_LED.Schedules
                 .Build();
             await _scheduler.ScheduleJob(showLed1XiBaoJob, showLed1XiBaoTrigger);
 
-            //IJobDetail showLed2XiBaoJob = JobBuilder.Create<Led2XiBaoJob>().Build();
-            //ITrigger showLed2XiBaoTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(1)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(showLed2XiBaoJob, showLed2XiBaoTrigger);
-
             IJobDetail showLed3XiBaoJob = JobBuilder.Create<Led34XiBaoJob>().Build();
             ITrigger showLed3XiBaoTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
@@ -55,16 +45,6 @@ namespace XHTD_SERVICES_LED.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(showLed3XiBaoJob, showLed3XiBaoTrigger);
-
-            //IJobDetail showLed4XiBaoJob = JobBuilder.Create<Led4XiBaoJob>().Build();
-            //ITrigger showLed4XiBaoTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(1)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(showLed4XiBaoJob, showLed4XiBaoTrigger);
 
             IJobDetail led12RealtimeJob = JobBuilder.Create<Led12RealtimeJob>().Build();
             ITrigger led12RealtimeTrigger = TriggerBuilder.Create()
