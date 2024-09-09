@@ -116,14 +116,14 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
                         if (order.TimeConfirm1 > dateTimeCall) continue;
-                        var sqlUpdate = "UPDATE tblStoreOrderOperating SET Step =  4,  TimeConfirm4 = ISNULL(TimeConfirm4, GETDATE()), LogProcessOrder = CONCAT(LogProcessOrder, N'#Đưa vào hàng đợi mời xe vào lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE OrderId = @OrderId AND ISNULL(Step,0) <> 4";
+                        var sqlUpdate = "UPDATE tblStoreOrderOperating SET Step = 11, TimeConfirm11 = ISNULL(TimeConfirm11, GETDATE()), LogProcessOrder = CONCAT(LogProcessOrder, N'#Đưa vào hàng đợi mời xe vào lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE OrderId = @OrderId AND ISNULL(Step, 0) <> 11";
                         var updateResponse = db.Database.ExecuteSqlCommand(sqlUpdate, new SqlParameter("@OrderId", order.OrderId));
                         if (updateResponse > 0)
                         {
                             // xử lý nghiệp vụ đẩy vào db để xử lý gọi loa
                             var tblCallVehicleStatusDb = db.tblCallVehicleStatus.FirstOrDefault(x => x.StoreOrderOperatingId == order.Id && x.IsDone == false);
                             if (tblCallVehicleStatusDb != null) continue;
-                            var logString = $@"Xe được mời vào lúc {DateTime.Now} .";
+                            var logString = $@"Đưa xe vào hàng đợi gọi loa lúc {DateTime.Now}. ";
                             var newTblVehicleStatus = new tblCallVehicleStatu
                             {
                                 StoreOrderOperatingId = order.Id,
@@ -139,7 +139,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                         }
                     }
 
-                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào hàng đợi: {string.Join(", ", orders.Select(order => order.Vehicle))} => Kết thúc");
+                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào hàng đợi gọi loa: {string.Join(", ", orders.Select(order => order.Vehicle))} => Kết thúc");
                 }
             }
             catch (Exception ex)
