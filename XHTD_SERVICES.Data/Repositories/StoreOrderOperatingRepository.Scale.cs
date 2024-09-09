@@ -95,7 +95,15 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
-                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     && (
+                                                        x.Step < (int)OrderStep.DA_CAN_VAO
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        ||
+                                                        x.Step == (int)OrderStep.CHO_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DANG_GOI_XE
+                                                        )
                                                      )
                                             .FirstOrDefaultAsync();
 
@@ -109,7 +117,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {cancelTime} ";
+                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân vào tự động lúc {cancelTime} ";
 
                     await dbContext.SaveChangesAsync();
                     return true;
