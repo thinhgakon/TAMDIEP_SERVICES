@@ -12,13 +12,15 @@ using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Hubs;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class ScaleSocketJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ScaleSocketFileAppender");
+
         private static bool DeviceConnected = false;
-        protected readonly Logger _logger;
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 2022;
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -32,9 +34,8 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
-        public ScaleSocketJob(Logger logger, Notification notification)
+        public ScaleSocketJob(Notification notification)
         {
-            _logger = logger;
             this._notification = notification;
         }
 
@@ -70,13 +71,13 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
         {
             try
             {
-                _logger.LogInfo("Thuc hien ket noi scale socket");
+                WriteLogInfo("Thuc hien ket noi scale socket");
                 client = new TcpClient();
 
                 // 1. connect
                 client.ConnectAsync(IP_ADDRESS, PORT_NUMBER).Wait(2000);
                 stream = client.GetStream();
-                _logger.LogInfo("Ket noi thanh cong");
+                WriteLogInfo("Ket noi thanh cong");
 
                 DeviceConnected = true;
 
@@ -87,7 +88,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Ket noi that bai: {ex.Message}");
+                WriteLogInfo($"Ket noi that bai: {ex.Message}");
                 return false;
             }
         }
@@ -137,7 +138,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                             continue;
                         }
 
-                        _logger.LogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
+                        WriteLogInfo($"dateTime: {dateTime} --- scaleValue: {scaleValue.ToString()}");
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
@@ -153,7 +154,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
                         if(timeDiffFromLastReceivedScaleSocket.TotalSeconds > 5)
                         {
-                            _logger.LogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
+                            WriteLogInfo($"Quá 5s không nhận được tín hiệu cân => tiến hành reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedScaleSocket}");
 
                             if (stream != null) stream.Close();
                             if (client != null) client.Close();
@@ -164,7 +165,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
+                    WriteLogInfo($@"Co loi xay ra khi xu ly du lieu can {ex.StackTrace} {ex.Message} ");
                     if (stream != null) stream.Close();
                     if (client != null) client.Close();
 
@@ -185,9 +186,14 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendScaleInfoAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendScaleInfoAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
-    }
 
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
+        }
+    }
 }

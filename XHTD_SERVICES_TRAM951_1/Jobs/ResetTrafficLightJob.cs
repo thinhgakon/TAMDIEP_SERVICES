@@ -12,14 +12,16 @@ using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Device;
 using XHTD_SERVICES_TRAM951_1.Devices;
 using XHTD_SERVICES_TRAM951_1.Business;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     [DisallowConcurrentExecution]
     public class ResetTrafficLightJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ResetLightFileAppender");
+
         protected readonly TCPTrafficLight _trafficLight;
-        protected readonly Logger _logger;
 
         private tblCategoriesDevice trafficLight;
 
@@ -28,10 +30,9 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
-        public ResetTrafficLightJob(TCPTrafficLight trafficLight, Logger logger)
+        public ResetTrafficLightJob(TCPTrafficLight trafficLight)
         {
             _trafficLight = trafficLight;
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -60,7 +61,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                     {
                         Program.IsFirstTimeResetTrafficLight = false;
 
-                        _logger.LogInfo("Reset traffic light - Scale 951 - 1");
+                        WriteLogInfo("Reset traffic light - Scale 951 - 1");
                         TurnOffTrafficLight();
                     }
                     else
@@ -77,33 +78,39 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"RESET DGT ERROR: {ex.Message}");
+                WriteLogInfo($"RESET DGT ERROR: {ex.Message}");
             }
         }
 
         public void TurnOffTrafficLight()
         {
-            _logger.LogInfo($@"Tắt đèn chiều vào");
+            WriteLogInfo($@"Tắt đèn chiều vào");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
             {
-                _logger.LogInfo($@"Tắt thành công");
+                WriteLogInfo($@"Tắt thành công");
             }
             else
             {
-                _logger.LogInfo($@"Tắt thất bại");
+                WriteLogInfo($@"Tắt thất bại");
             }
 
             Thread.Sleep(500);
 
-            _logger.LogInfo($@"Tắt đèn chiều ra");
+            WriteLogInfo($@"Tắt đèn chiều ra");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
             {
-                _logger.LogInfo($@"Tắt thành công");
+                WriteLogInfo($@"Tắt thành công");
             }
             else
             {
-                _logger.LogInfo($@"Tắt thất bại");
+                WriteLogInfo($@"Tắt thất bại");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

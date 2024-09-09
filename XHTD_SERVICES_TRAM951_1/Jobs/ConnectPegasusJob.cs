@@ -4,19 +4,20 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES_TRAM951_1.Devices;
+using log4net;
 
 namespace XHTD_SERVICES_TRAM951_1.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.181";
-        protected readonly Logger _logger;
 
-        public ConnectPegasusJob(Logger gatewayLogger)
+        public ConnectPegasusJob()
         {
-            _logger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -46,7 +47,7 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                 }
                 else
                 {
-                    _logger.LogWarn("Start reconnect...");
+                    WriteLogInfo("Start reconnect...");
 
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
@@ -56,13 +57,19 @@ namespace XHTD_SERVICES_TRAM951_1.Jobs
                         Thread.Sleep(1000);
                     }
 
-                    _logger.LogWarn("Reconnect success");
+                    WriteLogInfo("Reconnect success");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"PING ERROR: {ex.Message}");
+                WriteLogInfo($"PING ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }
