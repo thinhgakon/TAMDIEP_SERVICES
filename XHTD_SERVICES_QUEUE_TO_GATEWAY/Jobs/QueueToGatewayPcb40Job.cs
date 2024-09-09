@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using log4net;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
@@ -34,7 +35,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                WriteLogInfo($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                WriteLogInfo($"====================== Bắt đầu job {TYPE_PRODUCT} ======================");
 
                 await PushToDbCallProccesss();
             });
@@ -58,11 +59,12 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                 if (!isCall)
                 {
-                    WriteLogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
+                    WriteLogInfo($"Cấu hình gọi xe đang tắt => Kết thúc");
                     return;
                 }
 
-                WriteLogInfo($"Số xe {TYPE_PRODUCT} tối đa: {limitVehicle}");
+                WriteLogInfo($"1. Số xe cấu hình tối đa: {limitVehicle}");
+
                 ProcessPushToDBCall(limitVehicle);
             }
             catch (Exception ex)
@@ -78,45 +80,63 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
 
-                WriteLogInfo($"Số xe {TYPE_PRODUCT} đang trong bãi chờ: {vehicleFrontYard}");
+                WriteLogInfo($"2. Số xe đang chờ trong nhà máy: {vehicleFrontYard}");
 
                 if (vehicleFrontYard < LimitVehicle)
                 {
                     ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
-
                 else
                 {
-                    WriteLogInfo($"Số xe {TYPE_PRODUCT} trong nhà máy đã đạt tối đa => Kết thúc");
+                    WriteLogInfo($"3. Số xe trong nhà máy đã đạt tối đa => Kết thúc");
                 }
             }
             catch (Exception ex)
             {
-                WriteLogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message} => Kết thúc");
+                WriteLogInfo($@"ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException} => Kết thúc");
             }
         }
 
         public void ProcessUpdateStepIntoYard(int topX)
         {
-            WriteLogInfo($"Tìm và thêm {topX} xe {TYPE_PRODUCT} đưa vào hàng đợi gọi loa");
+            WriteLogInfo($"3. Tìm và thêm {topX} xe đưa vào hàng đợi gọi loa");
 
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals(TYPE_PRODUCT) && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_XAC_THUC
+                                                                    && x.TypeProduct.Equals(TYPE_PRODUCT)
+                                                                    && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "")
+                                                            .OrderBy(x => x.IndexOrder)
+                                                            .Take(topX)
+                                                            .ToList();
 
                     if (orders == null || orders.Count == 0)
                     {
-                        WriteLogInfo($"Không tìm thấy xe {TYPE_PRODUCT} nào => Kết thúc");
+                        WriteLogInfo($"4. Không tìm thấy xe {TYPE_PRODUCT} nào => Kết thúc");
                         return;
+                    }
+                    else
+                    {
+                        WriteLogInfo($"4. Các xe phù hợp: {string.Join(", ", orders.Select(order => order.Vehicle))}");
                     }
 
                     foreach (var order in orders)
                     {
+                        WriteLogInfo($"4.1. Tiến hành thêm xe vào hàng đợi: {order.DeliveryCode} --- {order.Vehicle}");
+
                         var dateTimeCall = DateTime.Now.AddSeconds(-15);
                         if (order.TimeConfirm1 > dateTimeCall) continue;
-                        var sqlUpdate = "UPDATE tblStoreOrderOperating SET Step = 11, TimeConfirm11 = ISNULL(TimeConfirm11, GETDATE()), LogProcessOrder = CONCAT(LogProcessOrder, N'#Đưa vào hàng đợi mời xe vào lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE OrderId = @OrderId AND ISNULL(Step, 0) <> 11";
+
+                        var sqlUpdate = $@"UPDATE tblStoreOrderOperating 
+                                           SET Step = {(int)OrderStep.CHO_GOI_XE}, 
+                                               TimeConfirm11 = ISNULL(TimeConfirm11, GETDATE()), 
+                                               LogProcessOrder = CONCAT(LogProcessOrder, N'#Đưa vào hàng đợi mời xe vào lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) 
+                                           WHERE OrderId = @OrderId 
+                                                 AND ISNULL(Step, 0) <> {(int)OrderStep.CHO_GOI_XE}
+                                           ";
+
                         var updateResponse = db.Database.ExecuteSqlCommand(sqlUpdate, new SqlParameter("@OrderId", order.OrderId));
                         if (updateResponse > 0)
                         {
@@ -136,15 +156,19 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                             };
                             db.tblCallVehicleStatus.Add(newTblVehicleStatus);
                             db.SaveChanges();
+
+                            WriteLogInfo($"4.2. Thêm thành công");
+                        }
+                        else
+                        {
+                            WriteLogInfo($"4.2. Thêm thất bại");
                         }
                     }
-
-                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào hàng đợi gọi loa: {string.Join(", ", orders.Select(order => order.Vehicle))} => Kết thúc");
                 }
             }
             catch (Exception ex)
             {
-                WriteLogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: {ex.Message} => Kết thúc");
+                WriteLogInfo($"ERROR ProcessUpdateStepIntoYard: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException} => Kết thúc");
             }
         }
 
