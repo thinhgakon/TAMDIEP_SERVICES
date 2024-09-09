@@ -102,11 +102,20 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
         }
         public void ProcessUpdateStepIntoYard(int topX)
         {
+            WriteLogInfo($"Tìm và thêm {topX} xe {TYPE_PRODUCT} đưa vào hàng đợi");
+
             try
             {
                 using (var db = new XHTD_Entities())
                 {
                     var orders = db.tblStoreOrderOperatings.Where(x => x.Step == 10 && x.TypeProduct.Equals(TYPE_PRODUCT) && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "").OrderBy(x => x.IndexOrder).Take(topX).ToList();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        WriteLogInfo($"Không tìm thấy xe {TYPE_PRODUCT} nào => Kết thúc");
+                        return;
+                    }
+
                     foreach (var order in orders)
                     {
                         var dateTimeCall = DateTime.Now.AddMinutes(-2);
@@ -133,6 +142,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                             db.SaveChanges();
                         }
                     }
+
+                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào bãi chờ: {string.Join(", ", orders.Select(order => order.Vehicle))}");
                 }
             }
             catch (Exception ex)
