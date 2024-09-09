@@ -184,7 +184,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
-                                                     && x.Step == (int)OrderStep.DA_XAC_THUC)
+                                                     && (
+                                                         x.Step == (int)OrderStep.DA_XAC_THUC 
+                                                         || 
+                                                         x.Step == (int)OrderStep.CHO_GOI_XE
+                                                         ||
+                                                         x.Step == (int)OrderStep.DANG_GOI_XE
+                                                         )
+                                                     )
                                             .ToListAsync();
 
                     if (orders == null)
