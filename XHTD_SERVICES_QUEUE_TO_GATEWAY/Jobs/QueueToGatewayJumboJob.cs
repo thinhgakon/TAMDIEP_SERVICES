@@ -76,6 +76,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                 WriteLogInfo(ex.Message);
             }
         }
+
         public void ProcessPushToDBCall(int LimitVehicle)
         {
             try
@@ -97,12 +98,13 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                WriteLogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message}");
+                WriteLogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message} => Kết thúc");
             }
         }
+
         public void ProcessUpdateStepIntoYard(int topX)
         {
-            WriteLogInfo($"Tìm và thêm {topX} xe {TYPE_PRODUCT} đưa vào hàng đợi");
+            WriteLogInfo($"Tìm và thêm {topX} xe {TYPE_PRODUCT} đưa vào hàng đợi gọi loa");
 
             try
             {
@@ -143,12 +145,12 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                         }
                     }
 
-                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào bãi chờ: {string.Join(", ", orders.Select(order => order.Vehicle))}");
+                    WriteLogInfo($"Các xe {TYPE_PRODUCT} mới được đưa vào hàng đợi: {string.Join(", ", orders.Select(order => order.Vehicle))} => Kết thúc");
                 }
             }
             catch (Exception ex)
             {
-                WriteLogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: " + ex.Message);
+                WriteLogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: {ex.Message} => Kết thúc");
             }
         }
 
