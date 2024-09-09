@@ -114,7 +114,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                     foreach (var order in orders)
                     {
-                        var dateTimeCall = DateTime.Now.AddMinutes(-2);
+                        var dateTimeCall = DateTime.Now.AddSeconds(-15);
                         if (order.TimeConfirm1 > dateTimeCall) continue;
                         var sqlUpdate = "UPDATE tblStoreOrderOperating SET Step = 11, TimeConfirm11 = ISNULL(TimeConfirm11, GETDATE()), LogProcessOrder = CONCAT(LogProcessOrder, N'#Đưa vào hàng đợi mời xe vào lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE OrderId = @OrderId AND ISNULL(Step, 0) <> 11";
                         var updateResponse = db.Database.ExecuteSqlCommand(sqlUpdate, new SqlParameter("@OrderId", order.OrderId));
