@@ -1,19 +1,13 @@
-﻿using System;
+﻿using Quartz;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Quartz;
-using log4net;
-using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
-using System.Threading;
-using XHTD_SERVICES.Data.Entities;
-using System.Data.SqlClient;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Repositories;
 using log4net;
 using XHTD_SERVICES.Data.Models.Values;
 
@@ -132,8 +126,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     {
                         WriteLogInfo($"4.1. Tiến hành thêm xe vào hàng đợi: {order.DeliveryCode} --- {order.Vehicle}");
 
-                        var dateTimeCall = DateTime.Now.AddSeconds(-15);
-                        if (order.TimeConfirm1 > dateTimeCall) continue;
+                        //var dateTimeCall = DateTime.Now.AddSeconds(-15);
+                        //if (order.TimeConfirm1 > dateTimeCall) continue;
 
                         var sqlUpdate = $@"UPDATE tblStoreOrderOperating 
                                            SET Step = {(int)OrderStep.CHO_GOI_XE}, 

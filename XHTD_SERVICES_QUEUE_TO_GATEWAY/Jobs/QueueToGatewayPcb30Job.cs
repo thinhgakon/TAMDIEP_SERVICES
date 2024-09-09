@@ -126,8 +126,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     {
                         WriteLogInfo($"4.1. Tiến hành thêm xe vào hàng đợi: {order.DeliveryCode} --- {order.Vehicle}");
 
-                        var dateTimeCall = DateTime.Now.AddSeconds(-15);
-                        if (order.TimeConfirm1 > dateTimeCall) continue;
+                        //var dateTimeCall = DateTime.Now.AddSeconds(-15);
+                        //if (order.TimeConfirm1 > dateTimeCall) continue;
 
                         var sqlUpdate = $@"UPDATE tblStoreOrderOperating 
                                            SET Step = {(int)OrderStep.CHO_GOI_XE}, 
