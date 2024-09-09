@@ -398,7 +398,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             // 3. Xác định xe vào hay ra
             var isLuongVao = true;
 
-            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO)
+            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO || currentOrder.Step == (int)OrderStep.DA_XAC_THUC || currentOrder.Step == (int)OrderStep.DANG_GOI_XE)
             {
                 isLuongVao = true;
                 _logger.LogInfo($"3. Xe can VAO");
