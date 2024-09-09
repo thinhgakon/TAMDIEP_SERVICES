@@ -319,6 +319,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     ||
                                                     x.Step == (int)OrderStep.DA_XAC_THUC
                                                     ||
+                                                    x.Step == (int)OrderStep.CHO_GOI_XE
+                                                    ||
+                                                    x.Step == (int)OrderStep.DANG_GOI_XE
+                                                    ||
                                                     x.WeightIn == null
                                                     ||
                                                     x.WeightIn == 0
@@ -331,7 +335,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if(order.Step < (int)OrderStep.DA_CAN_VAO || order.Step == (int)OrderStep.DA_XAC_THUC) 
+                    if(order.Step < (int)OrderStep.DA_CAN_VAO 
+                      || 
+                      order.Step == (int)OrderStep.DA_XAC_THUC
+                      ||
+                      order.Step == (int)OrderStep.CHO_GOI_XE
+                      ||
+                      order.Step == (int)OrderStep.DANG_GOI_XE
+                      ) 
                     { 
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
@@ -386,8 +397,12 @@ namespace XHTD_SERVICES.Data.Repositories
                                                     &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_CAN_RA
-                                                        || 
+                                                        ||
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        ||
+                                                        x.Step == (int)OrderStep.CHO_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DANG_GOI_XE
                                                         ||
                                                         x.WeightOut == null
                                                         ||
@@ -403,7 +418,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_CAN_RA || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        if (order.Step < (int)OrderStep.DA_CAN_RA 
+                           || 
+                           order.Step == (int)OrderStep.DA_XAC_THUC
+                           ||
+                           order.Step == (int)OrderStep.CHO_GOI_XE
+                           ||
+                           order.Step == (int)OrderStep.DANG_GOI_XE
+                           )
                         {
                             order.Step = (int)OrderStep.DA_CAN_RA;
                         }
@@ -436,6 +458,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.Step < (int)OrderStep.DA_HOAN_THANH
                                                         ||
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        ||
+                                                        x.Step == (int)OrderStep.CHO_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DANG_GOI_XE
                                                     )
                                                 );
 
@@ -443,7 +469,14 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         order.TimeConfirm8 = DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_HOAN_THANH || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        if (order.Step < (int)OrderStep.DA_HOAN_THANH 
+                           || 
+                           order.Step == (int)OrderStep.DA_XAC_THUC
+                           ||
+                           order.Step == (int)OrderStep.CHO_GOI_XE
+                           ||
+                           order.Step == (int)OrderStep.DANG_GOI_XE
+                           )
                         {
                             order.Step = (int)OrderStep.DA_HOAN_THANH;
                         }
@@ -470,6 +503,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.Step < (int)OrderStep.DA_GIAO_HANG
                                                         ||
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        ||
+                                                        x.Step == (int)OrderStep.CHO_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DANG_GOI_XE
                                                     )
                                                 );
 
@@ -477,7 +514,14 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         order.TimeConfirm9 = DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_GIAO_HANG || order.Step == (int)OrderStep.DA_XAC_THUC)
+                        if (order.Step < (int)OrderStep.DA_GIAO_HANG
+                           ||
+                           order.Step == (int)OrderStep.DA_XAC_THUC
+                           ||
+                           order.Step == (int)OrderStep.CHO_GOI_XE
+                           ||
+                           order.Step == (int)OrderStep.DANG_GOI_XE
+                           )
                         {
                             order.Step = (int)OrderStep.DA_GIAO_HANG;
                         }
