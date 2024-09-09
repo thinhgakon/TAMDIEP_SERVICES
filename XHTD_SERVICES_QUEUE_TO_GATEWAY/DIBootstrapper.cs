@@ -22,6 +22,10 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
             builder.RegisterType<QueueToGatewayRoiJob>().AsSelf();
             builder.RegisterType<QueueToGatewayPcb40Job>().AsSelf();
             builder.RegisterType<QueueToGatewayPcb30Job>().AsSelf();
+            builder.RegisterType<QueueToGatewayC91Job>().AsSelf();
+            builder.RegisterType<QueueToGatewayJumboJob>().AsSelf();
+            builder.RegisterType<QueueToGatewaySlingJob>().AsSelf();
+            builder.RegisterType<QueueToGatewayOtherJob>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -44,6 +48,10 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayRoiJob).Assembly));
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayPcb40Job).Assembly));
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayPcb30Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayC91Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayJumboJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewaySlingJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToGatewayOtherJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }
