@@ -1,26 +1,32 @@
-﻿using Quartz;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using XHTD_SERVICES.Data.Entities;
+using Quartz;
+using log4net;
 using XHTD_SERVICES.Data.Repositories;
+using RestSharp;
+using XHTD_SERVICES.Data.Models.Response;
+using Newtonsoft.Json;
+using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Helper.Models.Request;
+using System.Threading;
+using XHTD_SERVICES.Data.Entities;
+using System.Data.SqlClient;
+using System.Data.Entity;
 using log4net;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
-    public class QueueToGatewayPcb40Job : IJob
+    public class QueueToGatewayJumboJob : IJob
     {
-        ILog _logger = LogManager.GetLogger("Pcb40FileAppender");
+        ILog _logger = LogManager.GetLogger("JumboFileAppender");
 
-        private const string TYPE_PRODUCT = "PCB40";
+        private const string TYPE_PRODUCT = "JUMBO";
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        public QueueToGatewayPcb40Job(StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public QueueToGatewayJumboJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
         }

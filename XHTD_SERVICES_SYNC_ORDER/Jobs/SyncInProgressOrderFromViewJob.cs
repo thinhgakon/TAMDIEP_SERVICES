@@ -269,35 +269,43 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 else
                 {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
+                    _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
 
                     if (isSynced)
                     {
-                        var troughCode = await _troughRepository.GetTroughCodeByDeliveryCode(websaleOrder.deliveryCode);
-                        if (!string.IsNullOrEmpty(troughCode))
+                        var trough = await _troughRepository.GetTroughByDeliveryCode(websaleOrder.deliveryCode);
+                        if (trough != null)
                         {
-                            var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
+                            _syncOrderLogger.LogInfo($"Máng {trough.Code} đang xuất đơn hàng {websaleOrder.deliveryCode}");
 
+                            var machine = await _machineRepository.GetMachineByTroughCode(trough.Code);
                             if (machine != null)
                             {
-                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {troughCode} - máy {machine.Code}");
+                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {trough.Code} - máy {machine.Code}");
 
                                 var requestData = new MachineControlRequest
                                 {
                                     MachineCode = machine.Code,
-                                    TroughCode = troughCode,
+                                    TroughCode = trough.Code,
                                     CurrentDeliveryCode = websaleOrder.deliveryCode
                                 };
 
+                                _syncOrderLogger.LogInfo($"Stop Machine API Request Data: MachineCode = {requestData.MachineCode} ---- TroughCode = {requestData.TroughCode} ---- DeliveryCode = {requestData.CurrentDeliveryCode}");
+
                                 var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
+
+                                _syncOrderLogger.LogInfo($"Stop Machine API Response: Status = {apiResponse.Status} ---- Message = {apiResponse.MessageObject.Message}");
 
                                 if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
                                 {
                                     _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thành công!");
                                 }
 
-                                else _syncOrderLogger.LogInfo($"3. Start Machine {machine.Code} thất bại! => Trough: {troughCode} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                else _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
                             }
                         }
+
+                        _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
 
                         if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
                         {
