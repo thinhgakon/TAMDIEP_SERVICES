@@ -24,6 +24,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      && x.IsVoiced == false
                                                      && (x.Step == (int)OrderStep.DA_XAC_THUC
                                                      || x.Step == (int)OrderStep.DANG_GOI_XE
+                                                     || x.Step == (int)OrderStep.CHO_GOI_XE
                                                      || x.Step == (int)OrderStep.DA_NHAN_DON
                                                      || x.Step == (int)OrderStep.CHUA_NHAN_DON)
                                                      )
