@@ -26,7 +26,8 @@ namespace XHTD_SERVICES.Helper
 
             if (order.CatId == OrderCatIdCode.CLINKER)
             {
-                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
+                if ((order.Step == (int)OrderStep.DA_XAC_THUC || order.Step == (int)OrderStep.DANG_GOI_XE) 
+                    && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
@@ -37,7 +38,8 @@ namespace XHTD_SERVICES.Helper
             }
             else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
             {
-                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
+                if ((order.Step == (int)OrderStep.DA_XAC_THUC || order.Step == (int)OrderStep.DANG_GOI_XE)
+                    && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
@@ -48,7 +50,8 @@ namespace XHTD_SERVICES.Helper
             }
             else
             {
-                if (order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "")
+                if ((order.Step == (int)OrderStep.DA_XAC_THUC || order.Step == (int)OrderStep.DANG_GOI_XE) 
+                    && (order.DriverUserName ?? "") != "")
                 {
                     return true;
                 }
