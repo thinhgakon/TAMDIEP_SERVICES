@@ -102,6 +102,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewaySlingJob, queueToGatewaySlingTrigger);
+
+            // Đưa Other vào hàng đợi gọi loa
+            IJobDetail queueToGatewayOtherJob = JobBuilder.Create<QueueToGatewayOtherJob>().Build();
+            ITrigger queueToGatewayOtherTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToGatewayOtherJob, queueToGatewayOtherTrigger);
         }
     }
 }
