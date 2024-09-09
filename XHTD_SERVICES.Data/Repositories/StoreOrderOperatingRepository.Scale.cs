@@ -29,6 +29,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                 x.Step < (int)OrderStep.DA_CAN_RA 
                                                                 ||
                                                                 x.Step == (int)OrderStep.DA_XAC_THUC
+                                                                ||
+                                                                x.Step == (int)OrderStep.CHO_GOI_XE
+                                                                ||
+                                                                x.Step == (int)OrderStep.DANG_GOI_XE
                                                                 )
                                                             )
                                                             ||
@@ -38,6 +42,10 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                 (x.Step < (int)OrderStep.DA_CAN_RA 
                                                                 ||
                                                                 x.Step == (int)OrderStep.DA_XAC_THUC
+                                                                ||
+                                                                x.Step == (int)OrderStep.CHO_GOI_XE
+                                                                ||
+                                                                x.Step == (int)OrderStep.DANG_GOI_XE
                                                                 )
                                                             )
                                                         )
