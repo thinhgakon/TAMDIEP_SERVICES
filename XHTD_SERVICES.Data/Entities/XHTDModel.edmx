@@ -581,6 +581,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ExtraReason" Type="nvarchar(max)" />
           <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Confirm11" Type="int" />
+          <Property Name="TimeConfirm11" Type="datetime2" Precision="7" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1413,6 +1415,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblExportHistories" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblStoreOrderOperating" ToRole="tblExportHistory" />
           <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Confirm11" Type="Int32" />
+          <Property Name="TimeConfirm11" Type="DateTime" Precision="7" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2225,6 +2229,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="TimeConfirm11" ColumnName="TimeConfirm11" />
+                <ScalarProperty Name="Confirm11" ColumnName="Confirm11" />
                 <ScalarProperty Name="MachineExportedNumber" ColumnName="MachineExportedNumber" />
                 <ScalarProperty Name="ExtraReason" ColumnName="ExtraReason" />
                 <ScalarProperty Name="ExtraNumber" ColumnName="ExtraNumber" />
