@@ -13,12 +13,14 @@ using XHTD_SERVICES.Helper.Models.Request;
 using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
+using System.Data.Entity;
+using log4net;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayClinkerJob : IJob
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("QueueToGatewayClinkerFileAppender");
+        ILog _logger = LogManager.GetLogger("ClinkerFileAppender");
 
         private const string TYPE_PRODUCT = "CLINKER";
 
@@ -38,35 +40,40 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                log.Info($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                WriteLogInfo($"Start Queue To Gateway: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
-                PushToDbCallProccesss();
+                await PushToDbCallProccesss();
             });
         }
 
-        public void PushToDbCallProccesss()
+        public async Task PushToDbCallProccesss()
         {
             try
             {
-                var LimitVehicle = 5;
-                var IsCall = true;
+                var limitVehicle = 5;
+                var isCall = true;
 
                 using (var db = new XHTD_Entities())
                 {
-                    var isCallClinker = db.tblSystemParameters.FirstOrDefault(x => x.Code == "IS_CALL_CLINKER");
-                    IsCall = isCallClinker.Value == "1" ? true : false;
+                    var isCallConfig = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"IS_CALL_{TYPE_PRODUCT}");
+                    isCall = isCallConfig.Value == "1" ? true : false;
 
-                    var maxVehicleClinker = db.tblSystemParameters.FirstOrDefault(x => x.Code == "MAX_VEHICLE_CLINKER");
-                    LimitVehicle = int.Parse(maxVehicleClinker.Value);
+                    var maxVehicleConfig = await db.tblSystemParameters.FirstOrDefaultAsync(x => x.Code == $"MAX_VEHICLE_{TYPE_PRODUCT}");
+                    limitVehicle = int.Parse(maxVehicleConfig.Value);
                 }
 
-                if (!IsCall) return;
+                if (!isCall)
+                {
+                    WriteLogInfo($"Cấu hình gọi xe {TYPE_PRODUCT} đang tắt => Kết thúc");
+                    return;
+                }
 
-                ProcessPushToDBCall(LimitVehicle);
+                WriteLogInfo($"Số xe {TYPE_PRODUCT} tối đa: {limitVehicle}");
+                ProcessPushToDBCall(limitVehicle);
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                WriteLogInfo(ex.Message);
             }
         }
         public void ProcessPushToDBCall(int LimitVehicle)
@@ -75,14 +82,22 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             {
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(TYPE_PRODUCT);
+
+                WriteLogInfo($"Số xe {TYPE_PRODUCT} đang trong bãi chờ: {vehicleFrontYard}");
+
                 if (vehicleFrontYard < LimitVehicle)
                 {
                     ProcessUpdateStepIntoYard(LimitVehicle - vehicleFrontYard);
                 }
+
+                else
+                {
+                    WriteLogInfo($"Số xe {TYPE_PRODUCT} trong nhà máy đã đạt tối đa => Kết thúc");
+                }
             }
             catch (Exception ex)
             {
-                log.Error($@"ProcessPushToDBCall error: {ex.Message}");
+                WriteLogInfo($@"Có lỗi xảy ra khi thêm xe vào hàng đợi gọi loa: {ex.Message}");
             }
         }
         public void ProcessUpdateStepIntoYard(int topX)
@@ -122,8 +137,14 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error($"ProcessUpdateStepIntoYard error: " + ex.Message);
+                WriteLogInfo($"Có lỗi xảy ra khi cập nhật trạng thái đơn hàng: " + ex.Message);
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

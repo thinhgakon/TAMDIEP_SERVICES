@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_LED
+namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
 {
-    public class LedLogger : BaseLogger<Jobs.Led12XiBaoJob>
+    public class QueueToGatewayLogger : BaseLogger<Jobs.QueueToGatewayClinkerJob>
     {
     }
 }
