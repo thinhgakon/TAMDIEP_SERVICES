@@ -28,8 +28,8 @@ namespace XHTD_SERVICES_CANRA_2
         public static bool IsEnabledRfid = false;
         public static DateTime? EnabledRfidTime = null;
 
-        public static string PegasusIP1 = "192.168.13.188";
-        public static string PegasusIP2 = "192.168.13.188";
+        public static string PegasusIP1 = "192.168.13.187";
+        public static string PegasusIP2 = "192.168.13.187";
         public static int RefPort1 = 6000;
         public static byte RefComAdr1 = 0xFF;
         public static int RefPort2 = 6000;

@@ -15,7 +15,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.188";
+        private string PegasusAdr = "192.168.13.187";
 
         protected const int TIME_TO_RESET = 30;
 
