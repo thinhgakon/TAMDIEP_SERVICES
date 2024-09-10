@@ -249,6 +249,22 @@
       <Project>{e1ba9b59-31eb-4f3b-9261-bd843c9df463}</Project>
       <Name>XHTD_SERVICES_CALL_IN_TROUGH</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_CANRA_1\XHTD_SERVICES_CANRA_1.csproj">
+      <Project>{567a44f3-5d4d-474a-a14c-54ffc805f527}</Project>
+      <Name>XHTD_SERVICES_CANRA_1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_CANRA_2\XHTD_SERVICES_CANRA_2.csproj">
+      <Project>{426e8dff-6ea1-44e9-b6fb-bb008e08f1dc}</Project>
+      <Name>XHTD_SERVICES_CANRA_2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_CANVAO_1\XHTD_SERVICES_CANVAO_1.csproj">
+      <Project>{78cebe67-c3a1-4f68-8271-c6d4f2f8a9d4}</Project>
+      <Name>XHTD_SERVICES_CANVAO_1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XHTD_SERVICES_CANVAO_2\XHTD_SERVICES_CANVAO_2.csproj">
+      <Project>{356fa81c-4d5d-4131-b554-7543d7c75b60}</Project>
+      <Name>XHTD_SERVICES_CANVAO_2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_CONFIRM\XHTD_SERVICES_CONFIRM.csproj">
       <Project>{e4340df1-6075-45e5-bedf-e366e4a0fad1}</Project>
       <Name>XHTD_SERVICES_CONFIRM</Name>
