@@ -131,17 +131,15 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.ToUpper() == "MANUAL").OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
+                    // Mời xe ra bãi chờ trước
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.BAI_CHO).OrderBy(x => x.Id).FirstOrDefault();
+                    if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
+
                     for (int i = 0; i < 10; i++)
                     {
                         // Tự động
                         var typeCurrent = Program.roundRobinList.Next();
-
-                        // Mời xe ra bãi chờ trước
-                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.TypeProduct.Equals(typeCurrent) && x.CallType.ToUpper() == "BAI_CHO").OrderBy(x => x.Id).FirstOrDefault();
-                        if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
-
-                        // Mời xe vào cổng sau
-                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && x.CallType.ToUpper() == "CONG").OrderBy(x => x.Id).FirstOrDefault();
+                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && (x.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(x.CallType))).OrderBy(x => x.Id).FirstOrDefault();
                         if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
                     }
                 }
