@@ -410,6 +410,24 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nchar" MaxLength="10" />
         </EntityType>
+        <EntityType Name="TblQualityCertificate">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FromDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ToDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ExpectNumber" Type="float" Nullable="false" />
+          <Property Name="ItemCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ItemName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="State" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Note" Type="nvarchar(max)" />
+          <Property Name="ReferenceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreateDay" Type="datetime2" Precision="7" />
+          <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="UpdateDay" Type="datetime2" Precision="7" />
+          <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="tblRfid">
           <Key>
             <PropertyRef Name="Code" />
@@ -584,6 +602,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Confirm11" Type="int" />
           <Property Name="TimeConfirm11" Type="datetime2" Precision="7" />
+          <Property Name="LotNumber" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -788,6 +807,18 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber">
+          <End Role="TblQualityCertificate" Type="Self.TblQualityCertificate" Multiplicity="0..1" />
+          <End Role="tblStoreOrderOperating" Type="Self.tblStoreOrderOperating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificate">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblStoreOrderOperating">
+              <PropertyRef Name="LotNumber" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
           <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -842,6 +873,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblNotification" EntityType="Self.tblNotification" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TblPrint" EntityType="Self.TblPrint" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPrintConfig" EntityType="Self.tblPrintConfig" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblQualityCertificate" EntityType="Self.TblQualityCertificate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfid" EntityType="Self.tblRfid" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfidSign" EntityType="Self.tblRfidSign" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblScaleOperating" EntityType="Self.tblScaleOperating" Schema="dbo" store:Type="Tables" />
@@ -907,6 +939,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <AssociationSet Name="FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" Association="Self.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct">
             <End Role="tblTypeProduct" EntitySet="tblTypeProduct" />
             <End Role="tblMachineTypeProduct" EntitySet="tblMachineTypeProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" Association="Self.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber">
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificate" />
+            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperating" />
           </AssociationSet>
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
@@ -1419,6 +1455,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Confirm11" Type="Int32" />
           <Property Name="TimeConfirm11" Type="DateTime" Precision="7" />
+          <Property Name="LotNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TblQualityCertificate" Relationship="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" FromRole="tblStoreOrderOperating" ToRole="TblQualityCertificate" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1666,6 +1704,11 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
             <End Role="tblExportHistory" EntitySet="tblExportHistories" />
           </AssociationSet>
+          <EntitySet Name="TblQualityCertificates" EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" />
+          <AssociationSet Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber">
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificates" />
+            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -1813,6 +1856,37 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Principal>
             <Dependent Role="tblExportHistory">
               <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TblQualityCertificate">
+          <Key>
+            <PropertyRef Name="Code" />
+          </Key>
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FromDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ToDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ExpectNumber" Type="Double" Nullable="false" />
+          <Property Name="ItemCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ReferenceId" Type="Guid" Nullable="false" />
+          <Property Name="CreateDay" Type="DateTime" Precision="7" />
+          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UpdateDay" Type="DateTime" Precision="7" />
+          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblStoreOrderOperatings" Relationship="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" FromRole="TblQualityCertificate" ToRole="tblStoreOrderOperating" />
+        </EntityType>
+        <Association Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber">
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Role="TblQualityCertificate" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificate">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblStoreOrderOperating">
+              <PropertyRef Name="LotNumber" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2232,6 +2306,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="LotNumber" ColumnName="LotNumber" />
                 <ScalarProperty Name="TimeConfirm11" ColumnName="TimeConfirm11" />
                 <ScalarProperty Name="Confirm11" ColumnName="Confirm11" />
                 <ScalarProperty Name="MachineExportedNumber" ColumnName="MachineExportedNumber" />
@@ -2558,6 +2633,25 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="OrderId" ColumnName="OrderId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblQualityCertificates">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificate">
+              <MappingFragment StoreEntitySet="TblQualityCertificate">
+                <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
+                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
+                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
+                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
+                <ScalarProperty Name="ExpectNumber" ColumnName="ExpectNumber" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

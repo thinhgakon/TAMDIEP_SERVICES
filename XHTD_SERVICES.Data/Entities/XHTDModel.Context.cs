@@ -63,5 +63,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<TblMachineTrough> TblMachineTroughs { get; set; }
         public virtual DbSet<TblPrint> TblPrints { get; set; }
         public virtual DbSet<tblExportHistory> tblExportHistories { get; set; }
+        public virtual DbSet<TblQualityCertificate> TblQualityCertificates { get; set; }
     }
 }

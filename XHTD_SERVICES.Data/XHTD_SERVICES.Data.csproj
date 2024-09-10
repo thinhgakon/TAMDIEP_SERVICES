@@ -143,6 +143,9 @@
     <Compile Include="Entities\tblPrintConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblQualityCertificate.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblRfid.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>

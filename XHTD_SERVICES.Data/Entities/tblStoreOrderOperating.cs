@@ -126,8 +126,10 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<decimal> MachineExportedNumber { get; set; }
         public Nullable<int> Confirm11 { get; set; }
         public Nullable<System.DateTime> TimeConfirm11 { get; set; }
+        public string LotNumber { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
+        public virtual TblQualityCertificate TblQualityCertificate { get; set; }
     }
 }

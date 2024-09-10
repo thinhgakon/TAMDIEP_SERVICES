@@ -51,6 +51,8 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportHistory" Width="1.5" PointX="11" PointY="24.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="6.5" PointY="24.875" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
