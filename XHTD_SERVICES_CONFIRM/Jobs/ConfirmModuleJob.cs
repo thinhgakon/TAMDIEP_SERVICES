@@ -21,6 +21,7 @@ using XHTD_SERVICES_CONFIRM.Hubs;
 using System.Net.NetworkInformation;
 using XHTD_SERVICES_CONFIRM.Devices;
 using PK_UHF_Test;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
@@ -391,7 +392,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             ModifiledOn = DateTime.Now,
                             LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
                             IsDone = false,
-                            CallType = "BAI_CHO"
+                            CallType = CallType.BAI_CHO
                         };
 
                         db.tblCallVehicleStatus.Add(newTblVehicleStatus);

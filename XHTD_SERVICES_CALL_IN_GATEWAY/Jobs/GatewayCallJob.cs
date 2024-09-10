@@ -135,7 +135,13 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     {
                         // Tự động
                         var typeCurrent = Program.roundRobinList.Next();
-                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent)).OrderBy(x => x.Id).FirstOrDefault();
+
+                        // Mời xe ra bãi chờ trước
+                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.TypeProduct.Equals(typeCurrent) && x.CallType.ToUpper() == "BAI_CHO").OrderBy(x => x.Id).FirstOrDefault();
+                        if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
+
+                        // Mời xe vào cổng sau
+                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && x.CallType.ToUpper() == "CONG").OrderBy(x => x.Id).FirstOrDefault();
                         if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
                     }
                 }

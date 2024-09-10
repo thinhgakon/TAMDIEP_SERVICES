@@ -153,7 +153,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                                 ModifiledOn = DateTime.Now,
                                 LogCall = logString,
                                 IsDone = false,
-                                CallType = "CONG"
+                                CallType = CallType.CONG
                             };
                             db.tblCallVehicleStatus.Add(newTblVehicleStatus);
                             db.SaveChanges();
