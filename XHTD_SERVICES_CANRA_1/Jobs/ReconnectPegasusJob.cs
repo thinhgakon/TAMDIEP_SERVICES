@@ -34,7 +34,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
             await Task.Run(() =>
             {
-                WriteLogInfo($"=================== Start JOB ===================");
+                WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
 
                 CheckConnection();
             });
