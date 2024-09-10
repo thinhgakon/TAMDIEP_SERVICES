@@ -42,13 +42,22 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                //_logger.LogInfo("Start tramcan2 reset traffic light service");
-                //_logger.LogInfo("----------------------------");
+                await Task.Run(() =>
+                {
+                    WriteLogInfo("--------------- START JOB ---------------");
 
-                TrafficLightProcess();
-            });
+                    TrafficLightProcess();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void TrafficLightProcess()
@@ -57,22 +66,27 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             {
                 if (Program.scaleValuesForResetLight == null || Program.scaleValuesForResetLight.Count == 0)
                 {
+                    WriteLogInfo("1. Không có xe trên cân");
+
                     if (Program.IsFirstTimeResetTrafficLight)
                     {
                         Program.IsFirstTimeResetTrafficLight = false;
 
-                        WriteLogInfo("Reset traffic light - Scale 951 - 1");
+                        WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
+
                         TurnOffTrafficLight();
                     }
                     else
                     {
-                        //log.Info("Khong co xe dang can => return");
+                        WriteLogInfo("2. Không phải lần đầu tiên chỉ số cân về 0 => Kết thúc");
                     }
 
                     return;
                 }
                 else
                 {
+                    WriteLogInfo($"1. Có khối lượng cân: {Program.scaleValuesForResetLight.FirstOrDefault()} => Kết thúc");
+
                     Program.IsFirstTimeResetTrafficLight = true;
                 }
             }
@@ -84,26 +98,26 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public void TurnOffTrafficLight()
         {
-            WriteLogInfo($@"Tắt đèn chiều vào");
+            WriteLogInfo($@"2.1. Tắt đèn chiều vào");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
             {
-                WriteLogInfo($@"Tắt thành công");
+                WriteLogInfo($@"2.1.1. Tắt thành công");
             }
             else
             {
-                WriteLogInfo($@"Tắt thất bại");
+                WriteLogInfo($@"2.1.1. Tắt thất bại");
             }
 
             Thread.Sleep(500);
 
-            WriteLogInfo($@"Tắt đèn chiều ra");
+            WriteLogInfo($@"2.2. Tắt đèn chiều ra");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
             {
-                WriteLogInfo($@"Tắt thành công");
+                WriteLogInfo($@"2.2.1. Tắt thành công");
             }
             else
             {
-                WriteLogInfo($@"Tắt thất bại");
+                WriteLogInfo($@"2.2.1. Tắt thất bại");
             }
         }
 
