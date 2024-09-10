@@ -378,6 +378,27 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
                 SendPushNotification("adminNPP", pushMessage);
 
+                if (currentNumberWaitingVehicleInFactory < maxVehicle)
+                {
+                    using (var db = new XHTD_Entities())
+                    {
+                        var newTblVehicleStatus = new tblCallVehicleStatu
+                        {
+                            StoreOrderOperatingId = currentOrder.Id,
+                            CountTry = 0,
+                            TypeProduct = currentOrder.TypeProduct,
+                            CreatedOn = DateTime.Now,
+                            ModifiledOn = DateTime.Now,
+                            LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
+                            IsDone = false,
+                            CallType = "BAI_CHO"
+                        };
+
+                        db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                        db.SaveChanges();
+                    }
+                }
+
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
                 {
