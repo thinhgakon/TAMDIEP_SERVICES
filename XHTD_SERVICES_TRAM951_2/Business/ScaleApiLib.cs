@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
-using XHTD_SERVICES_TRAM951_2.Models.Response;
+using XHTD_SERVICES_CANRA_1.Models.Response;
 using XHTD_SERVICES.Helper;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_2.Business
+namespace XHTD_SERVICES_CANRA_1.Business
 {
     public class ScaleApiLib
     {

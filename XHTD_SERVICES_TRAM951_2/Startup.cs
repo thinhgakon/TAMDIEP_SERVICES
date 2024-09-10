@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_2
+namespace XHTD_SERVICES_CANRA_1
 {
     class Startup
     {

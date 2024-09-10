@@ -9,7 +9,7 @@ using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_2.Devices
+namespace XHTD_SERVICES_CANRA_1.Devices
 {
     public class BarrierControl
     {

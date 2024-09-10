@@ -3,11 +3,11 @@ using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using XHTD_SERVICES_TRAM951_2;
-using XHTD_SERVICES_TRAM951_2.Devices;
+using XHTD_SERVICES_CANRA_1;
+using XHTD_SERVICES_CANRA_1.Devices;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_2.Jobs
+namespace XHTD_SERVICES_CANRA_1.Jobs
 {
     public class ReconnectPegasusJob : IJob
     {

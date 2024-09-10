@@ -2,10 +2,10 @@
 using log4net;
 using System.ServiceProcess;
 using Topshelf;
-using XHTD_SERVICES_TRAM951_2.Hubs;
-using XHTD_SERVICES_TRAM951_2.Schedules;
+using XHTD_SERVICES_CANRA_1.Hubs;
+using XHTD_SERVICES_CANRA_1.Schedules;
 
-namespace XHTD_SERVICES_TRAM951_2
+namespace XHTD_SERVICES_CANRA_1
 {
     public partial class Service : ServiceBase
     {

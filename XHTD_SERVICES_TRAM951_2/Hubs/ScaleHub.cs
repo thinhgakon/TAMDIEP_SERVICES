@@ -8,11 +8,11 @@ using XHTD_SERVICES.Data.Common;
 using Autofac;
 using System.Threading;
 using System.Threading.Tasks;
-using XHTD_SERVICES_TRAM951_2.Devices;
-using XHTD_SERVICES_TRAM951_2.Business;
+using XHTD_SERVICES_CANRA_1.Devices;
+using XHTD_SERVICES_CANRA_1.Business;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_TRAM951_2.Hubs
+namespace XHTD_SERVICES_CANRA_1.Hubs
 {
     public class ScaleHub : Hub
     {

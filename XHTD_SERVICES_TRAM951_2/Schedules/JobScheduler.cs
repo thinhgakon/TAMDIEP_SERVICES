@@ -2,10 +2,10 @@
 using Quartz;
 using System;
 using log4net;
-using XHTD_SERVICES_TRAM951_2.Jobs;
+using XHTD_SERVICES_CANRA_1.Jobs;
 using System.Configuration;
 
-namespace XHTD_SERVICES_TRAM951_2.Schedules
+namespace XHTD_SERVICES_CANRA_1.Schedules
 {
     public class JobScheduler
     {

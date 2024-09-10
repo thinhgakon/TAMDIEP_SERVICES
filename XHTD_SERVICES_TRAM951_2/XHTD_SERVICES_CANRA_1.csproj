@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{567A44F3-5D4D-474A-A14C-54FFC805F527}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_TRAM951_2</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_TRAM951_2</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_CANRA_1</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_CANRA_1</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

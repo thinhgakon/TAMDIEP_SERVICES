@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_2.Models.Response
+namespace XHTD_SERVICES_CANRA_1.Models.Response
 {
     public class CardNoLog
     {
