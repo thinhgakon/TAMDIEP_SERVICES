@@ -98,6 +98,7 @@
           <Property Name="LogCall" Type="nvarchar" MaxLength="500" />
           <Property Name="IsDone" Type="bit" />
           <Property Name="TypeProduct" Type="varchar" MaxLength="20" />
+          <Property Name="CallType" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblCategories">
           <Key>
@@ -997,6 +998,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="LogCall" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsDone" Type="Boolean" />
           <Property Name="TypeProduct" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CallType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -1892,6 +1894,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblCallVehicleStatus">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallVehicleStatu">
               <MappingFragment StoreEntitySet="tblCallVehicleStatus">
+                <ScalarProperty Name="CallType" ColumnName="CallType" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="StoreOrderOperatingId" ColumnName="StoreOrderOperatingId" />
                 <ScalarProperty Name="CountTry" ColumnName="CountTry" />
