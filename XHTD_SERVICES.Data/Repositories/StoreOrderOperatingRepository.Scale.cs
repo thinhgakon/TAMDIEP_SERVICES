@@ -141,13 +141,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
+                                                     && x.Step >= (int)OrderStep.DA_VAO_CONG
                                                      && x.Step < (int)OrderStep.DA_CAN_VAO
-                                                     &&
-                                                     (
-                                                        x.CatId == OrderCatIdCode.CLINKER
-                                                        || x.TypeXK == OrderTypeXKCode.JUMBO
-                                                        || x.TypeXK == OrderTypeXKCode.SLING
-                                                     )
                                                     )
                                             .ToListAsync();
 
@@ -163,7 +158,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đã cân vào lúc {currentTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân vào tự động lúc {currentTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -171,7 +166,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Xác thực cân vào {vehicleCode} error: " + ex.Message);
+                    log.Error($@"Xác thực cân vào {vehicleCode} ERROR: " + ex.Message);
                     return false;
                 }
             }

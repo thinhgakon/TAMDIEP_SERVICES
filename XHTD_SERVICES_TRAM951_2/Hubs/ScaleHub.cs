@@ -330,14 +330,14 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                         WriteLogInfo($"6.2. Update gia tri can vao");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        WriteLogInfo($"6.3. Update trạng thái cân vào");
-                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+                                        //WriteLogInfo($"6.3. Update trạng thái cân vào");
+                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
 
                                         //WriteLogInfo($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
                                         //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
 
-                                        //WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
-                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
+                                        WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                     }
                                     else
                                     {
@@ -346,8 +346,11 @@ namespace XHTD_SERVICES_TRAM951_2.Hubs
                                         WriteLogInfo($"6.2. Update gia tri can vao");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        WriteLogInfo($"6.3. Update trạng thái cân vào");
-                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+                                        //WriteLogInfo($"6.3. Update trạng thái cân vào");
+                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
+
+                                        WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
+                                        await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
 
                                         //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
