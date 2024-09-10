@@ -13,6 +13,7 @@ using XHTD_SERVICES.Helper.Models.Request;
 using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 {
@@ -21,8 +22,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly GatewayCallLogger _gatewayCallLogger;
-
-        string PathAudio = $@"D:/VICEM_TAMDIEP/xuathangtudong/AudioNew";
 
         public GatewayCallJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -42,13 +41,13 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                CallVehicleProcess();
+                await CallVehicleProcess();
             });
         }
 
-        public void CallVehicleProcess()
+        public async Task CallVehicleProcess()
         {
-            _gatewayCallLogger.LogInfo("==============start process CallVehicleProcess ====================");
+            _gatewayCallLogger.LogInfo("================= Bắt đầu service gọi loa ====================");
 
             try
             {
@@ -59,38 +58,52 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     var callVehicleItem = new tblCallVehicleStatu();
                     callVehicleItem = GetVehicleToCall();
                     if (callVehicleItem == null || callVehicleItem.Id < 1) return;
+
                     // check xem trong bảng tblStoreOrderOperating xem đơn hàng có đang yêu cầu gọi vào không
                     var storeOrderOperating = db.tblStoreOrderOperatings.FirstOrDefault(x => x.Id == callVehicleItem.StoreOrderOperatingId);
-                    _gatewayCallLogger.LogError($@"======1==call vehicle {storeOrderOperating.Vehicle} ==============");
+                    if (storeOrderOperating == null) return;
+
+                    _gatewayCallLogger.LogInfo($@"======== Phương tiện {storeOrderOperating.Vehicle} - Đơn hàng {storeOrderOperating.DeliveryCode} - Loại {storeOrderOperating.TypeProduct} đang trong hàng đợi =========");
                     if (storeOrderOperating.CountReindex != null && (int)storeOrderOperating.CountReindex >= 3)
                     {
-                        _gatewayCallLogger.LogError($@"======2==call vehicle {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi -- hủy lốt==============");
-                        if (storeOrderOperating.Step == 1 || storeOrderOperating.Step == 4)
-                        {
-                            var sql = $@"UPDATE dbo.tblStoreOrderOperating SET IndexOrder = 0, Confirm1 = 0, TimeConfirm1 = NULL, Step = 0, IndexOrder2 = 0, DeliveryCodeParent = NULL, LogProcessOrder = CONCAT(LogProcessOrder, N'#Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE  Step IN (1,4) AND ISNULL(DriverUserName,'') <> '' AND (DeliveryCode = @DeliveryCode OR DeliveryCodeParent = @DeliveryCode)";
-                            db.Database.ExecuteSqlCommand(sql, new SqlParameter("@DeliveryCode", storeOrderOperating.DeliveryCode));
-                            var sqlDelete = $@"UPDATE dbo.tblCallVehicleStatus SET IsDone = 1 WHERE StoreOrderOperatingId = @StoreOrderOperatingId";
-                            db.Database.ExecuteSqlCommand(sql, new SqlParameter("@StoreOrderOperatingId", storeOrderOperating.Id));
-                            return;
-                        }
+                        _gatewayCallLogger.LogInfo($@"======== Phương tiện {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi => Hủy lốt ========");
+                        //if (storeOrderOperating.Step == 1 || storeOrderOperating.Step == 4)
+                        //{
+                        //    var sql = $@"UPDATE dbo.tblStoreOrderOperating SET IndexOrder = 0, Confirm1 = 0, TimeConfirm1 = NULL, Step = 0, IndexOrder2 = 0, DeliveryCodeParent = NULL, LogProcessOrder = CONCAT(LogProcessOrder, N'#Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE  Step IN (1,4) AND ISNULL(DriverUserName,'') <> '' AND (DeliveryCode = @DeliveryCode OR DeliveryCodeParent = @DeliveryCode)";
+                        //    db.Database.ExecuteSqlCommand(sql, new SqlParameter("@DeliveryCode", storeOrderOperating.DeliveryCode));
+
+                        //    var sqlDelete = $@"UPDATE dbo.tblCallVehicleStatus SET IsDone = 1 WHERE StoreOrderOperatingId = @StoreOrderOperatingId";
+                        //    db.Database.ExecuteSqlCommand(sqlDelete, new SqlParameter("@StoreOrderOperatingId", storeOrderOperating.Id));
+
+                        //    return;
+                        //}
                     }
                     var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
                     if (vehicleWaitingCall == null) return;
-                    if (storeOrderOperating == null || storeOrderOperating.Step != 4)
+
+                    if (storeOrderOperating == null || 
+                       (storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
+                        storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE))
                     {
+                        _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} đã vào cổng ========");
+
                         vehicleWaitingCall.ModifiledOn = DateTime.Now;
                         vehicleWaitingCall.IsDone = true;
-                        db.SaveChanges();
+                        await db.SaveChangesAsync();
                     }
+
                     else
                     {
+                        _gatewayCallLogger.LogInfo($"======== Gọi phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} lần thứ {vehicleWaitingCall.CountTry + 1} ========");
+
                         storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                        storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
                         isWillCall = true;
                         vehiceCode = storeOrderOperating.Vehicle;
                         vehicleWaitingCall.ModifiledOn = DateTime.Now;
                         vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
                         vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
-                        db.SaveChanges();
+                        await db.SaveChangesAsync();
                     }
                 }
                 if (isWillCall)
@@ -104,7 +117,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             {
                 _gatewayCallLogger.LogError(ex.Message);
             }
-
         }
 
         public tblCallVehicleStatu GetVehicleToCall()
@@ -129,7 +141,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayCallLogger.LogError(ex.Message);
+                _gatewayCallLogger.LogError($"Có lỗi khi lấy dữ liệu từ bảng tblCallVehicleStatus: {ex.Message}");
             }
             return callVehicleItem;
         }

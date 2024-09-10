@@ -12,7 +12,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY
     {
         public static readonly RoundRobinList<string> roundRobinList = new RoundRobinList<string>(
                     new List<string>{
-                        "PCB40", "PCB30", "ROI", "CLINKER", "XK"
+                        "PCB30", "PCB40", "C91", "ROI", "CLINKER", "OTHER"
                     }
                 );
 
