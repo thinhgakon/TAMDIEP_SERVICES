@@ -259,6 +259,48 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<bool> UpdateOrderConfirm7ByVehicleCode(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && x.Step >= (int)OrderStep.DA_CAN_VAO
+                                                     && x.Step < (int)OrderStep.DA_CAN_RA
+                                                    )
+                                            .ToListAsync();
+
+                    if (orders == null || orders.Count == 0)
+                    {
+                        return false;
+                    }
+
+                    foreach (var order in orders)
+                    {
+                        order.Confirm7 = (int)ConfirmType.RFID;
+                        order.TimeConfirm7 = DateTime.Now;
+                        order.Step = (int)OrderStep.DA_CAN_RA;
+                        order.IndexOrder = 0;
+                        order.CountReindex = 0;
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Cân ra tự động lúc {currentTime};";
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Xác thực cân ra {vehicleCode} ERROR: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
         public async Task<bool> UpdateWeightIn(string deliveryCode, int weightIn)
         {
             using (var dbContext = new XHTD_Entities())

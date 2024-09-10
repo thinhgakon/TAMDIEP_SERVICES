@@ -37,5 +37,10 @@ namespace XHTD_SERVICES_TRAM951_1.Business
         {
             await _storeOrderOperatingRepository.UpdateOrderConfirm7ByDeliveryCode(deliveryCode);
         }
+
+        public async Task UpdateOrderConfirm7ByVehicleCode(string vehicleCode)
+        {
+            await _storeOrderOperatingRepository.UpdateOrderConfirm7ByVehicleCode(vehicleCode);
+        }
     }
 }
