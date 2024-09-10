@@ -17,6 +17,7 @@ using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 {
+    [DisallowConcurrentExecution]
     public class GatewayCallJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;

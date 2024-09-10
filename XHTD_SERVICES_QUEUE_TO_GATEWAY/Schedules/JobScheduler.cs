@@ -32,7 +32,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayClinkerJob, queueToGatewayClinkerTrigger);
@@ -43,7 +43,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayRoiJob, queueToGatewayRoiTrigger);
@@ -54,7 +54,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayPcb40Job, queueToGatewayPcb40Trigger);
@@ -65,7 +65,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayPcb30Job, queueToGatewayPcb30Trigger);
@@ -76,7 +76,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayC91Job, queueToGatewayC91Trigger);
@@ -87,7 +87,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayJumboJob, queueToGatewayJumboTrigger);
@@ -98,7 +98,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewaySlingJob, queueToGatewaySlingTrigger);
@@ -109,7 +109,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Sync_Order_Interval_In_Seconds")))
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(queueToGatewayOtherJob, queueToGatewayOtherTrigger);
