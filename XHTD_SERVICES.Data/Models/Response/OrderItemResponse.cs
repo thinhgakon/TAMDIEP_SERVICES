@@ -91,5 +91,6 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string lastUpdatedDate { get; set; }
         public string dmsId { get; set; }
         public string docnum { get; set; }
+        public double itemId { get; set; }
     }
 }

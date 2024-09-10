@@ -119,7 +119,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             string strConString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
             OracleHelper oracleHelper = new OracleHelper(strConString);
-            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, ITEM_CATEGORY
+            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, ITEM_CATEGORY, INVENTORY_ITEM_ID
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
@@ -142,7 +142,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(),out int t) ? t : default,
                 status = reader["STATUS"].ToString(),
                 lastUpdatedDate = reader["LAST_UPDATE_DATE"]?.ToString() == null ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
-                itemCategory = reader["ITEM_CATEGORY"].ToString()
+                itemCategory = reader["ITEM_CATEGORY"].ToString(),
+                itemId = double.TryParse(reader["INVENTORY_ITEM_ID"].ToString(), out double k) ? k : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });

@@ -121,7 +121,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         UpdateDay = lastUpdatedDate > DateTime.MinValue ? lastUpdatedDate : DateTime.Now,
                         LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
                         LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
-                        IsSyncedByNewWS = true
+                        IsSyncedByNewWS = true,
+                        ItemId = websaleOrder.itemId,
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
