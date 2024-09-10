@@ -32,6 +32,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public const string IP_ADDRESS = "192.168.13.206";
 
+        private readonly bool IsWillSendScaleInfoAPI = true;
+
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
         public ScaleSocketJob(Notification notification)
@@ -142,9 +144,11 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
-                        //_logger.LogInfo($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+                        if (IsWillSendScaleInfoAPI)
+                        {
+                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
+                        }
 
-                        SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 
