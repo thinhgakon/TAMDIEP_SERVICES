@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using XHTD_SERVICES_TRAM951_1.Models.Response;
+using XHTD_SERVICES_CANVAO_1.Models.Response;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_TRAM951_1.Business
+namespace XHTD_SERVICES_CANVAO_1.Business
 {
     public class ScaleApiLib
     {

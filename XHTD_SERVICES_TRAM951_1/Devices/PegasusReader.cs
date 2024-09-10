@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_1.Devices
+namespace XHTD_SERVICES_CANVAO_1.Devices
 {
     public static class PegasusReader
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_1.Models.Request
+namespace XHTD_SERVICES_CANVAO_1.Models.Request
 {
     public class GetTokenRequest
     {

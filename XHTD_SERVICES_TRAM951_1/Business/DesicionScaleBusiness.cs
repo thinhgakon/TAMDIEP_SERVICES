@@ -3,14 +3,14 @@ using System;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_1.Models.Response;
-using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_CANVAO_1.Models.Response;
+using XHTD_SERVICES_CANVAO_1.Hubs;
 using log4net;
 using XHTD_SERVICES.Data.Common;
 using Microsoft.AspNet.SignalR.Messaging;
 using NDTan;
 
-namespace XHTD_SERVICES_TRAM951_1.Business
+namespace XHTD_SERVICES_CANVAO_1.Business
 {
     public class DesicionScaleBusiness
     {

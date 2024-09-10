@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Device.PLCM221;
 using XHTD_SERVICES.Device.PLCS71200;
-using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_CANVAO_1.Hubs;
 using XHTD_SERVICES.Data.Common;
 using log4net;
 using S7.Net;
 using System.Threading;
 
-namespace XHTD_SERVICES_TRAM951_1.Devices
+namespace XHTD_SERVICES_CANVAO_1.Devices
 {
     public class S7SensorControl
     {

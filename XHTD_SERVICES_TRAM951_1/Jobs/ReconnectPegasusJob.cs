@@ -4,10 +4,10 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using XHTD_SERVICES_TRAM951_1.Devices;
+using XHTD_SERVICES_CANVAO_1.Devices;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_1.Jobs
+namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
     public class ReconnectPegasusJob : IJob
     {

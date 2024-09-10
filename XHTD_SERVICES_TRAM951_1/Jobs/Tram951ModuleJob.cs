@@ -11,16 +11,16 @@ using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_TRAM951_1.Models.Response;
-using XHTD_SERVICES_TRAM951_1.Hubs;
-using XHTD_SERVICES_TRAM951_1.Devices;
-using XHTD_SERVICES_TRAM951_1.Business;
+using XHTD_SERVICES_CANVAO_1.Models.Response;
+using XHTD_SERVICES_CANVAO_1.Hubs;
+using XHTD_SERVICES_CANVAO_1.Devices;
+using XHTD_SERVICES_CANVAO_1.Business;
 using XHTD_SERVICES.Helper;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
 
-namespace XHTD_SERVICES_TRAM951_1.Jobs
+namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
     public class Tram951ModuleJob : IJob
     {

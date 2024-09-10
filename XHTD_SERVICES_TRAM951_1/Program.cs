@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XHTD_SERVICES_TRAM951_1
+namespace XHTD_SERVICES_CANVAO_1
 {
     static class Program
     {

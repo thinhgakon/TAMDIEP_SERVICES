@@ -10,11 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES_TRAM951_1.Devices;
-using XHTD_SERVICES_TRAM951_1.Hubs;
+using XHTD_SERVICES_CANVAO_1.Devices;
+using XHTD_SERVICES_CANVAO_1.Hubs;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_1.Jobs
+namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
     public class ScaleSocketJob : IJob
     {

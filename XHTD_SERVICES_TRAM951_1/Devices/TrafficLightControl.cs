@@ -8,7 +8,7 @@ using XHTD_SERVICES.Device;
 using XHTD_SERVICES.Data.Common;
 using log4net;
 
-namespace XHTD_SERVICES_TRAM951_1.Devices
+namespace XHTD_SERVICES_CANVAO_1.Devices
 {
     public class TrafficLightControl
     {

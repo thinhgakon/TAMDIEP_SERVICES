@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_TRAM951_1.Business
+namespace XHTD_SERVICES_CANVAO_1.Business
 {
     public class OrderBusiness
     {
