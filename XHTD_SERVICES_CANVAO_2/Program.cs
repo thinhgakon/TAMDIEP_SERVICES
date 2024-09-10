@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_CANVAO_2
         /// The main entry point for the application.
         /// </summary>
 
-        public static List<int> scaleValues = new List<int>(); 
+        public static List<int> scaleValues = new List<int>();
         public static List<int> scaleValuesForResetLight = new List<int>();
 
         public static bool IsScalling = false;
@@ -28,8 +28,8 @@ namespace XHTD_SERVICES_CANVAO_2
         public static bool IsEnabledRfid = false;
         public static DateTime? EnabledRfidTime = null;
 
-        public static string PegasusIP1 = "192.168.13.181";
-        public static string PegasusIP2 = "192.168.13.181";
+        public static string PegasusIP1 = "192.168.13.185";
+        public static string PegasusIP2 = "192.168.13.185";
         public static int RefPort1 = 6000;
         public static byte RefComAdr1 = 0xFF;
         public static int RefPort2 = 6000;
