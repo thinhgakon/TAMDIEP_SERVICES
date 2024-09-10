@@ -33,15 +33,15 @@ namespace XHTD_SERVICES_TRAM951_2.Schedules
                 .Build();
             await _scheduler.ScheduleJob(autoScaleJob, autoScaleTrigger);
 
-            //IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
-            //ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(5)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
+            IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
+            ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(15)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
 
             IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
             ITrigger connectPegasusrigger = TriggerBuilder.Create()

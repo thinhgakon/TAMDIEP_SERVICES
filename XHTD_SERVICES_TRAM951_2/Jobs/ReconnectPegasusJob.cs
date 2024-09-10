@@ -1,5 +1,4 @@
-﻿using log4net;
-using Quartz;
+﻿using Quartz;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -18,7 +17,7 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.188";
 
-        protected const int TIME_TO_RESET = 10;
+        protected const int TIME_TO_RESET = 30;
 
         TimeSpan timeDiffFromLastReceivedUHF = new TimeSpan();
 
@@ -35,6 +34,8 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
 
             await Task.Run(() =>
             {
+                WriteLogInfo($"=================== Start JOB ===================");
+
                 CheckConnection();
             });
         }
@@ -45,15 +46,21 @@ namespace XHTD_SERVICES_TRAM951_2.Jobs
             {
                 if (Program.LastTimeReceivedUHF != null)
                 {
+                    WriteLogInfo($"1. Thời điểm gần nhất nhận tín hiệu: {Program.LastTimeReceivedUHF}");
+
                     timeDiffFromLastReceivedUHF = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedUHF);
 
                     if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        WriteLogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+                        WriteLogInfo($"2. Quá {TIME_TO_RESET}s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
 
                         PegasusStaticClassReader.CloseNetPort(PortHandle);
 
                         Program.UHFConnected = false;
+                    }
+                    else
+                    {
+                        WriteLogInfo($"2. Chưa vượt quá {TIME_TO_RESET}s");
                     }
                 }
             }
