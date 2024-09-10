@@ -95,7 +95,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.185";
+        private string PegasusAdr = "192.168.13.182";
 
         public Tram951ModuleJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -246,7 +246,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                         }
                     }
                 }
-                catch(Exception err) 
+                catch (Exception err)
                 {
                     _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
                     Program.UHFConnected = false;
@@ -398,8 +398,8 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             // 3. Xác định xe vào hay ra
             var isLuongVao = true;
 
-            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO 
-                || currentOrder.Step == (int)OrderStep.DA_XAC_THUC 
+            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO
+                || currentOrder.Step == (int)OrderStep.DA_XAC_THUC
                 || currentOrder.Step == (int)OrderStep.CHO_GOI_XE
                 || currentOrder.Step == (int)OrderStep.DANG_GOI_XE
                 )

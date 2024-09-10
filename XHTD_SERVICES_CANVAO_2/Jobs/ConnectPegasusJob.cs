@@ -14,7 +14,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.185";
+        private string PegasusAdr = "192.168.13.182";
 
         public ConnectPegasusJob()
         {
