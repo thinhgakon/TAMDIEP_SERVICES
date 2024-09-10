@@ -38,6 +38,26 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<tblTrough> GetTroughByTroughCode(string troughCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code.ToUpper() == troughCode.ToUpper());
+                if (trough == null) return null;
+                return trough;
+            }
+        }
+
+        public async Task<tblTrough> GetTroughByDeliveryCode(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.DeliveryCodeCurrent.ToUpper() == deliveryCode.ToUpper());
+                if (trough == null) return null;
+                return trough;
+            }
+        }
+
         public async Task<List<string>> GetAllTroughCodes()
         {
             using (var dbContext = new XHTD_Entities())
@@ -91,7 +111,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateMachineSensor(string deliveryCode, double firstSensorQuantity)
+        public async Task UpdateMachineSensor(string deliveryCode, double firstSensorQuantity, DateTime firstCountFirstSensor, DateTime lastCountFirstSensor)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -103,19 +123,25 @@ namespace XHTD_SERVICES.Data.Repositories
                     var callToTrough = await dbContext.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode && x.IsDone == false);
                     if (callToTrough == null) return;
                     
-                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
-                    if (itemToCall != null)
+                    var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
+                    if (trough != null)
                     {
-                        itemToCall.Working = true;
-                        itemToCall.DeliveryCodeCurrent = deliveryCode;
-                        itemToCall.FirstSensorQuantityCurrent = firstSensorQuantity;
+                        trough.Working = true;
+                        trough.DeliveryCodeCurrent = deliveryCode;
+                        trough.FirstSensorQuantityCurrent = firstSensorQuantity;
+                        trough.LastCountFirstSensor = lastCountFirstSensor;
+
+                        if (trough.FirstCountFirstSensor == null)
+                        {
+                            trough.FirstCountFirstSensor = firstCountFirstSensor;
+                        }
 
                         order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 20);
 
                         await dbContext.SaveChangesAsync();
 
-                        log.Info($@"Update Machine Sensor Trough {itemToCall.Code} success");
-                        Console.WriteLine($@"Update Machine Sensor Trough {itemToCall.Code} Success");
+                        log.Info($@"Update Machine Sensor Trough {trough.Code} success");
+                        Console.WriteLine($@"Update Machine Sensor Trough {trough.Code} Success");
                     }
                 }
                 catch (Exception ex)
@@ -126,7 +152,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task UpdateTroughSensor(string troughCode, string deliveryCode, double countQuantity, double planQuantity)
+        public async Task UpdateTroughSensor(string troughCode, string deliveryCode, double countQuantity, double planQuantity, DateTime firstCountLastSensor, DateTime lastCountLastSensor)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -135,13 +161,19 @@ namespace XHTD_SERVICES.Data.Repositories
                     var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
                     if (order == null) return;
 
-                    var itemToCall = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
-                    if (itemToCall != null)
+                    var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    if (trough != null)
                     {
-                        itemToCall.Working = true;
-                        itemToCall.DeliveryCodeCurrent = deliveryCode;
-                        itemToCall.CountQuantityCurrent = countQuantity;
-                        itemToCall.PlanQuantityCurrent = planQuantity;
+                        trough.Working = true;
+                        trough.DeliveryCodeCurrent = deliveryCode;
+                        trough.CountQuantityCurrent = countQuantity;
+                        trough.PlanQuantityCurrent = planQuantity;
+                        trough.LastCountLastSensor = lastCountLastSensor;
+
+                        if (trough.FirstCountLastSensor == null)
+                        {
+                            trough.FirstCountLastSensor = firstCountLastSensor;
+                        }
 
                         order.ExportedNumber = (decimal?)(countQuantity / 20);
 

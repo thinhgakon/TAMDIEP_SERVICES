@@ -12,6 +12,9 @@ using XHTD_SERVICES_SYNC_ORDER.Models.Values;
 using XHTD_SERVICES.Helper;
 using System.Data;
 using System.Globalization;
+using XHTD_SERVICES.Helper.Models.Request;
+using Autofac;
+using XHTD_SERVICES_SYNC_ORDER.Business;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -24,6 +27,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected readonly MachineRepository _machineRepository;
+        
+        protected readonly TroughRepository _troughRepository;
 
         protected readonly Notification _notification;
 
@@ -44,6 +51,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             VehicleRepository vehicleRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
+            MachineRepository machineRepository,
+            TroughRepository troughRepository,
             Notification notification,
             SyncOrderLogger syncOrderLogger
             )
@@ -52,6 +61,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             _vehicleRepository = vehicleRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
+            _machineRepository = machineRepository;
+            _troughRepository = troughRepository;
             _notification = notification;
             _syncOrderLogger = syncOrderLogger;
         }
@@ -258,6 +269,58 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 else
                 {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
+                    _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
+
+                    if (isSynced)
+                    {
+                        var trough = await _troughRepository.GetTroughByDeliveryCode(websaleOrder.deliveryCode);
+                        if (trough != null)
+                        {
+                            _syncOrderLogger.LogInfo($"Máng {trough.Code} đang xuất đơn hàng {websaleOrder.deliveryCode}");
+
+                            var machine = await _machineRepository.GetMachineByTroughCode(trough.Code);
+                            if (machine != null)
+                            {
+                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {trough.Code} - máy {machine.Code}");
+
+                                var requestData = new MachineControlRequest
+                                {
+                                    MachineCode = machine.Code,
+                                    TroughCode = trough.Code,
+                                    CurrentDeliveryCode = websaleOrder.deliveryCode
+                                };
+
+                                _syncOrderLogger.LogInfo($"Stop Machine API Request Data: MachineCode = {requestData.MachineCode} ---- TroughCode = {requestData.TroughCode} ---- DeliveryCode = {requestData.CurrentDeliveryCode}");
+
+                                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
+
+                                _syncOrderLogger.LogInfo($"Stop Machine API Response: Status = {apiResponse.Status} ---- Message = {apiResponse.MessageObject.Message}");
+
+                                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                                {
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thành công!");
+                                }
+
+                                else _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
+                            }
+                        }
+
+                        _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
+
+                        if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
+                        {
+                            double? weightIn = double.Parse(websaleOrder.loadweightnull);
+                            double? weightOut = double.Parse(websaleOrder.loadweightfull);
+
+                            var tolerance = ((decimal)(weightOut - weightIn) - (decimal)websaleOrder.bookQuantity) / (decimal)websaleOrder.bookQuantity;
+                            tolerance = tolerance < 0 ? -1 * tolerance : tolerance;
+
+                            if (tolerance > (decimal)0.01)
+                            {
+                                SendToleranceWarning(websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity * 1000, (int?)(weightIn * 1000), (int?)(weightOut * 1000), (double?)tolerance);
+                            }
+                        }
+                    }
                 }
             }
             else if (stateId == (int)OrderState.DA_HUY_DON)
@@ -298,6 +361,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             {
                 _syncOrderLogger.LogInfo($"SendInfoNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
+        }
+
+        private void SendToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
+        {
+            _notification.SendOrderSendOrderToleranceWarning(deliveryCode, vehicle, sumNumber, weightIn, weightOut, tolerance);
         }
     }
 }

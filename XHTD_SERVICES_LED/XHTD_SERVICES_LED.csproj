@@ -69,6 +69,9 @@
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SuperSimpleTcp, Version=3.0.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSimpleTcp.3.0.14\lib\net462\SuperSimpleTcp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -125,10 +128,10 @@
     <Compile Include="Devices\TCPLed.cs" />
     <Compile Include="Devices\TCPLedControl.cs" />
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\Led1XiBaoJob.cs" />
-    <Compile Include="Jobs\Led2XiBaoJob.cs" />
-    <Compile Include="Jobs\Led3XiBaoJob.cs" />
-    <Compile Include="Jobs\Led4XiBaoJob.cs" />
+    <Compile Include="Jobs\Led12RealtimeJob.cs" />
+    <Compile Include="Jobs\Led12XiBaoJob.cs" />
+    <Compile Include="Jobs\Led34RealtimeJob.cs" />
+    <Compile Include="Jobs\Led34XiBaoJob.cs" />
     <Compile Include="LedLogger.cs" />
     <Compile Include="Libs\CSDKExport.cs" />
     <Compile Include="Models\Response\StoreOrderForLED12.cs" />

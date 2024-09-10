@@ -291,6 +291,42 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse SendMachineNotification(SendMachineNotificationRequest requestData)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendMachineNotification"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse SendDMSOrderToleranceWarning(SendOrderToleranceWarningRequest requestData)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendToleranceWarning"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static IRestResponse SendInforNotification(string receiver, string message)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
@@ -439,6 +475,26 @@ namespace XHTD_SERVICES.Helper
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
 
             var client = new RestClient(apiUrl["StartMachine"]);
+            var request = new RestRequest();
+
+            request.Method = Method.PUT;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse StopMachine(MachineControlRequest requestData)
+        {
+            logger.Info($"StopMachine API: machine: {requestData.MachineCode} - trough: {requestData.TroughCode} - deliveryCode: {requestData.CurrentDeliveryCode}");
+
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["StopMachine"]);
             var request = new RestRequest();
 
             request.Method = Method.PUT;

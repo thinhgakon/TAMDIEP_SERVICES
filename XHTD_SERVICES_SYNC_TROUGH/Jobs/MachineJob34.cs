@@ -11,6 +11,7 @@ using System.Timers;
 using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
 using SuperSimpleTcp;
+using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -18,6 +19,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     public class MachineJob34 : IJob, IDisposable
     {
         private readonly MachineRepository _machineRepository;
+        protected readonly Notification _notification;
         protected readonly SyncTroughLogger _logger;
 
         static SimpleTcpClient client;
@@ -31,9 +33,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const string MACHINE_1_CODE = "3";
         private const string MACHINE_2_CODE = "4";
 
-        public MachineJob34(MachineRepository machineRepository, SyncTroughLogger logger)
+        public MachineJob34(MachineRepository machineRepository, Notification notification, SyncTroughLogger logger)
         {
             _machineRepository = machineRepository;
+            _notification = notification;
             _logger = logger;
         }
 
@@ -128,6 +131,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             await _machineRepository.UpdateMachine(machine);
 
                             _logger.LogInfo($"2.1. Start thành công");
+
+                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                         }
                         else
                         {
@@ -163,6 +168,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             await _machineRepository.UpdateMachine(machine);
 
                             _logger.LogInfo($"2.1. Stop thành công");
+
+                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                         }
                         else
                         {
@@ -181,6 +188,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
         {
             MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
+        public void SendNotificationAPI(string machineType, string machineCode, string startStatus, string stopStatus)
+        {
+            try
+            {
+                _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotificationAPI Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
         }
 
         public void Dispose()

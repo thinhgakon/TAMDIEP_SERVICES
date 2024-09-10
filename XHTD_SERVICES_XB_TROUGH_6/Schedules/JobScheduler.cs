@@ -36,6 +36,16 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Schedules
                 .Build();
             await _scheduler.ScheduleJob(xibaoTroughJob, xibaoTroughTrigger);
 
+            IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
+            ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
+
             IJobDetail ConnectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
             ITrigger ConnectPegasusTrigger = TriggerBuilder.Create()
                 .WithPriority(1)

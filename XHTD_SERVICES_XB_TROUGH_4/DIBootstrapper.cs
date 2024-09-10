@@ -33,6 +33,7 @@ namespace XHTD_SERVICES_XB_TROUGH_4
             builder.RegisterType<TroughLogger>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<MachineRepository>().AsSelf();
+            builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<MachineApiLib>().AsSelf();
 
             RegisterScheduler(builder);

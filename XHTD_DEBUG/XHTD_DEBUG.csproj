@@ -301,14 +301,6 @@
       <Project>{80851f59-2836-4878-b532-aa58cc10755b}</Project>
       <Name>XHTD_SERVICES_TRACE</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_TRAM951_1\XHTD_SERVICES_TRAM951_1.csproj">
-      <Project>{78cebe67-c3a1-4f68-8271-c6d4f2f8a9d4}</Project>
-      <Name>XHTD_SERVICES_TRAM951_1</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_TRAM951_2\XHTD_SERVICES_TRAM951_2.csproj">
-      <Project>{567a44f3-5d4d-474a-a14c-54ffc805f527}</Project>
-      <Name>XHTD_SERVICES_TRAM951_2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_XB_TROUGH_1\XHTD_SERVICES_XB_TROUGH_1.csproj">
       <Project>{e8397e51-be40-4d7f-9c35-6d23409ea3ce}</Project>
       <Name>XHTD_SERVICES_XB_TROUGH_1</Name>

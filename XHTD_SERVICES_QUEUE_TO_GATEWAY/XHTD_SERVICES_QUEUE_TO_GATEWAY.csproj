@@ -123,16 +123,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
+    <Compile Include="Jobs\QueueToGatewayC91Job.cs" />
     <Compile Include="Jobs\QueueToGatewayClinkerJob.cs" />
+    <Compile Include="Jobs\QueueToGatewayJumboJob.cs" />
+    <Compile Include="Jobs\QueueToGatewayOtherJob.cs" />
     <Compile Include="Jobs\QueueToGatewayPcb30Job.cs" />
     <Compile Include="Jobs\QueueToGatewayPcb40Job.cs" />
     <Compile Include="Jobs\QueueToGatewayRoiJob.cs" />
+    <Compile Include="Jobs\QueueToGatewaySlingJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="QueueToGatewayLogger.cs" />
     <Compile Include="Schedules\JobScheduler.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>

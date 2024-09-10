@@ -24,6 +24,12 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> TimeStart { get; set; }
         public Nullable<System.DateTime> TimeEnd { get; set; }
         public Nullable<decimal> MachineExportedNumber { get; set; }
+        public Nullable<int> RemainingCountQuantity { get; set; }
+        public Nullable<double> FirstSensorCountQuantityEnd { get; set; }
+        public Nullable<double> FirstSensorCountQuantityStart { get; set; }
+        public Nullable<System.DateTime> LastTimeChangeTrough { get; set; }
+        public Nullable<System.DateTime> TimeGetInTrough { get; set; }
+        public Nullable<System.DateTime> TimeGetOutTrough { get; set; }
     
         public virtual tblStoreOrderOperating tblStoreOrderOperating { get; set; }
     }

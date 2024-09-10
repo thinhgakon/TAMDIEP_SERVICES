@@ -22,5 +22,6 @@ namespace XHTD_SERVICES.Data.Entities
         public string LogCall { get; set; }
         public Nullable<bool> IsDone { get; set; }
         public string TypeProduct { get; set; }
+        public string CallType { get; set; }
     }
 }

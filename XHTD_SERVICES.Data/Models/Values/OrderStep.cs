@@ -41,6 +41,9 @@ namespace XHTD_SERVICES.Data.Models.Values
         DA_GIAO_HANG = 9,
 
         [Display(Name = "Đã xác thực")]
-        DA_XAC_THUC = 10
+        DA_XAC_THUC = 10,
+
+        [Display(Name = "Chờ gọi xe")]
+        CHO_GOI_XE = 11
     }
 }
