@@ -42,7 +42,8 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                await CallVehicleProcess();
+                //await CallVehicleProcess();
+                CallBySystem("35C00307");
             });
         }
 
@@ -171,7 +172,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
-                Thread.Sleep(1500);
+                Thread.Sleep(1200);
                 var count = 0;
                 foreach (char c in vehicle)
                 {
@@ -185,11 +186,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                     else if (count == 3)
                     {
-                        Thread.Sleep(1200);
+                        Thread.Sleep(1000);
                     }
                     else
                     {
-                        Thread.Sleep(700);
+                        Thread.Sleep(600);
                     }
                 }
 

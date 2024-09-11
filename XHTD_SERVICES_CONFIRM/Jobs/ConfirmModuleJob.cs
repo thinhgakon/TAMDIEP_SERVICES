@@ -379,7 +379,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
                 SendPushNotification("adminNPP", pushMessage);
 
-                if (currentNumberWaitingVehicleInFactory < maxVehicle)
+                if (currentNumberWaitingVehicleInFactory > maxVehicle)
                 {
                     using (var db = new XHTD_Entities())
                     {

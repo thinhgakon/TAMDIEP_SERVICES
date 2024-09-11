@@ -133,6 +133,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             _logger.LogInfo($"2.1. Start thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
                         }
                         else
                         {
@@ -170,6 +171,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             _logger.LogInfo($"2.1. Stop thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStopNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
                         }
                         else
                         {
@@ -199,6 +201,30 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationAPI Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            try
+            {
+                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendMachineStartNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendMachineStopNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            try
+            {
+                _notification.SendTroughStopData(machineCode, troughCode, deliveryCode, vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendMachineStopNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

@@ -309,6 +309,42 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse SendTroughStartData(SendTroughControlRequest requestData)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendTroughStartData"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse SendTroughStopData(SendTroughControlRequest requestData)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendTroughStopData"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static IRestResponse SendDMSOrderToleranceWarning(SendOrderToleranceWarningRequest requestData)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
