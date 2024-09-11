@@ -4,7 +4,7 @@ using Quartz;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
     public class QueueToCallJumboJob : IJob
     {

@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
-using XHTD_SERVICES_QUEUE_TO_CALL.Jobs;
+using XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs;
 using System.Configuration;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL.Schedules
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Schedules
 {
     public class JobScheduler
     {

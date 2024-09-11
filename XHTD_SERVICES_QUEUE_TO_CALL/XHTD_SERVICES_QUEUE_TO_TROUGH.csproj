@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1B4BB622-6C20-4F23-A6B1-32BD30BF886E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_QUEUE_TO_CALL</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_QUEUE_TO_CALL</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_QUEUE_TO_TROUGH</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_QUEUE_TO_TROUGH</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
