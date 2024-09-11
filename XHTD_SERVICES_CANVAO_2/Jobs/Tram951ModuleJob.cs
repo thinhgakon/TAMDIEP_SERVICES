@@ -308,11 +308,12 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             _logger.LogInfo("--------------------------------------------------------");
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+            var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
+
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);
 
-                var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
                 if (scaleInfo != null
                     && (bool)scaleInfo.IsScaling
                     && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
@@ -338,6 +339,21 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     Program.InProgressVehicleCode = null;
                 }
             }
+
+            #region Kiểm tra đang có dữ liệu đơn đang cân không
+            if (scaleInfo != null
+                    && (bool)scaleInfo.IsScaling
+                    && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
+                    )
+            {
+                _logger.LogInfo($"=== Đang cân MSGH: {scaleInfo.DeliveryCode} --- TimeIn: {scaleInfo.TimeIn} == => Kết thúc");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            #endregion
 
             // 1. Kiểm tra cardNoCurrent hợp lệ
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
