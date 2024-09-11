@@ -30,6 +30,8 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
+        protected readonly bool IsWillResetLight = false;
+
         public ResetTrafficLightJob(TCPTrafficLight trafficLight)
         {
             _trafficLight = trafficLight;
@@ -72,9 +74,15 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     {
                         Program.IsFirstTimeResetTrafficLight = false;
 
-                        WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
-
-                        TurnOffTrafficLight();
+                        if (IsWillResetLight)
+                        {
+                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
+                            TurnOffTrafficLight();
+                        }
+                        else
+                        {
+                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Job không tat đèn => Ket thuc");
+                        }
                     }
                     else
                     {
