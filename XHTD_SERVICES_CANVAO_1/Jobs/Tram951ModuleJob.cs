@@ -136,12 +136,11 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                     if (!isActiveService)
                     {
-                        _logger.LogInfo("Service đang tắt");
+                        _logger.LogInfo("Service cân vào đang tắt");
                         return;
                     }
 
-                    _logger.LogInfo("Start tramcan service");
-                    _logger.LogInfo("----------------------------");
+                    _logger.LogInfo($"==================================== START JOB - IP: {PegasusAdr} ====================================");
 
                     // Get devices info
                     await LoadDevicesInfo();
@@ -274,6 +273,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (Program.IsEnabledRfid == false)
             {
+                _logger.LogInfo($"Đang khóa nhận diện rfid IsEnabledRfid = false => Kết thúc xử lý rfid");
                 return;
             }
 
@@ -303,9 +303,9 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
             SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
 
-            _logger.LogInfo("----------------------------");
+            _logger.LogInfo("--------------------------------------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
-            _logger.LogInfo("-----");
+            _logger.LogInfo("--------------------------------------------------------");
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             if (Program.IsScalling)
