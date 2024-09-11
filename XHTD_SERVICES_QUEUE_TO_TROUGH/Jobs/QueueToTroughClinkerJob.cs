@@ -6,7 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
-    public class QueueToCallRoiJob : IJob
+    public class QueueToTroughClinkerJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -14,13 +14,13 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
-        protected readonly QueueToCallLogger _queueToCallLogger;
+        protected readonly QueueToTroughLogger _queueToCallLogger;
 
-        public QueueToCallRoiJob(
+        public QueueToTroughClinkerJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            QueueToCallLogger queueToCallLogger
+            QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -44,12 +44,12 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         public async void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCall ROI service");
+            _queueToCallLogger.LogInfo("Start process QueueToCall CLINKER service");
 
             try
             {
                 // 1. Lay danh sach don hang chua duoc xep vao may xuat
-                var orders = await _storeOrderOperatingRepository.GetXiMangRoiOrdersAddToQueueToCall();
+                var orders = await _storeOrderOperatingRepository.GetClinkerOrdersAddToQueueToCall();
                 if (orders == null || orders.Count == 0)
                 {
                     return;
@@ -67,7 +67,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                     var sumNumber = (decimal)order.SumNumber;
                     var typeProduct = order.TypeProduct;
 
-                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct, OrderProductCategoryCode.XI_ROI);
+                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct, OrderProductCategoryCode.CLINKER);
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 

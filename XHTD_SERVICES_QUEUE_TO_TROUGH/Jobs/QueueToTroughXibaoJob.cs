@@ -6,7 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
-    public class QueueToCallXibaoJob : IJob
+    public class QueueToTroughXibaoJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -14,13 +14,13 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
-        protected readonly QueueToCallLogger _queueToCallLogger;
+        protected readonly QueueToTroughLogger _queueToCallLogger;
 
-        public QueueToCallXibaoJob(
+        public QueueToTroughXibaoJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            QueueToCallLogger queueToCallLogger
+            QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;

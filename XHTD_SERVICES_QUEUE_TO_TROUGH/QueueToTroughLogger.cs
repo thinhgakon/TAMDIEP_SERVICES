@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH
 {
-    public class QueueToCallLogger : BaseLogger<Jobs.QueueToCallXibaoJob>
+    public class QueueToTroughLogger : BaseLogger<Jobs.QueueToTroughXibaoJob>
     {
     }
 }
