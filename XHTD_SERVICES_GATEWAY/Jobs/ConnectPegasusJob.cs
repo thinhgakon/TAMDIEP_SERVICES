@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.168";
-        protected readonly GatewayLogger _gatewayLogger;
 
-        public ConnectPegasusJob(GatewayLogger gatewayLogger)
+        public ConnectPegasusJob()
         {
-            _gatewayLogger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -29,10 +30,22 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run( () =>
+            try
             {
-                CheckConnection();
-            });
+                await Task.Run(() =>
+                {
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
@@ -56,13 +69,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
-                    _gatewayLogger.LogWarn("Connect fail. Start reconnect");
+                    WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogWarn($"Ping ERROR: {ex.Message}");
+                WriteLogInfo($"Ping ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

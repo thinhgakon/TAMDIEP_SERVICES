@@ -117,25 +117,34 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _gatewayLogger.LogInfo("Service cong bao ve dang TAT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _gatewayLogger.LogInfo("Start gateway service");
-                _gatewayLogger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _gatewayLogger.LogInfo("Service cong bao ve dang TAT.");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _gatewayLogger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                AuthenticateGatewayModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateGatewayModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _gatewayLogger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
