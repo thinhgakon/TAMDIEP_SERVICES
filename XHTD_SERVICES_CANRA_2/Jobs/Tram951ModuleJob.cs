@@ -283,9 +283,9 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 tmpInvalidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
-                //_logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -296,7 +296,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
-                //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
