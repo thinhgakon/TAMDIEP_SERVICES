@@ -367,7 +367,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
-                // Điều hướng gọi loa
+                #region Điều hướng gọi loa
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
 
@@ -395,8 +395,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         db.SaveChanges();
                     }
                 }
+                #endregion
 
-                // Gửi thông báo notification
+                #region Gửi thông báo notification
                 var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
@@ -407,6 +408,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     SendPushNotification(driverUserName, pushMessage);
                 }
+                #endregion
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -414,7 +416,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 // Bật đèn xanh - đỏ
                 TurnOnTrafficLight();
 
-                // Cập nhật trạng thái in phiếu
+                #region Cập nhật trạng thái in phiếu
                 var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
                 if (erpUpdateStatusResponse.Code == "01")
                 {
@@ -430,6 +432,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
+                #endregion
             }
             else
             {
