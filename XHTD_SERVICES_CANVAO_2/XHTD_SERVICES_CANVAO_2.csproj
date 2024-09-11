@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{356FA81C-4D5D-4131-B554-7543D7C75B60}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>XHTD_SERVICES_CANVAO_1</RootNamespace>
-    <AssemblyName>XHTD_SERVICES_CANVAO_1</AssemblyName>
+    <RootNamespace>XHTD_SERVICES_CANVAO_2</RootNamespace>
+    <AssemblyName>XHTD_SERVICES_CANVAO_2</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
