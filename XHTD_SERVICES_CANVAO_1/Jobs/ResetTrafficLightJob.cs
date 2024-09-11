@@ -99,25 +99,39 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
         public void TurnOffTrafficLight()
         {
             WriteLogInfo($@"2.1. Tắt đèn chiều vào");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
+            try
             {
-                WriteLogInfo($@"2.1.1. Tắt thành công");
+                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
+                {
+                    WriteLogInfo($@"2.1.1. Tắt thành công");
+                }
+                else
+                {
+                    WriteLogInfo($@"2.1.1. Tắt thất bại");
+                }
             }
-            else
+            catch(Exception ex) 
             {
-                WriteLogInfo($@"2.1.1. Tắt thất bại");
+                WriteLogInfo($@"2.1.1. ERROR: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
             }
 
             Thread.Sleep(500);
 
             WriteLogInfo($@"2.2. Tắt đèn chiều ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
+            try
             {
-                WriteLogInfo($@"2.2.1. Tắt thành công");
+                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
+                {
+                    WriteLogInfo($@"2.2.1. Tắt thành công");
+                }
+                else
+                {
+                    WriteLogInfo($@"2.2.1. Tắt thất bại");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WriteLogInfo($@"2.2.1. Tắt thất bại");
+                WriteLogInfo($@"2.1.1. ERROR: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
             }
         }
 
