@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo("--------------- START JOB - IP: {PegasusAdr} ---------------");
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     CheckConnection();
                 });

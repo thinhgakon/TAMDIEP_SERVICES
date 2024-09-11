@@ -104,25 +104,34 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _confirmLogger.LogInfo("Start confirm point service");
-                _confirmLogger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _confirmLogger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                AuthenticateConfirmModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateConfirmModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _confirmLogger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
