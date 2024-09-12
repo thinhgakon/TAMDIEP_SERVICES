@@ -19,6 +19,7 @@ using XHTD_SERVICES.Helper;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
+using log4net;
 
 namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
@@ -41,6 +42,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
         protected readonly Notification _notification;
 
         protected readonly Logger _logger;
+
+        ILog _rfidlogger = LogManager.GetLogger("RfidFileAppender");
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
@@ -243,13 +246,13 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                             Program.LastTimeReceivedUHF = DateTime.Now;
 
-                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            _rfidlogger.Info($"======================= CardNo: {cardNoCurrent}");
 
                             ReadDataProcess(cardNoCurrent);
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                            _logger.LogError($@"PROCESS RFID ERROR: {ex.StackTrace} -- {ex.Message} -- {ex.InnerException}");
                             Program.UHFConnected = false;
                             break;
                         }
@@ -257,7 +260,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 }
                 catch(Exception err) 
                 {
-                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} -- {err.Message} -- {err.InnerException}");
                     Program.UHFConnected = false;
                     break;
                 }
@@ -273,7 +276,9 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (Program.IsEnabledRfid == false)
             {
-                _logger.LogInfo($"Đang khóa nhận diện rfid IsEnabledRfid = false => Kết thúc xử lý rfid");
+                _rfidlogger.Info($"1. Đang khóa nhận diện IsEnabledRfid={Program.IsEnabledRfid} => Kết thúc");
+                _rfidlogger.Info($"2. Chi tiết khóa nhận diện IsLockingRfid={Program.IsLockingRfid} --  scaleValue={Program.scaleValuesForResetLight.LastOrDefault()} -- EnabledRfidTime={Program.EnabledRfidTime} => Kết thúc");
+
                 return;
             }
 
@@ -285,7 +290,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
-                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _rfidlogger.Info($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -296,9 +301,11 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
-                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                _rfidlogger.Info($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
+
+            _rfidlogger.Info($"1. Tiến hành xử lý rfid => Xem main log");
 
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
             SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
