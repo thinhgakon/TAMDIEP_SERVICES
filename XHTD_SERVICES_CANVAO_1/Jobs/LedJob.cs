@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
     public class LedJob : IJob
     {
-        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+        ILog _logger = LogManager.GetLogger("LedFileAppender");
 
         protected readonly string LED_IP_ADDRESS = "192.168.13.180";
 
@@ -68,7 +68,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                     }
                     else
                     {
-                        WriteLogInfo($"Không phải lần đầu tiên => Kết thúc");
+                        WriteLogInfo($"2. Không phải lần đầu tiên => Kết thúc");
                     }
 
                     return;
@@ -85,7 +85,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 string dataCode = $"*[H1][C1]{vehicleText}[H2][C1]{weightText}[H3][C1]---[H4][Cy]---[!]";
 
-                WriteLogInfo($"3. Send Code: {dataCode}");
+                WriteLogInfo($"2. Send Code: {dataCode}");
 
                 DisplayScreenLed(dataCode);
             }
