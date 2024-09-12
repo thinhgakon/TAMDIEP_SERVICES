@@ -127,25 +127,34 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _logger.LogInfo("Service đang tắt");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _logger.LogInfo("Start tramcan service");
-                _logger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service cân vào đang tắt");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _logger.LogInfo($"==================================== START JOB - IP: {PegasusAdr} ====================================");
 
-                AuthenticateGatewayModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateGatewayModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -264,6 +273,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
             if (Program.IsEnabledRfid == false)
             {
+                _logger.LogInfo($"Đang khóa nhận diện rfid IsEnabledRfid = false => Kết thúc xử lý rfid");
                 return;
             }
 
@@ -273,9 +283,9 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 tmpInvalidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
-                //_logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -286,23 +296,24 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
-                //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
             SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
 
-            _logger.LogInfo("----------------------------");
+            _logger.LogInfo("--------------------------------------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
-            _logger.LogInfo("-----");
+            _logger.LogInfo("--------------------------------------------------------");
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+            var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
+
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);
 
-                var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
                 if (scaleInfo != null
                     && (bool)scaleInfo.IsScaling
                     && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
@@ -328,6 +339,21 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     Program.InProgressVehicleCode = null;
                 }
             }
+
+            #region Kiểm tra đang có dữ liệu đơn đang cân không
+            if (scaleInfo != null
+                    && (bool)scaleInfo.IsScaling
+                    && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
+                    )
+            {
+                _logger.LogInfo($"=== Đang cân MSGH: {scaleInfo.DeliveryCode} --- TimeIn: {scaleInfo.TimeIn} == => Kết thúc");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            #endregion
 
             // 1. Kiểm tra cardNoCurrent hợp lệ
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);

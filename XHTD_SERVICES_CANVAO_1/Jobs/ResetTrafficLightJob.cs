@@ -30,6 +30,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
+        protected readonly bool IsWillResetLight = true;
+
         public ResetTrafficLightJob(TCPTrafficLight trafficLight)
         {
             _trafficLight = trafficLight;
@@ -72,9 +74,15 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                     {
                         Program.IsFirstTimeResetTrafficLight = false;
 
-                        WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
-
-                        TurnOffTrafficLight();
+                        if (IsWillResetLight)
+                        {
+                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
+                            TurnOffTrafficLight();
+                        }
+                        else
+                        {
+                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Job không tat đèn => Ket thuc");
+                        }
                     }
                     else
                     {
@@ -99,25 +107,39 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
         public void TurnOffTrafficLight()
         {
             WriteLogInfo($@"2.1. Tắt đèn chiều vào");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
+            try
             {
-                WriteLogInfo($@"2.1.1. Tắt thành công");
+                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
+                {
+                    WriteLogInfo($@"2.1.1. Tắt thành công");
+                }
+                else
+                {
+                    WriteLogInfo($@"2.1.1. Tắt thất bại");
+                }
             }
-            else
+            catch(Exception ex) 
             {
-                WriteLogInfo($@"2.1.1. Tắt thất bại");
+                WriteLogInfo($@"2.1.1. ERROR: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
             }
 
             Thread.Sleep(500);
 
             WriteLogInfo($@"2.2. Tắt đèn chiều ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
+            try
             {
-                WriteLogInfo($@"2.2.1. Tắt thành công");
+                if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
+                {
+                    WriteLogInfo($@"2.2.1. Tắt thành công");
+                }
+                else
+                {
+                    WriteLogInfo($@"2.2.1. Tắt thất bại");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                WriteLogInfo($@"2.2.1. Tắt thất bại");
+                WriteLogInfo($@"2.1.1. ERROR: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
             }
         }
 

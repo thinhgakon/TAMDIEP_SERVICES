@@ -32,12 +32,22 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
+                await Task.Run(() =>
+                {
+                    WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
 
-                CheckConnection();
-            });
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
