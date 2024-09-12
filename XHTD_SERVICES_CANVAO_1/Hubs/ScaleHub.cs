@@ -200,6 +200,8 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
 
                 if (Program.IsScalling && !Program.IsLockingScale)
                 {
+                    WriteLogInfo($"Received {SCALE_CODE} data: time={time}, value={value}");
+
                     Program.scaleValues.Add(currentScaleValue);
 
                     if (Program.scaleValues.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
@@ -208,8 +210,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                     }
 
                     var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues, ScaleConfig.WEIGHT_SAISO);
-
-                    WriteLogInfo($"Received {SCALE_CODE} data: time={time}, value={value}");
 
                     if (isOnDinh)
                     {
