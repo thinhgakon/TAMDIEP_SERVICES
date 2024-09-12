@@ -145,6 +145,10 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
 
                     Program.scaleValues.Clear();
                     Program.scaleValuesForResetLight.Clear();
+
+                    Program.InProgressDeliveryCode = null;
+                    Program.InProgressVehicleCode = null;
+
                     return;
                 }
                 else
