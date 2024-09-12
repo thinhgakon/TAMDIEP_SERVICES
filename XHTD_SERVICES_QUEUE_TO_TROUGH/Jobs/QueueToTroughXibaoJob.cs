@@ -4,9 +4,9 @@ using Quartz;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
-    public class QueueToCallRoiJob : IJob
+    public class QueueToTroughXibaoJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -14,13 +14,13 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
-        protected readonly QueueToCallLogger _queueToCallLogger;
+        protected readonly QueueToTroughLogger _queueToCallLogger;
 
-        public QueueToCallRoiJob(
+        public QueueToTroughXibaoJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            QueueToCallLogger queueToCallLogger
+            QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
@@ -44,12 +44,11 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         public async void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCall ROI service");
-
-            try
-            {
+            _queueToCallLogger.LogInfo("Start process QueueToCall XI BAO service");
+            
+            try { 
                 // 1. Lay danh sach don hang chua duoc xep vao may xuat
-                var orders = await _storeOrderOperatingRepository.GetXiMangRoiOrdersAddToQueueToCall();
+                var orders = await _storeOrderOperatingRepository.GetXiMangBaoOrdersAddToQueueToCall();
                 if (orders == null || orders.Count == 0)
                 {
                     return;
@@ -67,12 +66,12 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
                     var sumNumber = (decimal)order.SumNumber;
                     var typeProduct = order.TypeProduct;
 
-                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct, OrderProductCategoryCode.XI_ROI);
+                    var machineCode = await _troughRepository.GetMinQuantityMachine(typeProduct, OrderProductCategoryCode.XI_BAO);
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
                     if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
-                    {
+                    { 
                         await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
                     }
                 }

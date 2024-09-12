@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using log4net;
 using System.ServiceProcess;
-using XHTD_SERVICES_QUEUE_TO_CALL.Schedules;
+using XHTD_SERVICES_QUEUE_TO_TROUGH.Schedules;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH
 {
     public partial class Service : ServiceBase
     {
@@ -16,14 +16,14 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL
 
         protected override void OnStart(string[] args)
         {
-            log.Info("OnStart service QUEUE_TO_CALL");
+            log.Info("OnStart service QUEUE_TO_TROUGH");
             Autofac.IContainer container = DIBootstrapper.Init();
             container.Resolve<JobScheduler>().Start();
         }
 
         protected override void OnStop()
         {
-            log.Info("OnStop service QUEUE_TO_CALL");
+            log.Info("OnStop service QUEUE_TO_TROUGH");
         }
     }
 }

@@ -23,6 +23,7 @@ namespace XHTD_SERVICES_CANRA_1
         public static bool IsSensorActive = false;
         public static bool IsBarrierActive = false;
         public static bool IsFirstTimeResetTrafficLight = true;
+        public static bool IsFirstTimeResetLed = true;
 
         public static bool IsLockingRfid = false;
         public static bool IsEnabledRfid = false;

@@ -293,10 +293,6 @@
       <Project>{0c2ed83e-ebb0-41c3-93e7-a91c9c3ceccb}</Project>
       <Name>XHTD_SERVICES_PING</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_QUEUE_TO_CALL\XHTD_SERVICES_QUEUE_TO_CALL.csproj">
-      <Project>{1b4bb622-6c20-4f23-a6b1-32bd30bf886e}</Project>
-      <Name>XHTD_SERVICES_QUEUE_TO_CALL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_QUEUE_TO_GATEWAY\XHTD_SERVICES_QUEUE_TO_GATEWAY.csproj">
       <Project>{d75106af-a21f-4580-bc44-0c6072fb5751}</Project>
       <Name>XHTD_SERVICES_QUEUE_TO_GATEWAY</Name>

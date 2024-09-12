@@ -42,8 +42,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 
             await Task.Run(async () =>
             {
-                //await CallVehicleProcess();
-                CallBySystem("35C00307");
+                await CallVehicleProcess();
             });
         }
 

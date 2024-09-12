@@ -1,4 +1,4 @@
-﻿namespace XHTD_SERVICES_QUEUE_TO_CALL
+﻿namespace XHTD_SERVICES_QUEUE_TO_TROUGH
 {
     partial class ProjectInstaller
     {
@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "XHTD_Service_QueueToCall";
+            this.serviceInstaller1.ServiceName = "XHTD_Service_Queue_To_Trough";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
