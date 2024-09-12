@@ -9,7 +9,7 @@ namespace XHTD_SERVICES_CANVAO_1.Devices
 {
     public class TCPLedControl
     {
-        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
         protected readonly TCPLed _tcpLed;
 
@@ -20,6 +20,8 @@ namespace XHTD_SERVICES_CANVAO_1.Devices
 
         public bool DisplayScreen(string ipAddress, string dataCode)
         {
+            _logger.Info($"DisplayScreen LED: IP={ipAddress} -- CODE: {dataCode}");
+
             _tcpLed.Connect(ipAddress);
 
             _tcpLed.SetDataCode(dataCode);

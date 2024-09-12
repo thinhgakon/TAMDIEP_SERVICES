@@ -12,7 +12,7 @@ namespace XHTD_SERVICES_CANVAO_2.Devices
 {
     public class TCPLed
     {
-        private static readonly ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
