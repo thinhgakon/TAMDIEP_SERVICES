@@ -18,6 +18,8 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        ILog _rfidlogger = LogManager.GetLogger("RfidFileAppender");
+
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
 
         protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
@@ -116,6 +118,8 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                     Program.IsLockingRfid = true;
                 }
 
+                _rfidlogger.Info($"====== IsScalling={Program.IsScalling} -- IsLockingScale={Program.IsLockingScale} -- IsLockingRfid={Program.IsLockingRfid} -- IsEnabledRfid={Program.IsEnabledRfid} -- EnabledRfidTime={Program.EnabledRfidTime}");
+
                 SendMessage($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
                 SendMessageAPI($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
 
@@ -195,8 +199,6 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                         }
                     }
                 }
-
-                WriteLogInfo($"IsScalling: {Program.IsScalling} ----- IsLockingScale: {Program.IsLockingScale}");
 
                 if (Program.IsScalling && !Program.IsLockingScale)
                 {
