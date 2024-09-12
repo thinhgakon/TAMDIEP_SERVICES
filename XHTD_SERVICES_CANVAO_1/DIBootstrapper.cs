@@ -50,6 +50,9 @@ namespace XHTD_SERVICES_CANVAO_1
             builder.RegisterType<VehicleBusiness>().AsSelf();
             builder.RegisterType<Notification>().AsSelf();
 
+            builder.RegisterType<TCPLed>().AsSelf();
+            builder.RegisterType<TCPLedControl>().AsSelf();
+
             RegisterScheduler(builder);
 
             return builder.Build();
