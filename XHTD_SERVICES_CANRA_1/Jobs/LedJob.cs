@@ -14,9 +14,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected readonly string SCALE_2_LED_IN_IP = "192.168.13.180";
-
-        protected readonly string SCALE_2_LED_OUT_IP = "192.168.13.186";
+        protected readonly string SCALE_2_LED_IP = "192.168.13.186";
 
         public LedJob()
         {
@@ -38,20 +36,20 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
         {
             try
             {
-                if (Program.scaleValues == null || Program.scaleValues.Count == 0)
+                if (Program.scaleValuesForResetLight == null || Program.scaleValuesForResetLight.Count == 0)
                 {
                     if (Program.IsFirstTimeResetLed)
                     {
                         Program.IsFirstTimeResetLed = false;
 
-                        string emptyDataCode = $"*[H1][C1]----[H2][C1]----[H3][C1]----[H4][C1]----[!]";
+                        string emptyDataCode = $"*[H1][C1]HE THONG CAN TU DONG[H2][C1]---[H3][C1]---[H4][Cy]---[!]";
                         DisplayScreenLed(emptyDataCode);
 
                         log.Info("Reset led");
                     }
                     else
                     {
-                        //log.Info("Khong co xe dang can => return");
+                        log.Info("Khong co xe dang can => Ket thuc");
                     }
 
                     return;
@@ -61,23 +59,10 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                     Program.IsFirstTimeResetLed = true;
                 }
 
-                var weightText = Program.scaleValues.LastOrDefault();
-                var vehicleText = Program.InProgressVehicleCode.ToUpper();
+                var weightText = Program.scaleValuesForResetLight.LastOrDefault();
+                var vehicleText = Program.InProgressVehicleCode != null ? Program.InProgressVehicleCode.ToUpper() : "HE THONG CAN TU DONG";
 
-                var sensorCheck = true;//DIBootstrapper.Init().Resolve<BarrierScaleBusiness>().CheckSensorCovered(true);
-                var sensorText = sensorCheck ? "CO" : "KHONG";
-
-                var validCheck = !string.IsNullOrEmpty(vehicleText) && !sensorCheck;
-                var validText = validCheck ? "Hop Le" : "Chua Hop Le";
-
-                var colorCode = "C1";
-                if (validCheck)
-                {
-                    colorCode = "C2";
-                }
-
-                string dataCode = $"*[H1][C1]{weightText}[H2][C1]{vehicleText}[H3][{colorCode}]{sensorText}[H4][{colorCode}]{validText}[!]";
-
+                string dataCode = $"*[H1][C1]{vehicleText}[H2][C1]{weightText}[H3][C1]---[H4][Cy]---[!]";
                 DisplayScreenLed(dataCode);
             }
             catch (Exception ex)
@@ -88,26 +73,15 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
         public void DisplayScreenLed(string dataCode)
         {
-            //log.Info($"Send led: dataCode= {dataCode}");
+            log.Info($"Send led: dataCode= {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_2_LED_IN_IP, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_2_LED_IP, dataCode))
             {
-                log.Info("LED IN Job - OK");
+                log.Info("LED CAN RA - OK");
             }
             else
             {
-                log.Info($"LED IN Job - FAILED: dataCode={dataCode}");
-            }
-
-            Thread.Sleep(500);
-
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_2_LED_OUT_IP, dataCode))
-            {
-                log.Info("LED OUT Job - OK");
-            }
-            else
-            {
-                log.Info($"LED OUT Job - FAILED: dataCode={dataCode}");
+                log.Info($"LED CAN RA - FAILED: dataCode={dataCode}");
             }
         }
     }

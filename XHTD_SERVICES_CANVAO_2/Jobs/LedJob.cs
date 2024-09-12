@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using XHTD_SERVICES_CANVAO_1.Devices;
+using XHTD_SERVICES_CANVAO_2.Devices;
 
-namespace XHTD_SERVICES_CANVAO_1.Jobs
+namespace XHTD_SERVICES_CANVAO_2.Jobs
 {
     public class LedJob : IJob
     {

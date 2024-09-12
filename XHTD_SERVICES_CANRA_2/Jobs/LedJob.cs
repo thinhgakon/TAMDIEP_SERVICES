@@ -4,17 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using XHTD_SERVICES_CANVAO_1.Devices;
+using XHTD_SERVICES_CANRA_2.Devices;
 
-namespace XHTD_SERVICES_CANVAO_1.Jobs
+namespace XHTD_SERVICES_CANRA_2.Jobs
 {
     public class LedJob : IJob
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected readonly string SCALE_1_LED_IP = "192.168.13.180";
+        protected readonly string SCALE_2_LED_IP = "192.168.13.186";
 
         public LedJob()
         {
@@ -75,13 +74,13 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
         {
             log.Info($"Send led: dataCode= {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_IP, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_2_LED_IP, dataCode))
             {
-                log.Info($"LED CAN VAO - OK");
+                log.Info("LED CAN RA - OK");
             }
             else
             {
-                log.Info($"LED CAN VAO - FAILED: dataCode={dataCode}");
+                log.Info($"LED CAN RA - FAILED: dataCode={dataCode}");
             }
         }
     }
