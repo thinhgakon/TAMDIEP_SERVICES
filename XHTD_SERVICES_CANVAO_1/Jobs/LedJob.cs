@@ -92,22 +92,22 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_IN_IP, dataCode))
             {
-                log.Info("LED IN 1 Job - OK");
+                log.Info("LED IN Job - OK");
             }
             else
             {
-                log.Info($"LED IN 1 Job - FAILED: dataCode={dataCode}");
+                log.Info($"LED IN Job - FAILED: dataCode={dataCode}");
             }
 
             Thread.Sleep(500);
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(SCALE_1_LED_OUT_IP, dataCode))
             {
-                log.Info("LED OUT 1 Job - OK");
+                log.Info("LED OUT Job - OK");
             }
             else
             {
-                log.Info($"LED OUT 1 Job - FAILED: dataCode={dataCode}");
+                log.Info($"LED OUT Job - FAILED: dataCode={dataCode}");
             }
         }
     }
