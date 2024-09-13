@@ -69,7 +69,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "GetRTLog")]
         public static extern int GetRTLog(IntPtr h, ref byte buffer, int buffersize);
 
-        private readonly string CAMERA_IP = "192.168.13.163";
+        private readonly string CAMERA_IP = "192.168.13.231";
         private readonly string CAMERA_USER_NAME = "admin";
         private readonly string CAMERA_PASSWORD = "tamdiep@35";
         private readonly string IMG_PATH = "C:\\IMAGE";
@@ -77,10 +77,10 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.219";
+        private string PegasusAdr = "192.168.13.230";
 
-        private readonly string MACHINE_CODE = "4";
-        private readonly string TROUGH_CODE = "8";
+        private readonly string MACHINE_CODE = "5";
+        private readonly string TROUGH_CODE = "11";
 
         public TroughJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
@@ -273,7 +273,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 using (var db = new XHTD_Entities())
                 {
                     currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
-                                                                                             x.TypeProduct.ToUpper() == OrderProductCategoryCode.CLINKER &&
+                                                                                             x.CatId == OrderCatIdCode.XI_MANG_XA &&
                                                                                              x.Step == (int)OrderStep.DA_CAN_VAO);
                 }
 
@@ -299,7 +299,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                     _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
                 }
 
-                else _logger.LogInfo($"3. Thêm xe vào máng {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
+                else _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
             }
             else
             {
