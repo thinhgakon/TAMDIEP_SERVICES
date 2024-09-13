@@ -301,11 +301,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                     _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thành công!");
                                 }
 
-                                else _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                else
+                                {
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                }
                             }
                         }
 
-                        _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
+                        else
+                        {
+                            _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
+                        }
 
                         if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
                         {
