@@ -249,6 +249,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 else
                 {
                     isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull);
+
+                    if (isSynced)
+                    {
+                        // Cân vào, gửi tín hiệu signalR tới in phun
+                        SendVehicleInTroughData(string.Empty, string.Empty, websaleOrder.deliveryCode, websaleOrder.vehicleCode);
+                    }
                 }
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
@@ -273,6 +279,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                     if (isSynced)
                     {
+                        // Cân ra, nếu trong máng chưa stop
                         var trough = await _troughRepository.GetTroughByDeliveryCode(websaleOrder.deliveryCode);
                         if (trough != null)
                         {
@@ -307,12 +314,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                 }
                             }
                         }
-
                         else
                         {
                             _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
                         }
 
+                        // Cân ra, kiểm tra dung sai
                         if (!string.IsNullOrEmpty(websaleOrder.loadweightnull) && !string.IsNullOrEmpty(websaleOrder.loadweightfull))
                         {
                             double? weightIn = double.Parse(websaleOrder.loadweightnull);
@@ -372,6 +379,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         private void SendToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
         {
             _notification.SendOrderSendOrderToleranceWarning(deliveryCode, vehicle, sumNumber, weightIn, weightOut, tolerance);
+        }
+
+        private void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            _notification.SendVehicleInTroughData(machineCode, troughCode, deliveryCode, vehicle);
         }
     }
 }
