@@ -161,6 +161,19 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendTroughStopData(notification);
         }
 
+        public void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            SendTroughControlRequest notification = new SendTroughControlRequest
+            {
+                MachineCode = machineCode,
+                TroughCode = troughCode,
+                DeliveryCode = deliveryCode,
+                Vehicle = vehicle
+            };
+
+            HttpRequest.SendVehicleInTroughData(notification);
+        }
+
         public void SendOrderSendOrderToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
         {
             SendOrderToleranceWarningRequest warning = new SendOrderToleranceWarningRequest
