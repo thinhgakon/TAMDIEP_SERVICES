@@ -497,7 +497,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     .Where(x => x.State == "CHUA_KHOA")
                     .Where(X => X.FromDate.Date <= DateTime.Now.Date)
                     .Where(x => x.ToDate.Date >= DateTime.Now.Date)
-                    .Where(x => x.ItemCode == order.ItemId.ToString())
+                    .Where(x => x.ItemCode == order.CatId.ToString())
                     .FirstOrDefault();
 
                     if (lot == null)
