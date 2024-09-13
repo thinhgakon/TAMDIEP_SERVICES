@@ -21,6 +21,8 @@ using System.Net.NetworkInformation;
 using XHTD_SERVICES_XR_TROUGH_1.Devices;
 using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES_XR_TROUGH_1.Business;
+using System.Data.Entity;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 {
@@ -267,31 +269,37 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
 
-                if (orderInTrough != null && vehicleCodeCurrent.ToUpper() == orderInTrough.Vehicle.ToUpper())
+                tblStoreOrderOperating currentOrder = null;
+                using (var db = new XHTD_Entities())
                 {
-                    if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
-                    {
-                        var requestData = new MachineControlRequest
-                        {
-                            MachineCode = MACHINE_CODE,
-                            TroughCode = TROUGH_CODE,
-                            CurrentDeliveryCode = orderInTrough.DeliveryCode
-                        };
-
-                        var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
-
-                        if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                        {
-                            _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thành công!");
-                        }
-
-                        else _logger.LogInfo($"3. Start Machine {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {orderInTrough.DeliveryCode}");
-                    }
-
-                    else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
+                    currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
+                                                                                             x.TypeProduct.ToUpper() == OrderProductCategoryCode.CLINKER &&
+                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO);
                 }
 
-                else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
+                if (currentOrder == null)
+                {
+                    _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
+                    return;
+                }
+
+                var requestDataList = new List<CallToTroughVehicleUpdateDto>();
+                var requestData = new CallToTroughVehicleUpdateDto
+                {
+                    Id = null,
+                    Machine = TROUGH_CODE,
+                    IndexTrough = 1,
+                    DeliveryCode = currentOrder.DeliveryCode
+                };
+                requestDataList.Add(requestData);
+
+                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().AddVehicleInTrough(requestDataList);
+                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                {
+                    _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+                }
+
+                else _logger.LogInfo($"3. Thêm xe vào máng {MACHINE_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
             }
             else
             {
