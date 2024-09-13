@@ -4,9 +4,9 @@ using Quartz;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
-    public class QueueToCallClinkerJob : IJob
+    public class QueueToTroughClinkerJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -14,13 +14,13 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
-        protected readonly QueueToCallLogger _queueToCallLogger;
+        protected readonly QueueToTroughLogger _queueToCallLogger;
 
-        public QueueToCallClinkerJob(
+        public QueueToTroughClinkerJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            QueueToCallLogger queueToCallLogger
+            QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;

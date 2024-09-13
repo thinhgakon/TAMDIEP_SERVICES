@@ -104,25 +104,34 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _confirmLogger.LogInfo("Start confirm point service");
-                _confirmLogger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _confirmLogger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                AuthenticateConfirmModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateConfirmModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _confirmLogger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -367,6 +376,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
+                #region Điều hướng gọi loa
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
 
@@ -374,12 +384,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
                 var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
 
-                var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
-                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
-                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
-                SendPushNotification("adminNPP", pushMessage);
-
-                if (currentNumberWaitingVehicleInFactory < maxVehicle)
+                if (currentNumberWaitingVehicleInFactory > maxVehicle)
                 {
                     using (var db = new XHTD_Entities())
                     {
@@ -399,12 +404,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         db.SaveChanges();
                     }
                 }
+                #endregion
+
+                #region Gửi thông báo notification
+                var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
+                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
+                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
+                SendPushNotification("adminNPP", pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
                 {
                     SendPushNotification(driverUserName, pushMessage);
                 }
+                #endregion
 
                 // Xếp số
                 this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
@@ -412,7 +425,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 // Bật đèn xanh - đỏ
                 TurnOnTrafficLight();
 
-                // Cập nhật trạng thái in phiếu
+                #region Cập nhật trạng thái in phiếu
                 var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
                 if (erpUpdateStatusResponse.Code == "01")
                 {
@@ -428,6 +441,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
+                #endregion
             }
             else
             {

@@ -1,13 +1,13 @@
 ﻿using Autofac.Extras.Quartz;
 using Autofac;
 using System.Collections.Specialized;
-using XHTD_SERVICES_QUEUE_TO_CALL.Schedules;
+using XHTD_SERVICES_QUEUE_TO_TROUGH.Schedules;
 using XHTD_SERVICES.Data.Repositories;
-using XHTD_SERVICES_QUEUE_TO_CALL.Jobs;
+using XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_QUEUE_TO_CALL
+namespace XHTD_SERVICES_QUEUE_TO_TROUGH
 {
     public static class DIBootstrapper
     {
@@ -19,7 +19,7 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
-            builder.RegisterType<QueueToCallLogger>().AsSelf();
+            builder.RegisterType<QueueToTroughLogger>().AsSelf();
 
             RegisterScheduler(builder);
 
@@ -38,10 +38,10 @@ namespace XHTD_SERVICES_QUEUE_TO_CALL
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallXibaoJob).Assembly));
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallClinkerJob).Assembly));
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallJumboJob).Assembly));
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToCallRoiJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughXibaoJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughClinkerJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughJumboJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughRoiJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

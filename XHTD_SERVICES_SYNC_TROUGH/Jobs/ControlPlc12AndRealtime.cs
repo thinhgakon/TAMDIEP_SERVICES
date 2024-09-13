@@ -54,8 +54,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
 
-        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
-
         private const string MACHINE_1_CODE = "1";
         private const string MACHINE_2_CODE = "2";
 

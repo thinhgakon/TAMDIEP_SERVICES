@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -9,14 +10,14 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.162";
-        protected readonly ConfirmLogger _logger;
 
-        public ConnectPegasusJob(ConfirmLogger logger)
+        public ConnectPegasusJob()
         {
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -26,10 +27,22 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                CheckConnection();
-            });
+                await Task.Run(() =>
+                {
+                    WriteLogInfo("--------------- START JOB ---------------");
+
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
@@ -46,7 +59,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 }
                 else
                 {
-                    _logger.LogWarn("Start reconnect...");
+                    WriteLogInfo("Start reconnect...");
 
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
@@ -56,13 +69,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         Thread.Sleep(1000);
                     }
 
-                    _logger.LogWarn("Reconnect success");
+                    WriteLogInfo("Reconnect success");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"Ping ERROR: {ex.Message}");
+                WriteLogInfo($"PING ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

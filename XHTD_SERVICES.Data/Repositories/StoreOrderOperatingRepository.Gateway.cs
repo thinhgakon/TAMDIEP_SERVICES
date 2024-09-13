@@ -227,6 +227,7 @@ namespace XHTD_SERVICES.Data.Repositories
             var validStep = new[] { 
                                     OrderStep.DA_VAO_CONG, 
                                     OrderStep.DA_CAN_VAO, 
+                                    OrderStep.CHO_GOI_XE,
                                     OrderStep.DANG_GOI_XE, 
                                     OrderStep.DANG_LAY_HANG, 
                                     OrderStep.DA_LAY_HANG

@@ -18,6 +18,8 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ScaleHub));
 
+        ILog _rfidlogger = LogManager.GetLogger("RfidFileAppender");
+
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
         protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
@@ -116,6 +118,8 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                     Program.IsLockingRfid = true;
                 }
 
+                _rfidlogger.Info($"====== IsScalling={Program.IsScalling} -- IsLockingScale={Program.IsLockingScale} -- IsLockingRfid={Program.IsLockingRfid} -- IsEnabledRfid={Program.IsEnabledRfid} -- EnabledRfidTime={Program.EnabledRfidTime}");
+
                 SendMessage($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
                 SendMessageAPI($"{ENABLED_RFID_STATUS}", $"{Program.IsEnabledRfid}");
 
@@ -145,6 +149,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
 
                     Program.scaleValues.Clear();
                     Program.scaleValuesForResetLight.Clear();
+
+                    Program.InProgressDeliveryCode = null;
+                    Program.InProgressVehicleCode = null;
+
                     return;
                 }
                 else
@@ -167,15 +175,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                 {
                     SendMessage($"{SCALE_STATUS}", $"Đang cân thủ công");
                     SendMessageAPI($"{SCALE_STATUS}", $"Đang cân thủ công");
-
-                    //SendMessage($"{SCALE_BALANCE}", "  ");
-                    //SendMessageAPI($"{SCALE_BALANCE}", "");
-
-                    //SendMessage("Notification", "  ");
-                    //SendMessageAPI("Notification", "  ");
-
-                    //SendMessage("WarningNotification ", "  ");
-                    //SendMessageAPI("WarningNotification ", "  ");
                 }
 
                 // TODO: kiểm tra vi phạm cảm biến cân
@@ -201,10 +200,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                     }
                 }
 
-                WriteLogInfo($"IsScalling: {Program.IsScalling} ----- IsLockingScale: {Program.IsLockingScale}");
-
                 if (Program.IsScalling && !Program.IsLockingScale)
                 {
+                    WriteLogInfo($"Received {SCALE_CODE} data: time={time}, value={value}");
+
                     Program.scaleValues.Add(currentScaleValue);
 
                     if (Program.scaleValues.Count > ScaleConfig.MAX_LENGTH_SCALE_VALUE)
@@ -213,8 +212,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                     }
 
                     var isOnDinh = Calculator.CheckBalanceValues(Program.scaleValues, ScaleConfig.WEIGHT_SAISO);
-
-                    WriteLogInfo($"Received {SCALE_CODE} data: time={time}, value={value}");
 
                     if (isOnDinh)
                     {

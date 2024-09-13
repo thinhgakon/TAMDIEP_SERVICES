@@ -19,6 +19,7 @@ using XHTD_SERVICES.Helper;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
+using log4net;
 
 namespace XHTD_SERVICES_CANRA_2.Jobs
 {
@@ -41,6 +42,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
         protected readonly Notification _notification;
 
         protected readonly Logger _logger;
+
+        ILog _rfidlogger = LogManager.GetLogger("RfidFileAppender");
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_2;
 
@@ -127,25 +130,34 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _logger.LogInfo("Service đang tắt");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _logger.LogInfo("Start tramcan service");
-                _logger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service cân vào đang tắt");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _logger.LogInfo($"==================================== START JOB - IP: {PegasusAdr} ====================================");
 
-                AuthenticateGatewayModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateGatewayModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -234,13 +246,13 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                             Program.LastTimeReceivedUHF = DateTime.Now;
 
-                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            _rfidlogger.Info($"======================= CardNo: {cardNoCurrent}");
 
                             ReadDataProcess(cardNoCurrent);
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message}");
+                            _logger.LogError($@"PROCESS RFID ERROR: {ex.StackTrace} -- {ex.Message} -- {ex.InnerException}");
                             Program.UHFConnected = false;
                             break;
                         }
@@ -248,7 +260,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 }
                 catch (Exception err)
                 {
-                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} -- {err.Message} -- {err.InnerException}");
                     Program.UHFConnected = false;
                     break;
                 }
@@ -264,6 +276,9 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
             if (Program.IsEnabledRfid == false)
             {
+                _rfidlogger.Info($"1. Đang khóa nhận diện IsEnabledRfid={Program.IsEnabledRfid} => Kết thúc");
+                _rfidlogger.Info($"2. Chi tiết khóa nhận diện IsLockingRfid={Program.IsLockingRfid} --  scaleValue={Program.scaleValuesForResetLight.LastOrDefault()} -- EnabledRfidTime={Program.EnabledRfidTime} => Kết thúc");
+
                 return;
             }
 
@@ -273,9 +288,9 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 tmpInvalidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
-                //_logger.LogInfo($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _rfidlogger.Info($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -286,23 +301,26 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
-                //_logger.LogInfo($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                _rfidlogger.Info($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
+
+            _rfidlogger.Info($"1. Tiến hành xử lý rfid => Xem main log");
 
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
             SendNotificationAPI(SCALE_CURRENT_RFID, cardNoCurrent);
 
-            _logger.LogInfo("----------------------------");
+            _logger.LogInfo("--------------------------------------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
-            _logger.LogInfo("-----");
+            _logger.LogInfo("--------------------------------------------------------");
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
+            var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
+
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);
 
-                var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
                 if (scaleInfo != null
                     && (bool)scaleInfo.IsScaling
                     && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
@@ -328,6 +346,21 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     Program.InProgressVehicleCode = null;
                 }
             }
+
+            #region Kiểm tra đang có dữ liệu đơn đang cân không
+            if (scaleInfo != null
+                    && (bool)scaleInfo.IsScaling
+                    && !String.IsNullOrEmpty(scaleInfo.DeliveryCode)
+                    )
+            {
+                _logger.LogInfo($"=== Đang cân MSGH: {scaleInfo.DeliveryCode} --- TimeIn: {scaleInfo.TimeIn} == => Kết thúc");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            #endregion
 
             // 1. Kiểm tra cardNoCurrent hợp lệ
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);

@@ -72,6 +72,16 @@ namespace XHTD_SERVICES_CANRA_2.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(resetTrafficLightJob, resetTrafficLightTrigger);
+
+            IJobDetail ledJob = JobBuilder.Create<LedJob>().Build();
+            ITrigger ledTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(1)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(ledJob, ledTrigger);
         }
     }
 }

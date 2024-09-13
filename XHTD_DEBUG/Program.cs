@@ -1,8 +1,8 @@
 ﻿using System;
 using Autofac;
 using log4net;
-using XHTD_SERVICES_LED;
-using XHTD_SERVICES_LED.Schedules;
+using XHTD_SERVICES_CANVAO_2;
+using XHTD_SERVICES_CANVAO_2.Schedules;
 
 namespace XHTD_DEBUG
 {

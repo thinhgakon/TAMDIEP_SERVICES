@@ -31,5 +31,25 @@ namespace XHTD_SERVICES_CLK_TROUGH_1.Business
 
             return resultResponse;
         }
+
+        public MachineResponse AddVehicleInTrough(List<CallToTroughVehicleUpdateDto> requestDatas)
+        {
+            var apiResponse = HttpRequest.AddVehicleInTrough(requestDatas);
+            var responseContent = apiResponse.Content;
+            var response = JsonConvert.DeserializeObject<MachineResponse>(responseContent);
+
+            var resultResponse = new MachineResponse
+            {
+                Status = false,
+                MessageObject = new MessageObject
+                {
+                    Code = "0104"
+                }
+            };
+            resultResponse.Status = response.Status;
+            resultResponse.MessageObject.Code = response.MessageObject.Code;
+
+            return resultResponse;
+        }
     }
 }

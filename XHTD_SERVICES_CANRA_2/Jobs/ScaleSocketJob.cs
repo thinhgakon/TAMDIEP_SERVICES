@@ -27,10 +27,11 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
         static TcpClient client = new TcpClient();
         static Stream stream = null;
         private readonly Notification _notification;
-        private readonly string START_CONNECTION_STR = "hello*mbf*abc123";
         private readonly string SEND_TO_RECEIVED_SCALE_CODE = "ww";
 
         public const string IP_ADDRESS = "192.168.13.203";
+
+        private readonly bool IsWillSendScaleInfoAPI = false;
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -80,9 +81,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 WriteLogInfo("Ket noi thanh cong");
 
                 DeviceConnected = true;
-
-                //var data = encoding.GetBytes(START_CONNECTION_STR);
-                //stream.Write(data, 0, data.Length);
 
                 return DeviceConnected;
             }
@@ -142,9 +140,11 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                         Program.LastTimeReceivedScaleSocket = DateTime.Now;
 
-                        //_logger.LogInfo($"================= Program.LastTimeReceivedScaleSocket: {Program.LastTimeReceivedScaleSocket}");
+                        if (IsWillSendScaleInfoAPI)
+                        {
+                            SendScaleInfoAPI(dateTime, scaleValue.ToString());
+                        }
 
-                        SendScaleInfoAPI(dateTime, scaleValue.ToString());
                         new ScaleHub().ReadDataScale(dateTime, scaleValue.ToString());
                     }
 

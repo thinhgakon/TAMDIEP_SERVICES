@@ -71,11 +71,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseLogger.cs" />
+    <Compile Include="Models\Request\CallToTroughVehicleUpdateDto.cs" />
     <Compile Include="Models\Request\MachineControlRequest.cs" />
     <Compile Include="Models\Request\SendConfirmNotificationRequest.cs" />
     <Compile Include="Models\Request\SendGatewayNotificationRequest.cs" />
     <Compile Include="Models\Request\SendMachineNotificationRequest.cs" />
     <Compile Include="Models\Request\SendOrderToleranceWarningRequest.cs" />
+    <Compile Include="Models\Request\SendTroughControlRequest.cs" />
     <Compile Include="Models\Request\SendTroughDataRequest.cs" />
     <Compile Include="Models\Request\SendTroughNotificationRequest.cs" />
     <Compile Include="Models\Request\UpdateWeightRequest.cs" />

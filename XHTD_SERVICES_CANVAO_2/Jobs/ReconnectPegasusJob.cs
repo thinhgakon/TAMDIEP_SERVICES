@@ -32,12 +32,22 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                WriteLogInfo($"=================== Start JOB ===================");
+                await Task.Run(() =>
+                {
+                    WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
 
-                CheckConnection();
-            });
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
@@ -52,7 +62,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
                     if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        WriteLogInfo($"Quá {TIME_TO_RESET}s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+                        WriteLogInfo($"2. Quá {TIME_TO_RESET}s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
 
                         PegasusStaticClassReader.CloseNetPort(PortHandle);
 

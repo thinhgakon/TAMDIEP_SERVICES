@@ -1,4 +1,4 @@
-﻿namespace XHTD_SERVICES_QUEUE_TO_CALL
+﻿namespace XHTD_SERVICES_QUEUE_TO_TROUGH
 {
     partial class Service
     {

@@ -22,6 +22,7 @@ namespace XHTD_SERVICES.Device
         private const string OFFGREENOFFRED = "*[L1]OFF[L2]OFF[!]";
 
         private const int COUNT_RETRY_CONNECT = 1;
+        private const int COUNT_RETRY_CONNECT_OFF = 3;
 
         private string IpAddress { get; set; }
 
@@ -75,7 +76,7 @@ namespace XHTD_SERVICES.Device
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error: " + ex.Message);
-                    _logger.Error($@"Loi bat den XANH count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    _logger.Error($@"BAT DEN XANH ERROR count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
                     //return false;
 
                     Thread.Sleep(1000);
@@ -129,7 +130,7 @@ namespace XHTD_SERVICES.Device
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error: " + ex.Message);
-                    _logger.Error($@"Loi bat den DO count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    _logger.Error($@"BAT DEN DO ERROR count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
                     //return false;
 
                     Thread.Sleep(1000);
@@ -140,34 +141,55 @@ namespace XHTD_SERVICES.Device
 
         public bool TurnOffGreenOffRed()
         {
-            try
+            var isSuccessed = false;
+            int count = 0;
+
+            while (!isSuccessed && count < COUNT_RETRY_CONNECT_OFF)
             {
-                TcpClient client = new TcpClient();
+                count++;
+                try
+                {
+                    _logger.Error($@"Tat den xanh do: count={count}");
 
-                // 1. connect
-                client.Connect($"{this.IpAddress}", PORT_NUMBER);
-                Stream stream = client.GetStream();
+                    TcpClient client = new TcpClient();
 
-                // 2. send 1
-                byte[] data1 = encoding.GetBytes($"{OFFGREENOFFRED}");
+                    // 1. connect
+                    var isConnected = client.ConnectAsync($"{this.IpAddress}", PORT_NUMBER).Wait(3000);
+                    if (!isConnected)
+                    {
+                        // connection failure
+                        _logger.Error($@"Khong the connect count={count}");
+                        continue;
+                    }
 
-                stream.Write(data1, 0, data1.Length);
+                    //client.Connect($"{this.IpAddress}", PORT_NUMBER);
+                    Stream stream = client.GetStream();
 
-                // 3. receive 1
-                data1 = new byte[BUFFER_SIZE];
-                stream.Read(data1, 0, BUFFER_SIZE);
+                    // 2. send 1
+                    byte[] data1 = encoding.GetBytes($"{OFFGREENOFFRED}");
 
-                // 5. Close
-                stream.Close();
-                client.Close();
+                    stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
 
-                return true;
+                    // 3. receive 1
+                    //data1 = new byte[BUFFER_SIZE];
+                    //stream.Read(data1, 0, BUFFER_SIZE);
+
+                    // 5. Close
+                    stream.Close();
+                    client.Close();
+
+                    isSuccessed = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                    _logger.Error($@"TAT DEN DO ERROR count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
+                    //return false;
+
+                    Thread.Sleep(1000);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                return false;
-            }
+            return isSuccessed;
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
 using SuperSimpleTcp;
 using XHTD_SERVICES.Helper;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -133,6 +134,21 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             _logger.LogInfo($"2.1. Start thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
+
+                            using (var db = new XHTD_Entities())
+                            {
+                                var callToTrough = await db.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == machine.CurrentDeliveryCode && x.IsDone == false);
+                                if (callToTrough != null)
+                                {
+                                    var trough = await db.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
+                                    if (trough != null)
+                                    {
+                                        trough.DeliveryCodeCurrent = machine.CurrentDeliveryCode;
+                                        await db.SaveChangesAsync();
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -170,6 +186,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             _logger.LogInfo($"2.1. Stop thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStopNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
                         }
                         else
                         {
@@ -199,6 +216,30 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationAPI Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            try
+            {
+                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendMachineStartNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendMachineStopNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        {
+            try
+            {
+                _notification.SendTroughStopData(machineCode, troughCode, deliveryCode, vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendMachineStopNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
