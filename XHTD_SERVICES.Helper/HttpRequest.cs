@@ -544,6 +544,24 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse AddVehicleInTrough(List<CallToTroughVehicleUpdateDto> requestDatas)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["AddVehicleInTrough"]);
+            var request = new RestRequest();
+
+            request.Method = Method.PUT;
+            request.AddJsonBody(requestDatas);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static string LoginSMSBrandName()
         {
             var smsBrandNameConfig = ConfigurationManager.GetSection("SMS_BRANDNAME") as NameValueCollection;
