@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
 using SuperSimpleTcp;
 using XHTD_SERVICES.Helper;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -131,6 +132,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             await _machineRepository.UpdateMachine(machine);
 
                             _logger.LogInfo($"2.1. Start thành công");
+
+                            using (var db = new XHTD_Entities())
+                            {
+                                var callToTrough = await db.tblCallToTroughs.FirstOrDefaultAsync(x => x.DeliveryCode == machine.CurrentDeliveryCode && x.IsDone == false);
+                                if (callToTrough == null) continue;
+
+                                var trough = await db.tblTroughs.FirstOrDefaultAsync(x => x.Code == callToTrough.Machine);
+                                if (trough == null) continue;
+
+                                trough.DeliveryCodeCurrent = machine.CurrentDeliveryCode;
+                                await db.SaveChangesAsync();
+                            }
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                             SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
