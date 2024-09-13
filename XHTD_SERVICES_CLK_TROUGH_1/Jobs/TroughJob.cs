@@ -270,7 +270,7 @@ namespace XHTD_SERVICES_CLK_TROUGH_1.Jobs
                 using (var db = new XHTD_Entities())
                 {
                     currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
-                                                                                             x.TypeProduct.ToUpper() == OrderProductCategoryCode.CLINKER &&
+                                                                                             x.CatId == OrderCatIdCode.CLINKER &&
                                                                                              x.Step == (int)OrderStep.DA_CAN_VAO);
                 }
 
