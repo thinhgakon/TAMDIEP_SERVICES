@@ -494,26 +494,26 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public void TurnOnRedTrafficLight()
         {
-            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+            _logger.LogInfo($@"6.1. Bật đèn ĐỎ chiều VÀO");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
             {
-                _logger.LogInfo($@"Bật đèn thành công");
+                _logger.LogInfo($@"6.1.1. Bật đèn thành công");
             }
             else
             {
-                _logger.LogInfo($@"Bật đèn thất bại");
+                _logger.LogInfo($@"6.1.1. Bật đèn thất bại");
             }
 
             Thread.Sleep(500);
 
-            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+            _logger.LogInfo($@"6.2. Bật đèn ĐỎ chiều RA");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
             {
-                _logger.LogInfo($@"Bật đèn thành công");
+                _logger.LogInfo($@"6.2.1. Bật đèn thành công");
             }
             else
             {
-                _logger.LogInfo($@"Bật đèn thất bại");
+                _logger.LogInfo($@"6.2.1. Bật đèn thất bại");
             }
         }
 
