@@ -454,14 +454,15 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                    // 5. Bat den do
-                    TurnOnRedTrafficLight();
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    // 5. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
+
+                    // 6. Bat den do
+                    _logger.LogInfo($"6. Bật đèn đỏ");
+                    TurnOnRedTrafficLight();
                 }
                 else
                 {
@@ -476,14 +477,15 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                    // 5. Bat den do
-                    TurnOnRedTrafficLight();
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    // 5. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
+
+                    // 6. Bat den do
+                    _logger.LogInfo($"6. Bật đèn đỏ");
+                    TurnOnRedTrafficLight();
                 }
                 else
                 {
