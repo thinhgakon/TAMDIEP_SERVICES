@@ -42,10 +42,22 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                ConnectTrafficLight();
-            });
+                await Task.Run(() =>
+                {
+                    WriteLogInfo($"--------------- START JOB: IP={IP_ADDRESS} -- PORT={PORT_NUMBER} ---------------");
+
+                    ConnectTrafficLight();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void ConnectTrafficLight()
