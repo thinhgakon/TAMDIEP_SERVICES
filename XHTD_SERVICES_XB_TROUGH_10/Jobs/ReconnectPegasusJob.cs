@@ -31,10 +31,22 @@ namespace XHTD_SERVICES_XB_TROUGH_10.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                CheckConnection();
-            });
+                await Task.Run(() =>
+                {
+                    WriteLogInfo("--------------- START JOB ---------------");
+
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
