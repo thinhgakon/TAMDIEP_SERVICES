@@ -55,15 +55,21 @@ namespace XHTD_SERVICES_XB_TROUGH_4.Jobs
             {
                 if (Program.LastTimeReceivedUHF != null)
                 {
+                    WriteLogInfo($"1. Thời điểm gần nhất nhận tín hiệu: {Program.LastTimeReceivedUHF}");
+
                     timeDiffFromLastReceivedUHF = DateTime.Now.Subtract((DateTime)Program.LastTimeReceivedUHF);
 
                     if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        WriteLogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+                        WriteLogInfo($"2. Quá {TIME_TO_RESET}s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
 
                         PegasusStaticClassReader.CloseNetPort(PortHandle);
 
                         Program.UHFConnected = false;
+                    }
+                    else
+                    {
+                        WriteLogInfo($"2. Chưa vượt quá {TIME_TO_RESET}s");
                     }
                 }
             }
