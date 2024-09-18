@@ -112,35 +112,31 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                try
+                await Task.Run(async () =>
                 {
-                    await Task.Run(async () =>
+                    // Get System Parameters
+                    await LoadSystemParameters();
+
+                    if (!isActiveService)
                     {
-                        // Get System Parameters
-                        await LoadSystemParameters();
+                        _logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                        return;
+                    }
 
-                        if (!isActiveService)
-                        {
-                            _logger.LogInfo("Service nhận diện RFID đang TẮT.");
-                            return;
-                        }
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                        _logger.LogInfo("Start Xi roi Trough service");
-                        _logger.LogInfo("----------------------------");
+                    AuthenticateConfirmModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
 
-                        AuthenticateConfirmModuleFromPegasus();
-                    });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
-
-                    // do you want the job to refire?
-                    throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
-                }
-            });
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()

@@ -113,22 +113,31 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _logger.LogInfo("Service nhận diện RFID xi bao đang TẮT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _logger.LogInfo("Start Xibao Trough service");
-                _logger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                        return;
+                    }
 
-                AuthenticateConfirmModuleFromPegasus();
-            });
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+
+                    AuthenticateConfirmModuleFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
