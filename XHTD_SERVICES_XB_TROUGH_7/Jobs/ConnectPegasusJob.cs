@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -9,14 +10,14 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.217";
-        protected readonly TroughLogger _logger;
 
-        public ConnectPegasusJob(TroughLogger logger)
+        public ConnectPegasusJob()
         {
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -53,13 +54,19 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
-                    _logger.LogWarn("Connect fail. Start reconnect");
+                    WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"Ping ERROR: {ex.Message}");
+                WriteLogInfo($"Ping ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

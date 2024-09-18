@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -9,18 +10,18 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
 {
     public class ReconnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.214";
-        protected readonly TroughLogger _logger;
 
         protected const int TIME_TO_RESET = 10;
 
         TimeSpan timeDiffFromLastReceivedUHF = new TimeSpan();
 
-        public ReconnectPegasusJob(TroughLogger logger)
+        public ReconnectPegasusJob()
         {
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -46,7 +47,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
 
                     if (timeDiffFromLastReceivedUHF.TotalSeconds > TIME_TO_RESET)
                     {
-                        _logger.LogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
+                        WriteLogInfo($"Quá 5s không nhận được UHF => reconnect: Now {DateTime.Now.ToString()} --- Last: {Program.LastTimeReceivedUHF}");
 
                         PegasusStaticClassReader.CloseNetPort(PortHandle);
 
@@ -56,8 +57,14 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"RECONNECT ERROR: {ex.Message}");
+                WriteLogInfo($"RECONNECT ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }
