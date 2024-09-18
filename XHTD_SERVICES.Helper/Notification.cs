@@ -189,6 +189,30 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSOrderToleranceWarning(warning);
         }
 
+        public void SendScale1TrafficLight(string trafficLightCode, string red, string green)
+        {
+            SendScaleTrafficLightRequest request = new SendScaleTrafficLightRequest
+            {
+                TrafficLightCode = trafficLightCode,
+                Red = red,
+                Green = green
+            };
+
+            HttpRequest.SendScale1TrafficLight(request);
+        }
+
+        public void SendScale2TrafficLight(string trafficLightCode, string red, string green)
+        {
+            SendScaleTrafficLightRequest request = new SendScaleTrafficLightRequest
+            {
+                TrafficLightCode = trafficLightCode,
+                Red = red,
+                Green = green
+            };
+
+            HttpRequest.SendScale2TrafficLight(request);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
