@@ -77,6 +77,7 @@
     <Compile Include="Models\Request\SendGatewayNotificationRequest.cs" />
     <Compile Include="Models\Request\SendMachineNotificationRequest.cs" />
     <Compile Include="Models\Request\SendOrderToleranceWarningRequest.cs" />
+    <Compile Include="Models\Request\SendScaleTrafficLightRequest.cs" />
     <Compile Include="Models\Request\SendTroughControlRequest.cs" />
     <Compile Include="Models\Request\SendTroughDataRequest.cs" />
     <Compile Include="Models\Request\SendTroughNotificationRequest.cs" />
