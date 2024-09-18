@@ -106,7 +106,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 var green = result.Item1;
                 var red = result.Item2;
 
-                _notification.SendScale1TrafficLight(SCALE_DGT_CODE, red, green);
+                _notification.SendScale2TrafficLight(SCALE_DGT_CODE, red, green);
             }
             catch (Exception ex)
             {
