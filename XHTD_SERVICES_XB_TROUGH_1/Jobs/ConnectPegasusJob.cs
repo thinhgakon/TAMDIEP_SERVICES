@@ -54,11 +54,13 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    Console.WriteLine("Connection ok");
+                    //Console.WriteLine("Connection ok");
                     return;
                 }
                 else
                 {
+                    WriteLogInfo("Start reconnect...");
+
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     while (openresult != 0)
@@ -66,12 +68,13 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                         Thread.Sleep(1000);
                     }
-                    WriteLogInfo("Connect fail. Start reconnect");
+
+                    WriteLogInfo("Reconnect success");
                 }
             }
             catch (Exception ex)
             {
-                WriteLogInfo($"Ping ERROR: {ex.Message}");
+                WriteLogInfo($"PING ERROR: {ex.Message}");
             }
         }
 
