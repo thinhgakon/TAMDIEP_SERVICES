@@ -67,6 +67,16 @@ namespace XHTD_SERVICES_CANVAO_2.Schedules
                 .Build();
             await _scheduler.ScheduleJob(scaleSocketJob, scaleSocketTrigger);
 
+            IJobDetail trafficLightJob = JobBuilder.Create<TrafficLightJob>().Build();
+            ITrigger trafficLightTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(trafficLightJob, trafficLightTrigger);
+
             IJobDetail resetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
             ITrigger resetTrafficLightTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
