@@ -56,15 +56,21 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 tblCallToTrough callToTrough = null;
                 using (var db = new XHTD_Entities())
                 {
-                    callToTrough = await db.tblCallToTroughs.FirstOrDefaultAsync(x => x.Machine == TROUGH_CODE && 
-                                                                                     (x.IsDone == null ||
-                                                                                      x.IsDone == false) &&
-                                                                                      x.IndexTrough == 1);
+                    callToTrough = await db.tblCallToTroughs
+                                            .Where(x => x.Machine == TROUGH_CODE
+                                                        &&
+                                                        (x.IsDone == null || x.IsDone == false)
+                                                  )
+                                            .OrderBy(x => x.IndexTrough)
+                                            .FirstOrDefaultAsync();
                 }
 
-                string dataCode = callToTrough == null ?
-                                  $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]" :
-                                  $"*[H1][C1]{callToTrough.Vehicle}[H2][C1][1]{callToTrough.DeliveryCode}[2]---[H3][C1][1]---[2]---[H4][C1][1]---[2]---[!]";
+                string dataCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
+
+                if(callToTrough != null)
+                {
+                    dataCode = $"*[H1][C1]{callToTrough.Vehicle}[H2][C1][1]{callToTrough.DeliveryCode}[2]---[H3][C1][1]---[2]---[H4][C1][1]---[2]---[!]";
+                }
 
                 DisplayScreenLed(dataCode);
             }
