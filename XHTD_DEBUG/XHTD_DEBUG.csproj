@@ -313,10 +313,6 @@
       <Project>{e8397e51-be40-4d7f-9c35-6d23409ea3ce}</Project>
       <Name>XHTD_SERVICES_XB_TROUGH_1</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_XR_QUEUE_TO_CALL\XHTD_SERVICES_XR_QUEUE_TO_CALL.csproj">
-      <Project>{eb93b207-e24a-4c22-8396-07049f24d4d5}</Project>
-      <Name>XHTD_SERVICES_XR_QUEUE_TO_CALL</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
