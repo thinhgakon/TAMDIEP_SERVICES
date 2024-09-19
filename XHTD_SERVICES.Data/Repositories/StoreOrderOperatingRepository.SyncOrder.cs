@@ -112,6 +112,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         Confirm9 = 0,
                         MoocCode = websaleOrder.moocCode,
                         LocationCode = websaleOrder.locationCode,
+                        LocationCodeTgc = websaleOrder.locationCodeTgc,
                         TransportMethodId = websaleOrder.transportMethodId,
                         TransportMethodName = websaleOrder.transportMethodName,
                         State = websaleOrder.status,
@@ -273,6 +274,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.TypeProduct = typeProduct;
                             order.TypeXK = typeXK;
                             order.LocationCode = websaleOrder.locationCode;
+                            order.LocationCodeTgc = websaleOrder.locationCodeTgc;
                             order.TransportMethodId = websaleOrder.transportMethodId;
                             order.TransportMethodName = websaleOrder.transportMethodName;
 
