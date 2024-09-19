@@ -272,8 +272,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 tmpValidCardNoLst.Add(newCardNoLog);
 
                 _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
-                SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationHub("XI_ROI", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationAPI("XI_ROI", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
 
                 tblStoreOrderOperating currentOrder = null;
 
