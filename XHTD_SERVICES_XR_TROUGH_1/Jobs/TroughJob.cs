@@ -266,9 +266,6 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
-            // Đơn hàng đầu tiên hiện tại trong máng
-            var orderInTrough = _callToTroughRepository.GetCurrentFirstOrderInTrough(TROUGH_CODE);
-
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -279,11 +276,13 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
 
                 tblStoreOrderOperating currentOrder = null;
+
                 using (var db = new XHTD_Entities())
                 {
                     currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
                                                                                              x.CatId == OrderCatIdCode.XI_MANG_XA &&
-                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO);
+                                                                                            (x.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG));
                 }
 
                 if (currentOrder == null)
@@ -306,6 +305,34 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
                 {
                     _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+
+                    List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
+                    List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+
+                    using (var db = new XHTD_Entities())
+                    {
+                        callToTroughEntities = await db.tblCallToTroughs.Where(x => x.Machine == TROUGH_CODE && x.IsDone == false).ToListAsync();
+
+                        ordersInTrough = await (from orders in db.tblStoreOrderOperatings
+                                                join callToTroughs in db.tblCallToTroughs
+                                                on orders.DeliveryCode equals callToTroughs.DeliveryCode
+                                                where callToTroughs.Machine == TROUGH_CODE && callToTroughs.IsDone == false
+                                                select orders).ToListAsync();
+
+                        foreach (var callToTroughEntity in callToTroughEntities)
+                        {
+                            callToTroughEntity.IsDone = true;
+                        }
+
+                        foreach (var order in ordersInTrough)
+                        {
+                            order.Step = (int)OrderStep.DA_LAY_HANG;
+                            order.TimeConfirm6 = DateTime.Now;
+                            order.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
+                        }
+
+                        await db.SaveChangesAsync();
+                    }
                 }
 
                 else _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");
