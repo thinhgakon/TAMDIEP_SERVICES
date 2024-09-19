@@ -104,15 +104,18 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         isWillCall = true;
                         type = callVehicleItem.CallType;
                         vehiceCode = storeOrderOperating.Vehicle;
-
-                        storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
                         
                         if (type == CONG)
                         {
+                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào bãi cổng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
                             storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
+                            storeOrderOperating.TimeConfirm4 = DateTime.Now;
                         }
 
-                        storeOrderOperating.TimeConfirm4 = DateTime.Now;
+                        else
+                        {
+                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào bãi chờ lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                        }
 
                         vehicleWaitingCall.ModifiledOn = DateTime.Now;
                         vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
