@@ -311,12 +311,16 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
                     using (var db = new XHTD_Entities())
                     {
-                        callToTroughEntities = await db.tblCallToTroughs.Where(x => x.Machine == TROUGH_CODE && x.IsDone == false).ToListAsync();
+                        callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
+                                                                                    x.Machine == TROUGH_CODE &&
+                                                                                    x.IsDone == false).ToListAsync();
 
                         ordersInTrough = await (from orders in db.tblStoreOrderOperatings
                                                 join callToTroughs in db.tblCallToTroughs
                                                 on orders.DeliveryCode equals callToTroughs.DeliveryCode
-                                                where callToTroughs.Machine == TROUGH_CODE && callToTroughs.IsDone == false
+                                                where callToTroughs.Machine == TROUGH_CODE &&
+                                                      callToTroughs.IsDone == false &&
+                                                      callToTroughs.DeliveryCode != currentOrder.DeliveryCode
                                                 select orders).ToListAsync();
 
                         foreach (var callToTroughEntity in callToTroughEntities)
