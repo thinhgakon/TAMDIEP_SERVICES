@@ -49,16 +49,22 @@ namespace XHTD_SERVICES.Data.Repositories
                         typeProduct = OrderTypeProductCode.SLING;
                     }
                     else if (productNameUpper.Contains("PCB30") 
-                        || productNameUpper.Contains("PCB 30") 
-                        || productNameUpper.Contains("MAX PRO"))
+                        || productNameUpper.Contains("PCB 30")
+                        || productNameUpper.Contains("MAX PRO")
+                        )
                     {
                         typeProduct = OrderTypeProductCode.PCB30;
                     }
-                    else if (productNameUpper.Contains("PCB40") || productNameUpper.Contains("PCB 40"))
+                    else if (productNameUpper.Contains("PCB40") 
+                        || productNameUpper.Contains("PCB 40")
+                        || productNameUpper.Contains("PC40")
+                        )
                     {
                         typeProduct = OrderTypeProductCode.PCB40;
                     }
-                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
+                    else if (productNameUpper.Contains("C91") 
+                        || productNameUpper.Contains("XÂY TRÁT")
+                        )
                     {
                         typeProduct = OrderTypeProductCode.C91;
                     }
