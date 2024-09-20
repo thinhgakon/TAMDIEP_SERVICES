@@ -384,7 +384,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
                 var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
 
-                if (currentNumberWaitingVehicleInFactory > maxVehicle)
+                if (currentNumberWaitingVehicleInFactory >= maxVehicle)
                 {
                     using (var db = new XHTD_Entities())
                     {
