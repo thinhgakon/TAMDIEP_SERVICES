@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "XHTD_Service_XB_Trough_8";
+            this.serviceInstaller1.ServiceName = "XHTD_Service_Sling_Trough_9";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
