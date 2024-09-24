@@ -133,8 +133,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             _logger.LogInfo($"2.1. Start thành công");
 
-                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
+                            string vehicle = string.Empty;
+                            string bookQuantity = string.Empty;
+                            string locationCodeTgc = string.Empty;
 
                             using (var db = new XHTD_Entities())
                             {
@@ -148,7 +149,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                         await db.SaveChangesAsync();
                                     }
                                 }
+
+                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == machine.CurrentDeliveryCode);
+                                if (currentOrder != null)
+                                {
+                                    vehicle = currentOrder.Vehicle;
+                                    bookQuantity = currentOrder.SumNumber.ToString();
+                                    locationCodeTgc = currentOrder.LocationCodeTgc;
+                                }
                             }
+
+                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
                         }
                         else
                         {
@@ -219,11 +231,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             try
             {
-                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle);
+                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle, bookQuantity, locationCodeTgc);
             }
             catch (Exception ex)
             {
