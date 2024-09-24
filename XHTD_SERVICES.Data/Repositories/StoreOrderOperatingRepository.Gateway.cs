@@ -206,7 +206,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_VAO_CONG;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng lúc {currentTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng tự động lúc {currentTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
