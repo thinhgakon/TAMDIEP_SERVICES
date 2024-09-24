@@ -317,10 +317,6 @@
       <Project>{420acb5c-88a5-4d7f-aca3-4ed455242e01}</Project>
       <Name>XHTD_SERVICES.Helper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_CONFIRM\XHTD_SERVICES_CONFIRM.csproj">
-      <Project>{e4340df1-6075-45e5-bedf-e366e4a0fad1}</Project>
-      <Name>XHTD_SERVICES_CONFIRM</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
