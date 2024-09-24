@@ -22,8 +22,8 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly string CONG = "CONG";
-        protected readonly string BAI_CHO = "BAI_CHO";
+        protected readonly string CONG = CallType.CONG;
+        protected readonly string BAI_CHO = CallType.BAI_CHO;
 
         protected readonly GatewayCallLogger _gatewayCallLogger;
 
@@ -86,9 +86,15 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
                     if (vehicleWaitingCall == null) return;
 
-                    if (storeOrderOperating == null || 
-                       (storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
-                        storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE))
+                    if (storeOrderOperating == null)
+                    {
+                        _gatewayCallLogger.LogInfo($"Không tìm thấy đơn hàng => Kết thúc");
+                        return;
+                    }
+
+                    if (storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
+                        storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
+                        storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE)
                     {
                         _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} đã vào cổng ========");
 
@@ -156,7 +162,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     // Mời xe ra bãi chờ trước
-                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.BAI_CHO).OrderBy(x => x.Id).FirstOrDefault();
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.CallType.ToUpper() == CallType.BAI_CHO).OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     for (int i = 0; i < 10; i++)
