@@ -253,7 +253,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     if (isSynced)
                     {
                         // Cân vào, gửi tín hiệu signalR tới in phun
-                        SendVehicleInTroughData(string.Empty, string.Empty, websaleOrder.deliveryCode, websaleOrder.vehicleCode);
+                        SendVehicleInTroughData(string.Empty, string.Empty, websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity.ToString(), websaleOrder.locationCodeTgc);
                     }
                 }
             }
@@ -381,9 +381,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             _notification.SendOrderSendOrderToleranceWarning(deliveryCode, vehicle, sumNumber, weightIn, weightOut, tolerance);
         }
 
-        private void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        private void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
-            _notification.SendVehicleInTroughData(machineCode, troughCode, deliveryCode, vehicle);
+            _notification.SendVehicleInTroughData(machineCode, troughCode, deliveryCode, vehicle, bookQuantity, locationCodeTgc);
         }
     }
 }

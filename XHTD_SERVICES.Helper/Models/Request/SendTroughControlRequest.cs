@@ -15,5 +15,9 @@ namespace XHTD_SERVICES.Helper.Models.Request
         public string DeliveryCode { get; set; }
 
         public string Vehicle { get; set; }
+
+        public string BookQuantity { get; set; }
+
+        public string LocationCodeTgc { get; set; }
     }
 }

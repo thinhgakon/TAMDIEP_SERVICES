@@ -135,14 +135,16 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendMachineNotification(notification);
         }
 
-        public void SendTroughStartData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendTroughStartData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             SendTroughControlRequest notification = new SendTroughControlRequest
             {
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 DeliveryCode = deliveryCode,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                BookQuantity = bookQuantity,
+                LocationCodeTgc = locationCodeTgc
             };
 
             HttpRequest.SendTroughStartData(notification);
@@ -161,14 +163,16 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendTroughStopData(notification);
         }
 
-        public void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             SendTroughControlRequest notification = new SendTroughControlRequest
             {
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 DeliveryCode = deliveryCode,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                BookQuantity = bookQuantity,
+                LocationCodeTgc = locationCodeTgc
             };
 
             HttpRequest.SendVehicleInTroughData(notification);
