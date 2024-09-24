@@ -72,16 +72,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (storeOrderOperating.CountReindex != null && (int)storeOrderOperating.CountReindex >= 3)
                     {
                         _gatewayCallLogger.LogInfo($@"======== Phương tiện {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi => Hủy lốt ========");
-                        //if (storeOrderOperating.Step == 1 || storeOrderOperating.Step == 4)
-                        //{
-                        //    var sql = $@"UPDATE dbo.tblStoreOrderOperating SET IndexOrder = 0, Confirm1 = 0, TimeConfirm1 = NULL, Step = 0, IndexOrder2 = 0, DeliveryCodeParent = NULL, LogProcessOrder = CONCAT(LogProcessOrder, N'#Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE  Step IN (1,4) AND ISNULL(DriverUserName,'') <> '' AND (DeliveryCode = @DeliveryCode OR DeliveryCodeParent = @DeliveryCode)";
-                        //    db.Database.ExecuteSqlCommand(sql, new SqlParameter("@DeliveryCode", storeOrderOperating.DeliveryCode));
-
-                        //    var sqlDelete = $@"UPDATE dbo.tblCallVehicleStatus SET IsDone = 1 WHERE StoreOrderOperatingId = @StoreOrderOperatingId";
-                        //    db.Database.ExecuteSqlCommand(sqlDelete, new SqlParameter("@StoreOrderOperatingId", storeOrderOperating.Id));
-
-                        //    return;
-                        //}
                     }
                     var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
                     if (vehicleWaitingCall == null) return;
@@ -186,16 +176,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
-                // var PathAudioLib = $@"./AudioNormal";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/VicemBegin.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
-                //wplayer.URL = VoiceFileStart;
-                //wplayer.settings.volume = 100;
-                //wplayer.controls.play();
-                //Thread.Sleep(5000);
 
                 wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
@@ -225,12 +210,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.URL = VoiceFileInOut;
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
-
-                //Thread.Sleep(5000);
-
-                //wplayer.URL = VoiceFileEnd;
-                //wplayer.controls.play();
-
             }
             catch (Exception ex)
             {
@@ -243,16 +222,16 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
-                // var PathAudioLib = $@"./AudioNormal";
-                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/VicemBegin.wav";
+                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
-                //wplayer.URL = VoiceFileStart;
-                //wplayer.settings.volume = 100;
-                //wplayer.controls.play();
-                //Thread.Sleep(5000);
+
+                wplayer.URL = VoiceFileStart;
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                Thread.Sleep(1500);
 
                 wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
@@ -283,11 +262,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
 
-                //Thread.Sleep(5000);
-
-                //wplayer.URL = VoiceFileEnd;
-                //wplayer.controls.play();
-
+                Thread.Sleep(3000);
             }
             catch (Exception ex)
             {
