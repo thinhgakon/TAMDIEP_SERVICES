@@ -202,7 +202,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     var command = $"*[Count][MX][{troughCode}]#GET[!]";
 
                     _logger.LogInfo($"1. Gửi lệnh: {command}");
-                    client.Send(command);
 
                     client.Send(command);
                     client.Events.DataReceived += Trough_DataReceived;
