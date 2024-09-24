@@ -258,7 +258,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business\ScaleApiLib.cs" />
+    <Compile Include="Business\SaleOrdersApiLib.cs" />
     <Compile Include="Devices\BarrierControl.cs" />
     <Compile Include="Devices\HikvisionStreamCamera.cs" />
     <Compile Include="Devices\PegasusReader.cs" />
@@ -280,6 +280,7 @@
     <Compile Include="Models\Response\HUBResponse.cs" />
     <Compile Include="Models\Response\FakeRFIDResponse.cs" />
     <Compile Include="Models\Response\GetTokenResponse.cs" />
+    <Compile Include="Models\Response\SaleOrdersResponse.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -316,10 +317,6 @@
     <ProjectReference Include="..\XHTD_SERVICES.Helper\XHTD_SERVICES.Helper.csproj">
       <Project>{420acb5c-88a5-4d7f-aca3-4ed455242e01}</Project>
       <Name>XHTD_SERVICES.Helper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_CONFIRM\XHTD_SERVICES_CONFIRM.csproj">
-      <Project>{e4340df1-6075-45e5-bedf-e366e4a0fad1}</Project>
-      <Name>XHTD_SERVICES_CONFIRM</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

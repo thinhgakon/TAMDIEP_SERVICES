@@ -24,8 +24,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using XHTD_SERVICES_GATEWAY.Devices;
-using XHTD_SERVICES_CONFIRM.Business;
-using XHTD_SERVICES_CONFIRM;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
