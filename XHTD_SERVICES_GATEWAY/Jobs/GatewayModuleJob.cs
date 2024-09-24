@@ -67,6 +67,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected const string CONFIRM_AT_GATEWAY_CODE = "CONFIRM_AT_GATEWAY";
 
+        protected const string REQUIRE_CALL_VOICE = "REQUIRE_CALL_VOICE";
+
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
         public static extern IntPtr Connect(string Parameters);
 
@@ -154,6 +156,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == CBV_ACTIVE);
             var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
             var confirmAtGatewayParameter = parameters.FirstOrDefault(x => x.Code == CONFIRM_AT_GATEWAY_CODE);
+            var requireCallVoiceParameter = parameters.FirstOrDefault(x => x.Code == REQUIRE_CALL_VOICE);
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -180,6 +183,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             else
             {
                 Program.IsConfirmAtGatewayActive = true;
+            }
+
+            if (requireCallVoiceParameter == null || requireCallVoiceParameter.Value == "0")
+            {
+                Program.IsRequireCallVoiceActive = false;
+            }
+            else
+            {
+                Program.IsRequireCallVoiceActive = true;
             }
         }
 
@@ -475,7 +487,16 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
 
-                isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
+                if (Program.IsRequireCallVoiceActive)
+                {
+                    _gatewayLogger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: BẬT");
+                    isValidCardNo = OrderValidator.IsValidOrderEntraceGatewayInCaseRequireCallVoice(currentOrder);
+                }
+                else
+                {
+                    _gatewayLogger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: TẮT");
+                    isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
+                }
             }
             else if (isLuongRa)
             {

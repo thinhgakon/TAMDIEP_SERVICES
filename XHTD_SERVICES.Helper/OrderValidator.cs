@@ -24,50 +24,39 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == OrderCatIdCode.CLINKER)
+            if ((order.Step == (int)OrderStep.DA_XAC_THUC
+                || order.Step == (int)OrderStep.DANG_GOI_XE
+                || order.Step == (int)OrderStep.CHO_GOI_XE
+                )
+                && (order.DriverUserName ?? "") != "")
             {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    ) 
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
-            {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    )
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    ) 
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
+            }
+        }
+
+        public static bool IsValidOrderEntraceGatewayInCaseRequireCallVoice(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if ((order.Step == (int)OrderStep.DANG_GOI_XE
+                )
+                && (order.DriverUserName ?? "") != "")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
