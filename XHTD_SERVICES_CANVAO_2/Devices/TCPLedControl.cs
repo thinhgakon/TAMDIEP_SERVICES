@@ -9,7 +9,7 @@ namespace XHTD_SERVICES_CANVAO_2.Devices
 {
     public class TCPLedControl
     {
-        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+        ILog _logger = LogManager.GetLogger("LedFileAppender");
 
         protected readonly TCPLed _tcpLed;
 
