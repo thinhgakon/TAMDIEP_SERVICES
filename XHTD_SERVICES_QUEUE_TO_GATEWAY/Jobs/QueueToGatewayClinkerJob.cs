@@ -108,7 +108,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     var orders = db.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_XAC_THUC
                                                                     && x.TypeProduct.Equals(TYPE_PRODUCT)
                                                                     && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != "")
-                                                            .OrderBy(x => x.IndexOrder)
+                                                            .OrderBy(x => x.TimeConfirm10)
                                                             .Take(topX)
                                                             .ToList();
 
