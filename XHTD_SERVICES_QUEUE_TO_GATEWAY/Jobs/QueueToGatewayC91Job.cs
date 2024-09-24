@@ -141,8 +141,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                         if (updateResponse > 0)
                         {
                             // xử lý nghiệp vụ đẩy vào db để xử lý gọi loa
-                            var tblCallVehicleStatusDb = db.tblCallVehicleStatus.FirstOrDefault(x => x.StoreOrderOperatingId == order.Id && x.IsDone == false);
-                            if (tblCallVehicleStatusDb != null) continue;
+                            var tblCallVehicleStatusDb = db.tblCallVehicleStatus
+                                                        .FirstOrDefault(x => x.StoreOrderOperatingId == order.Id
+                                                                        && x.IsDone == false
+                                                                        && x.CallType == CallType.CONG);
+
+                            if (tblCallVehicleStatusDb != null)
+                            {
+                                WriteLogInfo($"4.2. Đã tồn tại bản ghi chờ gọi loa");
+                                continue;
+                            }
+
                             var logString = $@"Đưa xe vào hàng đợi gọi loa lúc {DateTime.Now}. ";
                             var newTblVehicleStatus = new tblCallVehicleStatu
                             {
