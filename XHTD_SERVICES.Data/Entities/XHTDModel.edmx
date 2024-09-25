@@ -584,8 +584,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Confirm11" Type="int" />
           <Property Name="TimeConfirm11" Type="datetime2" Precision="7" />
-          <Property Name="LotNumber" Type="varchar" MaxLength="50" />
           <Property Name="LocationCodeTgc" Type="nvarchar(max)" />
+          <Property Name="LotNumber" Type="varchar" MaxLength="50" />
+          <Property Name="SealNumber" Type="nvarchar(max)" />
+          <Property Name="IsScaleInAuto" Type="bit" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1423,6 +1425,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="TimeConfirm11" Type="DateTime" Precision="7" />
           <Property Name="LotNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="LocationCodeTgc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SealNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsScaleInAuto" Type="Boolean" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2236,6 +2240,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="IsScaleInAuto" ColumnName="IsScaleInAuto" />
+                <ScalarProperty Name="SealNumber" ColumnName="SealNumber" />
                 <ScalarProperty Name="LocationCodeTgc" ColumnName="LocationCodeTgc" />
                 <ScalarProperty Name="LotNumber" ColumnName="LotNumber" />
                 <ScalarProperty Name="TimeConfirm11" ColumnName="TimeConfirm11" />
