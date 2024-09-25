@@ -43,15 +43,15 @@ namespace XHTD_SERVICES_CANRA_1.Schedules
                 .Build();
             await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
 
-            //IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            //ITrigger connectPegasusrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(5)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
+            IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger connectPegasusrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
 
             IJobDetail scaleSocketJob = JobBuilder.Create<ScaleSocketJob>().Build();
             ITrigger scaleSocketTrigger = TriggerBuilder.Create()
@@ -63,35 +63,35 @@ namespace XHTD_SERVICES_CANRA_1.Schedules
                 .Build();
             await _scheduler.ScheduleJob(scaleSocketJob, scaleSocketTrigger);
 
-            //IJobDetail trafficLightJob = JobBuilder.Create<TrafficLightJob>().Build();
-            //ITrigger trafficLightTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(5)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(trafficLightJob, trafficLightTrigger);
+            IJobDetail trafficLightJob = JobBuilder.Create<TrafficLightJob>().Build();
+            ITrigger trafficLightTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(trafficLightJob, trafficLightTrigger);
 
-            //IJobDetail resetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
-            //ITrigger resetTrafficLightTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(5)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(resetTrafficLightJob, resetTrafficLightTrigger);
+            IJobDetail resetTrafficLightJob = JobBuilder.Create<ResetTrafficLightJob>().Build();
+            ITrigger resetTrafficLightTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(resetTrafficLightJob, resetTrafficLightTrigger);
 
-            //IJobDetail ledJob = JobBuilder.Create<LedJob>().Build();
-            //ITrigger ledTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(1)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(ledJob, ledTrigger);
+            IJobDetail ledJob = JobBuilder.Create<LedJob>().Build();
+            ITrigger ledTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(1)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(ledJob, ledTrigger);
         }
     }
 }
