@@ -354,7 +354,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
@@ -410,7 +411,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
@@ -430,14 +432,16 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 if (erpUpdateStatusResponse.Code == "01")
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
-                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    //SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
                 else if (erpUpdateStatusResponse.Code == "02")
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
-                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    //SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
@@ -449,7 +453,14 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    SendPushNotification(driverUserName, pushMessage);
+                }
 
                 _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
             }
@@ -551,12 +562,25 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         {
             try
             {
-                _confirmLogger.LogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _confirmLogger.LogInfo($"Gửi push notification đến {userNameReceiver}, nội dung {message}");
                 _notification.SendPushNotification(userNameReceiver, message);
             }
             catch (Exception ex)
             {
                 _confirmLogger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                _confirmLogger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                _confirmLogger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

@@ -849,6 +849,31 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse SendNotificationByRight(string rightCode, string message)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendNotificationByRight"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new
+            {
+                RightCode = rightCode,
+                NotificationType = "XHTD",
+                SubTitle = "HỆ THỐNG XUẤT HÀNG TỰ ĐỘNG",
+                ContentMessage = message
+            });
+
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static IRestResponse PrintInvoice(string erpOrderId)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
