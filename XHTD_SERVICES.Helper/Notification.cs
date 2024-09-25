@@ -256,7 +256,11 @@ namespace XHTD_SERVICES.Helper
         public void SendPushNotification(string userName, string message)
         {
             HttpRequest.SendPushNotification(userName, message);
+        }
 
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            HttpRequest.SendNotificationByRight(rightCode, message);
         }
     }
 }
