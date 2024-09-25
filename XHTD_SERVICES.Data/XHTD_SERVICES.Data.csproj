@@ -63,6 +63,7 @@
     <Compile Include="Common\OrderTypeProductCode.cs" />
     <Compile Include="Common\OrderTypeXKCode.cs" />
     <Compile Include="Common\OrderCatIdCode.cs" />
+    <Compile Include="Common\RightCode.cs" />
     <Compile Include="Common\ScaleCode.cs" />
     <Compile Include="Common\ScaleConfig.cs" />
     <Compile Include="Common\URIConfig.cs" />
