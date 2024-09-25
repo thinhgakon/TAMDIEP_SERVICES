@@ -103,7 +103,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         
                         if (type == CONG)
                         {
-                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào bãi cổng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào cổng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
                             storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
                             storeOrderOperating.TimeConfirm4 = DateTime.Now;
                         }
