@@ -310,7 +310,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                                 else
                                 {
-                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode} - lỗi: {apiResponse.MessageObject.Message} - {apiResponse.MessageObject.MessageDetail}");
                                 }
                             }
                         }
