@@ -433,7 +433,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
                     //SendPushNotification("adminNPP", pushMessagePrintStatus);
-                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
@@ -441,7 +441,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
                     //SendPushNotification("adminNPP", pushMessagePrintStatus);
-                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
 
                     _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
                 }
