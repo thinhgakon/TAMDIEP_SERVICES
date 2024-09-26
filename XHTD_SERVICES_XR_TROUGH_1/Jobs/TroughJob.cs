@@ -282,7 +282,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                     currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
                                                                                              x.CatId == OrderCatIdCode.XI_MANG_XA &&
                                                                                             (x.Step == (int)OrderStep.DA_CAN_VAO ||
-                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG));
+                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                             x.IsVoiced == false);
                 }
 
                 if (currentOrder == null)
