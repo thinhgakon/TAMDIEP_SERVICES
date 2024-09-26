@@ -35,6 +35,26 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGateway(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && (x.Step == (int)OrderStep.DA_XAC_THUC
+                                                     || x.Step == (int)OrderStep.DANG_GOI_XE
+                                                     || x.Step == (int)OrderStep.CHO_GOI_XE
+                                                     || x.Step == (int)OrderStep.DA_NHAN_DON
+                                                     || x.Step == (int)OrderStep.CHUA_NHAN_DON)
+                                                     )
+                                            .OrderByDescending(x => x.Step)
+                                            .ToListAsync();
+
+                return orders;
+            }
+        }
+
         public async Task<tblStoreOrderOperating> GetCurrentOrderExitGateway(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
@@ -51,6 +71,25 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .FirstOrDefaultAsync();
 
                 return order;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGateway(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && (x.Step == (int)OrderStep.DA_CAN_VAO
+                                                     || x.Step == (int)OrderStep.DANG_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_CAN_RA)
+                                                  )
+                                            .OrderByDescending(x => x.Step)
+                                            .ToListAsync();
+
+                return orders;
             }
         }
 

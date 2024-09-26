@@ -38,6 +38,29 @@ namespace XHTD_SERVICES.Helper
             }
         }
 
+        public static bool IsValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            foreach(var order in orders)
+            {
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => ((x.Step == (int)OrderStep.DA_XAC_THUC
+                                            || x.Step == (int)OrderStep.DANG_GOI_XE
+                                            || x.Step == (int)OrderStep.CHO_GOI_XE
+                                            )
+                                            && (x.DriverUserName ?? "") != "")
+                                    );
+
+            return isValid;
+        }
+
         public static bool IsValidOrderEntraceGatewayInCaseRequireCallVoice(tblStoreOrderOperating order)
         {
             if (order == null)
@@ -58,6 +81,25 @@ namespace XHTD_SERVICES.Helper
             {
                 return false;
             }
+        }
+
+        public static bool IsValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            foreach (var order in orders) { 
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => x.Step == (int)OrderStep.DANG_GOI_XE 
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            return isValid;
         }
 
         public static bool IsValidOrderExitGateway(tblStoreOrderOperating order)
