@@ -125,6 +125,25 @@ namespace XHTD_SERVICES.Helper
             }
         }
 
+        public static bool IsValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu RA: order = null");
+                return false;
+            }
+
+            foreach (var order in orders) { 
+                _logger.Info($"4.0. Kiem tra don hang chieu RA: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => (x.Step == (int)OrderStep.DA_CAN_RA
+                                       && (x.DriverUserName ?? "") != "")
+                                    );
+
+            return isValid;
+        }
+
         public static bool IsValidOrderScaleStation(tblStoreOrderOperating order)
         {
             if (order == null)
