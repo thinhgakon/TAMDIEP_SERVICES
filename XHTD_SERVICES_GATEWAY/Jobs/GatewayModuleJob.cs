@@ -561,10 +561,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 if (isUpdatedOrder)
                 {
                     _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
-                }
 
-                if (isUpdatedOrder)
-                {
                     SendNotificationHub(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
@@ -604,10 +601,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 if (isUpdatedOrder)
                 {
                     _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
-                }
 
-                if (isUpdatedOrder)
-                {
                     SendNotificationHub(3, inout, null, $"Xác thực ra cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
 
