@@ -554,25 +554,13 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             var isUpdatedOrder = false;
             bool isSuccessOpenBarrier = true;
 
-            bool isNormalOrder = true;
-
-            var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
             if (isLuongVao)
             {
-                if (isNormalOrder)
-                {
-                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByVehicleCode(vehicleCodeCurrent);
+                isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm2ByVehicleCode(vehicleCodeCurrent);
 
-                    if (isUpdatedOrder)
-                    {
-                        _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
-                    }
-                }
-                else
+                if (isUpdatedOrder)
                 {
-                    isUpdatedOrder = true;
-                    _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái vào cổng.");
+                    _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
                 }
 
                 if (isUpdatedOrder)
@@ -611,19 +599,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
             else if (isLuongRa)
             {
-                if (isNormalOrder)
-                {
-                    isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
+                isUpdatedOrder = await _storeOrderOperatingRepository.UpdateOrderConfirm8ByVehicleCode(vehicleCodeCurrent);
 
-                    if (isUpdatedOrder)
-                    {
-                        _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
-                    }
-                }
-                else
+                if (isUpdatedOrder)
                 {
-                    isUpdatedOrder = true;
-                    _gatewayLogger.LogInfo($"5. Đơn hàng nội bộ => Không update trạng thái ra cổng.");
+                    _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
                 }
 
                 if (isUpdatedOrder)
@@ -641,7 +621,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
                     }
-                    
                 }
                 else
                 {
