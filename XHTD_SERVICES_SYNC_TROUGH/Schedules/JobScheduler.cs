@@ -65,26 +65,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(machineJob34, machineJob34Trigger);
-
-            //IJobDetail controlPlc12AndRealtimeJob = JobBuilder.Create<ControlPlc12AndRealtime>().Build();
-            //ITrigger controlPlc12AndRealtimeTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInHours(87600)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(controlPlc12AndRealtimeJob, controlPlc12AndRealtimeTrigger);
-
-            //IJobDetail controlPlc34AndRealtimeJob = JobBuilder.Create<ControlPlc34AndRealtime>().Build();
-            //ITrigger controlPlc34AndRealtimeTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInHours(87600)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(controlPlc34AndRealtimeJob, controlPlc34AndRealtimeTrigger);
         }
     }
 }
