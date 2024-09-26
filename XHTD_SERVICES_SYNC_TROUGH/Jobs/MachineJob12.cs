@@ -161,6 +161,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                             SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
+
+                            _logger.LogInfo($"Gửi signalR: Machine: {machine.Code} - DeliveryCode: {machine.CurrentDeliveryCode} - Vehicle: {vehicle} - BookQuantity: {bookQuantity} - LocationCodeTgc: {locationCodeTgc}");
                         }
                         else
                         {
