@@ -291,7 +291,8 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                                                                                              x.CatId == OrderCatIdCode.XI_MANG_BAO &&
                                                                                              x.TypeXK == OrderTypeXKCode.SLING &&
                                                                                             (x.Step == (int)OrderStep.DA_CAN_VAO ||
-                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG));
+                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                             x.IsVoiced == false);
                 }
 
                 if (currentOrder == null)
