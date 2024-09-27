@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,14 +13,14 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
-    public class QueueToGatewayExportPlanJumboJob : IJob
+    public class QueueToGatewayExportPlanSlingJob : IJob
     {
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("JumboFileAppender");
-        private const string TYPE_PRODUCT = "JUMBO";
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger("SlingFileAppender");
+        private const string TYPE_PRODUCT = "SLING";
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        public QueueToGatewayExportPlanJumboJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public QueueToGatewayExportPlanSlingJob(StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
         }
@@ -32,7 +33,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             await Task.Run(() =>
             {
-                log.Info($@"Start QueueToGatewayExportPlanJumboJob: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                log.Info($@"Start QueueToGatewayExportPlanSlingJob: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                 QueueToCallProccess();
             });
         }
@@ -61,8 +62,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     foreach (var itemConfig in callConfigs)
                     {
                         int sourceDocumentId = (int)itemConfig.SourceDocumentId;
-                        int maxVehicleJumbo = (int)itemConfig.MaxVehicleJumbo;
-                        ProcessByExportPlan(maxVehicleJumbo, sourceDocumentId);
+                        int maxVehicleSling = (int)itemConfig.MaxVehicleSling;
+                        ProcessByExportPlan(maxVehicleSling, sourceDocumentId);
                     }
                 }
             }
@@ -78,17 +79,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontJumboYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
+                var vehicleFrontSlingYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
 
-                log.Info($@"1. Số xe trong bãi chờ: {vehicleFrontJumboYard}");
+                log.Info($@"1. Số xe trong bãi chờ: {vehicleFrontSlingYard}");
 
-                if (vehicleFrontJumboYard >= LimitVehicle)
+                if (vehicleFrontSlingYard >= LimitVehicle)
                 {
                     log.Info($@"2. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
                     return;
                 }
 
-                AddVehicleIntoQueue(LimitVehicle - vehicleFrontJumboYard, sourceDocumentId);
+                AddVehicleIntoQueue(LimitVehicle - vehicleFrontSlingYard, sourceDocumentId);
             }
             catch (Exception ex)
             {
