@@ -252,6 +252,9 @@ namespace XHTD_SERVICES.Data.Repositories
                 var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
                 var cardNo = rfidItem?.Code ?? null;
 
+                var orderDateString = websaleOrder?.orderDate;
+                DateTime orderDate = DateTime.ParseExact(orderDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
                 var lastUpdatedDateString = websaleOrder?.lastUpdatedDate;
                 DateTime lastUpdatedDate = DateTime.ParseExact(lastUpdatedDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
@@ -260,7 +263,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                 && x.IsVoiced == false
-                                                && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                //&& x.Step < (int)OrderStep.DA_CAN_VAO
                                                 );
                     if (order != null)
                     {
@@ -273,19 +276,24 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
 
-                            order.Vehicle = vehicleCode;
-                            order.DriverName = websaleOrder.driverName;
-                            order.CardNo = cardNo;
-                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            if(order.Step < (int)OrderStep.DA_CAN_VAO)
+                            {
+                                order.Vehicle = vehicleCode;
+                                order.DriverName = websaleOrder.driverName;
+                                order.CardNo = cardNo;
 
-                            order.CatId = websaleOrder.itemCategory;
-                            order.NameProduct = websaleOrder.productName;
-                            order.TypeProduct = typeProduct;
-                            order.TypeXK = typeXK;
-                            order.LocationCode = websaleOrder.locationCode;
-                            order.LocationCodeTgc = websaleOrder.locationCodeTgc;
-                            order.TransportMethodId = websaleOrder.transportMethodId;
-                            order.TransportMethodName = websaleOrder.transportMethodName;
+                                order.CatId = websaleOrder.itemCategory;
+                                order.NameProduct = websaleOrder.productName;
+                                order.TypeProduct = typeProduct;
+                                order.TypeXK = typeXK;
+                                order.LocationCode = websaleOrder.locationCode;
+                                order.LocationCodeTgc = websaleOrder.locationCodeTgc;
+                                order.TransportMethodId = websaleOrder.transportMethodId;
+                                order.TransportMethodName = websaleOrder.transportMethodName;
+                            }
+
+                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            order.OrderDate = orderDate;
 
                             order.UpdateDay = lastUpdatedDate;
 
