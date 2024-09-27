@@ -225,10 +225,10 @@ namespace XHTD_SERVICES.Data.Repositories
         public int CountStoreOrderWaitingIntoTroughByType(string typeProduct)
         {
             var validStep = new[] { 
-                                    OrderStep.DA_VAO_CONG, 
-                                    OrderStep.DA_CAN_VAO, 
                                     OrderStep.CHO_GOI_XE,
                                     OrderStep.DANG_GOI_XE, 
+                                    OrderStep.DA_VAO_CONG, 
+                                    OrderStep.DA_CAN_VAO, 
                                     OrderStep.DANG_LAY_HANG, 
                                     OrderStep.DA_LAY_HANG
                                   };
@@ -239,6 +239,27 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 var sqlCount = $"SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN ({validStepSql}) AND IsVoiced = 0 AND TypeProduct = @TypeProduct";
                 var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct)).Single();
+                return count;
+            }
+        }
+
+        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int sourceDocumentId)
+        {
+            var validStep = new[] {
+                                    OrderStep.CHO_GOI_XE,
+                                    OrderStep.DANG_GOI_XE,
+                                    OrderStep.DA_VAO_CONG,
+                                    OrderStep.DA_CAN_VAO,
+                                    OrderStep.DANG_LAY_HANG,
+                                    OrderStep.DA_LAY_HANG
+                                  };
+
+            var validStepSql = string.Join(",", validStep.Select(s => (int)s));
+
+            using (var db = new XHTD_Entities())
+            {
+                var sqlCount = $"SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN ({validStepSql}) AND IsVoiced = 0 AND TypeProduct = @TypeProduct AND SourceDocumentId = @SourceDocumentId";
+                var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct), new SqlParameter("@SourceDocumentId", sourceDocumentId)).Single();
                 return count;
             }
         }
