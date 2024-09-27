@@ -20,7 +20,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
     [DisallowConcurrentExecution]
     public class MachineJob12 : IJob, IDisposable
     {
-        ILog _logger = LogManager.GetLogger("Machine12FileAppender");
+        ILog _logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly MachineRepository _machineRepository;
         protected readonly Notification _notification;
