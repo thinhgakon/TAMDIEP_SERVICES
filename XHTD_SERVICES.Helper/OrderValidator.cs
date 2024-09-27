@@ -61,6 +61,24 @@ namespace XHTD_SERVICES.Helper
             return isValid;
         }
 
+        public static List<tblStoreOrderOperating> ValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => ((x.Step == (int)OrderStep.DA_XAC_THUC
+                                            || x.Step == (int)OrderStep.DANG_GOI_XE
+                                            || x.Step == (int)OrderStep.CHO_GOI_XE
+                                            )
+                                            && (x.DriverUserName ?? "") != "")
+                                    )
+                                    .ToList();
+
+            return validOrders;
+        }
+
         public static bool IsValidOrderEntraceGatewayInCaseRequireCallVoice(tblStoreOrderOperating order)
         {
             if (order == null)
@@ -100,6 +118,21 @@ namespace XHTD_SERVICES.Helper
                                     );
 
             return isValid;
+        }
+
+        public static List<tblStoreOrderOperating> ValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => x.Step == (int)OrderStep.DANG_GOI_XE
+                                        && (x.DriverUserName ?? "") != ""
+                                    )
+                                    .ToList();
+
+            return validOrders;
         }
 
         public static bool IsValidOrderExitGateway(tblStoreOrderOperating order)
@@ -142,6 +175,21 @@ namespace XHTD_SERVICES.Helper
                                     );
 
             return isValid;
+        }
+
+        public static List<tblStoreOrderOperating> ValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => (x.Step == (int)OrderStep.DA_CAN_RA
+                                       && (x.DriverUserName ?? "") != "")
+                                    )
+                                    .ToList();
+
+            return validOrders;
         }
 
         public static bool IsValidOrderScaleStation(tblStoreOrderOperating order)
