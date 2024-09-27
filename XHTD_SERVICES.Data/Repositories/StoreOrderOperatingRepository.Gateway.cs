@@ -244,7 +244,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int sourceDocumentId)
+        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int? sourceDocumentId)
         {
             var validStep = new[] {
                                     OrderStep.CHO_GOI_XE,
@@ -257,11 +257,24 @@ namespace XHTD_SERVICES.Data.Repositories
 
             using (var db = new XHTD_Entities())
             {
-                var orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
+                List<tblStoreOrderOperating> orders = null;
+
+                if (sourceDocumentId == 0 || sourceDocumentId == null)
+                {
+                    orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                                                   x.IsVoiced == false &&
+                                                                   x.TypeProduct.ToUpper() == typeProduct.ToUpper())
+                                                       .ToList();
+                }
+
+                else
+                {
+                    orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
                                                                    x.IsVoiced == false &&
                                                                    x.TypeProduct.ToUpper() == typeProduct.ToUpper() &&
                                                                    x.SourceDocumentId == sourceDocumentId)
                                                        .ToList();
+                }
 
                 return orders.Count;
             }
