@@ -637,6 +637,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="LotNumber" Type="varchar" MaxLength="50" />
           <Property Name="SealNumber" Type="nvarchar(max)" />
           <Property Name="IsScaleInAuto" Type="bit" />
+          <Property Name="SourceDocumentId" Type="int" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1497,6 +1498,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="LocationCodeTgc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="SealNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsScaleInAuto" Type="Boolean" />
+          <Property Name="SourceDocumentId" Type="Int32" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2382,6 +2384,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="SourceDocumentId" ColumnName="SourceDocumentId" />
                 <ScalarProperty Name="IsScaleInAuto" ColumnName="IsScaleInAuto" />
                 <ScalarProperty Name="SealNumber" ColumnName="SealNumber" />
                 <ScalarProperty Name="LocationCodeTgc" ColumnName="LocationCodeTgc" />
