@@ -51,6 +51,10 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportHistory" Width="1.5" PointX="11" PointY="24.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" Width="1.5" PointX="13.375" PointY="17.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" Width="1.5" PointX="19.375" PointY="6" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Width="1.5" PointX="21.625" PointY="6" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
