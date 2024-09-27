@@ -478,32 +478,32 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
 
             // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
-            tblStoreOrderOperating currentOrder = null;
+            List<tblStoreOrderOperating> currentOrders = null;
             var isValidCardNo = false;
 
             if (isLuongVao)
             {
-                currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderEntraceGateway(vehicleCodeCurrent);
+                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGateway(vehicleCodeCurrent);
 
                 if (Program.IsRequireCallVoiceActive)
                 {
                     _gatewayLogger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: BẬT");
-                    isValidCardNo = OrderValidator.IsValidOrderEntraceGatewayInCaseRequireCallVoice(currentOrder);
+                    isValidCardNo = OrderValidator.IsValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
                 }
                 else
                 {
                     _gatewayLogger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: TẮT");
-                    isValidCardNo = OrderValidator.IsValidOrderEntraceGateway(currentOrder);
+                    isValidCardNo = OrderValidator.IsValidOrdersEntraceGateway(currentOrders);
                 }
             }
             else if (isLuongRa)
             {
-                currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderExitGateway(vehicleCodeCurrent);
+                currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGateway(vehicleCodeCurrent);
 
-                isValidCardNo = OrderValidator.IsValidOrderExitGateway(currentOrder);
+                isValidCardNo = OrderValidator.IsValidOrdersExitGateway(currentOrders);
             }
 
-            if (currentOrder == null)
+            if (currentOrders == null || currentOrders.Count == 0)
             {
                 _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
@@ -548,7 +548,27 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
             }
 
-            var currentDeliveryCode = currentOrder.DeliveryCode;
+            List<tblStoreOrderOperating> validOrders = null;
+            if (isLuongVao)
+            {
+                if (Program.IsRequireCallVoiceActive)
+                {
+                    validOrders = OrderValidator.ValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
+                }
+                else
+                {
+                    validOrders = OrderValidator.ValidOrdersEntraceGateway(currentOrders);
+                }
+            }
+            else if (isLuongRa)
+            {
+                validOrders = OrderValidator.ValidOrdersExitGateway(currentOrders);
+            }
+
+            tblStoreOrderOperating firstValidOrder = null;
+            firstValidOrder = validOrders.FirstOrDefault();
+
+            var currentDeliveryCode = firstValidOrder.DeliveryCode;
             _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
             var isUpdatedOrder = false;
@@ -568,7 +588,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực vào cổng tự động thành công, lái xe vui lòng di chuyển đến bàn cân, trân trọng!";
                     SendPushNotification("adminNPP", pushMessage);
 
-                    var driverUserName = currentOrder.DriverUserName;
+                    var driverUserName = firstValidOrder.DriverUserName;
                     if (driverUserName != null)
                     {
                         SendPushNotification(driverUserName, pushMessage);
@@ -637,7 +657,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         Code = deviceCode,
                         ActionType = 1,
-                        ActionInfo = $"Mở barrier cho xe {currentOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
+                        ActionInfo = $"Mở barrier cho xe {firstValidOrder.Vehicle} {luongText}, theo đơn hàng {currentDeliveryCode}",
                         ActionDate = DateTime.Now,
                     };
 
