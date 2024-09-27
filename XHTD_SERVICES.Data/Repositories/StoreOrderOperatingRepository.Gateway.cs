@@ -233,13 +233,14 @@ namespace XHTD_SERVICES.Data.Repositories
                                     OrderStep.DA_LAY_HANG
                                   };
 
-            var validStepSql = string.Join(",", validStep.Select(s => (int)s));
-
             using (var db = new XHTD_Entities())
             {
-                var sqlCount = $"SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN ({validStepSql}) AND IsVoiced = 0 AND TypeProduct = @TypeProduct";
-                var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct)).Single();
-                return count;
+                var orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                                                   x.IsVoiced == false &&
+                                                                   x.TypeProduct.ToUpper() == typeProduct.ToUpper())
+                                                       .ToList();
+
+                return orders.Count;
             }
         }
 
@@ -254,13 +255,15 @@ namespace XHTD_SERVICES.Data.Repositories
                                     OrderStep.DA_LAY_HANG
                                   };
 
-            var validStepSql = string.Join(",", validStep.Select(s => (int)s));
-
             using (var db = new XHTD_Entities())
             {
-                var sqlCount = $"SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN ({validStepSql}) AND IsVoiced = 0 AND TypeProduct = @TypeProduct AND SourceDocumentId = @SourceDocumentId";
-                var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct), new SqlParameter("@SourceDocumentId", sourceDocumentId)).Single();
-                return count;
+                var orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                                                   x.IsVoiced == false &&
+                                                                   x.TypeProduct.ToUpper() == typeProduct.ToUpper() &&
+                                                                   x.SourceDocumentId == sourceDocumentId)
+                                                       .ToList();
+
+                return orders.Count;
             }
         }
     }
