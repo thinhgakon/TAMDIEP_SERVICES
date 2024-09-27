@@ -86,6 +86,12 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (!CheckExist(websaleOrder.id))
                 {
+                    int? sourceDocumentId = null;
+                    if (!string.IsNullOrEmpty(websaleOrder.sourceDocumentId))
+                    {
+                        sourceDocumentId = int.Parse(websaleOrder.sourceDocumentId);
+                    }
+
                     var newOrderOperating = new tblStoreOrderOperating
                     {
                         Vehicle = vehicleCode,
@@ -124,7 +130,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         UpdateDay = lastUpdatedDate > DateTime.MinValue ? lastUpdatedDate : DateTime.Now,
                         LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
                         LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
-                        IsSyncedByNewWS = true
+                        IsSyncedByNewWS = true,
+                        SourceDocumentId = sourceDocumentId
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
