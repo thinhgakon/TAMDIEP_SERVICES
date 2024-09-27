@@ -593,6 +593,17 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     _gatewayLogger.LogInfo($"5. Đã xác thực trạng thái vào cổng");
 
+                    if (Program.IsBarrierActive)
+                    {
+                        // 6. Mở barrier
+                        _gatewayLogger.LogInfo($"6. Mở barrier");
+                        isSuccessOpenBarrier = OpenS7Barrier("IN");
+                    }
+                    else
+                    {
+                        _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
+                    }
+
                     SendNotificationHub(3, inout, null, $"Xác thực vào cổng thành công", null);
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
@@ -603,17 +614,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     if (driverUserName != null)
                     {
                         SendPushNotification(driverUserName, pushMessage);
-                    }
-
-                    if (Program.IsBarrierActive)
-                    {
-                        // 6. Mở barrier
-                        _gatewayLogger.LogInfo($"6. Mở barrier");
-                        isSuccessOpenBarrier = OpenS7Barrier("IN");
-                    }
-                    else
-                    {
-                        _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
                     }
                 }
                 else
@@ -633,9 +633,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     _gatewayLogger.LogInfo($"5.Đã xác thực trạng thái ra cổng");
 
-                    SendNotificationHub(3, inout, null, $"Xác thực ra cổng thành công", null);
-                    SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
-
                     if (Program.IsBarrierActive)
                     {
                         // 6. Mở barrier
@@ -646,6 +643,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         _gatewayLogger.LogInfo($"6. Cấu hình barrier đang TẮT");
                     }
+
+                    SendNotificationHub(3, inout, null, $"Xác thực ra cổng thành công", null);
+                    SendNotificationAPI(inout, 3, null, $"Xác thực ra cổng thành công", null);
                 }
                 else
                 {
