@@ -79,6 +79,9 @@
     <Compile Include="Entities\tblAttachment.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblCallToGatewayConfig.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblCallToTrough.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -119,6 +122,12 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblExportHistory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblExportPlan.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblExportPlanDetail.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblFunction.cs">

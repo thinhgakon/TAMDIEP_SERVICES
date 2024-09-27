@@ -68,6 +68,25 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="UpdateDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="tblCallToGatewayConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ExportPlanId" Type="int" />
+          <Property Name="ExportPlanName" Type="nvarchar(max)" />
+          <Property Name="MaxVehiclePcb30" Type="int" />
+          <Property Name="MaxVehiclePcb40" Type="int" />
+          <Property Name="MaxVehicleC91" Type="int" />
+          <Property Name="MaxVehicleJumbo" Type="int" />
+          <Property Name="MaxVehicleSling" Type="int" />
+          <Property Name="MaxVehicleRoi" Type="int" />
+          <Property Name="MaxVehicleClinker" Type="int" />
+          <Property Name="MaxVehicleOther" Type="int" />
+          <Property Name="Status" Type="int" />
+          <Property Name="SourceDocumentId" Type="int" />
+          <Property Name="SourceDocumentName" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="tblCallToTrough">
           <Key>
             <PropertyRef Name="Id" />
@@ -302,6 +321,36 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="LastTimeChangeTrough" Type="datetime2" Precision="7" />
           <Property Name="TimeGetInTrough" Type="datetime2" Precision="7" />
           <Property Name="TimeGetOutTrough" Type="datetime2" Precision="7" />
+        </EntityType>
+        <EntityType Name="tblExportPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="ShipName" Type="nvarchar(max)" />
+          <Property Name="StartDate" Type="datetime2" Precision="7" />
+          <Property Name="EndDate" Type="datetime2" Precision="7" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="SourceDocumentId" Type="int" Nullable="false" />
+          <Property Name="OrderType" Type="varchar" MaxLength="50" />
+          <Property Name="SourceDocumentName" Type="nvarchar(max)" />
+          <Property Name="PlanType" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tblExportPlanDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PlanId" Type="int" Nullable="false" />
+          <Property Name="ProductIdSyn" Type="int" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar(max)" />
+          <Property Name="DistributorIdSyn" Type="int" Nullable="false" />
+          <Property Name="DistributorName" Type="nvarchar(max)" />
+          <Property Name="AreaId" Type="int" Nullable="false" />
+          <Property Name="AreaName" Type="nvarchar(max)" />
+          <Property Name="OrderNumber" Type="float" />
+          <Property Name="ReleaseNumber" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="tblFunction">
           <Key>
@@ -740,6 +789,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblExportPlanDetail_tblExportPlan_PlanId">
+          <End Role="tblExportPlan" Type="Self.tblExportPlan" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="tblExportPlanDetail" Type="Self.tblExportPlanDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblExportPlan">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tblExportPlanDetail">
+              <PropertyRef Name="PlanId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TblMachineTrough_tblMachine_MachineCode">
           <End Role="tblMachine" Type="Self.tblMachine" Multiplicity="0..1" />
           <End Role="TblMachineTrough" Type="Self.TblMachineTrough" Multiplicity="*" />
@@ -825,6 +888,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblAccountGroup" EntityType="Self.tblAccountGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAccountGroupFunction" EntityType="Self.tblAccountGroupFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblAttachment" EntityType="Self.tblAttachment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblCallToGatewayConfig" EntityType="Self.tblCallToGatewayConfig" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCallToTrough" EntityType="Self.tblCallToTrough" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCallVehicleStatus" EntityType="Self.tblCallVehicleStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCategories" EntityType="Self.tblCategories" Schema="dbo" store:Type="Tables" />
@@ -838,6 +902,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySet Name="tblDriver" EntityType="Self.tblDriver" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblDriverVehicle" EntityType="Self.tblDriverVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblExportHistory" EntityType="Self.tblExportHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblExportPlan" EntityType="Self.tblExportPlan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblExportPlanDetail" EntityType="Self.tblExportPlanDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblFunction" EntityType="Self.tblFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblLongVehicle" EntityType="Self.tblLongVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblMachine" EntityType="Self.tblMachine" Schema="dbo" store:Type="Tables" />
@@ -895,6 +961,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <AssociationSet Name="FK_tblExportHistory_tblStoreOrderOperating_OrderId" Association="Self.FK_tblExportHistory_tblStoreOrderOperating_OrderId">
             <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperating" />
             <End Role="tblExportHistory" EntitySet="tblExportHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblExportPlanDetail_tblExportPlan_PlanId" Association="Self.FK_tblExportPlanDetail_tblExportPlan_PlanId">
+            <End Role="tblExportPlan" EntitySet="tblExportPlan" />
+            <End Role="tblExportPlanDetail" EntitySet="tblExportPlanDetail" />
           </AssociationSet>
           <AssociationSet Name="FK_TblMachineTrough_tblMachine_MachineCode" Association="Self.FK_TblMachineTrough_tblMachine_MachineCode">
             <End Role="tblMachine" EntitySet="tblMachine" />
@@ -1674,6 +1744,13 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
             <End Role="tblExportHistory" EntitySet="tblExportHistories" />
           </AssociationSet>
+          <EntitySet Name="tblCallToGatewayConfigs" EntityType="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" />
+          <EntitySet Name="tblExportPlans" EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" />
+          <EntitySet Name="tblExportPlanDetails" EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" />
+          <AssociationSet Name="FK_tblExportPlanDetail_tblExportPlan_PlanId" Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId">
+            <End Role="tblExportPlan" EntitySet="tblExportPlans" />
+            <End Role="tblExportPlanDetail" EntitySet="tblExportPlanDetails" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -1821,6 +1898,71 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Principal>
             <Dependent Role="tblExportHistory">
               <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="tblCallToGatewayConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ExportPlanId" Type="Int32" />
+          <Property Name="ExportPlanName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MaxVehiclePcb30" Type="Int32" />
+          <Property Name="MaxVehiclePcb40" Type="Int32" />
+          <Property Name="MaxVehicleC91" Type="Int32" />
+          <Property Name="MaxVehicleJumbo" Type="Int32" />
+          <Property Name="MaxVehicleSling" Type="Int32" />
+          <Property Name="MaxVehicleRoi" Type="Int32" />
+          <Property Name="MaxVehicleClinker" Type="Int32" />
+          <Property Name="MaxVehicleOther" Type="Int32" />
+          <Property Name="Status" Type="Int32" />
+          <Property Name="SourceDocumentId" Type="Int32" />
+          <Property Name="SourceDocumentName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="tblExportPlan">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShipName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Precision="7" />
+          <Property Name="EndDate" Type="DateTime" Precision="7" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="SourceDocumentId" Type="Int32" Nullable="false" />
+          <Property Name="OrderType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SourceDocumentName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PlanType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tblExportPlanDetails" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" FromRole="tblExportPlan" ToRole="tblExportPlanDetail" />
+        </EntityType>
+        <EntityType Name="tblExportPlanDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PlanId" Type="Int32" Nullable="false" />
+          <Property Name="ProductIdSyn" Type="Int32" Nullable="false" />
+          <Property Name="ProductName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DistributorIdSyn" Type="Int32" Nullable="false" />
+          <Property Name="DistributorName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AreaId" Type="Int32" Nullable="false" />
+          <Property Name="AreaName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OrderNumber" Type="Double" />
+          <Property Name="ReleaseNumber" Type="Double" Nullable="false" />
+          <NavigationProperty Name="tblExportPlan" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" FromRole="tblExportPlanDetail" ToRole="tblExportPlan" />
+        </EntityType>
+        <Association Name="FK_tblExportPlanDetail_tblExportPlan_PlanId">
+          <End Type="XHTD_SERVICES.Data.Entities.tblExportPlan" Role="tblExportPlan" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Role="tblExportPlanDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblExportPlan">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tblExportPlanDetail">
+              <PropertyRef Name="PlanId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2569,6 +2711,58 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
                 <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblCallToGatewayConfigs">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig">
+              <MappingFragment StoreEntitySet="tblCallToGatewayConfig">
+                <ScalarProperty Name="SourceDocumentName" ColumnName="SourceDocumentName" />
+                <ScalarProperty Name="SourceDocumentId" ColumnName="SourceDocumentId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="MaxVehicleOther" ColumnName="MaxVehicleOther" />
+                <ScalarProperty Name="MaxVehicleClinker" ColumnName="MaxVehicleClinker" />
+                <ScalarProperty Name="MaxVehicleRoi" ColumnName="MaxVehicleRoi" />
+                <ScalarProperty Name="MaxVehicleSling" ColumnName="MaxVehicleSling" />
+                <ScalarProperty Name="MaxVehicleJumbo" ColumnName="MaxVehicleJumbo" />
+                <ScalarProperty Name="MaxVehicleC91" ColumnName="MaxVehicleC91" />
+                <ScalarProperty Name="MaxVehiclePcb40" ColumnName="MaxVehiclePcb40" />
+                <ScalarProperty Name="MaxVehiclePcb30" ColumnName="MaxVehiclePcb30" />
+                <ScalarProperty Name="ExportPlanName" ColumnName="ExportPlanName" />
+                <ScalarProperty Name="ExportPlanId" ColumnName="ExportPlanId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblExportPlans">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblExportPlan">
+              <MappingFragment StoreEntitySet="tblExportPlan">
+                <ScalarProperty Name="PlanType" ColumnName="PlanType" />
+                <ScalarProperty Name="SourceDocumentName" ColumnName="SourceDocumentName" />
+                <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+                <ScalarProperty Name="SourceDocumentId" ColumnName="SourceDocumentId" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="ShipName" ColumnName="ShipName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblExportPlanDetails">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblExportPlanDetail">
+              <MappingFragment StoreEntitySet="tblExportPlanDetail">
+                <ScalarProperty Name="ReleaseNumber" ColumnName="ReleaseNumber" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="AreaName" ColumnName="AreaName" />
+                <ScalarProperty Name="AreaId" ColumnName="AreaId" />
+                <ScalarProperty Name="DistributorName" ColumnName="DistributorName" />
+                <ScalarProperty Name="DistributorIdSyn" ColumnName="DistributorIdSyn" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="ProductIdSyn" ColumnName="ProductIdSyn" />
+                <ScalarProperty Name="PlanId" ColumnName="PlanId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
