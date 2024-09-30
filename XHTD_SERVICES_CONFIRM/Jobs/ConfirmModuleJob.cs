@@ -378,31 +378,46 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
                 #region Điều hướng gọi loa
+                _confirmLogger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
+
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
+
+                _confirmLogger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
 
                 var parameters = await _systemParameterRepository.GetSystemParameters();
                 var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
                 var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
 
+                _confirmLogger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
+
                 if (currentNumberWaitingVehicleInFactory >= maxVehicle)
                 {
+                    _confirmLogger.LogInfo($"Them vao hang doi goi vao BAI CHO");
                     using (var db = new XHTD_Entities())
                     {
-                        var newTblVehicleStatus = new tblCallVehicleStatu
-                        {
-                            StoreOrderOperatingId = currentOrder.Id,
-                            CountTry = 0,
-                            TypeProduct = currentOrder.TypeProduct,
-                            CreatedOn = DateTime.Now,
-                            ModifiledOn = DateTime.Now,
-                            LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
-                            IsDone = false,
-                            CallType = CallType.BAI_CHO
-                        };
+                        try { 
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                StoreOrderOperatingId = currentOrder.Id,
+                                CountTry = 0,
+                                TypeProduct = currentOrder.TypeProduct,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.BAI_CHO
+                            };
 
-                        db.tblCallVehicleStatus.Add(newTblVehicleStatus);
-                        db.SaveChanges();
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+
+                            _confirmLogger.LogInfo($"Them vao hang doi goi vao BAI CHO thanh cong");
+                        }
+                        catch (Exception ex)
+                        {
+                            _confirmLogger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                        }
                     }
                 }
                 #endregion
