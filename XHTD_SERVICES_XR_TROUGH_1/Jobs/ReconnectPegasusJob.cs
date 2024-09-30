@@ -35,7 +35,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo("--------------- START JOB ---------------");
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     CheckConnection();
                 });
@@ -71,6 +71,10 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                     {
                         WriteLogInfo($"2. Chưa vượt quá {TIME_TO_RESET}s");
                     }
+                }
+                else
+                {
+                    WriteLogInfo($"Chua dat gia tri cho LastTimeReceivedUHF: null");
                 }
             }
             catch (Exception ex)
