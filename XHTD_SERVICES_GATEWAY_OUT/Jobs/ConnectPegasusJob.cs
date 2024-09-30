@@ -55,18 +55,31 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    Console.WriteLine("Connection ok");
+                    WriteLogInfo("Ping ok");
                     return;
                 }
                 else
                 {
+                    WriteLogInfo("Ping fail");
+
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                        if (openresult != 0)
+                        {
+                            WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                        }
+                        else
+                        {
+                            WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                        }
+
                         Thread.Sleep(1000);
                     }
+
                     WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
