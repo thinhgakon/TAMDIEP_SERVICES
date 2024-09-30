@@ -122,7 +122,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     // Get devices info
                     await LoadDevicesInfo();
 
-                    AuthenticateConfirmModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
@@ -159,7 +159,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             trafficLight = devices.FirstOrDefault(x => x.Code == "CONFIRM.DGT");
         }
 
-        public void AuthenticateConfirmModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -222,7 +222,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 }
             }
 
-            AuthenticateConfirmModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)

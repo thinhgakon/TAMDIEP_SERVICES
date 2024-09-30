@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     // Get devices info
                     await LoadDevicesInfo();
 
-                    AuthenticateGatewayModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
@@ -210,7 +210,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
         }
 
-        public void AuthenticateGatewayModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -288,7 +288,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 }
             }
 
-            AuthenticateGatewayModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)

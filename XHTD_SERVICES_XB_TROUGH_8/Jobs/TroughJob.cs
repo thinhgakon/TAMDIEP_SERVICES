@@ -128,7 +128,7 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
 
                     _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                    AuthenticateConfirmModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
@@ -156,7 +156,7 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
             }
         }
 
-        public void AuthenticateConfirmModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -230,7 +230,7 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
                 }
             }
 
-            AuthenticateConfirmModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)

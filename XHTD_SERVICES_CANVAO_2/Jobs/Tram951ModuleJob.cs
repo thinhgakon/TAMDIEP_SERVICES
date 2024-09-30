@@ -148,7 +148,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     // Get devices info
                     await LoadDevicesInfo();
 
-                    AuthenticateGatewayModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
         }
 
-        public void AuthenticateGatewayModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -266,7 +266,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 }
             }
 
-            AuthenticateGatewayModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         public async void ReadDataProcess(string cardNoCurrent)
