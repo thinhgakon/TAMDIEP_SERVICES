@@ -63,20 +63,14 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
 
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
+
+                    if (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-
-                        if (openresult != 0)
-                        {
-                            WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                        }
-                        else
-                        {
-                            WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                        }
-
-                        Thread.Sleep(1000);
+                        WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                    }
+                    else
+                    {
+                        WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
                     }
 
                     WriteLogInfo("Connect fail. Start reconnect");
