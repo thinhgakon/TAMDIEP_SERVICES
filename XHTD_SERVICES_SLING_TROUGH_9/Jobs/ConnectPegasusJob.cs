@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo("--------------- START JOB ---------------");
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     CheckConnection();
                 });
@@ -54,27 +54,37 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    //Console.WriteLine("Connection ok");
+                    WriteLogInfo("Ping ok");
                     return;
                 }
                 else
                 {
-                    WriteLogInfo("Start reconnect...");
+                    WriteLogInfo("Ping fail");
 
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
                     while (openresult != 0)
                     {
                         openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                        if (openresult != 0)
+                        {
+                            WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                        }
+                        else
+                        {
+                            WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                        }
+
                         Thread.Sleep(1000);
                     }
 
-                    WriteLogInfo("Reconnect success");
+                    WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                WriteLogInfo($"PING ERROR: {ex.Message}");
+                WriteLogInfo($"Ping ERROR: {ex.Message}");
             }
         }
 
