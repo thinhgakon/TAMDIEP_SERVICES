@@ -65,10 +65,6 @@ namespace XHTD_SERVICES_LED.Devices
 
                     stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
 
-                    // 3. receive 1
-                    //data1 = new byte[BUFFER_SIZE];
-                    //stream.Read(data1, 0, BUFFER_SIZE);
-
                     // 5. Close
                     stream.Close();
                     client.Close();
