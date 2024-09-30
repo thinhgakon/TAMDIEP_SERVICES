@@ -63,11 +63,7 @@ namespace XHTD_SERVICES_CANVAO_1.Devices
                     // 2. send 1
                     byte[] data1 = encoding.GetBytes($"{DATA_CODE}");
 
-                    stream.Write(data1, 0, data1.Length);
-
-                    // 3. receive 1
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
+                    stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
 
                     // 5. Close
                     stream.Close();
