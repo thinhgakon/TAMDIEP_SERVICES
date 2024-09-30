@@ -36,7 +36,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     CheckConnection();
                 });
@@ -72,6 +72,10 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     {
                         WriteLogInfo($"2. Chưa vượt quá {TIME_TO_RESET}s");
                     }
+                }
+                else
+                {
+                    WriteLogInfo($"Chua dat gia tri cho LastTimeReceivedUHF: null");
                 }
             }
             catch (Exception ex)
