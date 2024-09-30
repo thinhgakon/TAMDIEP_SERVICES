@@ -77,10 +77,22 @@ namespace XHTD_SERVICES_LED.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                await ProcessLedRealtime();
-            });
+                await Task.Run(async () =>
+                {
+                    WriteLogInfo($"--------------- START JOB - IP: {IP_ADDRESS} ---------------");
+
+                    await ProcessLedRealtime();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task ProcessLedRealtime()
