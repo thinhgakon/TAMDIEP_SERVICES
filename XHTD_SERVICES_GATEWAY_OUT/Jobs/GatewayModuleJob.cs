@@ -201,7 +201,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     {
                         _gatewayLogger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
 
-                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+                        Thread.Sleep(3000);
                     }
                     else
                     {
