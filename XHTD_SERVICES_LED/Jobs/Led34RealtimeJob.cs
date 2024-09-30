@@ -224,12 +224,23 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
 
+                if (machine == null)
+                {
+                    WriteLogInfo($"Chua cau hinh active machine (TblMachineTrough co status = true) cho mang xuat troughCode={troughCode}");
+                    return;
+                }
+
                 var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
                 if (order != null)
                 {
                     vehicleCode = order.Vehicle;
                     planQuantity = (int)(order.SumNumber * 20);
                     typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                }
+                else
+                {
+                    WriteLogInfo($"Khong tim thay don hang {deliveryCode}");
+                    return;
                 }
 
                 var sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
