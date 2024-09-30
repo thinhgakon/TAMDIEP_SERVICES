@@ -200,6 +200,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     if (openResult != 0)
                     {
                         _gatewayLogger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        PegasusStaticClassReader.CloseNetPort(PortHandle);
                     }
                     else
                     {
