@@ -52,11 +52,23 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            await Task.Run(async () =>
+
+            try
             {
-                //WriteLogInfo("Thuc hien ket noi machine.");
-                await ConnectPLC();
-            });
+                await Task.Run(async () =>
+                {
+                    WriteLogInfo($"--------------- START JOB REALTIME - IP: {PLC_IP_ADDRESS} ---------------");
+
+                    await ConnectPLC();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task ConnectPLC()

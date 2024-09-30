@@ -71,7 +71,7 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 await Task.Run(async () =>
                 {
-                    WriteLogInfo($"--------------- START JOB - IP: {IP_ADDRESS} ---------------");
+                    WriteLogInfo($"--------------- START JOB REALTIME - IP: {IP_ADDRESS} ---------------");
 
                     await ProcessLedRealtime();
                 });
