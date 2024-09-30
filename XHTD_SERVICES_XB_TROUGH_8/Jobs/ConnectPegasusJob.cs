@@ -31,7 +31,7 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo("--------------- START JOB ---------------");
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     CheckConnection();
                 });
