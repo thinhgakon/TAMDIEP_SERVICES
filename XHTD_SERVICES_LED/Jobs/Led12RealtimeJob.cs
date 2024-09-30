@@ -33,10 +33,6 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly TroughRepository _troughRepository;
 
-        //protected readonly CallToTroughRepository _callToTroughRepository;
-
-        //protected readonly SystemParameterRepository _systemParameterRepository;
-
         static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static string MachineResponse = string.Empty;
@@ -57,17 +53,11 @@ namespace XHTD_SERVICES_LED.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             MachineRepository machineRepository,
             TroughRepository troughRepository
-            //CallToTroughRepository callToTroughRepository
-            //SystemParameterRepository systemParameterRepository
-            //LedLogger syncTroughLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _machineRepository = machineRepository;
             _troughRepository = troughRepository;
-            //_callToTroughRepository = callToTroughRepository;
-            //_systemParameterRepository = systemParameterRepository;
-            //_logger = syncTroughLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
