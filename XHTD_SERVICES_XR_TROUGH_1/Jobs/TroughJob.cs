@@ -272,8 +272,6 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
             _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
-            var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
-
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
