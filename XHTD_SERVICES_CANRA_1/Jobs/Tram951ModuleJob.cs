@@ -77,6 +77,8 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpPendingCardNoLst = new List<CardNoLog>();
+
         private tblCategoriesDevice c3400;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
@@ -305,6 +307,17 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                 return;
             }
 
+            if (tmpPendingCardNoLst.Count > 5)
+            {
+                tmpPendingCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpPendingCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            {
+                _rfidlogger.Info($@"1. Tag PENDING khi có xe đang cân da duoc check truoc do => Ket thuc.");
+                return;
+            }
+
             if (tmpCardNoLst.Count > 5)
             {
                 tmpCardNoLst.RemoveRange(0, 3);
@@ -367,7 +380,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                 _logger.LogInfo($"=== Đang cân MSGH: {scaleInfo.DeliveryCode} --- TimeIn: {scaleInfo.TimeIn} == => Kết thúc");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
+                tmpPendingCardNoLst.Add(newCardNoLog);
 
                 return;
             }
