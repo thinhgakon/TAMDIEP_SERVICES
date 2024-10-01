@@ -283,6 +283,12 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
 
             var trough = await _troughRepository.GetTroughByTroughCode(TROUGH_CODE);
 
+            if (machine == null)
+            {
+                _logger.LogInfo($"2. Máy không tồn tại => Kết thúc");
+                return;
+            }
+
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -292,7 +298,7 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
                 SendNotificationHub("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
 
-                if (!string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
+                if (trough != null && !string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
                 {
                     var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
                     if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent.ToUpper())
