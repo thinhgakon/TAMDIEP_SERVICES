@@ -192,7 +192,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     break;
             }
 
-            if (stateId == (int)OrderState.DA_DAT_HANG)
+            if (stateId != (int)OrderState.DA_HUY_DON)
             {
                 isSynced = await _storeOrderOperatingRepository.ChangedAsync(websaleOrder);
             }
