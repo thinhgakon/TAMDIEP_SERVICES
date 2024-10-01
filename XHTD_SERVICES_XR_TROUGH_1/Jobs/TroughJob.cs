@@ -170,7 +170,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                     {
                         _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
 
-                        Thread.Sleep(3000);
+                        Thread.Sleep(5000);
                     }
                     else
                     {
