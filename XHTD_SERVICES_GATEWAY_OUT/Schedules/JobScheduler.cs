@@ -69,15 +69,15 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
                 .Build();
             await _scheduler.ScheduleJob(captureJob, captureTrigger);
 
-            //IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            //ITrigger reconnectTrigger = TriggerBuilder.Create()
-            //    .WithPriority(1)
-            //     .StartNow()
-            //     .WithSimpleSchedule(x => x
-            //         .WithIntervalInSeconds(5)
-            //        .RepeatForever())
-            //    .Build();
-            //await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
+            IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            ITrigger reconnectTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
         }
     }
 }
