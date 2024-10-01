@@ -283,7 +283,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int sourceDocumentId)
+        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int? sourceDocumentId)
         {
             var validStep = new[] {
                                     OrderStep.CHO_GOI_XE,
@@ -296,11 +296,34 @@ namespace XHTD_SERVICES.Data.Repositories
 
             using (var db = new XHTD_Entities())
             {
-                var orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
-                                                                   x.IsVoiced == false &&
-                                                                   x.TypeProduct.ToUpper() == typeProduct.ToUpper() &&
-                                                                   x.SourceDocumentId == sourceDocumentId)
-                                                       .ToList();
+                var orders = db.tblStoreOrderOperatings
+                               .Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                           x.IsVoiced == false &&
+                                           x.TypeProduct.ToUpper() == typeProduct.ToUpper())
+                               .ToList();
+
+                var callConfigs = db.tblCallToGatewayConfigs
+                                    .Where(x => x.Status == 1 && x.SourceDocumentId != 0)
+                                    .Select(x => x.SourceDocumentId)
+                                    .ToList();
+
+                if (sourceDocumentId != 0)
+                {
+                    orders = orders.Where(x => x.SourceDocumentId == sourceDocumentId).ToList();
+                }
+
+                else if (callConfigs.Any())
+                {
+                    orders = orders.Where(x => x.SourceDocumentId == null || x.SourceDocumentId == 0 ||
+                                              (x.SourceDocumentId != null && !callConfigs.Contains((int)x.SourceDocumentId)))
+                                   .ToList();
+                }
+
+                else
+                {
+                    orders = orders.Where(x => (x.SourceDocumentId == null || x.SourceDocumentId == 0) || x.SourceDocumentId != null)
+                                    .ToList();
+                }
 
                 return orders.Count;
             }
