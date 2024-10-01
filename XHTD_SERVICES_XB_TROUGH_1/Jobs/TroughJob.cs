@@ -272,83 +272,80 @@ namespace XHTD_SERVICES_XB_TROUGH_1.Jobs
 
             var trough = await _troughRepository.GetTroughByTroughCode(TROUGH_CODE);
 
-            if (machine != null)
+            if (machine == null)
             {
-                if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+                _logger.LogInfo($"2. Máy không tồn tại => Kết thúc");
+                return;
+            }
+
+            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            {
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpValidCardNoLst.Add(newCardNoLog);
+
+                _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
+                SendNotificationHub("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationAPI("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
+
+                if (trough != null && !string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
                 {
-                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                    tmpValidCardNoLst.Add(newCardNoLog);
-
-                    _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                    SendNotificationHub("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
-                    SendNotificationAPI("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
-
-                    if (trough != null && !string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
+                    var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
+                    if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent.ToUpper())
                     {
-                        var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
-                        if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent.ToUpper())
-                        {
-                            if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
-                            {
-                                var requestData = new MachineControlRequest
-                                {
-                                    MachineCode = machine.Code,
-                                    TroughCode = TROUGH_CODE,
-                                    CurrentDeliveryCode = oldOrder.DeliveryCode
-                                };
-
-                                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
-
-                                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                                {
-                                    _logger.LogInfo($"3. Stop Machine {machine.Code} thành công cho đơn hàng {oldOrder.DeliveryCode} đã cân ra!");
-                                }
-
-                                else _logger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {oldOrder.Vehicle} - DeliveryCode: {oldOrder.DeliveryCode}");
-                            }
-                        }
-                    }
-
-                    if (orderInTrough != null && vehicleCodeCurrent.ToUpper() == orderInTrough.Vehicle.ToUpper())
-                    {
-                        if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
+                        if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
                             var requestData = new MachineControlRequest
                             {
                                 MachineCode = machine.Code,
                                 TroughCode = TROUGH_CODE,
-                                CurrentDeliveryCode = orderInTrough.DeliveryCode
+                                CurrentDeliveryCode = oldOrder.DeliveryCode
                             };
 
-                            var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
+                            var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
 
                             if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
                             {
-                                _logger.LogInfo($"3. Start Machine {machine.Code} thành công!");
+                                _logger.LogInfo($"3. Stop Machine {machine.Code} thành công cho đơn hàng {oldOrder.DeliveryCode} đã cân ra!");
                             }
 
-                            else _logger.LogInfo($"3. Start Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {orderInTrough.DeliveryCode}");
+                            else _logger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {oldOrder.Vehicle} - DeliveryCode: {oldOrder.DeliveryCode}");
+                        }
+                    }
+                }
+
+                if (orderInTrough != null && vehicleCodeCurrent.ToUpper() == orderInTrough.Vehicle.ToUpper())
+                {
+                    if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
+                    {
+                        var requestData = new MachineControlRequest
+                        {
+                            MachineCode = machine.Code,
+                            TroughCode = TROUGH_CODE,
+                            CurrentDeliveryCode = orderInTrough.DeliveryCode
+                        };
+
+                        var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
+
+                        if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
+                        {
+                            _logger.LogInfo($"3. Start Machine {machine.Code} thành công!");
                         }
 
-                        else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
+                        else _logger.LogInfo($"3. Start Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {orderInTrough.DeliveryCode}");
                     }
 
-                    else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
+                    else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
                 }
-                else
-                {
-                    _logger.LogInfo($"3. Tag KHÔNG hợp lệ! => Kết thúc");
 
-                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                    tmpInvalidCardNoLst.Add(newCardNoLog);
-
-                    return;
-                }
+                else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
             }
-
             else
             {
-                _logger.LogInfo($"2. Máy không tồn tại => Kết thúc");
+                _logger.LogInfo($"3. Tag KHÔNG hợp lệ! => Kết thúc");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
                 return;
             }
 
