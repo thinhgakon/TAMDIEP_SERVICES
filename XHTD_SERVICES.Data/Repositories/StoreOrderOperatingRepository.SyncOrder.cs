@@ -142,39 +142,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     isSynced = true;
                 }
-                //else
-                //{
-                //    var order = _appDbContext.tblStoreOrderOperatings
-                //            .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                //                                && x.IsVoiced == false
-                //                                && x.Step < (int)OrderStep.DA_CAN_VAO
-                //                                );
-                //    if (order != null)
-                //    {
-                //        if (lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
-                //        {
-                //            return false;
-                //        }
-
-                //        if (order.UpdateDay == null || order.UpdateDay < lastUpdatedDate)
-                //        {
-                //            log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
-
-                //            order.Vehicle = vehicleCode;
-                //            order.DriverName = websaleOrder.driverName;
-                //            order.CardNo = cardNo;
-                //            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
-                //            order.UpdateDay = lastUpdatedDate;
-
-                //            order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
-                //            order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
-
-                //            await _appDbContext.SaveChangesAsync();
-
-                //            log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
-                //        }
-                //    }
-                //}
 
                 return isSynced;
             }
