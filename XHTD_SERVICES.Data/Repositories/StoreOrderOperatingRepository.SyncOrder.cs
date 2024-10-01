@@ -97,7 +97,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         Vehicle = vehicleCode,
                         DriverName = websaleOrder.driverName,
                         NameDistributor = websaleOrder.customerName,
-                        //ItemId = websaleOrder.INVENTORY_ITEM_ID,
+                        ItemId = !string.IsNullOrEmpty(websaleOrder.productId) ? Double.Parse(websaleOrder.productId) : 0,
+                        IDDistributorSyn = !string.IsNullOrEmpty(websaleOrder.customerId) ? int.Parse(websaleOrder.customerId) : 0,
                         NameProduct = websaleOrder.productName,
                         CatId = websaleOrder.itemCategory,
                         SumNumber = (decimal?)websaleOrder.bookQuantity,
@@ -251,6 +252,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                                 order.CatId = websaleOrder.itemCategory;
                                 order.NameProduct = websaleOrder.productName;
+                                order.ItemId = !string.IsNullOrEmpty(websaleOrder.productId) ? Double.Parse(websaleOrder.productId) : 0;
                                 order.TypeProduct = typeProduct;
                                 order.TypeXK = typeXK;
                                 order.LocationCode = websaleOrder.locationCode;
