@@ -269,8 +269,6 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                 machineCode = machineTrough.MachineCode;
             }
 
-            var machine = await _machineRepository.GetMachineByMachineCode(machineCode);
-
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
