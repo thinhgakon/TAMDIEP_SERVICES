@@ -10,7 +10,7 @@ namespace XHTD_SERVICES_XB_TROUGH_3.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
-        ILog _logger = LogManager.GetLogger("ReconnectFileAppender");
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
