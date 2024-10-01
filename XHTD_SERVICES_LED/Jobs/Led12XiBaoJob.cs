@@ -21,7 +21,7 @@ namespace XHTD_SERVICES_LED.Jobs
     [DisallowConcurrentExecution]
     public class Led12XiBaoJob : IJob, IDisposable
     {
-        ILog _logger = LogManager.GetLogger("Led34XiBaoFileAppender");
+        ILog _logger = LogManager.GetLogger("Led12XiBaoFileAppender");
 
         protected readonly MachineRepository _machineRepository;
         protected readonly TroughRepository _troughRepository;
