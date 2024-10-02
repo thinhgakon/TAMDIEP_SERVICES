@@ -120,10 +120,12 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
             using (var db = new XHTD_Entities())
             {
                 // Xếp lại số
-                var callVehicleStatusReindex = await db.tblCallVehicleStatus.Where(x => x.CountTry == 3 &&
-                                                                                        x.CountReindex < 3 &&
-                                                                                        x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
-                                                                            .ToListAsync();
+                var callVehicleStatusReindex = await db.tblCallVehicleStatus
+                                                        .Where(x => x.CountTry == 3 &&
+                                                                    x.CountReindex < 3 &&
+                                                                    x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                        .ToListAsync();
+
                 foreach (var callVehicleStatus in callVehicleStatusReindex)
                 {
                     callVehicleStatus.CountReindex++;
@@ -132,10 +134,12 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 await db.SaveChangesAsync();
 
                 // Tăng số lần CountToCancel
-                var callVehicleStatusRetry = await db.tblCallVehicleStatus.Where(x => x.CountTry == 3 &&
-                                                                                      x.CountToCancel < 3 &&
-                                                                                      x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
-                                                                           .ToListAsync();
+                var callVehicleStatusRetry = await db.tblCallVehicleStatus
+                                                        .Where(x => x.CountTry == 3 &&
+                                                                x.CountToCancel < 3 &&
+                                                                x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                    .ToListAsync();
+
                 foreach (var callVehicleStatus in callVehicleStatusRetry)
                 {
                     callVehicleStatus.CountToCancel++;
