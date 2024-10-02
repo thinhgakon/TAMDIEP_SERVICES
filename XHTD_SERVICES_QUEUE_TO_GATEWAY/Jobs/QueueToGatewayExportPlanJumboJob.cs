@@ -76,17 +76,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
         public void ProcessByExportPlan(int LimitVehicle, int sourceDocumentId)
         {
-            WriteLogInfo($@"Xử lý đơn hàng với số hiệu hợp đồng: {sourceDocumentId} với cấu hình xe tối đa {LimitVehicle}");
+            WriteLogInfo($@" ======= Xử lý kế hoạch: sourceDocumentId={sourceDocumentId}, cấu hình xe tối đa {LimitVehicle} =======");
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
 
-                WriteLogInfo($@"1. Số xe trong bãi chờ: {vehicleFrontYard}");
+                WriteLogInfo($@"1. Số xe chờ lấy hàng: {vehicleFrontYard}");
 
                 if (vehicleFrontYard >= LimitVehicle)
                 {
-                    WriteLogInfo($@"2. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
+                    WriteLogInfo($@"1.1. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
                     return;
                 }
 
@@ -102,6 +102,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
         {
             try
             {
+                WriteLogInfo($@"2. Tìm và thêm {topX} xe vào hàng đợi");
+
                 using (var db = new XHTD_Entities())
                 {
                     var callConfigs = db.tblCallToGatewayConfigs.Where(x => x.Status == 1 && x.SourceDocumentId != 0).ToList();
@@ -118,8 +120,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     }
                     else
                     {
-                        query = query.Where(x => x.SourceDocumentId == null || 
-                                                 x.SourceDocumentId == 0 || 
+                        query = query.Where(x => x.SourceDocumentId == null ||
+                                                 x.SourceDocumentId == 0 ||
                                                 (x.SourceDocumentId != null && !sourceDocumentIds.Contains(x.SourceDocumentId)));
                     }
 
@@ -129,17 +131,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                     if (orders == null || orders.Count == 0)
                     {
-                        WriteLogInfo($"4. Không tìm thấy xe {TYPE_PRODUCT} nào với số hiệu hợp đồng: {sourceDocumentId} => Kết thúc");
+                        WriteLogInfo($"3. Không tìm thấy xe {TYPE_PRODUCT} nào với số hiệu hợp đồng: {sourceDocumentId} => Kết thúc");
                         return;
                     }
                     else
                     {
-                        WriteLogInfo($"4. Các xe phù hợp: {string.Join(", ", orders.Select(order => order.Vehicle))}");
+                        WriteLogInfo($"3. Có {orders.Count} xe phù hợp: {string.Join(", ", orders.Select(order => order.Vehicle))}");
                     }
 
                     foreach (var order in orders)
                     {
-                        WriteLogInfo($"4.1. Tiến hành thêm xe vào hàng đợi: {order.DeliveryCode} --- {order.Vehicle}");
+                        WriteLogInfo($"4. Tiến hành thêm xe vào hàng đợi: {order.DeliveryCode} --- {order.Vehicle}");
 
                         var sqlUpdate = $@"UPDATE tblStoreOrderOperating 
                                            SET Step = {(int)OrderStep.CHO_GOI_XE}, 
@@ -160,7 +162,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                             if (tblCallVehicleStatusDb != null)
                             {
-                                WriteLogInfo($"4.2. Đã tồn tại bản ghi chờ gọi loa");
+                                WriteLogInfo($"4.1. Đã tồn tại bản ghi chờ gọi loa => Không thêm xe này");
                                 continue;
                             }
 
@@ -179,11 +181,11 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                             db.tblCallVehicleStatus.Add(newTblVehicleStatus);
                             db.SaveChanges();
 
-                            WriteLogInfo($"4.2. Thêm thành công");
+                            WriteLogInfo($"4.1. Thêm thành công");
                         }
                         else
                         {
-                            WriteLogInfo($"4.2. Thêm thất bại");
+                            WriteLogInfo($"4.1. Thêm thất bại");
                         }
                     }
                 }
