@@ -106,7 +106,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     var sourceDocumentIds = callConfigs.Select(x => x.SourceDocumentId).ToList();
 
                     var query = db.tblStoreOrderOperatings
-                                    .Where(x => x.Step == 1 &&
+                                    .Where(x => x.Step == (int)OrderStep.DA_XAC_THUC &&
                                                 x.TypeProduct.Equals(TYPE_PRODUCT) &&
                                                 x.IndexOrder2 == 0 &&
                                                (x.DriverUserName ?? "") != "" &&
