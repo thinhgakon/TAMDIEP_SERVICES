@@ -119,7 +119,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             string strConString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
             OracleHelper oracleHelper = new OracleHelper(strConString);
-            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, 
+            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, ORDER_QUANTITY, ORDER_ID, DELIVERY_CODE, 
                                        ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, 
                                        ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 productName = reader["PRODUCT_NAME"].ToString(),
-                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"].ToString(), out decimal d) ? d : default ,
+                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"].ToString(), out decimal d) ? d : default ,
                 id = int.TryParse(reader["ORDER_ID"]?.ToString(), out int i) ? i : default,
                 deliveryCode = reader["DELIVERY_CODE"].ToString(),
                 orderDate = reader["ORDER_DATE"]?.ToString() == null ? null : reader.GetDateTime(7).ToString("yyyy-MM-ddTHH:mm:ss"),
