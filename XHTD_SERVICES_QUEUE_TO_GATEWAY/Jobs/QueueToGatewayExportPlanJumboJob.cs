@@ -96,19 +96,36 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
         }
 
-        public void AddVehicleIntoQueue(int topX, int sourceDocumentId)
+        public void AddVehicleIntoQueue(int topX, int? sourceDocumentId)
         {
             try
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Step == (int)OrderStep.DA_XAC_THUC
-                                                                    && x.TypeProduct.Equals(TYPE_PRODUCT)
-                                                                    && x.IndexOrder2 == 0 && (x.DriverUserName ?? "") != ""
-                                                                    && x.SourceDocumentId == sourceDocumentId)
-                                                            .OrderBy(x => x.TimeConfirm10)
-                                                            .Take(topX)
-                                                            .ToList();
+                    var callConfigs = db.tblCallToGatewayConfigs.Where(x => x.Status == 1 && x.SourceDocumentId != 0).ToList();
+                    var sourceDocumentIds = callConfigs.Select(x => x.SourceDocumentId).ToList();
+
+                    var query = db.tblStoreOrderOperatings
+                                    .Where(x => x.Step == 1 &&
+                                                x.TypeProduct.Equals(TYPE_PRODUCT) &&
+                                                x.IndexOrder2 == 0 &&
+                                               (x.DriverUserName ?? "") != "" &&
+                                                x.IsVoiced == false);
+
+                    if (sourceDocumentId != 0)
+                    {
+                        query = query.Where(x => x.SourceDocumentId == sourceDocumentId);
+                    }
+                    else
+                    {
+                        query = query.Where(x => x.SourceDocumentId == null || 
+                                                 x.SourceDocumentId == 0 || 
+                                                (x.SourceDocumentId != null && !sourceDocumentIds.Contains(x.SourceDocumentId)));
+                    }
+
+                    var orders = query.OrderBy(x => x.TimeConfirm10)
+                                      .Take(topX)
+                                      .ToList();
 
                     if (orders == null || orders.Count == 0)
                     {
