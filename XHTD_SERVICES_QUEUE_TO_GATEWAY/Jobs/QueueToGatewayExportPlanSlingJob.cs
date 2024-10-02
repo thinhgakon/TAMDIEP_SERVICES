@@ -62,8 +62,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     foreach (var itemConfig in callConfigs)
                     {
                         int sourceDocumentId = (int)itemConfig.SourceDocumentId;
-                        int maxVehicleSling = (int)itemConfig.MaxVehicleSling;
-                        ProcessByExportPlan(maxVehicleSling, sourceDocumentId);
+                        int maxVehicleConfig = (int)itemConfig.MaxVehicleSling;
+                        ProcessByExportPlan(maxVehicleConfig, sourceDocumentId);
                     }
                 }
             }
