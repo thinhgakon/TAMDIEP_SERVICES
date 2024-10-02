@@ -296,11 +296,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
             using (var db = new XHTD_Entities())
             {
-                var orders = db.tblStoreOrderOperatings
+                var query = db.tblStoreOrderOperatings
                                .Where(x => validStep.Contains((OrderStep)x.Step) &&
                                            x.IsVoiced == false &&
-                                           x.TypeProduct.ToUpper() == typeProduct.ToUpper())
-                               .ToList();
+                                           x.TypeProduct.ToUpper() == typeProduct.ToUpper());
 
                 var callConfigs = db.tblCallToGatewayConfigs
                                     .Where(x => x.Status == 1 && x.SourceDocumentId != 0)
@@ -309,21 +308,19 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (sourceDocumentId != 0)
                 {
-                    orders = orders.Where(x => x.SourceDocumentId == sourceDocumentId).ToList();
+                    query = query.Where(x => x.SourceDocumentId == sourceDocumentId);
                 }
-
                 else if (callConfigs.Any())
                 {
-                    orders = orders.Where(x => x.SourceDocumentId == null || x.SourceDocumentId == 0 ||
-                                              (x.SourceDocumentId != null && !callConfigs.Contains((int)x.SourceDocumentId)))
-                                   .ToList();
+                    query = query.Where(x => x.SourceDocumentId == null || x.SourceDocumentId == 0 ||
+                                              (x.SourceDocumentId != null && !callConfigs.Contains((int)x.SourceDocumentId)));
                 }
-
                 else
                 {
-                    orders = orders.Where(x => (x.SourceDocumentId == null || x.SourceDocumentId == 0) || x.SourceDocumentId != null)
-                                    .ToList();
+                    query = query.Where(x => (x.SourceDocumentId == null || x.SourceDocumentId == 0) || x.SourceDocumentId != null);
                 }
+
+                var orders = query.ToList();
 
                 return orders.Count;
             }
