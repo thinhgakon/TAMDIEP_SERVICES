@@ -12,6 +12,8 @@ using XHTD_SERVICES.Helper.Models.Request;
 using XHTD_SERVICES.Data.Models.Values;
 using System.Threading;
 using WMPLib;
+using XHTD_SERVICES.Data.Entities;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 {
@@ -23,7 +25,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
         protected readonly SystemParameterRepository _systemParameterRepository;
 
-        protected readonly ReindexToTroughLogger _reindexToTroughLogger;
+        protected readonly ReindexToGatewayLogger _reindexToGatewayLogger;
 
         protected const string SERVICE_ACTIVE_CODE = "REINDEX_TO_TROUGH_ACTIVE";
 
@@ -45,13 +47,13 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
-            ReindexToTroughLogger reindexToTroughLogger
+            ReindexToGatewayLogger reindexToGatewayLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _reindexToTroughLogger = reindexToTroughLogger;
+            _reindexToGatewayLogger = reindexToGatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -68,11 +70,11 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                 if (!isActiveService)
                 {
-                    _reindexToTroughLogger.LogInfo("Service tu dong quay vong lot xe vao mang dang TAT");
+                    _reindexToGatewayLogger.LogInfo("Service tu dong quay vong lot xe vao mang dang TAT");
                     return;
                 }
 
-                ReindexToTroughProcess();
+                ReindexToGatewayProcess();
             });
         }
 
@@ -110,45 +112,54 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
             }
         }
 
-        public async void ReindexToTroughProcess()
+        public async void ReindexToGatewayProcess()
         {
-            _reindexToTroughLogger.LogInfo("Start process ReindexToTrough service");
+            _reindexToGatewayLogger.LogInfo("Start process ReindexToTrough service");
 
-            // Xử lý các order đã quá 3 lần gọi loa mà ko vào máng
-            var overCountTryItems = await _callToTroughRepository.GetItemsOverCountTry(maxCountTryCall);
-            if (overCountTryItems != null && overCountTryItems.Count > 0)
+            // Xử lý các order đã quá 3 lần gọi loa mà ko vào cổng
+            using (var db = new XHTD_Entities())
             {
-                foreach (var item in overCountTryItems)
+                // Xếp lại số
+                var callVehicleStatusReindex = await db.tblCallVehicleStatus.Where(x => x.CountTry == 3 &&
+                                                                                        x.CountReindex < 3 &&
+                                                                                        x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                                            .ToListAsync();
+                foreach (var callVehicleStatus in callVehicleStatusReindex)
                 {
-                    var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(overTimeToReindex) > DateTime.Now;
-                    if (isOverTime)
-                    {
-                        continue;
-                    }
-
-                    // cập nhật trạng thái isDone trong hàng đợi
-                    await _callToTroughRepository.UpdateWhenOverCountTry(item.Id);
+                    callVehicleStatus.CountReindex++;
+                    callVehicleStatus.CountTry = 0;
                 }
+                await db.SaveChangesAsync();
+
+                // Tăng số lần CountToCancel
+                var callVehicleStatusRetry = await db.tblCallVehicleStatus.Where(x => x.CountTry == 3 &&
+                                                                                      x.CountToCancel < 3 &&
+                                                                                      x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                                           .ToListAsync();
+                foreach (var callVehicleStatus in callVehicleStatusRetry)
+                {
+                    callVehicleStatus.CountToCancel++;
+                    callVehicleStatus.CountTry = 0;
+                    callVehicleStatus.CountReindex = 0;
+                }
+                await db.SaveChangesAsync();
+
+                // Hủy xác thực các đơn hàng vượt quá số lần gọi
+                var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
+                                           join callVehicleStatus in db.tblCallVehicleStatus
+                                           on orders.Id equals callVehicleStatus.StoreOrderOperatingId
+                                           where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= DateTime.Now.AddMinutes(-5)
+                                           select orders).ToListAsync();
+
+                foreach (var order in ordersToCancel)
+                {
+                    order.Confirm10 = 0;
+                    order.TimeConfirm10 = null;
+                    order.Step = (int)OrderStep.DA_NHAN_DON;
+                    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                }
+                await db.SaveChangesAsync();
             }
-
-            // Xử lý các order quá 3 lần xoay vòng lốt mà ko vào máng
-            //var overCountReindexItems = await _callToTroughRepository.GetItemsOverCountReindex(maxCountReindex);
-            //if (overCountReindexItems != null && overCountReindexItems.Count > 0)
-            //{
-            //    foreach (var item in overCountReindexItems)
-            //    {
-            //        var isOverTime = ((DateTime)item.UpdateDay).AddMinutes(overTimeToReindex) > DateTime.Now;
-            //        if (isOverTime)
-            //        {
-            //            continue;
-            //        }
-
-            //        // cập nhật trạng thái isDone trong hàng đợi
-            //        await _callToTroughRepository.UpdateWhenOverCountReindex(item.Id);
-
-            //        await _storeOrderOperatingRepository.UpdateWhenOverCountReindex(item.OrderId);
-            //    }
-            //}
         }
     }
 }
