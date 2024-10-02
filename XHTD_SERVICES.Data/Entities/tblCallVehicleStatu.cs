@@ -23,5 +23,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<bool> IsDone { get; set; }
         public string TypeProduct { get; set; }
         public string CallType { get; set; }
+        public Nullable<int> CountReindex { get; set; }
+        public Nullable<int> CountToCancel { get; set; }
     }
 }

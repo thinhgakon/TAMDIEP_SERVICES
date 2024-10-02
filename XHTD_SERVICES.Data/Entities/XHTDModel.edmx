@@ -95,7 +95,7 @@
           <Property Name="OrderId" Type="int" Nullable="false" />
           <Property Name="DeliveryCode" Type="nvarchar" MaxLength="50" />
           <Property Name="Vehicle" Type="nvarchar" MaxLength="50" />
-          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Machine" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IndexTrough" Type="int" />
           <Property Name="CountTry" Type="int" Nullable="false" />
@@ -118,6 +118,8 @@
           <Property Name="IsDone" Type="bit" />
           <Property Name="TypeProduct" Type="varchar" MaxLength="20" />
           <Property Name="CallType" Type="nvarchar" MaxLength="50" />
+          <Property Name="CountReindex" Type="int" />
+          <Property Name="CountToCancel" Type="int" />
         </EntityType>
         <EntityType Name="tblCategories">
           <Key>
@@ -314,7 +316,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CountQuantityEnd" Type="float" />
           <Property Name="TimeStart" Type="datetime2" Precision="7" />
           <Property Name="TimeEnd" Type="datetime2" Precision="7" />
-          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="FirstSensorCountQuantityEnd" Type="float" />
           <Property Name="FirstSensorCountQuantityStart" Type="float" />
           <Property Name="RemainingCountQuantity" Type="int" />
@@ -1051,7 +1053,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="DeliveryCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Vehicle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Machine" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="IndexTrough" Type="Int32" />
           <Property Name="CountTry" Type="Int32" Nullable="false" />
@@ -1074,6 +1076,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="IsDone" Type="Boolean" />
           <Property Name="TypeProduct" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="CallType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CountReindex" Type="Int32" />
+          <Property Name="CountToCancel" Type="Int32" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -1881,7 +1885,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="TimeStart" Type="DateTime" Precision="7" />
           <Property Name="TimeEnd" Type="DateTime" Precision="7" />
           <NavigationProperty Name="tblStoreOrderOperating" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblExportHistory" ToRole="tblStoreOrderOperating" />
-          <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="RemainingCountQuantity" Type="Int32" />
           <Property Name="FirstSensorCountQuantityEnd" Type="Double" />
           <Property Name="FirstSensorCountQuantityStart" Type="Double" />
@@ -2046,6 +2050,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <EntitySetMapping Name="tblCallVehicleStatus">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallVehicleStatu">
               <MappingFragment StoreEntitySet="tblCallVehicleStatus">
+                <ScalarProperty Name="CountToCancel" ColumnName="CountToCancel" />
+                <ScalarProperty Name="CountReindex" ColumnName="CountReindex" />
                 <ScalarProperty Name="CallType" ColumnName="CallType" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="StoreOrderOperatingId" ColumnName="StoreOrderOperatingId" />
