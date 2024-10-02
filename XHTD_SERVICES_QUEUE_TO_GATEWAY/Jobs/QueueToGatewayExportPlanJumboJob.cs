@@ -92,7 +92,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                log.Error($@"SyncTrough1 {ex.Message}");
+                log.Error($@"ProcessByExportPlan {TYPE_PRODUCT}: {ex.Message}");
             }
         }
 
