@@ -102,6 +102,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
         {
             try
             {
+                WriteLogInfo($@"2. Tìm và thêm {topX} xe vào hàng đợi");
+
                 using (var db = new XHTD_Entities())
                 {
                     var callConfigs = db.tblCallToGatewayConfigs.Where(x => x.Status == 1 && x.SourceDocumentId != 0).ToList();
@@ -129,12 +131,12 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                     if (orders == null || orders.Count == 0)
                     {
-                        WriteLogInfo($"4. Không tìm thấy xe {TYPE_PRODUCT} nào với số hiệu hợp đồng: {sourceDocumentId} => Kết thúc");
+                        WriteLogInfo($"3. Không tìm thấy xe {TYPE_PRODUCT} nào với số hiệu hợp đồng: {sourceDocumentId} => Kết thúc");
                         return;
                     }
                     else
                     {
-                        WriteLogInfo($"4. Các xe phù hợp: {string.Join(", ", orders.Select(order => order.Vehicle))}");
+                        WriteLogInfo($"3. Có {orders.Count} xe phù hợp: {string.Join(", ", orders.Select(order => order.Vehicle))}");
                     }
 
                     foreach (var order in orders)
