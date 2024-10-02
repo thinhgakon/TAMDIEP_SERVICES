@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.Start();
 
             // Đưa Clinker vào hàng đợi gọi loa
-            IJobDetail queueToGatewayClinkerJob = JobBuilder.Create<QueueToGatewayClinkerJob>().Build();
+            IJobDetail queueToGatewayClinkerJob = JobBuilder.Create<QueueToGatewayExportPlanClinkerJob>().Build();
             ITrigger queueToGatewayClinkerTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -38,7 +38,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayClinkerJob, queueToGatewayClinkerTrigger);
 
             // Đưa Rời vào hàng đợi gọi loa
-            IJobDetail queueToGatewayRoiJob = JobBuilder.Create<QueueToGatewayRoiJob>().Build();
+            IJobDetail queueToGatewayRoiJob = JobBuilder.Create<QueueToGatewayExportPlanRoiJob>().Build();
             ITrigger queueToGatewayRoiTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -49,7 +49,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayRoiJob, queueToGatewayRoiTrigger);
 
             // Đưa PCB40 vào hàng đợi gọi loa
-            IJobDetail queueToGatewayPcb40Job = JobBuilder.Create<QueueToGatewayPcb40Job>().Build();
+            IJobDetail queueToGatewayPcb40Job = JobBuilder.Create<QueueToGatewayExportPlanPcb40Job>().Build();
             ITrigger queueToGatewayPcb40Trigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -60,7 +60,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayPcb40Job, queueToGatewayPcb40Trigger);
 
             // Đưa PCB30 vào hàng đợi gọi loa
-            IJobDetail queueToGatewayPcb30Job = JobBuilder.Create<QueueToGatewayPcb30Job>().Build();
+            IJobDetail queueToGatewayPcb30Job = JobBuilder.Create<QueueToGatewayExportPlanPcb30Job>().Build();
             ITrigger queueToGatewayPcb30Trigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -71,7 +71,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayPcb30Job, queueToGatewayPcb30Trigger);
 
             // Đưa C91 vào hàng đợi gọi loa
-            IJobDetail queueToGatewayC91Job = JobBuilder.Create<QueueToGatewayC91Job>().Build();
+            IJobDetail queueToGatewayC91Job = JobBuilder.Create<QueueToGatewayExportPlanC91Job>().Build();
             ITrigger queueToGatewayC91Trigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -82,7 +82,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayC91Job, queueToGatewayC91Trigger);
 
             // Đưa Jumbo vào hàng đợi gọi loa
-            IJobDetail queueToGatewayJumboJob = JobBuilder.Create<QueueToGatewayJumboJob>().Build();
+            IJobDetail queueToGatewayJumboJob = JobBuilder.Create<QueueToGatewayExportPlanJumboJob>().Build();
             ITrigger queueToGatewayJumboTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -93,7 +93,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewayJumboJob, queueToGatewayJumboTrigger);
 
             // Đưa Sling vào hàng đợi gọi loa
-            IJobDetail queueToGatewaySlingJob = JobBuilder.Create<QueueToGatewaySlingJob>().Build();
+            IJobDetail queueToGatewaySlingJob = JobBuilder.Create<QueueToGatewayExportPlanSlingJob>().Build();
             ITrigger queueToGatewaySlingTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
@@ -104,7 +104,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Schedules
             await _scheduler.ScheduleJob(queueToGatewaySlingJob, queueToGatewaySlingTrigger);
 
             // Đưa Other vào hàng đợi gọi loa
-            IJobDetail queueToGatewayOtherJob = JobBuilder.Create<QueueToGatewayOtherJob>().Build();
+            IJobDetail queueToGatewayOtherJob = JobBuilder.Create<QueueToGatewayExportPlanOtherJob>().Build();
             ITrigger queueToGatewayOtherTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
