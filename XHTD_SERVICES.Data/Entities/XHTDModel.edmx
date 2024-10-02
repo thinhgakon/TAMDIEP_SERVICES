@@ -534,7 +534,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ItemId" Type="float" />
           <Property Name="NameProduct" Type="nvarchar" MaxLength="250" />
           <Property Name="CatId" Type="nvarchar" MaxLength="50" />
-          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="4" />
           <Property Name="TimeIn33" Type="datetime" />
           <Property Name="CardNo" Type="nvarchar" MaxLength="50" />
           <Property Name="OrderId" Type="int" />
@@ -627,10 +627,10 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ErpOrderId" Type="varchar" MaxLength="50" />
           <Property Name="InvoiceNo" Type="varchar" MaxLength="50" />
           <Property Name="InvoiceStatus" Type="varchar" MaxLength="50" />
-          <Property Name="ExportedNumber" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ExportedNumber" Type="decimal" Precision="18" Scale="4" />
+          <Property Name="ExtraNumber" Type="decimal" Precision="18" Scale="4" />
           <Property Name="ExtraReason" Type="nvarchar(max)" />
-          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MachineExportedNumber" Type="decimal" Precision="18" Scale="4" />
           <Property Name="Confirm11" Type="int" />
           <Property Name="TimeConfirm11" Type="datetime2" Precision="7" />
           <Property Name="LocationCodeTgc" Type="nvarchar(max)" />
@@ -1394,7 +1394,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ItemId" Type="Double" />
           <Property Name="NameProduct" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="CatId" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="4" />
           <Property Name="TimeIn33" Type="DateTime" Precision="3" />
           <Property Name="CardNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="OrderId" Type="Int32" />
@@ -1487,11 +1487,11 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="ErpOrderId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="InvoiceStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ExportedNumber" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ExportedNumber" Type="Decimal" Precision="18" Scale="4" />
+          <Property Name="ExtraNumber" Type="Decimal" Precision="18" Scale="4" />
           <Property Name="ExtraReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblExportHistories" Relationship="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" FromRole="tblStoreOrderOperating" ToRole="tblExportHistory" />
-          <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MachineExportedNumber" Type="Decimal" Precision="18" Scale="4" />
           <Property Name="Confirm11" Type="Int32" />
           <Property Name="TimeConfirm11" Type="DateTime" Precision="7" />
           <Property Name="LotNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
