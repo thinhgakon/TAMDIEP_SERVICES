@@ -7,7 +7,7 @@ using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_REINDEX_TO_GATEWAY
 {
-    public class ReindexToTroughLogger : BaseLogger<Jobs.ReindexToTroughJob>
+    public class ReindexToTroughLogger : BaseLogger<Jobs.ReindexToGatewayJob>
     {
     }
 }

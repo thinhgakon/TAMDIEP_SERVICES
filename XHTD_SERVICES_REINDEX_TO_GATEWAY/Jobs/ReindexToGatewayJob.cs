@@ -15,7 +15,7 @@ using WMPLib;
 
 namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 {
-    public class ReindexToTroughJob : IJob
+    public class ReindexToGatewayJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -41,7 +41,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
         private static int overTimeToReindex = 5;
 
-        public ReindexToTroughJob(
+        public ReindexToGatewayJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,

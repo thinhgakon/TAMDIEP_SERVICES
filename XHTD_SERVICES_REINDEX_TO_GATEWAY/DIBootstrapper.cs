@@ -38,7 +38,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(ReindexToTroughJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(ReindexToGatewayJob).Assembly));
             builder.RegisterType<JobScheduler>().AsSelf();
         }
     }

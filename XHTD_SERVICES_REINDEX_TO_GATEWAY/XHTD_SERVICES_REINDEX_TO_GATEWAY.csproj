@@ -104,7 +104,7 @@
   <ItemGroup>
     <Compile Include="ReindexToTroughLogger.cs" />
     <Compile Include="DIBootstrapper.cs" />
-    <Compile Include="Jobs\ReindexToTroughJob.cs" />
+    <Compile Include="Jobs\ReindexToGatewayJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

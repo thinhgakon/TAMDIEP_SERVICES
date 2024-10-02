@@ -27,7 +27,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Schedules
             await _scheduler.Start();
 
             // Đồng bộ đơn hàng
-            IJobDetail syncOrderJob = JobBuilder.Create<ReindexToTroughJob>().Build();
+            IJobDetail syncOrderJob = JobBuilder.Create<ReindexToGatewayJob>().Build();
             ITrigger syncOrderTrigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
