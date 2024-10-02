@@ -15,7 +15,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayExportPlanSlingJob : IJob
     {
-        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger("SlingFileAppender");
+        ILog _logger = LogManager.GetLogger("SlingFileAppender");
+
         private const string TYPE_PRODUCT = "SLING";
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;

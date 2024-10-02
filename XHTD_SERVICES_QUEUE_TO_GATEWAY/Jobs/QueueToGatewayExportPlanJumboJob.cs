@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,7 +15,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 {
     public class QueueToGatewayExportPlanJumboJob : IJob
     {
-        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger("JumboFileAppender");
+        ILog _logger = LogManager.GetLogger("JumboFileAppender");
+
         private const string TYPE_PRODUCT = "JUMBO";
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
