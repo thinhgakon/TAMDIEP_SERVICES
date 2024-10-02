@@ -33,7 +33,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             await Task.Run(() =>
             {
-                log.Info($@"Start QueueToGatewayExportPlanSlingJob: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                log.Info($"--------------- START JOB ---------------");
                 QueueToCallProccess();
             });
         }
@@ -79,17 +79,17 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontSlingYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
+                var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
 
-                log.Info($@"1. Số xe trong bãi chờ: {vehicleFrontSlingYard}");
+                log.Info($@"1. Số xe trong bãi chờ: {vehicleFrontYard}");
 
-                if (vehicleFrontSlingYard >= LimitVehicle)
+                if (vehicleFrontYard >= LimitVehicle)
                 {
                     log.Info($@"2. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
                     return;
                 }
 
-                AddVehicleIntoQueue(LimitVehicle - vehicleFrontSlingYard, sourceDocumentId);
+                AddVehicleIntoQueue(LimitVehicle - vehicleFrontYard, sourceDocumentId);
             }
             catch (Exception ex)
             {
