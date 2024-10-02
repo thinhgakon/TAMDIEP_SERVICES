@@ -34,7 +34,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             await Task.Run(() =>
             {
-                _logger.Info($"--------------- START JOB ---------------");
+                WriteLogInfo($"--------------- START JOB ---------------");
                 QueueToCallProccess();
             });
         }
@@ -52,7 +52,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
 
                 if (!IsCall)
                 {
-                    _logger.Info($@"Cấu hình gọi loa đang OFF. Kiểm tra IsCall trong tblSystemParameters");
+                    WriteLogInfo($@"Cấu hình gọi loa đang OFF. Kiểm tra IsCall trong tblSystemParameters");
                     return;
                 }
 
@@ -70,23 +70,23 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                WriteLogInfo(ex.Message);
             }
         }
 
         public void ProcessByExportPlan(int LimitVehicle, int sourceDocumentId)
         {
-            _logger.Info($@"Xử lý đơn hàng với số hiệu hợp đồng: {sourceDocumentId} với cấu hình xe tối đa {LimitVehicle}");
+            WriteLogInfo($@"Xử lý đơn hàng với số hiệu hợp đồng: {sourceDocumentId} với cấu hình xe tối đa {LimitVehicle}");
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
                 var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
 
-                _logger.Info($@"1. Số xe trong bãi chờ: {vehicleFrontYard}");
+                WriteLogInfo($@"1. Số xe trong bãi chờ: {vehicleFrontYard}");
 
                 if (vehicleFrontYard >= LimitVehicle)
                 {
-                    _logger.Info($@"2. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
+                    WriteLogInfo($@"2. Số xe đang chờ vượt quá số xe tối đa => Kết thúc");
                     return;
                 }
 
@@ -94,7 +94,7 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             }
             catch (Exception ex)
             {
-                _logger.Error($@"ProcessByExportPlan {TYPE_PRODUCT}: {ex.Message}");
+                WriteLogInfo($@"ProcessByExportPlan {TYPE_PRODUCT}: {ex.Message}");
             }
         }
 
