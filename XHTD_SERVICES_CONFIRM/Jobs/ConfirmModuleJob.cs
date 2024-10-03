@@ -393,7 +393,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
 
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
-                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, currentOrder.SourceDocumentId);
+                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, currentOrder.SourceDocumentId ?? 0);
 
                 _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
                 int? maxVehicle = 0;
