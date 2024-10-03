@@ -22,6 +22,7 @@ using System.Net.NetworkInformation;
 using XHTD_SERVICES_CONFIRM.Devices;
 using PK_UHF_Test;
 using XHTD_SERVICES.Data.Models.Values;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
@@ -392,22 +393,28 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
 
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
-                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
+                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, currentOrder.SourceDocumentId);
 
                 _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
+                int? maxVehicle = 0;
 
-                var parameters = await _systemParameterRepository.GetSystemParameters();
-                var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
-                var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
-
-                _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
-
-                if (currentNumberWaitingVehicleInFactory >= maxVehicle)
+                using (var db = new XHTD_Entities())
                 {
-                    _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
-                    using (var db = new XHTD_Entities())
+                    try
                     {
-                        try { 
+                        var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == currentOrder.SourceDocumentId && x.Status == 1);
+                        if (config == null)
+                        {
+                            config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
+                        }
+
+                        maxVehicle = GetMaxVehicle(config, typeProduct);
+
+                        if (currentNumberWaitingVehicleInFactory >= maxVehicle)
+                        {
+                            _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
+                            _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
+
                             var newTblVehicleStatus = new tblCallVehicleStatu
                             {
                                 StoreOrderOperatingId = currentOrder.Id,
@@ -425,10 +432,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                             _logger.LogInfo($"Them vao hang doi goi vao BAI CHO thanh cong");
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
                     }
                 }
                 #endregion
@@ -897,5 +904,30 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
         }
         #endregion
+
+        public int? GetMaxVehicle(tblCallToGatewayConfig config, string typeProduct)
+        {
+            switch (typeProduct.ToUpper())
+            {
+                case "PCB30":
+                    return config.MaxVehiclePcb30;
+                case "PCB40":
+                    return config.MaxVehiclePcb40;
+                case "CLINKER":
+                    return config.MaxVehicleClinker;
+                case "ROI":
+                    return config.MaxVehicleRoi;
+                case "C91":
+                    return config.MaxVehicleC91;
+                case "JUMBO":
+                    return config.MaxVehicleJumbo;
+                case "SLING":
+                    return config.MaxVehicleSling;
+                case "OTHER":
+                    return config.MaxVehicleOther;
+                default:
+                    return 0;
+            }
+        }
     }
 }
