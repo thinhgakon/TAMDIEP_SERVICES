@@ -395,9 +395,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var sourceDocumentId = currentOrder.SourceDocumentId ?? 0;
 
-                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
-
-                _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
+                var currentNumberWaitingVehicleInFactory = 0;
                 int? maxVehicle = 0;
 
                 using (var db = new XHTD_Entities())
@@ -407,14 +405,26 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == sourceDocumentId && x.Status == 1);
                         if (config == null)
                         {
+                            _logger.LogInfo($"Don hang thuoc cau hinh ke hoach chung");
+
                             config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
+                            currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, 0);
                         }
+                        else
+                        {
+                            _logger.LogInfo($"Don hang co cau hinh ke hoach rieng");
+
+                            currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
+                        }
+
+                        _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
 
                         maxVehicle = GetMaxVehicle(config, typeProduct);
 
+                        _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
+
                         if (currentNumberWaitingVehicleInFactory >= maxVehicle)
                         {
-                            _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
                             _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
 
                             var newTblVehicleStatus = new tblCallVehicleStatu
