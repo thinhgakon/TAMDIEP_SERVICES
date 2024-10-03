@@ -393,7 +393,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
 
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
-                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, currentOrder.SourceDocumentId ?? 0);
+                var sourceDocumentId = currentOrder.SourceDocumentId ?? 0;
+
+                var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
 
                 _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
                 int? maxVehicle = 0;
@@ -402,7 +404,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     try
                     {
-                        var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == currentOrder.SourceDocumentId && x.Status == 1);
+                        var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == sourceDocumentId && x.Status == 1);
                         if (config == null)
                         {
                             config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
