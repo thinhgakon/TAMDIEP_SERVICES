@@ -112,22 +112,31 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _logger.LogInfo("Service nhận diện RFID đang TẮT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _logger.LogInfo("Start Xibao Trough service");
-                _logger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                        return;
+                    }
 
-                AuthenticateConfirmModuleFromPegasus();
-            });
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+
+                    AuthenticateUhfFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -146,7 +155,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
             }
         }
 
-        public void AuthenticateConfirmModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -156,6 +165,17 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 try
                 {
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                    if (openResult != 0)
+                    {
+                        _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -209,7 +229,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 }
             }
 
-            AuthenticateConfirmModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)
@@ -252,13 +272,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
             _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
-            var machine = await _machineRepository.GetMachineByMachineCode(MACHINE_CODE);
-
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
-
-            // Đơn hàng đầu tiên hiện tại trong máng
-            var orderInTrough = _callToTroughRepository.GetCurrentFirstOrderInTrough(TROUGH_CODE);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
@@ -266,15 +281,18 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 tmpValidCardNoLst.Add(newCardNoLog);
 
                 _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                SendNotificationHub("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
-                SendNotificationAPI("XI_BAO", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationHub("XI_ROI", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
+                SendNotificationAPI("XI_ROI", MACHINE_CODE, TROUGH_CODE, vehicleCodeCurrent);
 
                 tblStoreOrderOperating currentOrder = null;
+
                 using (var db = new XHTD_Entities())
                 {
                     currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
                                                                                              x.CatId == OrderCatIdCode.XI_MANG_XA &&
-                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO);
+                                                                                            (x.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                             x.IsVoiced == false);
                 }
 
                 if (currentOrder == null)
@@ -297,6 +315,38 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
                 {
                     _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+
+                    List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
+                    List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+
+                    using (var db = new XHTD_Entities())
+                    {
+                        callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
+                                                                                    x.Machine == TROUGH_CODE &&
+                                                                                    x.IsDone == false).ToListAsync();
+
+                        ordersInTrough = await (from orders in db.tblStoreOrderOperatings
+                                                join callToTroughs in db.tblCallToTroughs
+                                                on orders.DeliveryCode equals callToTroughs.DeliveryCode
+                                                where callToTroughs.Machine == TROUGH_CODE &&
+                                                      callToTroughs.IsDone == false &&
+                                                      callToTroughs.DeliveryCode != currentOrder.DeliveryCode
+                                                select orders).ToListAsync();
+
+                        foreach (var callToTroughEntity in callToTroughEntities)
+                        {
+                            callToTroughEntity.IsDone = true;
+                        }
+
+                        foreach (var order in ordersInTrough)
+                        {
+                            order.Step = (int)OrderStep.DA_LAY_HANG;
+                            order.TimeConfirm6 = DateTime.Now;
+                            order.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
+                        }
+
+                        await db.SaveChangesAsync();
+                    }
                 }
 
                 else _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {currentOrder.DeliveryCode}");

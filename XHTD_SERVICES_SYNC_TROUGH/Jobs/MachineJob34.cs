@@ -13,15 +13,17 @@ using XHTD_SERVICES.Data.Entities;
 using SuperSimpleTcp;
 using XHTD_SERVICES.Helper;
 using System.Data.Entity;
+using log4net;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
     [DisallowConcurrentExecution]
     public class MachineJob34 : IJob, IDisposable
     {
+        ILog _logger = LogManager.GetLogger("Machine34FileAppender");
+
         private readonly MachineRepository _machineRepository;
         protected readonly Notification _notification;
-        protected readonly SyncTroughLogger _logger;
 
         static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
@@ -34,11 +36,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const string MACHINE_1_CODE = "3";
         private const string MACHINE_2_CODE = "4";
 
-        public MachineJob34(MachineRepository machineRepository, Notification notification, SyncTroughLogger logger)
+        public MachineJob34(MachineRepository machineRepository, Notification notification)
         {
             _machineRepository = machineRepository;
             _notification = notification;
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -75,13 +76,13 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                 if (client.IsConnected)
                 {
-                    _logger.LogInfo($"Machine Job Ket noi thanh cong MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    WriteLogInfo($"Machine Job Ket noi thanh cong MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
 
                     await MachineJobProcess(machines);
                 }
                 else
                 {
-                    _logger.LogInfo($"Machine Job Ket noi that bai MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
+                    WriteLogInfo($"Machine Job Ket noi that bai MDB {MACHINE_1_CODE}|{MACHINE_2_CODE} --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
                 }
 
                 if (client != null)
@@ -92,7 +93,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"Machine Job ERROR IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
+                WriteLogInfo($"Machine Job ERROR IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}: {ex.Message} -- {ex.StackTrace}");
             }
         }
 
@@ -106,23 +107,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                 {
                     if (machine.StartStatus == "PENDING" && !string.IsNullOrEmpty(machine.CurrentDeliveryCode))
                     {
-                        _logger.LogInfo($"Start machine code: {machine.Code} - msgh: {machine.CurrentDeliveryCode}============================================");
+                        WriteLogInfo($"Start machine code: {machine.Code} - msgh: {machine.CurrentDeliveryCode}============================================");
 
                         var command = (machine.StartCountingFrom == null || machine.StartCountingFrom == 0) ?
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[!]" :
                                       $"*[Start][MDB][{machine.Code}]##{machine.CurrentDeliveryCode}[N]{machine.StartCountingFrom}[!]";
 
-                        _logger.LogInfo($"1. Gửi lệnh: {command}");
+                        WriteLogInfo($"1. Gửi lệnh: {command}");
                         client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
                         Thread.Sleep(200);
 
                         if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"2. Không có phản hồi");
+                            WriteLogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
+                        WriteLogInfo($"2. Phản hồi: {MachineResponse}");
 
                         if (MachineResponse.Contains($"*[Start][MDB][{machine.Code}]#OK#"))
                         {
@@ -131,10 +132,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             await _machineRepository.UpdateMachine(machine);
 
-                            _logger.LogInfo($"2.1. Start thành công");
+                            WriteLogInfo($"2.1. Start thành công");
 
-                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
+                            string vehicle = string.Empty;
+                            string bookQuantity = string.Empty;
+                            string locationCodeTgc = string.Empty;
 
                             using (var db = new XHTD_Entities())
                             {
@@ -148,32 +150,45 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                         await db.SaveChangesAsync();
                                     }
                                 }
+
+                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == machine.CurrentDeliveryCode);
+                                if (currentOrder != null)
+                                {
+                                    vehicle = currentOrder.Vehicle;
+                                    bookQuantity = currentOrder.SumNumber.ToString();
+                                    locationCodeTgc = currentOrder.LocationCodeTgc;
+                                }
                             }
+
+                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
+
+                            WriteLogInfo($"Gửi signalR: Machine: {machine.Code} - DeliveryCode: {machine.CurrentDeliveryCode} - Vehicle: {vehicle} - BookQuantity: {bookQuantity} - LocationCodeTgc: {locationCodeTgc}");
                         }
                         else
                         {
-                            _logger.LogInfo($"2.1. Start thất bại");
+                            WriteLogInfo($"2.1. Start thất bại");
                             continue;
                         }
                     }
 
                     if (machine.StopStatus == "PENDING")
                     {
-                        _logger.LogInfo($"Stop machine code: {machine.Code} ============================================");
+                        WriteLogInfo($"Stop machine code: {machine.Code} ============================================");
 
                         var command = $"*[Stop][MDB][{machine.Code}][!]";
 
-                        _logger.LogInfo($"1. Gửi lệnh: {command}");
+                        WriteLogInfo($"1. Gửi lệnh: {command}");
                         client.Send(command);
                         client.Events.DataReceived += Machine_DataReceived;
                         Thread.Sleep(200);
 
                         if (MachineResponse == null || MachineResponse.Length == 0)
                         {
-                            _logger.LogInfo($"2. Không có phản hồi");
+                            WriteLogInfo($"2. Không có phản hồi");
                             continue;
                         }
-                        _logger.LogInfo($"2. Phản hồi: {MachineResponse}");
+                        WriteLogInfo($"2. Phản hồi: {MachineResponse}");
 
                         if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
@@ -183,21 +198,21 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             await _machineRepository.UpdateMachine(machine);
 
-                            _logger.LogInfo($"2.1. Stop thành công");
+                            WriteLogInfo($"2.1. Stop thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                             SendMachineStopNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
                         }
                         else
                         {
-                            _logger.LogInfo($"2.1. Stop thất bại");
+                            WriteLogInfo($"2.1. Stop thất bại");
                             continue;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
+                    WriteLogInfo($"MachineJobProcess ERROR: Code={machine.Code} --- {ex.Message} --- {ex.StackTrace}");
                 }
             }
         }
@@ -215,19 +230,19 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendNotificationAPI Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendNotificationAPI Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
-        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendMachineStartNotification(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             try
             {
-                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle);
+                _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle, bookQuantity, locationCodeTgc);
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendMachineStartNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendMachineStartNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -239,7 +254,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendMachineStopNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                WriteLogInfo($"SendMachineStopNotification Machine {MACHINE_1_CODE}|{MACHINE_2_CODE} Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -254,8 +269,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"MachineJob {MACHINE_1_CODE}|{MACHINE_2_CODE}: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
+                WriteLogInfo($"MachineJob {MACHINE_1_CODE}|{MACHINE_2_CODE}: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

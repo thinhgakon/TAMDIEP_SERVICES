@@ -23,6 +23,7 @@ namespace XHTD_SERVICES_GATEWAY
 
         public static bool IsBarrierActive = false; // cấu hình tự động mở barrier
         public static bool IsConfirmAtGatewayActive = false; // cấu hình xác thực tại cổng
+        public static bool IsRequireCallVoiceActive = false; // cấu hình chỉ mở cổng sau khi đã gọi loa
 
         public static DateTime? LastTimeReceivedUHF = DateTime.Now;
 

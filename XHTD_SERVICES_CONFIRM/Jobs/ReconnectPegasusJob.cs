@@ -11,7 +11,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 {
     public class ReconnectPegasusJob : IJob
     {
-        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+        ILog _logger = LogManager.GetLogger("ReconnectFileAppender");
 
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
@@ -72,6 +72,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     {
                         WriteLogInfo($"2. Chưa vượt quá {TIME_TO_RESET}s");
                     }
+                }
+                else
+                {
+                    WriteLogInfo($"Chua dat gia tri cho LastTimeReceivedUHF: null");
                 }
             }
             catch (Exception ex)

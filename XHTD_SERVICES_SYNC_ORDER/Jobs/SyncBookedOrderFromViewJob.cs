@@ -119,7 +119,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
         {
             string strConString = System.Configuration.ConfigurationManager.ConnectionStrings["TAMDIEP_ORACLE"].ConnectionString.ToString();
             OracleHelper oracleHelper = new OracleHelper(strConString);
-            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, BOOK_QUANTITY, ORDER_ID, DELIVERY_CODE, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, ITEM_CATEGORY, INVENTORY_ITEM_ID
+            string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, ORDER_QUANTITY, ORDER_ID, DELIVERY_CODE, 
+                                       ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, 
+                                       ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
@@ -133,17 +135,21 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 productName = reader["PRODUCT_NAME"].ToString(),
-                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"].ToString(), out decimal d) ? d : default ,
+                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"].ToString(), out decimal d) ? d : default ,
                 id = int.TryParse(reader["ORDER_ID"]?.ToString(), out int i) ? i : default,
                 deliveryCode = reader["DELIVERY_CODE"].ToString(),
                 orderDate = reader["ORDER_DATE"]?.ToString() == null ? null : reader.GetDateTime(7).ToString("yyyy-MM-ddTHH:mm:ss"),
                 moocCode = reader["MOOC_CODE"].ToString(),
                 locationCode = reader["LOCATION_CODE"].ToString(),
+                locationCodeTgc = reader["LOCATION_CODE_TGC"].ToString(),
                 transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(),out int t) ? t : default,
                 status = reader["STATUS"].ToString(),
                 lastUpdatedDate = reader["LAST_UPDATE_DATE"]?.ToString() == null ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
                 itemCategory = reader["ITEM_CATEGORY"].ToString(),
-                itemId = double.TryParse(reader["INVENTORY_ITEM_ID"].ToString(), out double k) ? k : default,
+                sourceDocumentId = reader["ORDER_REQ_ID"] != DBNull.Value ? reader["ORDER_REQ_ID"].ToString() :
+                                   reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
+                productId = reader["INVENTORY_ITEM_ID"].ToString(),
+                customerId = reader["CUSTOMER_ID"].ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });

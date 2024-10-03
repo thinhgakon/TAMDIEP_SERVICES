@@ -35,6 +35,26 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersEntraceGateway(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && (x.Step == (int)OrderStep.DA_XAC_THUC
+                                                     || x.Step == (int)OrderStep.DANG_GOI_XE
+                                                     || x.Step == (int)OrderStep.CHO_GOI_XE
+                                                     || x.Step == (int)OrderStep.DA_NHAN_DON
+                                                     || x.Step == (int)OrderStep.CHUA_NHAN_DON)
+                                                     )
+                                            .OrderByDescending(x => x.Step)
+                                            .ToListAsync();
+
+                return orders;
+            }
+        }
+
         public async Task<tblStoreOrderOperating> GetCurrentOrderExitGateway(string vehicleCode)
         {
             using (var dbContext = new XHTD_Entities())
@@ -51,6 +71,25 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .FirstOrDefaultAsync();
 
                 return order;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetCurrentOrdersExitGateway(string vehicleCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var orders = await dbContext.tblStoreOrderOperatings
+                                            .Where(x => x.Vehicle == vehicleCode
+                                                     && x.IsVoiced == false
+                                                     && (x.Step == (int)OrderStep.DA_CAN_VAO
+                                                     || x.Step == (int)OrderStep.DANG_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_LAY_HANG
+                                                     || x.Step == (int)OrderStep.DA_CAN_RA)
+                                                  )
+                                            .OrderByDescending(x => x.Step)
+                                            .ToListAsync();
+
+                return orders;
             }
         }
 
@@ -206,7 +245,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_VAO_CONG;
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng lúc {currentTime} ";
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng tự động lúc {currentTime} ";
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -225,21 +264,65 @@ namespace XHTD_SERVICES.Data.Repositories
         public int CountStoreOrderWaitingIntoTroughByType(string typeProduct)
         {
             var validStep = new[] { 
-                                    OrderStep.DA_VAO_CONG, 
-                                    OrderStep.DA_CAN_VAO, 
                                     OrderStep.CHO_GOI_XE,
                                     OrderStep.DANG_GOI_XE, 
+                                    OrderStep.DA_VAO_CONG, 
+                                    OrderStep.DA_CAN_VAO, 
                                     OrderStep.DANG_LAY_HANG, 
                                     OrderStep.DA_LAY_HANG
                                   };
 
-            var validStepSql = string.Join(",", validStep.Select(s => (int)s));
+            using (var db = new XHTD_Entities())
+            {
+                var orders = db.tblStoreOrderOperatings.Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                                                   x.IsVoiced == false &&
+                                                                   x.TypeProduct.ToUpper() == typeProduct.ToUpper())
+                                                       .ToList();
+
+                return orders.Count;
+            }
+        }
+
+        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int? sourceDocumentId)
+        {
+            var validStep = new[] {
+                                    OrderStep.CHO_GOI_XE,
+                                    OrderStep.DANG_GOI_XE,
+                                    OrderStep.DA_VAO_CONG,
+                                    OrderStep.DA_CAN_VAO,
+                                    OrderStep.DANG_LAY_HANG,
+                                    OrderStep.DA_LAY_HANG
+                                  };
 
             using (var db = new XHTD_Entities())
             {
-                var sqlCount = $"SELECT COUNT(DISTINCT Vehicle) FROM dbo.tblStoreOrderOperating WHERE Step IN ({validStepSql}) AND IsVoiced = 0 AND TypeProduct = @TypeProduct";
-                var count = db.Database.SqlQuery<int>(sqlCount, new SqlParameter("@TypeProduct", typeProduct)).Single();
-                return count;
+                var query = db.tblStoreOrderOperatings
+                               .Where(x => validStep.Contains((OrderStep)x.Step) &&
+                                           x.IsVoiced == false &&
+                                           x.TypeProduct.ToUpper() == typeProduct.ToUpper());
+
+                var callConfigs = db.tblCallToGatewayConfigs
+                                    .Where(x => x.Status == 1 && x.SourceDocumentId != 0)
+                                    .Select(x => x.SourceDocumentId)
+                                    .ToList();
+
+                if (sourceDocumentId != 0)
+                {
+                    query = query.Where(x => x.SourceDocumentId == sourceDocumentId);
+                }
+                else if (callConfigs.Any())
+                {
+                    query = query.Where(x => x.SourceDocumentId == null || x.SourceDocumentId == 0 ||
+                                              (x.SourceDocumentId != null && !callConfigs.Contains((int)x.SourceDocumentId)));
+                }
+                else
+                {
+                    query = query.Where(x => (x.SourceDocumentId == null || x.SourceDocumentId == 0) || x.SourceDocumentId != null);
+                }
+
+                var orders = query.ToList();
+
+                return orders.Count;
             }
         }
     }

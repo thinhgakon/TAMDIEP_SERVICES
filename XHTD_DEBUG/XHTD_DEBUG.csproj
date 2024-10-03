@@ -281,10 +281,6 @@
       <Project>{7a175492-8df5-46dd-ab19-425b895546fb}</Project>
       <Name>XHTD_SERVICES_GATEWAY_PRINT</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_INIT\XHTD_SERVICES_INIT.csproj">
-      <Project>{29ad49ed-e753-4f6d-93c2-21c72265d1ac}</Project>
-      <Name>XHTD_SERVICES_INIT</Name>
-    </ProjectReference>
     <ProjectReference Include="..\XHTD_SERVICES_LED\XHTD_SERVICES_LED.csproj">
       <Project>{3ded0d80-1b3b-468a-9944-a85efe1d37e2}</Project>
       <Name>XHTD_SERVICES_LED</Name>
@@ -316,10 +312,6 @@
     <ProjectReference Include="..\XHTD_SERVICES_XB_TROUGH_1\XHTD_SERVICES_XB_TROUGH_1.csproj">
       <Project>{e8397e51-be40-4d7f-9c35-6d23409ea3ce}</Project>
       <Name>XHTD_SERVICES_XB_TROUGH_1</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XHTD_SERVICES_XR_QUEUE_TO_CALL\XHTD_SERVICES_XR_QUEUE_TO_CALL.csproj">
-      <Project>{eb93b207-e24a-4c22-8396-07049f24d4d5}</Project>
-      <Name>XHTD_SERVICES_XR_QUEUE_TO_CALL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

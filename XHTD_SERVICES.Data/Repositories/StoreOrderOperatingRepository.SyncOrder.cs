@@ -28,47 +28,49 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (itemCategory == OrderCatIdCode.CLINKER)
                 {
-                    typeProduct = OrderCatIdCode.CLINKER;
+                    typeProduct = OrderTypeProductCode.CLINKER;
+                }
+                else if (itemCategory == OrderCatIdCode.XI_MANG_XA)
+                {
+                    typeProduct = OrderTypeProductCode.ROI;
                 }
                 else
                 {
-                    // Type Product
-                    if (productNameUpper.Contains("PCB30") 
-                        || productNameUpper.Contains("PCB 30") 
-                        || productNameUpper.Contains("MAX PRO"))
-                    {
-                        typeProduct = "PCB30";
-                    }
-                    else if (productNameUpper.Contains("PC30"))
-                    {
-                        typeProduct = "PC30";
-                    }
-                    else if (productNameUpper.Contains("PCB40") || productNameUpper.Contains("PCB 40"))
-                    {
-                        typeProduct = "PCB40";
-                    }
-                    else if (productNameUpper.Contains("PC40"))
-                    {
-                        typeProduct = "PC40";
-                    }
-                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
-                    {
-                        typeProduct = "C91";
-                    }
-                    else
-                    {
-                        typeProduct = "OTHER";
-                    }
-
                     // Type XK
                     if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
                         typeXK = OrderTypeXKCode.JUMBO;
+                        typeProduct = OrderTypeProductCode.JUMBO;
                     }
-                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING) 
+                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING)
                         || productNameUpper.Contains(OrderTypeXKCode.SILING))
                     {
                         typeXK = OrderTypeXKCode.SLING;
+                        typeProduct = OrderTypeProductCode.SLING;
+                    }
+                    else if (productNameUpper.Contains("PCB30") 
+                        || productNameUpper.Contains("PCB 30")
+                        || productNameUpper.Contains("MAX PRO")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.PCB30;
+                    }
+                    else if (productNameUpper.Contains("PCB40") 
+                        || productNameUpper.Contains("PCB 40")
+                        || productNameUpper.Contains("PC40")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.PCB40;
+                    }
+                    else if (productNameUpper.Contains("C91") 
+                        || productNameUpper.Contains("XÂY TRÁT")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.C91;
+                    }
+                    else
+                    {
+                        typeProduct = OrderTypeProductCode.OTHER;
                     }
                 }
 
@@ -84,12 +86,19 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (!CheckExist(websaleOrder.id))
                 {
+                    int? sourceDocumentId = null;
+                    if (!string.IsNullOrEmpty(websaleOrder.sourceDocumentId))
+                    {
+                        sourceDocumentId = int.Parse(websaleOrder.sourceDocumentId);
+                    }
+
                     var newOrderOperating = new tblStoreOrderOperating
                     {
                         Vehicle = vehicleCode,
                         DriverName = websaleOrder.driverName,
                         NameDistributor = websaleOrder.customerName,
-                        //ItemId = websaleOrder.INVENTORY_ITEM_ID,
+                        ItemId = !string.IsNullOrEmpty(websaleOrder.productId) ? Double.Parse(websaleOrder.productId) : 0,
+                        IDDistributorSyn = !string.IsNullOrEmpty(websaleOrder.customerId) ? int.Parse(websaleOrder.customerId) : 0,
                         NameProduct = websaleOrder.productName,
                         CatId = websaleOrder.itemCategory,
                         SumNumber = (decimal?)websaleOrder.bookQuantity,
@@ -110,6 +119,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         Confirm9 = 0,
                         MoocCode = websaleOrder.moocCode,
                         LocationCode = websaleOrder.locationCode,
+                        LocationCodeTgc = websaleOrder.locationCodeTgc,
                         TransportMethodId = websaleOrder.transportMethodId,
                         TransportMethodName = websaleOrder.transportMethodName,
                         State = websaleOrder.status,
@@ -122,7 +132,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
                         LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
                         IsSyncedByNewWS = true,
-                        ItemId = websaleOrder.itemId,
+                        SourceDocumentId = sourceDocumentId
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -133,39 +143,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     isSynced = true;
                 }
-                //else
-                //{
-                //    var order = _appDbContext.tblStoreOrderOperatings
-                //            .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                //                                && x.IsVoiced == false
-                //                                && x.Step < (int)OrderStep.DA_CAN_VAO
-                //                                );
-                //    if (order != null)
-                //    {
-                //        if (lastUpdatedDate == null || lastUpdatedDate <= DateTime.MinValue)
-                //        {
-                //            return false;
-                //        }
-
-                //        if (order.UpdateDay == null || order.UpdateDay < lastUpdatedDate)
-                //        {
-                //            log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
-
-                //            order.Vehicle = vehicleCode;
-                //            order.DriverName = websaleOrder.driverName;
-                //            order.CardNo = cardNo;
-                //            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
-                //            order.UpdateDay = lastUpdatedDate;
-
-                //            order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
-                //            order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
-
-                //            await _appDbContext.SaveChangesAsync();
-
-                //            log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
-                //        }
-                //    }
-                //}
 
                 return isSynced;
             }
@@ -193,53 +170,58 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (itemCategory == OrderCatIdCode.CLINKER)
                 {
-                    typeProduct = OrderCatIdCode.CLINKER;
+                    typeProduct = OrderTypeProductCode.CLINKER;
+                }
+                else if (itemCategory == OrderCatIdCode.XI_MANG_XA)
+                {
+                    typeProduct = OrderTypeProductCode.ROI;
                 }
                 else
                 {
-                    // Type Product
-                    if (productNameUpper.Contains("PCB30")
-                        || productNameUpper.Contains("PCB 30")
-                        || productNameUpper.Contains("MAX PRO"))
-                    {
-                        typeProduct = "PCB30";
-                    }
-                    else if (productNameUpper.Contains("PC30"))
-                    {
-                        typeProduct = "PC30";
-                    }
-                    else if (productNameUpper.Contains("PCB40") || productNameUpper.Contains("PCB 40"))
-                    {
-                        typeProduct = "PCB40";
-                    }
-                    else if (productNameUpper.Contains("PC40"))
-                    {
-                        typeProduct = "PC40";
-                    }
-                    else if (productNameUpper.Contains("C91") || productNameUpper.Contains("XÂY TRÁT"))
-                    {
-                        typeProduct = "C91";
-                    }
-                    else
-                    {
-                        typeProduct = "OTHER";
-                    }
-
                     // Type XK
                     if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
                     {
                         typeXK = OrderTypeXKCode.JUMBO;
+                        typeProduct = OrderTypeProductCode.JUMBO;
                     }
                     else if (productNameUpper.Contains(OrderTypeXKCode.SLING)
                         || productNameUpper.Contains(OrderTypeXKCode.SILING))
                     {
                         typeXK = OrderTypeXKCode.SLING;
+                        typeProduct = OrderTypeProductCode.SLING;
+                    }
+                    else if (productNameUpper.Contains("PCB30") 
+                        || productNameUpper.Contains("PCB 30")
+                        || productNameUpper.Contains("MAX PRO")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.PCB30;
+                    }
+                    else if (productNameUpper.Contains("PCB40") 
+                        || productNameUpper.Contains("PCB 40")
+                        || productNameUpper.Contains("PC40")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.PCB40;
+                    }
+                    else if (productNameUpper.Contains("C91") 
+                        || productNameUpper.Contains("XÂY TRÁT")
+                        )
+                    {
+                        typeProduct = OrderTypeProductCode.C91;
+                    }
+                    else
+                    {
+                        typeProduct = OrderTypeProductCode.OTHER;
                     }
                 }
 
                 var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
                 var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
                 var cardNo = rfidItem?.Code ?? null;
+
+                var orderDateString = websaleOrder?.orderDate;
+                DateTime orderDate = DateTime.ParseExact(orderDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
 
                 var lastUpdatedDateString = websaleOrder?.lastUpdatedDate;
                 DateTime lastUpdatedDate = DateTime.ParseExact(lastUpdatedDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
@@ -249,7 +231,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     var order = _appDbContext.tblStoreOrderOperatings
                             .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                 && x.IsVoiced == false
-                                                && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                //&& x.Step < (int)OrderStep.DA_CAN_VAO
                                                 );
                     if (order != null)
                     {
@@ -262,18 +244,25 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
 
-                            order.Vehicle = vehicleCode;
-                            order.DriverName = websaleOrder.driverName;
-                            order.CardNo = cardNo;
-                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            if(order.Step < (int)OrderStep.DA_CAN_VAO)
+                            {
+                                order.Vehicle = vehicleCode;
+                                order.DriverName = websaleOrder.driverName;
+                                order.CardNo = cardNo;
 
-                            order.CatId = websaleOrder.itemCategory;
-                            order.NameProduct = websaleOrder.productName;
-                            order.TypeProduct = typeProduct;
-                            order.TypeXK = typeXK;
-                            order.LocationCode = websaleOrder.locationCode;
-                            order.TransportMethodId = websaleOrder.transportMethodId;
-                            order.TransportMethodName = websaleOrder.transportMethodName;
+                                order.CatId = websaleOrder.itemCategory;
+                                order.NameProduct = websaleOrder.productName;
+                                order.ItemId = !string.IsNullOrEmpty(websaleOrder.productId) ? Double.Parse(websaleOrder.productId) : 0;
+                                order.TypeProduct = typeProduct;
+                                order.TypeXK = typeXK;
+                                order.LocationCode = websaleOrder.locationCode;
+                                order.LocationCodeTgc = websaleOrder.locationCodeTgc;
+                                order.TransportMethodId = websaleOrder.transportMethodId;
+                                order.TransportMethodName = websaleOrder.transportMethodName;
+                            }
+
+                            order.SumNumber = (decimal?)websaleOrder.bookQuantity;
+                            order.OrderDate = orderDate;
 
                             order.UpdateDay = lastUpdatedDate;
 

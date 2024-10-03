@@ -60,8 +60,10 @@
   <ItemGroup>
     <Compile Include="Common\MachineCode.cs" />
     <Compile Include="Common\OrderProductCategoryCode.cs" />
+    <Compile Include="Common\OrderTypeProductCode.cs" />
     <Compile Include="Common\OrderTypeXKCode.cs" />
     <Compile Include="Common\OrderCatIdCode.cs" />
+    <Compile Include="Common\RightCode.cs" />
     <Compile Include="Common\ScaleCode.cs" />
     <Compile Include="Common\ScaleConfig.cs" />
     <Compile Include="Common\URIConfig.cs" />
@@ -75,6 +77,9 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblAttachment.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblCallToGatewayConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblCallToTrough.cs">
@@ -117,6 +122,12 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblExportHistory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblExportPlan.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblExportPlanDetail.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblFunction.cs">

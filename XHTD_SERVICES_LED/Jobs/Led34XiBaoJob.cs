@@ -52,11 +52,23 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 throw new ArgumentNullException(nameof(context));
             }
-            await Task.Run(async () =>
+
+            try
             {
-                //WriteLogInfo("Thuc hien ket noi machine.");
-                await ConnectPLC();
-            });
+                await Task.Run(async () =>
+                {
+                    WriteLogInfo($"--------------- START JOB REALTIME - IP: {PLC_IP_ADDRESS} ---------------");
+
+                    await ConnectPLC();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task ConnectPLC()
@@ -71,6 +83,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 WriteLogInfo($"Connected to machine : 3|4");
 
+                WriteLogInfo($"Đọc dữ liệu máng xuất");
                 var trough12Codes = new List<string> { "5", "6" };
                 await ReadMXData(trough12Codes, MACHINE_3_CODE);
 
@@ -79,6 +92,9 @@ namespace XHTD_SERVICES_LED.Jobs
                 var trough34Codes = new List<string> { "7", "8" };
                 await ReadMXData(trough34Codes, MACHINE_4_CODE);
 
+                //Thread.Sleep(200);
+
+                //WriteLogInfo($"Đọc dữ liệu máy đếm bao");
                 //var machineCodes = new List<string> { "1" };
                 //await ReadMDBData(machineCodes);
 
@@ -108,7 +124,12 @@ namespace XHTD_SERVICES_LED.Jobs
 
                 foreach (var troughCode in troughCodes)
                 {
+                    WriteLogInfo($"Máng {troughCode}");
+
                     var command = $"*[Count][MX][{troughCode}]#GET[!]";
+
+                    WriteLogInfo($"Gửi lệnh: {command}");
+
                     byte[] data1 = encoding.GetBytes($"{command}");
                     stream.Write(data1, 0, data1.Length);
 
@@ -121,6 +142,10 @@ namespace XHTD_SERVICES_LED.Jobs
                     {
                         WriteLogInfo($"Khong co du lieu tra ve");
                         return;
+                    }
+                    else
+                    {
+                        WriteLogInfo($"Phản hồi: {response}");
                     }
 
                     var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
@@ -188,8 +213,13 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 try
                 {
+                    WriteLogInfo($"Máy {machineCode}");
+
                     // *[Count][MDB][1]#GET[!]
                     var command = $"*[Count][MDB][{machineCode}]#GET[!]";
+
+                    WriteLogInfo($"Gửi lệnh: {command}");
+
                     byte[] data1 = encoding.GetBytes($"{command}");
                     stream.Write(data1, 0, data1.Length);
 
@@ -202,6 +232,10 @@ namespace XHTD_SERVICES_LED.Jobs
                     {
                         WriteLogInfo($"Khong co du lieu tra ve");
                         return;
+                    }
+                    else
+                    {
+                        WriteLogInfo($"Phản hồi: {response}");
                     }
 
                     var result = GetMDBInfo(response.Replace("\0", "").Replace("##", "#"));
@@ -277,29 +311,29 @@ namespace XHTD_SERVICES_LED.Jobs
 
         public void DisplayScreenMDBLed(string dataCode)
         {
-            WriteLogInfo($"Send led: dataCode = {dataCode}");
+            WriteLogInfo($"Send led khi đọc từ MDB: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(MACHINE_MDB_CODE, dataCode))
             {
-                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} - OK");
+                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} từ MDB - OK");
             }
             else
             {
-                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} - FAILED");
+                WriteLogInfo($"LED Máy {MACHINE_MDB_CODE} từ MDB - FAILED");
             }
         }
 
         public void DisplayScreenLed(string dataCode, string ledCode)
         {
-            WriteLogInfo($"Send led: dataCode = {dataCode}");
+            WriteLogInfo($"Send led khi đọc từ MX: dataCode = {dataCode}");
 
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
             {
-                WriteLogInfo($"LED Máy {ledCode} - OK");
+                WriteLogInfo($"LED Máy {ledCode} từ MX - OK");
             }
             else
             {
-                WriteLogInfo($"LED Máy {ledCode} - FAILED");
+                WriteLogInfo($"LED Máy {ledCode} từ MX - FAILED");
             }
         }
 

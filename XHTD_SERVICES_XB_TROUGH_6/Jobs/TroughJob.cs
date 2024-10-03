@@ -113,22 +113,31 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _logger.LogInfo("Service nhận diện RFID đang TẮT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _logger.LogInfo("Start Xibao Trough service");
-                _logger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                        return;
+                    }
 
-                AuthenticateConfirmModuleFromPegasus();
-            });
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+
+                    AuthenticateUhfFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -147,7 +156,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
             }
         }
 
-        public void AuthenticateConfirmModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -157,6 +166,17 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                 try
                 {
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                    if (openResult != 0)
+                    {
+                        _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -210,7 +230,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                 }
             }
 
-            AuthenticateConfirmModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)
@@ -263,6 +283,12 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
 
             var trough = await _troughRepository.GetTroughByTroughCode(TROUGH_CODE);
 
+            if (machine == null)
+            {
+                _logger.LogInfo($"2. Máy không tồn tại => Kết thúc");
+                return;
+            }
+
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
@@ -272,7 +298,7 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
                 SendNotificationHub("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("XI_BAO", machine.Code, TROUGH_CODE, vehicleCodeCurrent);
 
-                if (!string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
+                if (trough != null && !string.IsNullOrEmpty(trough.DeliveryCodeCurrent))
                 {
                     var oldOrder = await _storeOrderOperatingRepository.GetDetail(trough.DeliveryCodeCurrent);
                     if (oldOrder.Vehicle.ToUpper() != vehicleCodeCurrent.ToUpper())

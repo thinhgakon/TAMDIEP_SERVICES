@@ -24,51 +24,115 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == OrderCatIdCode.CLINKER)
+            if ((order.Step == (int)OrderStep.DA_XAC_THUC
+                || order.Step == (int)OrderStep.DANG_GOI_XE
+                || order.Step == (int)OrderStep.CHO_GOI_XE
+                )
+                && (order.DriverUserName ?? "") != "")
             {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    ) 
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
-            {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    )
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                if ((order.Step == (int)OrderStep.DA_XAC_THUC 
-                    || order.Step == (int)OrderStep.DANG_GOI_XE
-                    || order.Step == (int)OrderStep.CHO_GOI_XE
-                    ) 
-                    && (order.DriverUserName ?? "") != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
+        }
+
+        public static bool IsValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            foreach(var order in orders)
+            {
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => ((x.Step == (int)OrderStep.DA_XAC_THUC
+                                            || x.Step == (int)OrderStep.DANG_GOI_XE
+                                            || x.Step == (int)OrderStep.CHO_GOI_XE
+                                            )
+                                            && (x.DriverUserName ?? "") != "")
+                                    );
+
+            return isValid;
+        }
+
+        public static List<tblStoreOrderOperating> ValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => ((x.Step == (int)OrderStep.DA_XAC_THUC
+                                            || x.Step == (int)OrderStep.DANG_GOI_XE
+                                            || x.Step == (int)OrderStep.CHO_GOI_XE
+                                            )
+                                            && (x.DriverUserName ?? "") != "")
+                                    )
+                                    .ToList();
+
+            return validOrders;
+        }
+
+        public static bool IsValidOrderEntraceGatewayInCaseRequireCallVoice(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if ((order.Step == (int)OrderStep.DANG_GOI_XE
+                )
+                && (order.DriverUserName ?? "") != "")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool IsValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+                return false;
+            }
+
+            foreach (var order in orders) { 
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => x.Step == (int)OrderStep.DANG_GOI_XE 
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            return isValid;
+        }
+
+        public static List<tblStoreOrderOperating> ValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => x.Step == (int)OrderStep.DANG_GOI_XE
+                                        && (x.DriverUserName ?? "") != ""
+                                    )
+                                    .ToList();
+
+            return validOrders;
         }
 
         public static bool IsValidOrderExitGateway(tblStoreOrderOperating order)
@@ -81,48 +145,51 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang chieu RA: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == OrderCatIdCode.CLINKER)
+            if (
+                order.Step == (int)OrderStep.DA_CAN_RA
+                && (order.DriverUserName ?? "") != ""
+               )
             {
-                if (
-                    order.Step == (int)OrderStep.DA_CAN_RA
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
-            {
-                if (
-                    order.Step == (int)OrderStep.DA_CAN_RA
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                if (
-                    order.Step == (int)OrderStep.DA_CAN_RA
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
+        }
+
+        public static bool IsValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu RA: order = null");
+                return false;
+            }
+
+            foreach (var order in orders) { 
+                _logger.Info($"4.0. Kiem tra don hang chieu RA: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => (x.Step == (int)OrderStep.DA_CAN_RA
+                                       && (x.DriverUserName ?? "") != "")
+                                    );
+
+            return isValid;
+        }
+
+        public static List<tblStoreOrderOperating> ValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                return null;
+            }
+
+            var validOrders = orders.Where(x => (x.Step == (int)OrderStep.DA_CAN_RA
+                                       && (x.DriverUserName ?? "") != "")
+                                    )
+                                    .ToList();
+
+            return validOrders;
         }
 
         public static bool IsValidOrderScaleStation(tblStoreOrderOperating order)
@@ -143,40 +210,6 @@ namespace XHTD_SERVICES.Helper
                     && order.Step != (int)OrderStep.DA_CAN_VAO
                     && order.Step != (int)OrderStep.DANG_LAY_HANG
                     && order.Step != (int)OrderStep.DA_LAY_HANG
-                    && order.Step != (int)OrderStep.DA_CAN_RA
-                    && order.Step != (int)OrderStep.DA_HOAN_THANH
-                    && order.Step != (int)OrderStep.DA_GIAO_HANG
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.CatId == OrderCatIdCode.CLINKER)
-            {
-                if (!string.IsNullOrEmpty(order.DriverUserName)
-                    && order.Step != (int)OrderStep.CHUA_NHAN_DON
-                    && order.Step != (int)OrderStep.DA_NHAN_DON
-                    && order.Step != (int)OrderStep.DA_CAN_RA
-                    && order.Step != (int)OrderStep.DA_HOAN_THANH
-                    && order.Step != (int)OrderStep.DA_GIAO_HANG
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
-            {
-                if (!string.IsNullOrEmpty(order.DriverUserName)
-                    && order.Step != (int)OrderStep.CHUA_NHAN_DON
-                    && order.Step != (int)OrderStep.DA_NHAN_DON
                     && order.Step != (int)OrderStep.DA_CAN_RA
                     && order.Step != (int)OrderStep.DA_HOAN_THANH
                     && order.Step != (int)OrderStep.DA_GIAO_HANG

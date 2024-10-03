@@ -181,8 +181,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             OracleHelper oracleHelper = new OracleHelper(connectionString);
 
-            string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, VEHICLE_CODE, 
-                            DRIVER_NAME, CUSTOMER_NAME, BOOK_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM 
+            string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
+                                     VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
+                                     TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID
                             FROM apps.dev_sales_orders_mbf_v 
                             WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
@@ -199,7 +200,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
                 driverName = reader["DRIVER_NAME"]?.ToString(),
                 customerName = reader["CUSTOMER_NAME"]?.ToString(),
-                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
+                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
                 orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
                 moocCode = reader["MOOC_CODE"]?.ToString(),
                 locationCode = reader["LOCATION_CODE"]?.ToString(),
@@ -207,6 +208,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(16).ToString("yyyy-MM-ddTHH:mm:ss"),
                 itemCategory = reader["ITEM_CATEGORY"].ToString(),
                 docnum = reader["DOC_NUM"].ToString(),
+                sourceDocumentId = reader["ORDER_REQ_ID"] != DBNull.Value ? reader["ORDER_REQ_ID"].ToString() :
+                                   reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
@@ -253,7 +256,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     if (isSynced)
                     {
                         // Cân vào, gửi tín hiệu signalR tới in phun
-                        SendVehicleInTroughData(string.Empty, string.Empty, websaleOrder.deliveryCode, websaleOrder.vehicleCode);
+                        SendVehicleInTroughData(string.Empty, string.Empty, websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity.ToString(), websaleOrder.locationCodeTgc);
                     }
                 }
             }
@@ -310,7 +313,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                                 else
                                 {
-                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode}");
+                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode} - lỗi: {apiResponse.MessageObject.Message} - {apiResponse.MessageObject.MessageDetail}");
                                 }
                             }
                         }
@@ -381,9 +384,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             _notification.SendOrderSendOrderToleranceWarning(deliveryCode, vehicle, sumNumber, weightIn, weightOut, tolerance);
         }
 
-        private void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        private void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
-            _notification.SendVehicleInTroughData(machineCode, troughCode, deliveryCode, vehicle);
+            _notification.SendVehicleInTroughData(machineCode, troughCode, deliveryCode, vehicle, bookQuantity, locationCodeTgc);
         }
     }
 }

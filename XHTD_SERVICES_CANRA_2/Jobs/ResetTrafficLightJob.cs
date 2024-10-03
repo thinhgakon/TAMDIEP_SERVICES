@@ -46,11 +46,11 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
             try
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    TrafficLightProcess();
+                    await TrafficLightProcess();
                 });
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             }
         }
 
-        public void TrafficLightProcess()
+        public async Task TrafficLightProcess()
         {
             try
             {
@@ -76,7 +76,12 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                         if (IsWillResetLight)
                         {
-                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0 => Tắt đèn");
+                            WriteLogInfo("2. Lần đầu tiên chỉ số cân về 0");
+
+                            WriteLogInfo("2.1. Giải phóng cân");
+                            await ReleaseScale();
+
+                            WriteLogInfo("2.2. Tắt đèn");
                             TurnOffTrafficLight();
                         }
                         else
@@ -102,6 +107,14 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             {
                 WriteLogInfo($"RESET DGT ERROR: {ex.Message}");
             }
+        }
+
+        public async Task ReleaseScale()
+        {
+            Program.IsScalling = false;
+            Program.IsLockingScale = false;
+            Program.scaleValues.Clear();
+            await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
         }
 
         public void TurnOffTrafficLight()

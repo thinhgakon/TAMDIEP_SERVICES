@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1">
+      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1" ZoomLevel="76">
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccount" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroup" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroupFunction" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
@@ -51,6 +51,10 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblMachineTypeProduct_tblTypeProduct_TypeProduct" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportHistory" Width="1.5" PointX="11" PointY="24.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" Width="1.5" PointX="13.375" PointY="17.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" Width="1.5" PointX="19.375" PointY="6" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Width="1.5" PointX="21.625" PointY="6" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="6.5" PointY="24.875" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" />
       </Diagram>

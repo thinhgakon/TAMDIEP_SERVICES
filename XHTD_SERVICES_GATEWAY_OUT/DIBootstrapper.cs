@@ -35,6 +35,8 @@ namespace XHTD_SERVICES_GATEWAY_OUT
             builder.RegisterType<ScaleApiLib>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
             builder.RegisterType<S71200Control>().AsSelf();
+            builder.RegisterType<AttachmentRepository>().AsSelf();
+            builder.RegisterType<CheckInOutRepository>().AsSelf();
 
             RegisterScheduler(builder);
 

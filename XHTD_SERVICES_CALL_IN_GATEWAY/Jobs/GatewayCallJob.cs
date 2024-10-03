@@ -22,6 +22,9 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
+        protected readonly string CONG = CallType.CONG;
+        protected readonly string BAI_CHO = CallType.BAI_CHO;
+
         protected readonly GatewayCallLogger _gatewayCallLogger;
 
         public GatewayCallJob(
@@ -53,6 +56,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var isWillCall = false;
+                var type = CONG;
                 var vehiceCode = "";
                 using (var db = new XHTD_Entities())
                 {
@@ -68,23 +72,19 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (storeOrderOperating.CountReindex != null && (int)storeOrderOperating.CountReindex >= 3)
                     {
                         _gatewayCallLogger.LogInfo($@"======== Phương tiện {storeOrderOperating.Vehicle} quá 3 lần xoay vòng gọi => Hủy lốt ========");
-                        //if (storeOrderOperating.Step == 1 || storeOrderOperating.Step == 4)
-                        //{
-                        //    var sql = $@"UPDATE dbo.tblStoreOrderOperating SET IndexOrder = 0, Confirm1 = 0, TimeConfirm1 = NULL, Step = 0, IndexOrder2 = 0, DeliveryCodeParent = NULL, LogProcessOrder = CONCAT(LogProcessOrder, N'#Quá 3 lần xoay vòng lốt mà xe không vào, hủy lốt lúc ', FORMAT(getdate(), 'dd/MM/yyyy HH:mm:ss')) WHERE  Step IN (1,4) AND ISNULL(DriverUserName,'') <> '' AND (DeliveryCode = @DeliveryCode OR DeliveryCodeParent = @DeliveryCode)";
-                        //    db.Database.ExecuteSqlCommand(sql, new SqlParameter("@DeliveryCode", storeOrderOperating.DeliveryCode));
-
-                        //    var sqlDelete = $@"UPDATE dbo.tblCallVehicleStatus SET IsDone = 1 WHERE StoreOrderOperatingId = @StoreOrderOperatingId";
-                        //    db.Database.ExecuteSqlCommand(sqlDelete, new SqlParameter("@StoreOrderOperatingId", storeOrderOperating.Id));
-
-                        //    return;
-                        //}
                     }
                     var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
                     if (vehicleWaitingCall == null) return;
 
-                    if (storeOrderOperating == null || 
-                       (storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
-                        storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE))
+                    if (storeOrderOperating == null)
+                    {
+                        _gatewayCallLogger.LogInfo($"Không tìm thấy đơn hàng => Kết thúc");
+                        return;
+                    }
+
+                    if (storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
+                        storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
+                        storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE)
                     {
                         _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} đã vào cổng ========");
 
@@ -97,22 +97,41 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     {
                         _gatewayCallLogger.LogInfo($"======== Gọi phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} lần thứ {vehicleWaitingCall.CountTry + 1} ========");
 
-                        storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
-                        storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
-                        storeOrderOperating.TimeConfirm4 = DateTime.Now;
                         isWillCall = true;
+                        type = callVehicleItem.CallType;
                         vehiceCode = storeOrderOperating.Vehicle;
+                        
+                        if (type == CONG)
+                        {
+                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào cổng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                            storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
+                            storeOrderOperating.TimeConfirm4 = DateTime.Now;
+                        }
+
+                        else
+                        {
+                            storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào bãi chờ lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
+                        }
+
                         vehicleWaitingCall.ModifiledOn = DateTime.Now;
                         vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
                         vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
+
                         await db.SaveChangesAsync();
                     }
                 }
                 if (isWillCall)
                 {
                     // tiến hành gọi xe
-                    // CallVoiceVehicle(vehiceCode);
-                    CallBySystem(vehiceCode);
+                    if (type == CONG)
+                    {
+                        CallInGatewayBySystem(vehiceCode);
+                    }
+
+                    else if (type == BAI_CHO)
+                    {
+                        CallInYardBySystem(vehiceCode);
+                    }
                 }
             }
             catch (Exception ex)
@@ -133,7 +152,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     // Mời xe ra bãi chờ trước
-                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.BAI_CHO).OrderBy(x => x.Id).FirstOrDefault();
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.CallType.ToUpper() == CallType.BAI_CHO).OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     for (int i = 0; i < 10; i++)
@@ -152,21 +171,67 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             return callVehicleItem;
         }
 
-        public void CallBySystem(string vehicle)
+        public void CallInGatewayBySystem(string vehicle)
         {
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
-                // var PathAudioLib = $@"./AudioNormal";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/VicemBegin.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
-                //wplayer.URL = VoiceFileStart;
-                //wplayer.settings.volume = 100;
-                //wplayer.controls.play();
-                //Thread.Sleep(5000);
+
+                wplayer.URL = VoiceFileInvite;
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+                var count = 0;
+                foreach (char c in vehicle)
+                {
+                    count++;
+                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    wplayer.settings.volume = 100;
+                    wplayer.controls.play();
+                    if (count < 3)
+                    {
+                        Thread.Sleep(700);
+                    }
+                    else if (count == 3)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        Thread.Sleep(600);
+                    }
+                }
+
+                wplayer.URL = VoiceFileInOut;
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+            }
+            catch (Exception ex)
+            {
+                _gatewayCallLogger.LogError(ex.Message);
+            }
+        }
+
+        public void CallInYardBySystem(string vehicle)
+        {
+            try
+            {
+                var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
+                string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
+                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
+                string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
+                WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileStart;
+                wplayer.settings.volume = 100;
+                wplayer.controls.play();
+                Thread.Sleep(1500);
 
                 wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
@@ -197,11 +262,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
 
-                //Thread.Sleep(5000);
-
-                //wplayer.URL = VoiceFileEnd;
-                //wplayer.controls.play();
-
+                Thread.Sleep(3000);
             }
             catch (Exception ex)
             {

@@ -34,6 +34,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<MachineRepository>().AsSelf();
             builder.RegisterType<MachineApiLib>().AsSelf();
+            builder.RegisterType<TCPLed>().AsSelf();
+            builder.RegisterType<TCPLedControl>().AsSelf();
 
             RegisterScheduler(builder);
 

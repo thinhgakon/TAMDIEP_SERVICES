@@ -22,32 +22,13 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
                                                         && (
-                                                            (
-                                                                (x.CatId == OrderCatIdCode.CLINKER || x.TypeXK == OrderTypeXKCode.JUMBO || x.TypeXK == OrderTypeXKCode.SLING)
-                                                                &&
-                                                                (
-                                                                x.Step < (int)OrderStep.DA_CAN_RA
-                                                                ||
-                                                                x.Step == (int)OrderStep.DA_XAC_THUC
-                                                                ||
-                                                                x.Step == (int)OrderStep.CHO_GOI_XE
-                                                                ||
-                                                                x.Step == (int)OrderStep.DANG_GOI_XE
-                                                                )
-                                                            )
+                                                            x.Step < (int)OrderStep.DA_CAN_RA
                                                             ||
-                                                            (
-                                                                (x.CatId != OrderCatIdCode.CLINKER && x.TypeXK != OrderTypeXKCode.JUMBO && x.TypeXK != OrderTypeXKCode.SLING)
-                                                                &&
-                                                                (x.Step < (int)OrderStep.DA_CAN_RA
-                                                                ||
-                                                                x.Step == (int)OrderStep.DA_XAC_THUC
-                                                                ||
-                                                                x.Step == (int)OrderStep.CHO_GOI_XE
-                                                                ||
-                                                                x.Step == (int)OrderStep.DANG_GOI_XE
-                                                                )
-                                                            )
+                                                            x.Step == (int)OrderStep.DA_XAC_THUC
+                                                            ||
+                                                            x.Step == (int)OrderStep.CHO_GOI_XE
+                                                            ||
+                                                            x.Step == (int)OrderStep.DANG_GOI_XE
                                                         )
                                                    )
                                             .OrderByDescending(x => x.Step)

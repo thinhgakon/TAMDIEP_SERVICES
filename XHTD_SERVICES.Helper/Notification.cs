@@ -135,14 +135,16 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendMachineNotification(notification);
         }
 
-        public void SendTroughStartData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendTroughStartData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             SendTroughControlRequest notification = new SendTroughControlRequest
             {
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 DeliveryCode = deliveryCode,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                BookQuantity = bookQuantity,
+                LocationCodeTgc = locationCodeTgc
             };
 
             HttpRequest.SendTroughStartData(notification);
@@ -161,14 +163,16 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendTroughStopData(notification);
         }
 
-        public void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendVehicleInTroughData(string machineCode, string troughCode, string deliveryCode, string vehicle, string bookQuantity, string locationCodeTgc)
         {
             SendTroughControlRequest notification = new SendTroughControlRequest
             {
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 DeliveryCode = deliveryCode,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                BookQuantity = bookQuantity,
+                LocationCodeTgc = locationCodeTgc
             };
 
             HttpRequest.SendVehicleInTroughData(notification);
@@ -187,6 +191,30 @@ namespace XHTD_SERVICES.Helper
             };
 
             HttpRequest.SendDMSOrderToleranceWarning(warning);
+        }
+
+        public void SendScale1TrafficLight(string trafficLightCode, string red, string green)
+        {
+            SendScaleTrafficLightRequest request = new SendScaleTrafficLightRequest
+            {
+                TrafficLightCode = trafficLightCode,
+                Red = red,
+                Green = green
+            };
+
+            HttpRequest.SendScale1TrafficLight(request);
+        }
+
+        public void SendScale2TrafficLight(string trafficLightCode, string red, string green)
+        {
+            SendScaleTrafficLightRequest request = new SendScaleTrafficLightRequest
+            {
+                TrafficLightCode = trafficLightCode,
+                Red = red,
+                Green = green
+            };
+
+            HttpRequest.SendScale2TrafficLight(request);
         }
 
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
@@ -228,7 +256,11 @@ namespace XHTD_SERVICES.Helper
         public void SendPushNotification(string userName, string message)
         {
             HttpRequest.SendPushNotification(userName, message);
+        }
 
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            HttpRequest.SendNotificationByRight(rightCode, message);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace XHTD_SERVICES.Device
         private const string OFFGREENONRED = "*[L1]OFF[L2]ON[!]";
         private const string OFFGREENOFFRED = "*[L1]OFF[L2]OFF[!]";
 
-        private const int COUNT_RETRY_CONNECT = 1;
+        private const int COUNT_RETRY_CONNECT = 3;
         private const int COUNT_RETRY_CONNECT_OFF = 3;
 
         private string IpAddress { get; set; }
@@ -61,11 +61,7 @@ namespace XHTD_SERVICES.Device
                     // 2. send 1
                     byte[] data1 = encoding.GetBytes($"{ONGREENOFFRED}");
 
-                    stream.Write(data1, 0, data1.Length);
-
-                    // 3. receive 1
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
+                    stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
 
                     // 5. Close
                     stream.Close();
@@ -109,17 +105,12 @@ namespace XHTD_SERVICES.Device
                         continue;
                     }
 
-                    //client.Connect($"{this.IpAddress}", PORT_NUMBER);
                     Stream stream = client.GetStream();
 
                     // 2. send 1
                     byte[] data1 = encoding.GetBytes($"{OFFGREENONRED}");
 
-                    stream.Write(data1, 0, data1.Length);
-
-                    // 3. receive 1
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
+                    stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
 
                     // 5. Close
                     stream.Close();
@@ -131,7 +122,6 @@ namespace XHTD_SERVICES.Device
                 {
                     Console.WriteLine("Error: " + ex.Message);
                     _logger.Error($@"BAT DEN DO ERROR count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                    //return false;
 
                     Thread.Sleep(1000);
                 }
@@ -162,17 +152,12 @@ namespace XHTD_SERVICES.Device
                         continue;
                     }
 
-                    //client.Connect($"{this.IpAddress}", PORT_NUMBER);
                     Stream stream = client.GetStream();
 
                     // 2. send 1
                     byte[] data1 = encoding.GetBytes($"{OFFGREENOFFRED}");
 
                     stream.WriteAsync(data1, 0, data1.Length).Wait(3000);
-
-                    // 3. receive 1
-                    //data1 = new byte[BUFFER_SIZE];
-                    //stream.Read(data1, 0, BUFFER_SIZE);
 
                     // 5. Close
                     stream.Close();
@@ -184,7 +169,6 @@ namespace XHTD_SERVICES.Device
                 {
                     Console.WriteLine("Error: " + ex.Message);
                     _logger.Error($@"TAT DEN DO ERROR count={count}: {ex.Message} === {ex.StackTrace} === {ex.InnerException}");
-                    //return false;
 
                     Thread.Sleep(1000);
                 }

@@ -41,7 +41,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly ConfirmLogger _confirmLogger;
+        protected readonly ConfirmLogger _logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -94,7 +94,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _systemParameterRepository = systemParameterRepository;
             _trafficLight = trafficLight;
             _notification = notification;
-            _confirmLogger = confirmLogger;
+            _logger = confirmLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -113,21 +113,21 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                     if (!isActiveService)
                     {
-                        _confirmLogger.LogInfo("Service điểm xác thực đang TẮT.");
+                        _logger.LogInfo("Service điểm xác thực đang TẮT.");
                         return;
                     }
 
-                    _confirmLogger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
                     // Get devices info
                     await LoadDevicesInfo();
 
-                    AuthenticateConfirmModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
             {
-                _confirmLogger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
 
                 // do you want the job to refire?
                 throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
@@ -159,7 +159,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             trafficLight = devices.FirstOrDefault(x => x.Code == "CONFIRM.DGT");
         }
 
-        public void AuthenticateConfirmModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -169,14 +169,25 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 try
                 {
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                    if (openResult != 0)
+                    {
+                        _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _confirmLogger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                    _logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
                 }
-                
             }
-            _confirmLogger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
+
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
 
             Program.UHFConnected = true;
 
@@ -186,7 +197,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _confirmLogger.LogInfo($"Reading Pegasus...");
+            _logger.LogInfo($"Reading Pegasus...");
 
             while (Program.UHFConnected)
             {
@@ -202,13 +213,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                             Program.LastTimeReceivedUHF = DateTime.Now;
 
-                            _confirmLogger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
 
                             await ReadDataProcess(cardNoCurrent);
                         }
                         catch (Exception ex)
                         {
-                            _confirmLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
                             Program.UHFConnected = false;
                             break;
                         }
@@ -216,20 +227,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 }
                 catch(Exception err) 
                 {
-                    _confirmLogger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
                     Program.UHFConnected = false;
                     break;
                 }
             }
 
-            AuthenticateConfirmModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent)
         {
             if (Program.IsLockingRfid)
             {
-                _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+                _logger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
                 new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
             }
@@ -261,22 +272,22 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 return;
             }
 
-            _confirmLogger.LogInfo("----------------------------");
-            _confirmLogger.LogInfo($"Tag: {cardNoCurrent}");
-            _confirmLogger.LogInfo("-----");
+            _logger.LogInfo("----------------------------");
+            _logger.LogInfo($"Tag: {cardNoCurrent}");
+            _logger.LogInfo("-----");
 
-            _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+            _logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
             // Kiểm tra RFID có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
-                _confirmLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+                _logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
             }
             else
             {
-                _confirmLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+                _logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                 SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
                 SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
@@ -298,7 +309,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Nếu RFID không có đơn hàng
             if (currentOrder == null)
             {
-                _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
                 SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                 SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
@@ -312,7 +323,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Nếu RFID không có đơn hàng hợp lệ
             else if (isValidCardNo == false)
             {
-                _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
                 SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                 SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
@@ -337,7 +348,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
 
             var currentDeliveryCode = currentOrder.DeliveryCode;
-            _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
+            _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
             // Gọi API ERP kiểm tra điều kiện xác thực
             var orders = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
@@ -354,7 +365,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
@@ -362,7 +374,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     SendPushNotification(currentOrder.DriverUserName, pushMessage);
                 }
 
-                _confirmLogger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
+                _logger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
 
                 return;
             }
@@ -377,31 +389,46 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
                 #region Điều hướng gọi loa
+                _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
+
                 var typeProduct = currentOrder.TypeProduct.ToUpper();
                 var currentNumberWaitingVehicleInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByType(typeProduct);
+
+                _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
 
                 var parameters = await _systemParameterRepository.GetSystemParameters();
                 var maxVehicleConfig = parameters.Where(x => x.Code == $"MAX_VEHICLE_{typeProduct}").FirstOrDefault();
                 var maxVehicle = maxVehicleConfig != null ? int.Parse(maxVehicleConfig.Value) : 0;
 
-                if (currentNumberWaitingVehicleInFactory > maxVehicle)
+                _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
+
+                if (currentNumberWaitingVehicleInFactory >= maxVehicle)
                 {
+                    _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
                     using (var db = new XHTD_Entities())
                     {
-                        var newTblVehicleStatus = new tblCallVehicleStatu
-                        {
-                            StoreOrderOperatingId = currentOrder.Id,
-                            CountTry = 0,
-                            TypeProduct = currentOrder.TypeProduct,
-                            CreatedOn = DateTime.Now,
-                            ModifiledOn = DateTime.Now,
-                            LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
-                            IsDone = false,
-                            CallType = CallType.BAI_CHO
-                        };
+                        try { 
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                StoreOrderOperatingId = currentOrder.Id,
+                                CountTry = 0,
+                                TypeProduct = currentOrder.TypeProduct,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.BAI_CHO
+                            };
 
-                        db.tblCallVehicleStatus.Add(newTblVehicleStatus);
-                        db.SaveChanges();
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+
+                            _logger.LogInfo($"Them vao hang doi goi vao BAI CHO thanh cong");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                        }
                     }
                 }
                 #endregion
@@ -410,7 +437,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
                                   $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
                 if (driverUserName != null)
@@ -430,16 +458,18 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 if (erpUpdateStatusResponse.Code == "01")
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
-                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    //SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
 
-                    _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
+                    _logger.LogInfo($"{pushMessagePrintStatus}");
                 }
                 else if (erpUpdateStatusResponse.Code == "02")
                 {
                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
-                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    //SendPushNotification("adminNPP", pushMessagePrintStatus);
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
 
-                    _confirmLogger.LogInfo($"{pushMessagePrintStatus}");
+                    _logger.LogInfo($"{pushMessagePrintStatus}");
                 }
                 #endregion
             }
@@ -449,12 +479,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-                SendPushNotification("adminNPP", pushMessage);
+                //SendPushNotification("adminNPP", pushMessage);
+                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
-                _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
+                var driverUserName = currentOrder.DriverUserName;
+                if (driverUserName != null)
+                {
+                    SendPushNotification(driverUserName, pushMessage);
+                }
+
+                _logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
             }
 
-            _confirmLogger.LogInfo($"10. Giai phong RFID IN");
+            _logger.LogInfo($"10. Giai phong RFID IN");
 
             Program.IsLockingRfid = false;
         }
@@ -475,26 +512,26 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public void TurnOnTrafficLight()
         {
-            _confirmLogger.LogInfo($"7. Bật đèn xanh");
+            _logger.LogInfo($"7. Bật đèn xanh");
             if (TurnOnGreenTrafficLight())
             {
-                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                _logger.LogInfo($"7.2. Bật đèn xanh thành công");
             }
             else
             {
-                _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                _logger.LogInfo($"7.2. Bật đèn xanh thất bại");
             }
 
             Thread.Sleep(20000);
 
-            _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+            _logger.LogInfo($"8. Bật đèn đỏ");
             if (TurnOnRedTrafficLight())
             {
-                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                _logger.LogInfo($"8.2. Bật đèn đỏ thành công");
             }
             else
             {
-                _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                _logger.LogInfo($"8.2. Bật đèn đỏ thất bại");
             }
         }
 
@@ -507,7 +544,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 return false;
             }
 
-            _confirmLogger.LogInfo($"7.1. IP đèn: {ipAddress}");
+            _logger.LogInfo($"7.1. IP đèn: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 
@@ -523,7 +560,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 return false;
             }
 
-            _confirmLogger.LogInfo($"8.1. IP đèn: {ipAddress}");
+            _logger.LogInfo($"8.1. IP đèn: {ipAddress}");
 
             _trafficLight.Connect(ipAddress);
 
@@ -543,7 +580,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
             catch (Exception ex)
             {
-                _confirmLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -551,12 +588,25 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         {
             try
             {
-                _confirmLogger.LogInfo($"Gửi push notificaiton đến {userNameReceiver}, nội dung {message}");
+                _logger.LogInfo($"Gửi push notification đến {userNameReceiver}, nội dung {message}");
                 _notification.SendPushNotification(userNameReceiver, message);
             }
             catch (Exception ex)
             {
-                _confirmLogger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -585,13 +635,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _confirmLogger.LogInfo($"Connected to C3-400 {ipAddress}");
+                        _logger.LogInfo($"Connected to C3-400 {ipAddress}");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _confirmLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
+                        _logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
                         ret = PullLastError();
                         DeviceConnected = false;
                     }
@@ -600,14 +650,14 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
             catch (Exception ex)
             {
-                _confirmLogger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
+                _logger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
 
         public async void ReadDataFromC3400()
         {
-            _confirmLogger.LogInfo("Reading RFID from C3-400 ...");
+            _logger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -637,7 +687,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                     if (Program.IsLockingRfid)
                                     {
-                                        _confirmLogger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
+                                        _logger.LogInfo($"== Diem xac thuc dang xu ly => Ket thuc {cardNoCurrent} == ");
 
                                         new ConfirmHub().SendMessage("IS_LOCKING_RFID", "1");
                                     }
@@ -667,22 +717,22 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         continue;
                                     }
 
-                                    _confirmLogger.LogInfo("----------------------------");
-                                    _confirmLogger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
-                                    _confirmLogger.LogInfo("-----");
+                                    _logger.LogInfo("----------------------------");
+                                    _logger.LogInfo($"Tag: {cardNoCurrent}, door: {doorCurrent}, time: {timeCurrent}");
+                                    _logger.LogInfo("-----");
 
-                                    _confirmLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+                                    _logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
                                     // Kiểm tra RFID có hợp lệ hay không
                                     string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
                                     if (!String.IsNullOrEmpty(vehicleCodeCurrent))
                                     {
-                                        _confirmLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+                                        _logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
                                     }
                                     else
                                     {
-                                        _confirmLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+                                        _logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                                         SendNotificationHub("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
                                         SendNotificationAPI("CONFIRM_VEHICLE", 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
@@ -704,7 +754,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     // Nếu RFID không có đơn hàng
                                     if (currentOrder == null)
                                     {
-                                        _confirmLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+                                        _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
                                         SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
                                         SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
@@ -718,7 +768,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     // Nếu RFID không có đơn hàng hợp lệ
                                     else if (isValidCardNo == false)
                                     {
-                                        _confirmLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                                        _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
                                         SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
                                         SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
@@ -743,7 +793,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                     }
 
                                     var currentDeliveryCode = currentOrder.DeliveryCode;
-                                    _confirmLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
+                                    _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
                                     // Xác thực
                                     bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
@@ -760,18 +810,18 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         int statusGreenLight = 0;
                                         string messageGreenLight = "";
 
-                                        _confirmLogger.LogInfo($"7. Bật đèn xanh");
+                                        _logger.LogInfo($"7. Bật đèn xanh");
                                         if (TurnOnGreenTrafficLight())
                                         {
                                             statusGreenLight = 1;
                                             messageGreenLight = "Bật đèn xanh thành công";
-                                            _confirmLogger.LogInfo($"7.2. Bật đèn xanh thành công");
+                                            _logger.LogInfo($"7.2. Bật đèn xanh thành công");
                                         }
                                         else
                                         {
                                             statusGreenLight = 0;
                                             messageGreenLight = "Bật đèn xanh thất bại";
-                                            _confirmLogger.LogInfo($"7.2. Bật đèn xanh thất bại");
+                                            _logger.LogInfo($"7.2. Bật đèn xanh thất bại");
                                         }
 
                                         //var img = new HikvisionStreamCamera().CaptureStream(CAMERA_IP, CAMERA_USER_NAME, CAMERA_PASSWORD, "CONFIRM", CAMERA_NUMBER, IMG_PATH);
@@ -790,18 +840,18 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         int statusRedLight = 0;
                                         string messageRedLight = "";
 
-                                        _confirmLogger.LogInfo($"8. Bật đèn đỏ");
+                                        _logger.LogInfo($"8. Bật đèn đỏ");
                                         if (TurnOnRedTrafficLight())
                                         {
                                             statusRedLight = 1;
                                             messageRedLight = "Bật đèn đỏ thành công";
-                                            _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thành công");
+                                            _logger.LogInfo($"8.2. Bật đèn đỏ thành công");
                                         }
                                         else
                                         {
                                             statusRedLight = 0;
                                             messageRedLight = "Bật đèn đỏ thất bại";
-                                            _confirmLogger.LogInfo($"8.2. Bật đèn đỏ thất bại");
+                                            _logger.LogInfo($"8.2. Bật đèn đỏ thất bại");
                                         }
 
                                         //await SendNotificationHub("CONFIRM_RESULT", statusRedLight, cardNoCurrent, messageRedLight);
@@ -813,23 +863,23 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                         SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
                                         SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
-                                        _confirmLogger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
+                                        _logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
                                     }
 
-                                    _confirmLogger.LogInfo($"10. Giai phong RFID IN");
+                                    _logger.LogInfo($"10. Giai phong RFID IN");
 
                                     Program.IsLockingRfid = false;
                                 }
                             }
                             catch (Exception ex)
                             {
-                                _confirmLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
                                 continue;
                             }
                         }
                         else
                         {
-                            _confirmLogger.LogWarn("No data. Reconnect ...");
+                            _logger.LogWarn("No data. Reconnect ...");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 

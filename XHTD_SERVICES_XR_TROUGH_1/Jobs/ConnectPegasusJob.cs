@@ -1,4 +1,5 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -9,14 +10,14 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 {
     public class ConnectPegasusJob : IJob
     {
+        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.219";
-        protected readonly TroughLogger _logger;
+        private string PegasusAdr = "192.168.13.230";
 
-        public ConnectPegasusJob(TroughLogger logger)
+        public ConnectPegasusJob()
         {
-            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -26,10 +27,22 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            try
             {
-                CheckConnection();
-            });
+                await Task.Run(() =>
+                {
+                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+
+                    CheckConnection();
+                });
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public void CheckConnection()
@@ -41,25 +54,38 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    Console.WriteLine("Connection ok");
+                    WriteLogInfo("Ping ok");
                     return;
                 }
                 else
                 {
+                    WriteLogInfo("Ping fail");
+
                     int port = PortHandle;
                     var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                    while (openresult != 0)
+
+                    if (openresult != 0)
                     {
-                        openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-                        Thread.Sleep(1000);
+                        WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
                     }
-                    _logger.LogWarn("Connect fail. Start reconnect");
+                    else
+                    {
+                        WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
+                    }
+
+                    WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarn($"Ping ERROR: {ex.Message}");
+                WriteLogInfo($"Ping ERROR: {ex.Message}");
             }
+        }
+
+        public void WriteLogInfo(string message)
+        {
+            Console.WriteLine(message);
+            _logger.Info(message);
         }
     }
 }

@@ -55,6 +55,16 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(ConnectPegasusJob, ConnectPegasusTrigger);
+
+            IJobDetail ledJob = JobBuilder.Create<LedJob>().Build();
+            ITrigger ledTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(10)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(ledJob, ledTrigger);
         }
     }
 }

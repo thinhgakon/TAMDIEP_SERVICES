@@ -43,7 +43,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly GatewayLogger _gatewayLogger;
+        protected readonly GatewayLogger _logger;
 
         private IntPtr h21 = IntPtr.Zero;
 
@@ -103,7 +103,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             _systemParameterRepository = systemParameterRepository;
             _barrier = barrier;
             _notification = notification;
-            _gatewayLogger = gatewayLogger;
+            _logger = gatewayLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -113,25 +113,34 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(async () =>
+            try
             {
-                // Get System Parameters
-                await LoadSystemParameters();
-
-                if (!isActiveService)
+                await Task.Run(async () =>
                 {
-                    _gatewayLogger.LogInfo("Service cong bao ve dang TAT.");
-                    return;
-                }
+                    // Get System Parameters
+                    await LoadSystemParameters();
 
-                _gatewayLogger.LogInfo("Start gateway service");
-                _gatewayLogger.LogInfo("----------------------------");
+                    if (!isActiveService)
+                    {
+                        _logger.LogInfo("Service cong bao ve dang TAT.");
+                        return;
+                    }
 
-                // Get devices info
-                await LoadDevicesInfo();
+                    _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
-                AuthenticateGatewayModuleFromPegasus();
-            });
+                    // Get devices info
+                    await LoadDevicesInfo();
+
+                    AuthenticateUhfFromPegasus();
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"RUN JOB ERROR: {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+
+                // do you want the job to refire?
+                throw new JobExecutionException(msg: "", refireImmediately: true, cause: ex);
+            }
         }
 
         public async Task LoadSystemParameters()
@@ -177,7 +186,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             barrierRa = devices.FirstOrDefault(x => x.Code == "CBV.M221.BRE-OUT");
         }
 
-        public void AuthenticateGatewayModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -187,14 +196,25 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                 try
                 {
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                    if (openResult != 0)
+                    {
+                        _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _gatewayLogger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
+                    _logger.LogInfo($"OpenNetPort ERROR:{ex.StackTrace} --- {ex.Message}");
                 }
             }
 
-            _gatewayLogger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
+            _logger.LogInfo($"Connected Pegasus IP:{PegasusAdr} - Port: {PortHandle}");
 
             Program.UHFConnected = true;
 
@@ -204,7 +224,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         public async void ReadDataFromPegasus()
         {
-            _gatewayLogger.LogInfo("Reading Pegasus...");
+            _logger.LogInfo("Reading Pegasus...");
 
             while (Program.UHFConnected)
             {
@@ -224,13 +244,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
                             Program.LastTimeReceivedUHF = DateTime.Now;
 
-                            _gatewayLogger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
 
                             await ReadDataProcess(cardNoCurrent, isLuongVao, isLuongRa);
                         }
                         catch (Exception ex)
                         {
-                            _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                            _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
                             Program.UHFConnected = false;
                             continue;
                         }
@@ -238,13 +258,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                 }
                 catch (Exception err)
                 {
-                    _gatewayLogger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
+                    _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} {err.Message}");
                     Program.UHFConnected = false;
                     break;
                 }
             }
 
-            AuthenticateGatewayModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         private async Task ReadDataProcess(string cardNoCurrent, bool isLuongVao, bool isLuongRa)
@@ -253,7 +273,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 if (Program.IsLockingRfidIn)
                 {
-                    _gatewayLogger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    _logger.LogInfo($"== Cong VAO dang xu ly => Ket thuc {cardNoCurrent} == ");
                     new GatewayHub().SendMessage("IS_LOCKING_RFID_IN", "1");
                     return;
                 }
@@ -267,7 +287,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 if (Program.IsLockingRfidOut)
                 {
-                    _gatewayLogger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
+                    _logger.LogInfo($"== Cong RA dang xu ly => Ket thuc {cardNoCurrent} == ");
                     new GatewayHub().SendMessage("IS_LOCKING_RFID_OUT", "1");
                     return;
                 }
@@ -285,7 +305,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
             {
-                _gatewayLogger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                _logger.LogInfo($@"2. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -298,7 +318,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
                 if (tmpCardNoLst_In.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                    _logger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
@@ -311,39 +331,39 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
                 if (tmpCardNoLst_Out.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
                 {
-                    _gatewayLogger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                    _logger.LogInfo($@"2. Tag HOP LE da duoc check truoc do => Ket thuc.");
                     return;
                 }
             }
 
-            _gatewayLogger.LogInfo("----------------------------");
-            _gatewayLogger.LogInfo($"Tag: {cardNoCurrent}");
-            _gatewayLogger.LogInfo("-----");
+            _logger.LogInfo("----------------------------");
+            _logger.LogInfo($"Tag: {cardNoCurrent}");
+            _logger.LogInfo("-----");
 
             var inout = "";
             if (isLuongVao)
             {
                 inout = "IN";
-                _gatewayLogger.LogInfo($"1. Xe VAO cong");
+                _logger.LogInfo($"1. Xe VAO cong");
             }
             else
             {
                 inout = "OUT";
-                _gatewayLogger.LogInfo($"1. Xe RA cong");
+                _logger.LogInfo($"1. Xe RA cong");
             }
 
-            _gatewayLogger.LogInfo($"2. Kiem tra tag da check truoc do");
+            _logger.LogInfo($"2. Kiem tra tag da check truoc do");
 
             // 3. Kiểm tra cardNoCurrent có hợp lệ hay không
             string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
-                _gatewayLogger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+                _logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
             }
             else
             {
-                _gatewayLogger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
+                _logger.LogInfo($"3. Tag KHONG hop le => Ket thuc.");
 
                 await SendNotificationCBV(0, inout, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
                 SendNotificationAPI(inout, 0, cardNoCurrent, $"RFID {cardNoCurrent} không thuộc hệ thống");
@@ -373,7 +393,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
             if (currentOrder == null)
             {
-                _gatewayLogger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
                 await SendNotificationCBV(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
                 SendNotificationAPI(inout, 0, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
@@ -385,7 +405,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             }
             else if (isValidCardNo == false)
             {
-                _gatewayLogger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
                 await SendNotificationCBV(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
                 SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
@@ -417,7 +437,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             }
 
             var currentDeliveryCode = currentOrder.DeliveryCode;
-            _gatewayLogger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
+            _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
             /*
             #region Xử lý đơn hàng hợp lệ
@@ -539,13 +559,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
             if (isLuongVao)
             {
-                _gatewayLogger.LogInfo($"10. Giai phong RFID IN");
+                _logger.LogInfo($"10. Giai phong RFID IN");
 
                 Program.IsLockingRfidIn = false;
             }
             else if (isLuongRa)
             {
-                _gatewayLogger.LogInfo($"10. Giai phong RFID OUT");
+                _logger.LogInfo($"10. Giai phong RFID OUT");
 
                 Program.IsLockingRfidOut = false;
             }
@@ -588,7 +608,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
@@ -622,13 +642,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     h21 = Connect(str);
                     if (h21 != IntPtr.Zero)
                     {
-                        _gatewayLogger.LogInfo($"Connected to C3-400 {ipAddress}");
+                        _logger.LogInfo($"Connected to C3-400 {ipAddress}");
 
                         DeviceConnected = true;
                     }
                     else
                     {
-                        _gatewayLogger.LogInfo($"Connect to C3-400 {ipAddress} failed");
+                        _logger.LogInfo($"Connect to C3-400 {ipAddress} failed");
 
                         ret = PullLastError();
                         DeviceConnected = false;
@@ -638,14 +658,14 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
+                _logger.LogInfo($@"Connect to C3-400 {ipAddress} error: {ex.Message}");
                 return false;
             }
         }
 
         public async void ReadDataFromC3400()
         {
-            _gatewayLogger.LogInfo("Reading RFID from C3-400 ...");
+            _logger.LogInfo("Reading RFID from C3-400 ...");
 
             if (DeviceConnected)
             {
@@ -686,13 +706,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                             }
                             catch (Exception ex)
                             {
-                                _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                                _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
                                 continue;
                             }
                         }
                         else
                         {
-                            _gatewayLogger.LogWarn("No data. Reconnect ...");
+                            _logger.LogWarn("No data. Reconnect ...");
                             DeviceConnected = false;
                             h21 = IntPtr.Zero;
 
@@ -726,17 +746,17 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
 
         public bool ConnectGatewayModuleFromController()
         {
-            _gatewayLogger.LogInfo("Thuc hien ket noi.");
+            _logger.LogInfo("Thuc hien ket noi.");
             try
             {
-                _gatewayLogger.LogInfo("Bat dau ket noi.");
+                _logger.LogInfo("Bat dau ket noi.");
                 client = new TcpClient();
 
                 // 1. connect
                 client.ConnectAsync(c3400.IpAddress, c3400.PortNumber ?? 0).Wait(2000);
                 stream = client.GetStream();
 
-                _gatewayLogger.LogInfo("Connected to controller");
+                _logger.LogInfo("Connected to controller");
 
                 DeviceConnected = true;
 
@@ -744,16 +764,16 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             }
             catch (Exception ex)
             {
-                _gatewayLogger.LogInfo("Ket noi that bai.");
-                _gatewayLogger.LogInfo(ex.Message);
-                _gatewayLogger.LogInfo(ex.StackTrace);
+                _logger.LogInfo("Ket noi that bai.");
+                _logger.LogInfo(ex.Message);
+                _logger.LogInfo(ex.StackTrace);
                 return false;
             }
         }
 
         public async void ReadDataFromController()
         {
-            _gatewayLogger.LogInfo("Reading RFID from Controller ...");
+            _logger.LogInfo("Reading RFID from Controller ...");
 
             if (DeviceConnected)
             {
@@ -766,7 +786,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                         //var dataStr = "*[Reader][1]1974716100[!]";
                         var dataStr = encoding.GetString(data);
 
-                        _gatewayLogger.LogInfo($"Nhan tin hieu: {dataStr}");
+                        _logger.LogInfo($"Nhan tin hieu: {dataStr}");
 
                         string pattern = @"\*\[Reader\]\[(\d+)\](.*?)\[!\]";
                         Match match = Regex.Match(dataStr, pattern);
@@ -781,13 +801,13 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                         }
                         else
                         {
-                            _gatewayLogger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
+                            _logger.LogInfo("Tin hieu nhan vao khong dung dinh dang");
                             continue;
                         }
 
                         if (!int.TryParse(xValue, out int doorCurrent))
                         {
-                            _gatewayLogger.LogInfo("XValue is not valid");
+                            _logger.LogInfo("XValue is not valid");
                             continue;
                         }
 
@@ -799,7 +819,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _gatewayLogger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
+                        _logger.LogError($@"Co loi xay ra khi xu ly RFID {ex.StackTrace} {ex.Message} ");
                         continue;
                     }
                 }

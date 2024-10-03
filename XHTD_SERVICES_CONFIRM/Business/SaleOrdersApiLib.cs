@@ -15,10 +15,14 @@ namespace XHTD_SERVICES_CONFIRM.Business
             var resultResponse = new SaleOrdersResponse
             {
                 Code = "02",
-                Message = "Xác thực thất bại"
+                Message = "Xác thực thất bại. API xác thực ERP không trả về dữ liệu"
             };
-            resultResponse.Code = response.Code;
-            resultResponse.Message = response.Message;
+
+            if(response != null) 
+            { 
+                resultResponse.Code = response.Code;
+                resultResponse.Message = response.Message;
+            }
 
             return resultResponse;
         }
@@ -32,11 +36,15 @@ namespace XHTD_SERVICES_CONFIRM.Business
             var resultResponse = new SaleOrdersResponse
             {
                 Code = "02",
-                Message = "Cập nhật trạng thái in phiếu thất bại"
+                Message = "Cập nhật trạng thái in phiếu thất bại. API xác thực ERP không trả về dữ liệu"
             };
-            resultResponse.Code = response.Code;
-            resultResponse.Message = response.Message;
 
+            if (response != null) 
+            {
+                resultResponse.Code = response.Code;
+                resultResponse.Message = response.Message;
+            }
+            
             return resultResponse;
         }
     }

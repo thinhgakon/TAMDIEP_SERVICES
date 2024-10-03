@@ -77,6 +77,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         private List<CardNoLog> tmpInvalidCardNoLst = new List<CardNoLog>();
 
+        private List<CardNoLog> tmpPendingCardNoLst = new List<CardNoLog>();
+
         private tblCategoriesDevice c3400;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
@@ -148,7 +150,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     // Get devices info
                     await LoadDevicesInfo();
 
-                    AuthenticateGatewayModuleFromPegasus();
+                    AuthenticateUhfFromPegasus();
                 });
             }
             catch (Exception ex)
@@ -203,7 +205,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             c3400 = devices.FirstOrDefault(x => x.Code == "951-1.C3-400");
         }
 
-        public void AuthenticateGatewayModuleFromPegasus()
+        public void AuthenticateUhfFromPegasus()
         {
             // 1. Connect Device
             int port = PortHandle;
@@ -213,6 +215,17 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 try
                 {
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+
+                    if (openResult != 0)
+                    {
+                        _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -266,7 +279,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 }
             }
 
-            AuthenticateGatewayModuleFromPegasus();
+            AuthenticateUhfFromPegasus();
         }
 
         public async void ReadDataProcess(string cardNoCurrent)
@@ -291,6 +304,17 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
                 _rfidlogger.Info($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                return;
+            }
+
+            if (tmpPendingCardNoLst.Count > 5)
+            {
+                tmpPendingCardNoLst.RemoveRange(0, 3);
+            }
+
+            if (tmpPendingCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
+            {
+                _rfidlogger.Info($@"1. Tag PENDING khi có xe đang cân da duoc check truoc do => Ket thuc.");
                 return;
             }
 
@@ -356,7 +380,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 _logger.LogInfo($"=== Đang cân MSGH: {scaleInfo.DeliveryCode} --- TimeIn: {scaleInfo.TimeIn} == => Kết thúc");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
+                tmpPendingCardNoLst.Add(newCardNoLog);
 
                 return;
             }
@@ -454,14 +478,15 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                    // 5. Bat den do
-                    TurnOnRedTrafficLight();
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    // 5. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
+
+                    // 6. Bat den do
+                    _logger.LogInfo($"6. Bật đèn đỏ");
+                    TurnOnRedTrafficLight();
                 }
                 else
                 {
@@ -476,14 +501,15 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
 
-                    // 5. Bat den do
-                    TurnOnRedTrafficLight();
-
-                    // 6. Đánh dấu trạng thái đang cân
-                    _logger.LogInfo($@"6. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    // 5. Đánh dấu trạng thái đang cân
+                    _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
+
+                    // 6. Bat den do
+                    _logger.LogInfo($"6. Bật đèn đỏ");
+                    TurnOnRedTrafficLight();
                 }
                 else
                 {
@@ -494,26 +520,26 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         public void TurnOnRedTrafficLight()
         {
-            _logger.LogInfo($@"5.1. Bật đèn ĐỎ chiều VÀO");
+            _logger.LogInfo($@"6.1. Bật đèn ĐỎ chiều VÀO");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
             {
-                _logger.LogInfo($@"Bật đèn thành công");
+                _logger.LogInfo($@"6.1.1. Bật đèn thành công");
             }
             else
             {
-                _logger.LogInfo($@"Bật đèn thất bại");
+                _logger.LogInfo($@"6.1.1. Bật đèn thất bại");
             }
 
             Thread.Sleep(500);
 
-            _logger.LogInfo($@"5.2. Bật đèn ĐỎ chiều RA");
+            _logger.LogInfo($@"6.2. Bật đèn ĐỎ chiều RA");
             if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
             {
-                _logger.LogInfo($@"Bật đèn thành công");
+                _logger.LogInfo($@"6.2.1. Bật đèn thành công");
             }
             else
             {
-                _logger.LogInfo($@"Bật đèn thất bại");
+                _logger.LogInfo($@"6.2.1. Bật đèn thất bại");
             }
         }
 
