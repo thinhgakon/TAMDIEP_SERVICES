@@ -175,10 +175,35 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     {
                         _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
 
+                        Program.CountToSendFailOpenPort++;
+
+                        _logger.LogInfo($"Open netPort that bai lan thu: {Program.CountToSendFailOpenPort}");
+
+                        if (Program.CountToSendFailOpenPort == 3)
+                        {
+                            _logger.LogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailOpenPortLastTime}");
+
+                            if (Program.SendFailOpenPortLastTime == null || Program.SendFailOpenPortLastTime < DateTime.Now.AddMinutes(-3))
+                            {
+                                Program.SendFailOpenPortLastTime = DateTime.Now;
+
+                                // gửi thông báo ping thất bại
+                                var pushMessage = $"Điểm xác thực: mở kết nối không thành công đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+
+                                _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
+
+                                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            }
+
+                            Program.CountToSendFailOpenPort = 0;
+                        }
+
                         Thread.Sleep(5000);
                     }
                     else
                     {
+                        Program.CountToSendFailOpenPort = 0;
+
                         _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
                     }
                 }
