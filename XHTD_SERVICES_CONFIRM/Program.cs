@@ -15,13 +15,6 @@ namespace XHTD_SERVICES_CONFIRM
 
         public static bool IsLockingRfid = false;
 
-        public static string PegasusIP1 = "192.168.13.161";
-        public static string PegasusIP2 = "192.168.13.162";
-        public static int RefPort1 = 6000;
-        public static byte RefComAdr1 = 0xFF;
-        public static int RefPort2 = 6000;
-        public static byte RefComAdr2 = 0xFF;
-
         public static DateTime? LastTimeReceivedUHF = DateTime.Now;
 
         public static bool UHFConnected = false;
