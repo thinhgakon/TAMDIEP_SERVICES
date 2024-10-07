@@ -12,7 +12,7 @@ namespace XHTD_SERVICES_CANRA_1.Devices
 {
     public class TCPLed
     {
-        ILog _logger = LogManager.GetLogger("ConnectFileAppender");
+        ILog _logger = LogManager.GetLogger("LedFileAppender");
 
         private const int BUFFER_SIZE = 1024;
         private const int PORT_NUMBER = 10000;
