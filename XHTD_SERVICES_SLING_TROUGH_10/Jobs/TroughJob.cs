@@ -339,7 +339,8 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Jobs
                                                 on orders.DeliveryCode equals callToTroughs.DeliveryCode
                                                 where callToTroughs.Machine == TROUGH_CODE &&
                                                       callToTroughs.IsDone == false &&
-                                                      callToTroughs.DeliveryCode != currentOrder.DeliveryCode
+                                                      callToTroughs.DeliveryCode != currentOrder.DeliveryCode &&
+                                                      orders.Step == (int)OrderStep.DANG_LAY_HANG
                                                 select orders).ToListAsync();
 
                         foreach (var callToTroughEntity in callToTroughEntities)
