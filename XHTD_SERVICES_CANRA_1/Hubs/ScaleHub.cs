@@ -305,7 +305,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
-                                    SendPushNotification("adminNPP", pushMessage);
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
 
                                     //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
                                     //if (driverUserName != null)
@@ -368,7 +368,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
-                                    SendPushNotification("adminNPP", pushMessage);
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
 
                                     WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -422,7 +422,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
-                                    SendPushNotification("adminNPP", pushMessage);
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
 
                                     //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
                                     //if (driverUserName != null)
@@ -461,7 +461,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
-                                    SendPushNotification("adminNPP", pushMessage);
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
 
                                     WriteLogInfo($"4.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
@@ -654,6 +654,19 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
             catch (Exception ex)
             {
                 WriteLogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

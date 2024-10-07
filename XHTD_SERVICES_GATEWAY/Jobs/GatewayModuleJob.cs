@@ -423,7 +423,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             if (isConfirmSuccess)
                             {
                                 var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!";
-                                SendPushNotification("adminNPP", pushMessage);
+                                SendNotificationByRight(RightCode.GATEWAY, pushMessage);
 
                                 _logger.LogInfo($"{pushMessage}");
 
@@ -440,7 +440,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     // Cập nhật in phiếu thành công
                                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
-                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                                    SendNotificationByRight(RightCode.GATEWAY, pushMessagePrintStatus);
 
                                     _logger.LogInfo($"{pushMessagePrintStatus}");
                                 }
@@ -448,7 +448,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                                 {
                                     // Cập nhật in phiếu thất bại
                                     var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
-                                    SendPushNotification("adminNPP", pushMessagePrintStatus);
+                                    SendNotificationByRight(RightCode.GATEWAY, pushMessagePrintStatus);
 
                                     _logger.LogInfo($"{pushMessagePrintStatus}");
                                 }
@@ -457,7 +457,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             {
                                 // Xác thực thất bại
                                 var pushMessage = $"Đơn hàng {currentDeliveryCodesToConfirm} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-                                SendPushNotification("adminNPP", pushMessage);
+                                SendNotificationByRight(RightCode.GATEWAY, pushMessage);
 
                                 _logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
                             }
@@ -466,7 +466,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         {
                             // Không đủ điều kiện xác thực
                             var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
-                            SendPushNotification("adminNPP", pushMessage);
+                            SendNotificationByRight(RightCode.GATEWAY, pushMessage);
 
                             var driverUserName = ordersToConfirm.FirstOrDefault().DriverUserName;
                             if (driverUserName != null)
@@ -619,7 +619,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     SendNotificationAPI(inout, 3, null, $"Xác thực vào cổng thành công", null);
 
                     var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} vào cổng tự động thành công, lái xe vui lòng di chuyển đến bàn cân, trân trọng!";
-                    SendPushNotification("adminNPP", pushMessage);
+                    SendNotificationByRight(RightCode.GATEWAY, pushMessage);
 
                     var driverUserName = firstValidOrder.DriverUserName;
                     if (driverUserName != null)
@@ -631,7 +631,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     SendNotificationHub(4, inout, null, $"Xác thực vào cổng thất bại", null);
                     SendNotificationAPI(inout, 4, null, $"Xác thực vào cổng thất bại", null);
-                    SendPushNotification("adminNPP", $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} vào cổng tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!");
+                    SendNotificationByRight(RightCode.GATEWAY, $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} vào cổng tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!");
 
                     _logger.LogInfo($"5. Confirm 2 failed.");
                 }
@@ -744,6 +744,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
