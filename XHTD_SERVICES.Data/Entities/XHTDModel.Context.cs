@@ -66,5 +66,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblCallToGatewayConfig> tblCallToGatewayConfigs { get; set; }
         public virtual DbSet<tblExportPlan> tblExportPlans { get; set; }
         public virtual DbSet<tblExportPlanDetail> tblExportPlanDetails { get; set; }
+        public virtual DbSet<TblQualityCertificate> TblQualityCertificates { get; set; }
     }
 }

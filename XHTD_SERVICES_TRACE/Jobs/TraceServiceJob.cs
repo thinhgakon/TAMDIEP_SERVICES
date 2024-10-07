@@ -29,36 +29,37 @@ namespace XHTD_SERVICES_TRACE.Jobs
 
         public async Task Trace()
         {
-            var connection = new HubConnectionBuilder()
-                   .WithUrl(Program.SignalRUrl)
-                   .Build();
-
-            connection.StartAsync().Wait();
             try
             {
-                using (ServiceController service = new ServiceController(ServiceName))
+                var connection = Program.HubConnection;
+                try
+                {
+                    using (ServiceController service = new ServiceController(ServiceName))
+                    {
+                        await connection.SendAsync("Trace", new SystemTraceDto()
+                        {
+                            Code = service.ServiceName,
+                            MachineName = Environment.MachineName,
+                            Status = service.Status == ServiceControllerStatus.Running,
+                            Log = service.Status.ToString()
+                        });
+                    }
+                }
+                catch (Exception ex)
                 {
                     await connection.SendAsync("Trace", new SystemTraceDto()
                     {
-                        Code = service.ServiceName,
+                        Code = ServiceName,
                         MachineName = Environment.MachineName,
-                        Status = service.Status == ServiceControllerStatus.Running,
-                        Log = service.Status.ToString()
+                        Status = null,
+                        Log = ex.Message
                     });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await connection.SendAsync("Trace", new SystemTraceDto()
-                {
-                    Code = ServiceName,
-                    MachineName = Environment.MachineName,
-                    Status = null,
-                    Log = ex.Message
-                });
+
             }
-
-
         }
     }
 }

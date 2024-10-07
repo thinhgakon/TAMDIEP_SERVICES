@@ -37,5 +37,10 @@ namespace XHTD_SERVICES_CANVAO_1.Business
         {
             await _storeOrderOperatingRepository.UpdateWeightOut(deliveryCode, weightOut);
         }
+
+        public async Task UpdateLotNumber(string deliveryCode)
+        {
+            await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
+        }
     }
 }
