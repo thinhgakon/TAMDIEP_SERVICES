@@ -9,6 +9,7 @@ using log4net;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ReconnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ReconnectFileAppender");

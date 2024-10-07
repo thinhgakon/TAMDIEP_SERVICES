@@ -8,6 +8,7 @@ using XHTD_SERVICES_CONFIRM.Devices;
 
 namespace XHTD_SERVICES_CONFIRM.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ConnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
@@ -54,7 +55,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    WriteLogInfo("Ping ok");
+                    WriteLogInfo("Ping ooooookkkkkkk");
                     return;
                 }
                 else
