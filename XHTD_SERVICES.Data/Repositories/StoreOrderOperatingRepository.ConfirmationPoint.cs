@@ -101,8 +101,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     logProccess += $@", xep lot cho xe {indexOrderSet}";
 
                     currentOrder.IndexOrder = indexOrderSet;
-                    currentOrder.IndexOrderTemp = indexOrderSet;
-                    currentOrder.IndexOrder1 = indexOrderSet;
                     currentOrder.LogHistory = currentOrder.LogHistory + $@" #IndexOrder: {indexOrderSet}";
                     currentOrder.LogProcessOrder = currentOrder.LogProcessOrder + $@" #Xếp lốt : {indexOrderSet}";
 
