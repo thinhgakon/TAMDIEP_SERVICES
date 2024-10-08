@@ -230,6 +230,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                          ||
                                                          x.Step == (int)OrderStep.DANG_GOI_XE
                                                          )
+                                                     && x.IsVoiced == false
                                                      )
                                             .ToListAsync();
 
@@ -246,6 +247,20 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng tự động lúc {currentTime} ";
+
+                        var typeProductOrders = await dbContext.tblStoreOrderOperatings
+                                                               .Where(x => x.TypeProduct.ToUpper() == order.TypeProduct.ToUpper() &&
+                                                                          (x.Step == (int)OrderStep.DA_XAC_THUC || 
+                                                                           x.Step == (int)OrderStep.CHO_GOI_XE || 
+                                                                           x.Step == (int)OrderStep.DANG_GOI_XE) &&
+                                                                           x.IsVoiced == false)
+                                                               .OrderBy(x => x.IndexOrder)
+                                                               .ToListAsync();
+
+                        foreach (var typeProductOrder in typeProductOrders)
+                        {
+                            typeProductOrder.IndexOrder--;
+                        }
                     }
 
                     await dbContext.SaveChangesAsync();
