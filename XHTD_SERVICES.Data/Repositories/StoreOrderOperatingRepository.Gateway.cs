@@ -262,7 +262,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         foreach (var typeProductOrder in typeProductOrders)
                         {
-                            typeProductOrder.IndexOrder--;
+                            if (typeProductOrder.IndexOrder > 1)
+                            {
+                                typeProductOrder.IndexOrder--;
+                            }
                         }
                     }
 
