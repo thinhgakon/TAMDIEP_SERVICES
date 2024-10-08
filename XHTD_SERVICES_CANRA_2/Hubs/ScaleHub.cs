@@ -453,6 +453,9 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
 
                                     //WriteLogInfo($"8. Tắt đèn");
                                     //TurnOffTrafficLight();
+
+                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
+                                    WriteLogInfo($". Cap nhat so lo");
                                 }
                                 else
                                 {

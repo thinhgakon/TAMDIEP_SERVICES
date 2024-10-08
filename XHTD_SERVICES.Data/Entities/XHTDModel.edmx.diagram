@@ -55,6 +55,8 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" Width="1.5" PointX="19.375" PointY="6" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Width="1.5" PointX="21.625" PointY="6" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="6.5" PointY="24.875" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

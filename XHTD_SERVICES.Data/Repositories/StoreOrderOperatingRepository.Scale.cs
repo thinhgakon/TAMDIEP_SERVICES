@@ -43,9 +43,9 @@ namespace XHTD_SERVICES.Data.Repositories
             using (var dbContext = new XHTD_Entities())
             {
                 var orders = await dbContext.tblStoreOrderOperatings
-                                            .Where(x => x.Vehicle == vehicleCode 
-                                            && x.Step >= (int)OrderStep.DA_VAO_CONG 
-                                            && x.Step < (int)OrderStep.DA_CAN_VAO 
+                                            .Where(x => x.Vehicle == vehicleCode
+                                            && x.Step >= (int)OrderStep.DA_VAO_CONG
+                                            && x.Step < (int)OrderStep.DA_CAN_VAO
                                             && x.IsVoiced == false)
                                             .ToListAsync();
                 return orders;
@@ -454,6 +454,51 @@ namespace XHTD_SERVICES.Data.Repositories
                 catch (Exception ex)
                 {
                     log.Error($@"Cân ra deliveryCode={deliveryCode} Error: " + ex.Message);
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> UpdateLotNumber(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var order = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.DeliveryCode == deliveryCode)
+                                                .FirstOrDefaultAsync();
+
+                    if (order == null)
+                    {
+                        return false;
+                    }
+
+                    var lot = dbContext.TblQualityCertificates
+                    .Where(x => x.State == "CHUA_KHOA")
+                    .Where(X => X.FromDate.Date <= DateTime.Now.Date)
+                    .Where(x => x.ToDate.Date >= DateTime.Now.Date)
+                    .Where(x => x.ItemCode == order.CatId.ToString())
+                    .FirstOrDefault();
+
+                    if (lot == null)
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(lot?.Code))
+                    {
+                        return false;
+                    }
+
+                    order.LotNumber = lot.Code;
+
+                    await dbContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
                     return false;
                 }
             }
