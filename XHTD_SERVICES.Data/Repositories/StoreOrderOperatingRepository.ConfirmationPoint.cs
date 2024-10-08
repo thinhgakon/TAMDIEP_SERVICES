@@ -84,25 +84,19 @@ namespace XHTD_SERVICES.Data.Repositories
                     var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC).ToList();
                     if (orders == null || orders.Count < 1) return;
 
-                    var currentOrder = orders.FirstOrDefault();
-                    if (currentOrder == null || currentOrder.IndexOrder > 0) return;
-                    logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
-
-                    var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
-                    // log thêm các đơn cùng loại đã được xếp lốt
-                    var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
-                    logProccess += $@", Cac don duoc xep lot truoc do: ";
-                    foreach (var orderReceiving in orderReceivings)
+                    foreach (var currentOrder in orders)
                     {
-                        logProccess += $@"Order {orderReceiving.Id} - lot hien tai: {orderReceiving.IndexOrder} - loai sp: {orderReceiving.TypeProduct} - step: {orderReceiving.Step},";
+                        if (currentOrder == null || currentOrder.IndexOrder > 0) return;
+                        logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
+
+                        var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
+                        var indexOrderSet = orderIndexMax + 1;
+                        logProccess += $@", xep lot cho xe {indexOrderSet}";
+
+                        currentOrder.IndexOrder = indexOrderSet;
+                        currentOrder.LogHistory = currentOrder.LogHistory + $@" #IndexOrder: {indexOrderSet}";
+                        currentOrder.LogProcessOrder = currentOrder.LogProcessOrder + $@" #Xếp lốt : {indexOrderSet}";
                     }
-
-                    var indexOrderSet = orderIndexMax + 1;
-                    logProccess += $@", xep lot cho xe {indexOrderSet}";
-
-                    currentOrder.IndexOrder = indexOrderSet;
-                    currentOrder.LogHistory = currentOrder.LogHistory + $@" #IndexOrder: {indexOrderSet}";
-                    currentOrder.LogProcessOrder = currentOrder.LogProcessOrder + $@" #Xếp lốt : {indexOrderSet}";
 
                     db.SaveChanges();
                     log.Info(logProccess);
