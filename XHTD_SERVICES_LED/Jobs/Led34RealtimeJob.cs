@@ -222,6 +222,10 @@ namespace XHTD_SERVICES_LED.Jobs
 
             if (isRunning)
             {
+                var isActiveInMachine = await _troughRepository.IsTroughActiveInAnyMachine(troughCode);
+
+                if (!isActiveInMachine) return;
+
                 var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
 
                 if (machine == null)
