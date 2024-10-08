@@ -241,6 +241,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
+                        var oldIndexOrder = order.IndexOrder;
+
                         order.Confirm2 = (int)ConfirmType.RFID;
                         order.TimeConfirm2 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_VAO_CONG;
@@ -253,6 +255,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                           (x.Step == (int)OrderStep.DA_XAC_THUC || 
                                                                            x.Step == (int)OrderStep.CHO_GOI_XE || 
                                                                            x.Step == (int)OrderStep.DANG_GOI_XE) &&
+                                                                           x.IndexOrder > oldIndexOrder &&
                                                                            x.IsVoiced == false)
                                                                .OrderBy(x => x.IndexOrder)
                                                                .ToListAsync();
