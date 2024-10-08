@@ -38,6 +38,7 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly string MACHINE_3_CODE = MachineCode.MACHINE_XI_BAO_3;
         protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
         protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
+        protected readonly string DEFAULT_LED_CODE = "*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
         public Led34XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
@@ -84,13 +85,20 @@ namespace XHTD_SERVICES_LED.Jobs
                 WriteLogInfo($"Connected to machine : 3|4");
 
                 WriteLogInfo($"Đọc dữ liệu máng xuất");
-                var trough12Codes = new List<string> { "5", "6" };
-                await ReadMXData(trough12Codes, MACHINE_3_CODE);
+                var trough12Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_3_CODE);
+                if (trough12Codes != null)
+                {
+                    await ReadMXData(trough12Codes, MACHINE_3_CODE);
+                }
 
                 Thread.Sleep(200);
 
-                var trough34Codes = new List<string> { "7", "8" };
-                await ReadMXData(trough34Codes, MACHINE_4_CODE);
+                WriteLogInfo($"Đọc dữ liệu máy đếm bao");
+                var trough34Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_4_CODE);
+                if (trough34Codes != null)
+                {
+                    await ReadMXData(trough34Codes, MACHINE_4_CODE);
+                }
 
                 //Thread.Sleep(200);
 
@@ -195,9 +203,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     }
                     else
                     {
-                        //sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
-                        sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
-                        DisplayScreenLed(sendCode, machineCode);
+                        DisplayScreenLed(DEFAULT_LED_CODE, machineCode);
                     }
                 }
             }

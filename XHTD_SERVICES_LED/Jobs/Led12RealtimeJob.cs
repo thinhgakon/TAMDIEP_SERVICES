@@ -44,6 +44,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
         private const string MACHINE_1_CODE = "1";
         private const string MACHINE_2_CODE = "2";
+        private const string DEFAULT_LED_CODE = "*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
         TimeSpan timeDiffFromLastReceivedScaleSocket = new TimeSpan();
 
@@ -230,6 +231,14 @@ namespace XHTD_SERVICES_LED.Jobs
                 if(machine == null)
                 {
                     WriteLogInfo($"Chua cau hinh active machine (TblMachineTrough co status = true) cho mang xuat troughCode={troughCode}");
+                    return;
+                }
+
+                var isActiveInMachine = await _troughRepository.IsTroughActiveInAnyMachine(troughCode);
+
+                if (!isActiveInMachine)
+                {
+                    DisplayScreenLed(DEFAULT_LED_CODE, machine.Code);
                     return;
                 }
 
