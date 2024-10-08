@@ -90,14 +90,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
 
                         var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
-                        // log thêm các đơn cùng loại đã được xếp lốt
-                        var orderReceivings = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).ToList();
-                        logProccess += $@", Cac don duoc xep lot truoc do: ";
-                        foreach (var orderReceiving in orderReceivings)
-                        {
-                            logProccess += $@"Order {orderReceiving.Id} - lot hien tai: {orderReceiving.IndexOrder} - loai sp: {orderReceiving.TypeProduct} - step: {orderReceiving.Step},";
-                        }
-
                         var indexOrderSet = orderIndexMax + 1;
                         logProccess += $@", xep lot cho xe {indexOrderSet}";
 
