@@ -82,6 +82,24 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<string>> GetActiveTroughInMachine(string machineCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var machineTroughs = await dbContext.TblMachineTroughs
+                                                    .Where(x => x.MachineCode.ToUpper() == machineCode.ToUpper() &&
+                                                                x.Status == true)
+                                                    .ToListAsync();
+
+                if (machineTroughs == null || machineTroughs.Count == 0)
+                {
+                    return null;
+                }
+
+                return machineTroughs.Select(x => x.TroughCode).ToList();
+            }
+        }
+
         public async Task UpdateTrough(string troughCode, string deliveryCode, double countQuantity, double planQuantity, double firstSensorQuantity)
         {
             using (var dbContext = new XHTD_Entities())
