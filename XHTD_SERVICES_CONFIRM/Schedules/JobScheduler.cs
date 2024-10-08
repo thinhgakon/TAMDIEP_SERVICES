@@ -37,6 +37,16 @@ namespace XHTD_SERVICES_CONFIRM.Schedules
                 .Build();
             await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
+            IJobDetail trafficLightJob = JobBuilder.Create<TrafficLightJob>().Build();
+            ITrigger trafficLightTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(trafficLightJob, trafficLightTrigger);
+
             IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
             ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
                 .WithPriority(1)
