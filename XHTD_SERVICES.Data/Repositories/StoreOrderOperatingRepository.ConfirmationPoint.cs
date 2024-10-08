@@ -59,7 +59,7 @@ namespace XHTD_SERVICES.Data.Repositories
             {
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.DANG_GOI_XE) && (x.IndexOrder2 ?? 0) == 0).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC).ToList();
                     if (orders == null || orders.Count < 1) return;
 
                     var currentOrder = orders.FirstOrDefault();
@@ -81,7 +81,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 var logProccess = "";
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.DANG_GOI_XE) && (x.IndexOrder2 ?? 0) == 0).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC).ToList();
                     if (orders == null || orders.Count < 1) return;
 
                     foreach (var currentOrder in orders)

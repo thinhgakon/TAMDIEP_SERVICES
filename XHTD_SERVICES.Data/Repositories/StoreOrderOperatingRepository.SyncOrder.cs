@@ -124,6 +124,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         TransportMethodName = websaleOrder.transportMethodName,
                         State = websaleOrder.status,
                         IndexOrder = 0,
+                        IndexOrder1 = 0,
                         IndexOrder2 = 0,
                         CountReindex = 0,
                         Step = (int)OrderStep.CHUA_NHAN_DON,
