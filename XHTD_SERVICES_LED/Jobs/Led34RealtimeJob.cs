@@ -222,15 +222,20 @@ namespace XHTD_SERVICES_LED.Jobs
 
             if (isRunning)
             {
-                var isActiveInMachine = await _troughRepository.IsTroughActiveInAnyMachine(troughCode);
-
-                if (!isActiveInMachine) return;
-
                 var machine = await _machineRepository.GetMachineByTroughCode(troughCode);
 
                 if (machine == null)
                 {
                     WriteLogInfo($"Chua cau hinh active machine (TblMachineTrough co status = true) cho mang xuat troughCode={troughCode}");
+                    return;
+                }
+
+                var isActiveInMachine = await _troughRepository.IsTroughActiveInAnyMachine(troughCode);
+
+                if (!isActiveInMachine)
+                {
+                    var defaultCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]"; ;
+                    DisplayScreenLed(defaultCode, machine.Code);
                     return;
                 }
 
