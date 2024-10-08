@@ -217,6 +217,17 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendScale2TrafficLight(request);
         }
 
+        public void SendConfirmTrafficLight(string red, string green)
+        {
+            SendConfirmTrafficLightRequest request = new SendConfirmTrafficLightRequest
+            {
+                Red = red,
+                Green = green
+            };
+
+            HttpRequest.SendConfirmTrafficLight(request);
+        }
+
         // Gửi thông báo thay đổi trạng thái đơn hàng đến app lái xe
         public void SendInforNotification(string receiver, string message)
         {
