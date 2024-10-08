@@ -19,7 +19,7 @@ namespace XHTD_SERVICES_CANVAO_2.Devices
 
         protected readonly S71200Sensor _sensor;
 
-        private const string IP_ADDRESS = "10.0.9.6";
+        private const string IP_ADDRESS = "192.168.13.175";
         private const short RACK = 0;
         private const short SLOT = 1;
 
