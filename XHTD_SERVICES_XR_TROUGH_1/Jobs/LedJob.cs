@@ -54,6 +54,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
             try
             {
                 tblCallToTrough callToTrough = null;
+                tblStoreOrderOperating order = null;
                 using (var db = new XHTD_Entities())
                 {
                     callToTrough = await db.tblCallToTroughs
@@ -63,13 +64,17 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                                                   )
                                             .OrderBy(x => x.IndexTrough)
                                             .FirstOrDefaultAsync();
+
+                    order = await db.tblStoreOrderOperatings
+                                    .FirstOrDefaultAsync(x => x.DeliveryCode == callToTrough.DeliveryCode &&
+                                                              x.IsVoiced == false);
                 }
 
                 string dataCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
-                if(callToTrough != null)
+                if(callToTrough != null && order != null)
                 {
-                    dataCode = $"*[H1][C1]{callToTrough.Vehicle}[H2][C1][1]{callToTrough.DeliveryCode}[2]---[H3][C1][1]---[2]---[H4][C1][1]---[2]---[!]";
+                    dataCode = $"*[H1][C1]HE THONG XUAT HANG KHONG DUNG[H2][C1][1]BSX[2]{callToTrough.Vehicle}[H3][C1][1]MSGH[2]{callToTrough.DeliveryCode}[H4][C1][1]DAT[2]{order.SumNumber}[!]";
                 }
 
                 DisplayScreenLed(dataCode);
