@@ -96,6 +96,16 @@ namespace XHTD_SERVICES_CANVAO_1.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(ledJob, ledTrigger);
+
+            IJobDetail sensorJob = JobBuilder.Create<SensorJob>().Build();
+            ITrigger sensorTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(5)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(sensorJob, sensorTrigger);
         }
     }
 }
