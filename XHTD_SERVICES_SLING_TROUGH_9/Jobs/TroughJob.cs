@@ -250,7 +250,7 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                 tmpInvalidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
+            if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-15)))
             {
                 return;
             }
@@ -260,7 +260,7 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                 tmpValidCardNoLst.RemoveRange(0, 3);
             }
 
-            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-5)))
+            if (tmpValidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
                 return;
             }
