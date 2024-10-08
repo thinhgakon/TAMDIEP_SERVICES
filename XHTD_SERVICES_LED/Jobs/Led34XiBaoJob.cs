@@ -84,13 +84,20 @@ namespace XHTD_SERVICES_LED.Jobs
                 WriteLogInfo($"Connected to machine : 3|4");
 
                 WriteLogInfo($"Đọc dữ liệu máng xuất");
-                var trough12Codes = new List<string> { "5", "6" };
-                await ReadMXData(trough12Codes, MACHINE_3_CODE);
+                var trough12Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_3_CODE);
+                if (trough12Codes != null)
+                {
+                    await ReadMXData(trough12Codes, MACHINE_3_CODE);
+                }
 
                 Thread.Sleep(200);
 
-                var trough34Codes = new List<string> { "7", "8" };
-                await ReadMXData(trough34Codes, MACHINE_4_CODE);
+                WriteLogInfo($"Đọc dữ liệu máy đếm bao");
+                var trough34Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_4_CODE);
+                if (trough34Codes != null)
+                {
+                    await ReadMXData(trough34Codes, MACHINE_4_CODE);
+                }
 
                 //Thread.Sleep(200);
 
