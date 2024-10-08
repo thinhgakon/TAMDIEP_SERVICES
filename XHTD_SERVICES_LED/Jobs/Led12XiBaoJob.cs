@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -38,6 +39,7 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly string MACHINE_1_CODE = MachineCode.MACHINE_XI_BAO_1;
         protected readonly string MACHINE_2_CODE = MachineCode.MACHINE_XI_BAO_2;
         protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
+        protected readonly string DEFAULT_LED_CODE = "*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
         public Led12XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
@@ -200,9 +202,7 @@ namespace XHTD_SERVICES_LED.Jobs
                     }
                     else
                     {
-                        //sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG DEM BAO[H3][C1]MANG XUAT[H4][C1]{troughCodes[1]}        {troughCodes[0]}[!]";
-                        sendCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
-                        DisplayScreenLed(sendCode, machineCode);
+                        DisplayScreenLed(DEFAULT_LED_CODE, machineCode);
                     }
                 }
             }
