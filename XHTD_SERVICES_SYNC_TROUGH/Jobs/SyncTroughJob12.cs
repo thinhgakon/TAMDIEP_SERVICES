@@ -46,7 +46,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         private const int PORT_NUMBER = 11000;
         private int TimeInterVal = 2000;
         private List<string> machineCodes = new List<string>() { "1", "2" };
-        private List<string> listTroughInThisDevice = new List<string> { "1", "2", "3", "4" };
         static ASCIIEncoding encoding = new ASCIIEncoding();
         static SimpleTcpClient client;
         static string MachineResponse = string.Empty;
@@ -86,8 +85,14 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             try
             {
-                var troughCodes = await _troughRepository.GetActiveXiBaoTroughs();
-                troughCodes = troughCodes.Where(x => listTroughInThisDevice.Contains(x)).ToList();
+                var troughCodes = new List<string>();
+                
+                foreach (var machineCode in machineCodes)
+                {
+                    var troughInMachine = await _troughRepository.GetActiveTroughInMachine(machineCode);
+                    troughCodes.AddRange(troughInMachine);
+                }
+
                 if (troughCodes == null || troughCodes.Count == 0)
                 {
                     WriteLogInfo($"Trough Job MDB 1|2: Khong tim thay mang xuat --- IP: {IP_ADDRESS} --- PORT: {PORT_NUMBER}");
