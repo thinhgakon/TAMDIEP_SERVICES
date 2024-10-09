@@ -114,55 +114,71 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
         public async void ReindexToGatewayProcess()
         {
-            _reindexToGatewayLogger.LogInfo("Start process ReindexToTrough service");
+            _reindexToGatewayLogger.LogInfo("Start process ReindexToGateway service");
 
             // Xử lý các order đã quá 3 lần gọi loa mà ko vào cổng
             using (var db = new XHTD_Entities())
             {
                 // Xếp lại số
                 var callVehicleStatusReindex = await db.tblCallVehicleStatus
-                                                        .Where(x => x.CountTry == 3 &&
-                                                                    x.CountReindex < 3 &&
-                                                                    x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
-                                                        .ToListAsync();
+                                                       .Where(x => x.CountTry == 3 &&
+                                                                   x.CountReindex < 3 &&
+                                                                   x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                       .ToListAsync();
 
-                foreach (var callVehicleStatus in callVehicleStatusReindex)
+                if (callVehicleStatusReindex == null || callVehicleStatusReindex.Count == 0)
                 {
-                    callVehicleStatus.CountReindex++;
-                    callVehicleStatus.CountTry = 0;
+                    _reindexToGatewayLogger.LogInfo("Không có xe nào vượt quá 3 lần gọi => Bỏ qua");
                 }
-                await db.SaveChangesAsync();
+
+                else
+                {
+                    foreach (var callVehicleStatus in callVehicleStatusReindex)
+                    {
+                        callVehicleStatus.CountReindex++;
+                        callVehicleStatus.CountTry = 0;
+                    }
+                    await db.SaveChangesAsync();
+                }
 
                 // Tăng số lần CountToCancel
                 var callVehicleStatusRetry = await db.tblCallVehicleStatus
-                                                        .Where(x => x.CountTry == 3 &&
-                                                                x.CountToCancel < 3 &&
-                                                                x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
-                                                    .ToListAsync();
+                                                     .Where(x => x.CountTry == 3 &&
+                                                                 x.CountToCancel < 3 &&
+                                                                 x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                     .ToListAsync();
 
-                foreach (var callVehicleStatus in callVehicleStatusRetry)
+                if (callVehicleStatusRetry == null || callVehicleStatusRetry.Count == 0)
                 {
-                    callVehicleStatus.CountToCancel++;
-                    callVehicleStatus.CountTry = 0;
-                    callVehicleStatus.CountReindex = 0;
+                    _reindexToGatewayLogger.LogInfo("Không có xe nào vượt quá 3 lần gọi và vượt quá 3 lần đếm hủy => Bỏ qua");
                 }
-                await db.SaveChangesAsync();
+
+                else
+                {
+                    foreach (var callVehicleStatus in callVehicleStatusRetry)
+                    {
+                        callVehicleStatus.CountToCancel++;
+                        callVehicleStatus.CountTry = 0;
+                        callVehicleStatus.CountReindex = 0;
+                    }
+                    await db.SaveChangesAsync();
+                }
 
                 // Hủy xác thực các đơn hàng vượt quá số lần gọi
-                var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
-                                           join callVehicleStatus in db.tblCallVehicleStatus
-                                           on orders.Id equals callVehicleStatus.StoreOrderOperatingId
-                                           where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= DateTime.Now.AddMinutes(-5)
-                                           select orders).ToListAsync();
+                //var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
+                //                           join callVehicleStatus in db.tblCallVehicleStatus
+                //                           on orders.Id equals callVehicleStatus.StoreOrderOperatingId
+                //                           where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= DateTime.Now.AddMinutes(-5)
+                //                           select orders).ToListAsync();
 
-                foreach (var order in ordersToCancel)
-                {
-                    order.Confirm10 = 0;
-                    order.TimeConfirm10 = null;
-                    order.Step = (int)OrderStep.DA_NHAN_DON;
-                    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
-                }
-                await db.SaveChangesAsync();
+                //foreach (var order in ordersToCancel)
+                //{
+                //    order.Confirm10 = 0;
+                //    order.TimeConfirm10 = null;
+                //    order.Step = (int)OrderStep.DA_NHAN_DON;
+                //    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                //}
+                //await db.SaveChangesAsync();
             }
         }
     }
