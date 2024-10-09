@@ -92,5 +92,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string dmsId { get; set; }
         public string docnum { get; set; }
         public string locationCodeTgc { get; set; }
+        public string itemalias { get; set; }
+        public string netweight { get; set; }
     }
 }

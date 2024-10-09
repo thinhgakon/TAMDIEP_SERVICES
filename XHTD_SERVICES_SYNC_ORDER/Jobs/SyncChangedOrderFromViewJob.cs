@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
                                      VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
                                      TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID,
-                                     INVENTORY_ITEM_ID, CUSTOMER_ID
+                                     INVENTORY_ITEM_ID, CUSTOMER_ID, ITEM_ALIAS, NET_WEIGHT
                             FROM apps.dev_sales_orders_mbf_v 
                             WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
@@ -165,6 +165,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                    reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
                 productId = reader["INVENTORY_ITEM_ID"].ToString(),
                 customerId = reader["CUSTOMER_ID"].ToString(),
+                itemalias = reader["ITEM_ALIAS"].ToString(),
+                netweight = reader["NET_WEIGHT"].ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);

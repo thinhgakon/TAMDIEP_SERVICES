@@ -133,7 +133,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         LogProcessOrder = $@"#Sync Tạo đơn lúc {syncTime}",
                         LogJobAttach = $@"#Sync Tạo đơn lúc {syncTime}",
                         IsSyncedByNewWS = true,
-                        SourceDocumentId = sourceDocumentId
+                        SourceDocumentId = sourceDocumentId,
+                        ItemAlias = websaleOrder.itemalias,
+                        NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0,
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -261,6 +263,9 @@ namespace XHTD_SERVICES.Data.Repositories
                                 order.TransportMethodId = websaleOrder.transportMethodId;
                                 order.TransportMethodName = websaleOrder.transportMethodName;
                             }
+
+                            order.ItemAlias = websaleOrder.itemalias;
+                            order.NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0;
 
                             order.SumNumber = (decimal?)websaleOrder.bookQuantity;
                             order.OrderDate = orderDate;

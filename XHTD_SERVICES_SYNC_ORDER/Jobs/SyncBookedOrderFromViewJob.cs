@@ -121,7 +121,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             OracleHelper oracleHelper = new OracleHelper(strConString);
             string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, ORDER_QUANTITY, ORDER_ID, DELIVERY_CODE, 
                                        ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, 
-                                       ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID
+                                       ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID,
+                                       ITEM_ALIAS, NET_WEIGHT
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
@@ -150,6 +151,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                    reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
                 productId = reader["INVENTORY_ITEM_ID"].ToString(),
                 customerId = reader["CUSTOMER_ID"].ToString(),
+                itemalias = reader["ITEM_ALIAS"].ToString(),
+                netweight = reader["NET_WEIGHT"].ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });
