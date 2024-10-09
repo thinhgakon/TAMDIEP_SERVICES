@@ -24,11 +24,11 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
         private const short RACK = 0;
         private const short SLOT = 1;
 
-        private const string SCALE_2_IN_I = "I0.2"; /*"Q0.2";*/
-        private const string SCALE_2_OUT_I = "I0.3"; /*"Q0.2";*/
+        private const string SCALE_IN_I = "I0.2"; /*"Q0.2";*/
+        private const string SCALE_OUT_I = "I0.3"; /*"Q0.2";*/
 
-        protected readonly string SCALE_2_CB_1_CODE = "SCALE-2-CB-1";
-        protected readonly string SCALE_2_CB_2_CODE = "SCALE-2-CB-3";
+        protected readonly string SCALE_CB_1_CODE = "SCALE-2-CB-1";
+        protected readonly string SCALE_CB_2_CODE = "SCALE-2-CB-3";
 
         public SensorJob(
             )
@@ -69,14 +69,32 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                 if (!_sensor.IsConnected) return;
 
-                var checkScale2CB1 = _sensor.ReadInputPort(SCALE_2_IN_I);
-                var checkScale2CB2 = _sensor.ReadInputPort(SCALE_2_OUT_I);
+                var checkScale2CB1 = _sensor.ReadInputPort(SCALE_IN_I);
+                var checkScale2CB2 = _sensor.ReadInputPort(SCALE_OUT_I);
 
-                _notification.SendScale2Sensor(SCALE_2_CB_1_CODE, checkScale2CB1 ? "1" : "0");
+                if (checkScale2CB1) 
+                {
+                    _notification.SendScale2Sensor(SCALE_CB_1_CODE, "1");
+
+                    WriteLogInfo($"Vi phạm cảm biến 1");
+                }
+                else
+                {
+                    _notification.SendScale2Sensor(SCALE_CB_1_CODE, "0");
+                }
 
                 Thread.Sleep(200);
 
-                _notification.SendScale2Sensor(SCALE_2_CB_2_CODE, checkScale2CB2 ? "1" : "0");
+                if (checkScale2CB2) 
+                {
+                    WriteLogInfo($"Vi phạm cảm biến 2");
+
+                    _notification.SendScale2Sensor(SCALE_CB_2_CODE, "1");
+                }
+                else
+                {
+                    _notification.SendScale2Sensor(SCALE_CB_2_CODE, "0");
+                }
             }
             catch (Exception ex)
             {
