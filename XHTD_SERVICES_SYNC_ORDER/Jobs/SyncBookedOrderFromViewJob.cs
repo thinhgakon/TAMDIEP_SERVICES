@@ -151,8 +151,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                    reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
                 productId = reader["INVENTORY_ITEM_ID"].ToString(),
                 customerId = reader["CUSTOMER_ID"].ToString(),
-                itemalias = reader["ITEM_ALIAS"].ToString(),
-                netweight = reader["NET_WEIGHT"].ToString(),
+                itemalias = reader["ITEM_ALIAS"] == DBNull.Value ? null : reader["ITEM_ALIAS"].ToString(),
+                netweight = reader["NET_WEIGHT"] == DBNull.Value ? null : reader["NET_WEIGHT"].ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });
