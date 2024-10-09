@@ -66,31 +66,31 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 if (!_sensor.IsConnected) return;
 
-                var checkScale2CB1 = _sensor.ReadInputPort(SCALE_IN_I);
-                var checkScale2CB2 = _sensor.ReadInputPort(SCALE_OUT_I);
+                var checkScale1CB1 = _sensor.ReadInputPort(SCALE_IN_I);
+                var checkScale1CB2 = _sensor.ReadInputPort(SCALE_OUT_I);
 
-                if (checkScale2CB1)
+                if (checkScale1CB1)
                 {
-                    _notification.SendScale2Sensor(SCALE_CB_1_CODE, "1");
+                    _notification.SendScale1Sensor(SCALE_CB_1_CODE, "1");
 
                     WriteLogInfo($"Vi phạm cảm biến 1");
                 }
                 else
                 {
-                    _notification.SendScale2Sensor(SCALE_CB_1_CODE, "0");
+                    _notification.SendScale1Sensor(SCALE_CB_1_CODE, "0");
                 }
 
                 Thread.Sleep(200);
 
-                if (checkScale2CB2)
+                if (checkScale1CB2)
                 {
                     WriteLogInfo($"Vi phạm cảm biến 2");
 
-                    _notification.SendScale2Sensor(SCALE_CB_2_CODE, "1");
+                    _notification.SendScale1Sensor(SCALE_CB_2_CODE, "1");
                 }
                 else
                 {
-                    _notification.SendScale2Sensor(SCALE_CB_2_CODE, "0");
+                    _notification.SendScale1Sensor(SCALE_CB_2_CODE, "0");
                 }
             }
             catch (Exception ex)
