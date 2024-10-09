@@ -24,8 +24,8 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
         private const short RACK = 0;
         private const short SLOT = 1;
 
-        private const string SCALE_2_IN_I = "I0.4"; /*"Q0.2";*/
-        private const string SCALE_2_OUT_I = "I0.5"; /*"Q0.2";*/
+        private const string SCALE_2_IN_I = "I0.2"; /*"Q0.2";*/
+        private const string SCALE_2_OUT_I = "I0.3"; /*"Q0.2";*/
 
         protected readonly string SCALE_2_CB_1_CODE = "SCALE-2-CB-1";
         protected readonly string SCALE_2_CB_2_CODE = "SCALE-2-CB-3";

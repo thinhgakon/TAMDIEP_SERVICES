@@ -98,7 +98,7 @@ namespace XHTD_SERVICES_CANRA_1.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
+                     .WithIntervalInSeconds(3)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(sensorJob, sensorTrigger);
