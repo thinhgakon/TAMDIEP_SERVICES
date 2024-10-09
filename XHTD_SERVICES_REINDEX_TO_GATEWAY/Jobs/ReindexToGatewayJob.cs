@@ -119,11 +119,13 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
             // Xử lý các order đã quá 3 lần gọi loa mà ko vào cổng
             using (var db = new XHTD_Entities())
             {
+                var last5Min = DateTime.Now.AddMinutes(-5);
+
                 // Xếp lại số
                 var callVehicleStatusReindex = await db.tblCallVehicleStatus
                                                        .Where(x => x.CountTry == 3 &&
                                                                    x.CountReindex < 3 &&
-                                                                   x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                                   x.ModifiledOn <= last5Min)
                                                        .ToListAsync();
 
                 if (callVehicleStatusReindex == null || callVehicleStatusReindex.Count == 0)
@@ -145,7 +147,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 var callVehicleStatusRetry = await db.tblCallVehicleStatus
                                                      .Where(x => x.CountTry == 3 &&
                                                                  x.CountToCancel < 3 &&
-                                                                 x.ModifiledOn <= DateTime.Now.AddMinutes(-5))
+                                                                 x.ModifiledOn <= last5Min)
                                                      .ToListAsync();
 
                 if (callVehicleStatusRetry == null || callVehicleStatusRetry.Count == 0)
@@ -165,20 +167,20 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 }
 
                 // Hủy xác thực các đơn hàng vượt quá số lần gọi
-                //var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
-                //                           join callVehicleStatus in db.tblCallVehicleStatus
-                //                           on orders.Id equals callVehicleStatus.StoreOrderOperatingId
-                //                           where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= DateTime.Now.AddMinutes(-5)
-                //                           select orders).ToListAsync();
+                var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
+                                            join callVehicleStatus in db.tblCallVehicleStatus
+                                            on orders.Id equals callVehicleStatus.StoreOrderOperatingId
+                                            where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= last5Min
+                                            select orders).ToListAsync();
 
-                //foreach (var order in ordersToCancel)
-                //{
-                //    order.Confirm10 = 0;
-                //    order.TimeConfirm10 = null;
-                //    order.Step = (int)OrderStep.DA_NHAN_DON;
-                //    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
-                //}
-                //await db.SaveChangesAsync();
+                foreach (var order in ordersToCancel)
+                {
+                    order.Confirm10 = 0;
+                    order.TimeConfirm10 = null;
+                    order.Step = (int)OrderStep.DA_NHAN_DON;
+                    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                }
+                await db.SaveChangesAsync();
             }
         }
     }
