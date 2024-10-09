@@ -131,9 +131,10 @@ namespace XHTD_SERVICES.Data.Entities
         public string SealNumber { get; set; }
         public Nullable<bool> IsScaleInAuto { get; set; }
         public Nullable<int> SourceDocumentId { get; set; }
+        public string ItemAlias { get; set; }
+        public Nullable<double> NetWeight { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
-        public virtual TblQualityCertificate TblQualityCertificate { get; set; }
     }
 }

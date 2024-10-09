@@ -23,7 +23,9 @@ namespace XHTD_SERVICES.Data.Entities
         public int AreaId { get; set; }
         public string AreaName { get; set; }
         public Nullable<double> OrderNumber { get; set; }
-        public double ReleaseNumber { get; set; }
+        public Nullable<System.DateTime> LimitFromDate { get; set; }
+        public Nullable<double> LimitNumber { get; set; }
+        public Nullable<System.DateTime> LimitToDate { get; set; }
     
         public virtual tblExportPlan tblExportPlan { get; set; }
     }
