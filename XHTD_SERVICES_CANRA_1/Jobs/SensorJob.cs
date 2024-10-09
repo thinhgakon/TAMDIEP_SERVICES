@@ -30,11 +30,11 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
         protected readonly string SCALE_CB_1_CODE = "SCALE-2-CB-1";
         protected readonly string SCALE_CB_2_CODE = "SCALE-2-CB-3";
 
-        public SensorJob(
-            )
+        public SensorJob(Notification notification)
         {
             var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
             _sensor = new S71200Sensor(plc);
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
