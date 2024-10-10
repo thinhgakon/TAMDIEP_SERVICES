@@ -89,7 +89,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            SendNotificationByRight(RightCode.GATEWAY, pushMessage);
                         }
 
                         Program.CountToSendFailPing = 0;
