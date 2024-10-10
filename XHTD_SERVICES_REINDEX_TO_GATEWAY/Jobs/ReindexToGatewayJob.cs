@@ -130,14 +130,15 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                 if (callVehicleStatusReindex == null || callVehicleStatusReindex.Count == 0)
                 {
-                    _reindexToGatewayLogger.LogInfo("Không có xe nào vượt quá 3 lần gọi => Bỏ qua");
+                    _reindexToGatewayLogger.LogInfo("1. Không có xe nào vượt quá 3 lần gọi => Bỏ qua");
                 }
-
                 else
                 {
+                    _reindexToGatewayLogger.LogInfo($"1. Tìm thấy các đơn vượt quá 3 lần gọi => {string.Join(",", callVehicleStatusReindex.Select(x => x.StoreOrderOperatingId))}");
+
                     foreach (var callVehicleStatus in callVehicleStatusReindex)
                     {
-                        callVehicleStatus.CountReindex++;
+                        callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex++;
                         callVehicleStatus.CountTry = 0;
                     }
                     await db.SaveChangesAsync();
@@ -152,14 +153,15 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                 if (callVehicleStatusRetry == null || callVehicleStatusRetry.Count == 0)
                 {
-                    _reindexToGatewayLogger.LogInfo("Không có xe nào vượt quá 3 lần gọi và vượt quá 3 lần đếm hủy => Bỏ qua");
+                    _reindexToGatewayLogger.LogInfo("2. Không có xe nào vượt quá 3 lần gọi và vượt quá 3 lần đếm hủy => Bỏ qua");
                 }
-
                 else
                 {
+                    _reindexToGatewayLogger.LogInfo($"2. Tìm thấy các đơn vượt quá 3 lần gọi và vượt quá 3 lần đếm hủy => {string.Join(",", callVehicleStatusRetry.Select(x => x.StoreOrderOperatingId))}");
+
                     foreach (var callVehicleStatus in callVehicleStatusRetry)
                     {
-                        callVehicleStatus.CountToCancel++;
+                        callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel++;
                         callVehicleStatus.CountTry = 0;
                         callVehicleStatus.CountReindex = 0;
                     }
@@ -173,14 +175,23 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                                             where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= last5Min
                                             select orders).ToListAsync();
 
-                foreach (var order in ordersToCancel)
+                if (ordersToCancel == null || ordersToCancel.Count == 0)
                 {
-                    order.Confirm10 = 0;
-                    order.TimeConfirm10 = null;
-                    order.Step = (int)OrderStep.DA_NHAN_DON;
-                    order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                    _reindexToGatewayLogger.LogInfo("3. Không có đơn nào đủ đk hủy => Bỏ qua");
                 }
-                await db.SaveChangesAsync();
+                else
+                {
+                    _reindexToGatewayLogger.LogInfo($"3. Hủy các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
+
+                    foreach (var order in ordersToCancel)
+                    {
+                        order.Confirm10 = 0;
+                        order.TimeConfirm10 = null;
+                        order.Step = (int)OrderStep.DA_NHAN_DON;
+                        order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                    }
+                    await db.SaveChangesAsync();
+                }
             }
         }
     }
