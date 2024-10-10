@@ -298,5 +298,50 @@ namespace XHTD_SERVICES.Data.Repositories
 
             return null;
         }
+
+        public async Task<string> GetMinQuantityTrough(string typeProduct, string productCategory)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = await (from trough in dbContext.tblTroughs
+
+                                   join machineTrough in dbContext.TblMachineTroughs.Where(x => x.Status == true)
+                                   on trough.Code equals machineTrough.TroughCode
+                                   into machineTroughs
+
+                                   from machineTrough in machineTroughs
+
+                                   join machine in dbContext.tblMachines.Where(x => x.State == true)
+                                   on machineTrough.MachineCode equals machine.Code
+
+                                   join machineTypeProduct in dbContext.tblMachineTypeProducts
+                                   on machine.Code equals machineTypeProduct.MachineCode
+                                   into machineTypeProducts
+
+                                   join callToTrough in dbContext.tblCallToTroughs.Where(x => x.IsDone == null || x.IsDone == false)
+                                   on trough.Code equals callToTrough.Machine
+                                   into callToTroughs
+
+                                   where machine.ProductCategory == productCategory &&
+                                         machineTypeProducts.Any(mtp => mtp.TypeProduct == typeProduct) 
+
+                                   select new
+                                   {
+                                       trough.Code,
+                                       callToTroughs
+                                   })
+                                   .ToListAsync();
+
+                var record = query.Select(x => new
+                {
+                    x.Code,
+                    SumNumber = x.callToTroughs.Sum(y => y.SumNumber ?? 0)
+                })
+                .OrderBy(t => t.SumNumber)
+                .FirstOrDefault();
+
+                return record.Code;
+            }
+        }
     }
 }
