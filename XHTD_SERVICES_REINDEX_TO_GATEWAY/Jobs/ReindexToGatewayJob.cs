@@ -124,7 +124,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 // Xếp lại số
                 var callVehicleStatusReindex = await db.tblCallVehicleStatus
                                                        .Where(x => x.CountTry == 3 &&
-                                                                   x.CountReindex < 3 &&
+                                                                  (x.CountReindex == null || x.CountReindex < 3) &&
                                                                    x.ModifiledOn <= last5Min)
                                                        .ToListAsync();
 
@@ -146,7 +146,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 // Tăng số lần CountToCancel
                 var callVehicleStatusRetry = await db.tblCallVehicleStatus
                                                      .Where(x => x.CountTry == 3 &&
-                                                                 x.CountToCancel < 3 &&
+                                                                (x.CountToCancel == null || x.CountToCancel < 3) &&
                                                                  x.ModifiledOn <= last5Min)
                                                      .ToListAsync();
 
