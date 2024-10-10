@@ -123,7 +123,8 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                 // Xếp lại số
                 var callVehicleStatusReindex = await db.tblCallVehicleStatus
-                                                       .Where(x => x.CountTry == 3 &&
+                                                       .Where(x => x.CallType == CallType.CONG && 
+                                                                   x.CountTry == 3 &&
                                                                   (x.CountReindex == null || x.CountReindex < 3) &&
                                                                    x.ModifiledOn <= last5Min)
                                                        .ToListAsync();
@@ -146,7 +147,8 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                 // Tăng số lần CountToCancel
                 var callVehicleStatusRetry = await db.tblCallVehicleStatus
-                                                     .Where(x => x.CountTry == 3 &&
+                                                     .Where(x => x.CallType == CallType.CONG &&
+                                                                 x.CountTry == 3 &&
                                                                 (x.CountToCancel == null || x.CountToCancel < 3) &&
                                                                  x.ModifiledOn <= last5Min)
                                                      .ToListAsync();
@@ -172,7 +174,9 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                 var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
                                             join callVehicleStatus in db.tblCallVehicleStatus
                                             on orders.Id equals callVehicleStatus.StoreOrderOperatingId
-                                            where callVehicleStatus.CountToCancel == 3 && callVehicleStatus.ModifiledOn <= last5Min
+                                            where callVehicleStatus.CallType == CallType.CONG &&
+                                                  callVehicleStatus.CountToCancel == 3 && 
+                                                  callVehicleStatus.ModifiledOn <= last5Min
                                             select orders).ToListAsync();
 
                 if (ordersToCancel == null || ordersToCancel.Count == 0)
