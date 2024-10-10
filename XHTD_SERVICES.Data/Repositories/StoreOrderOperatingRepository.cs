@@ -422,9 +422,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == OrderCatIdCode.XI_MANG_XA
-                                                && x.TypeXK != OrderTypeXKCode.JUMBO
-                                                && x.TypeXK != OrderTypeXKCode.SLING
+                                                && x.TypeProduct == OrderTypeProductCode.ROI
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
@@ -448,7 +446,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.CatId == OrderCatIdCode.CLINKER
+                                                && x.TypeProduct == OrderTypeProductCode.CLINKER
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
