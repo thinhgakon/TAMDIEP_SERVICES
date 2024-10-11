@@ -142,7 +142,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         foreach (var callVehicleStatus in callVehicleStatusReindex)
                         {
-                            callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex++;
+                            callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex + 1;
                             callVehicleStatus.CountTry = 0;
                         }
                         await db.SaveChangesAsync();
@@ -167,7 +167,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         foreach (var callVehicleStatus in callVehicleStatusRetry)
                         {
-                            callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel++;
+                            callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel + 1;
                             callVehicleStatus.CountTry = 0;
                             callVehicleStatus.CountReindex = 0;
                         }
