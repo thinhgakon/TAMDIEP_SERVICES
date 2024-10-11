@@ -65,9 +65,8 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                     var deliveryCode = order.DeliveryCode;
                     var vehicle = order.Vehicle;
                     var sumNumber = (decimal)order.SumNumber;
-                    var typeProduct = order.TypeProduct;
 
-                    var machineCode = await _troughRepository.GetMinQuantityTrough(typeProduct, OrderProductCategoryCode.XI_ROI);
+                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.ROI, OrderProductCategoryCode.XI_ROI);
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 

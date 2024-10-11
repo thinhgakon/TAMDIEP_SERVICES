@@ -6,7 +6,7 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
-    public class QueueToTroughJumboJob : IJob
+    public class QueueToTroughSlingJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
@@ -16,7 +16,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly QueueToTroughLogger _queueToCallLogger;
 
-        public QueueToTroughJumboJob(
+        public QueueToTroughSlingJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
@@ -44,12 +44,12 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         public async void QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCall JUMBO service");
+            _queueToCallLogger.LogInfo("Start process QueueToCall SLING service");
 
             try
             {
                 // 1. Lay danh sach don hang chua duoc xep vao may xuat
-                var orders = await _storeOrderOperatingRepository.GetTypeXKOrdersAddToQueueToCall(OrderTypeXKCode.JUMBO);
+                var orders = await _storeOrderOperatingRepository.GetTypeXKOrdersAddToQueueToCall(OrderTypeXKCode.SLING);
                 if (orders == null || orders.Count == 0)
                 {
                     return;
@@ -66,7 +66,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                     var vehicle = order.Vehicle;
                     var sumNumber = (decimal)order.SumNumber;
 
-                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.JUMBO, OrderProductCategoryCode.JUMBO);
+                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.SLING, OrderProductCategoryCode.XI_BAO);
 
                     _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
