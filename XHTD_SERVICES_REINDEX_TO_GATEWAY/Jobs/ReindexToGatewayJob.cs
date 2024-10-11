@@ -142,7 +142,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         foreach (var callVehicleStatus in callVehicleStatusReindex)
                         {
-                            callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex++;
+                            callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex + 1;
                             callVehicleStatus.CountTry = 0;
                         }
                         await db.SaveChangesAsync();
@@ -167,7 +167,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         foreach (var callVehicleStatus in callVehicleStatusRetry)
                         {
-                            callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel++;
+                            callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel + 1;
                             callVehicleStatus.CountTry = 0;
                             callVehicleStatus.CountReindex = 0;
                         }
@@ -175,32 +175,32 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                     }
 
                     // Hủy xác thực các đơn hàng vượt quá số lần gọi
-                    var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
-                                                join callVehicleStatus in db.tblCallVehicleStatus
-                                                on orders.Id equals callVehicleStatus.StoreOrderOperatingId
-                                                where callVehicleStatus.CallType == CallType.CONG &&
-                                                      callVehicleStatus.CountToCancel == 3 &&
-                                                      callVehicleStatus.ModifiledOn <= last5Min &&
-                                                      callVehicleStatus.IsDone == false
-                                                select orders).ToListAsync();
+                    //var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
+                    //                            join callVehicleStatus in db.tblCallVehicleStatus
+                    //                            on orders.Id equals callVehicleStatus.StoreOrderOperatingId
+                    //                            where callVehicleStatus.CallType == CallType.CONG &&
+                    //                                  callVehicleStatus.CountToCancel == 3 &&
+                    //                                  callVehicleStatus.ModifiledOn <= last5Min &&
+                    //                                  callVehicleStatus.IsDone == false
+                    //                            select orders).ToListAsync();
 
-                    if (ordersToCancel == null || ordersToCancel.Count == 0)
-                    {
-                        _reindexToGatewayLogger.LogInfo("3. Không có đơn nào đủ đk hủy => Bỏ qua");
-                    }
-                    else
-                    {
-                        _reindexToGatewayLogger.LogInfo($"3. Hủy các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
+                    //if (ordersToCancel == null || ordersToCancel.Count == 0)
+                    //{
+                    //    _reindexToGatewayLogger.LogInfo("3. Không có đơn nào đủ đk hủy => Bỏ qua");
+                    //}
+                    //else
+                    //{
+                    //    _reindexToGatewayLogger.LogInfo($"3. Hủy các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
 
-                        foreach (var order in ordersToCancel)
-                        {
-                            order.Confirm10 = 0;
-                            order.TimeConfirm10 = null;
-                            order.Step = (int)OrderStep.DA_NHAN_DON;
-                            order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
-                        }
-                        await db.SaveChangesAsync();
-                    }
+                    //    foreach (var order in ordersToCancel)
+                    //    {
+                    //        order.Confirm10 = 0;
+                    //        order.TimeConfirm10 = null;
+                    //        order.Step = (int)OrderStep.DA_NHAN_DON;
+                    //        order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+                    //    }
+                    //    await db.SaveChangesAsync();
+                    //}
                 }
             }
             catch (Exception ex)
