@@ -106,9 +106,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
+    <Compile Include="Jobs\QueueToTroughC91Job.cs" />
     <Compile Include="Jobs\QueueToTroughClinkerJob.cs" />
     <Compile Include="Jobs\QueueToTroughJumboJob.cs" />
+    <Compile Include="Jobs\QueueToTroughOtherJob.cs" />
+    <Compile Include="Jobs\QueueToTroughPcb30Job.cs" />
+    <Compile Include="Jobs\QueueToTroughPcb40Job.cs" />
     <Compile Include="Jobs\QueueToTroughRoiJob.cs" />
+    <Compile Include="Jobs\QueueToTroughSlingJob.cs" />
     <Compile Include="Jobs\QueueToTroughXibaoJob.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

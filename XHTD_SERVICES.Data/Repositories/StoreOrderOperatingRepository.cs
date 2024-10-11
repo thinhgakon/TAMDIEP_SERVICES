@@ -409,6 +409,30 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<List<tblStoreOrderOperating>> GetXiMangBaoOrdersAddToQueueToCall(string typeProduct)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
+
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.TypeProduct == typeProduct
+                                                && x.IsVoiced == false
+                                                && x.TimeConfirm3 < timeToAdd
+                                                && !ordersInQueue.Contains(x.DeliveryCode)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
         public async Task<List<tblStoreOrderOperating>> GetXiMangRoiOrdersAddToQueueToCall()
         {
             using (var dbContext = new XHTD_Entities())
@@ -457,7 +481,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> GetJumboOrdersAddToQueueToCall()
+        public async Task<List<tblStoreOrderOperating>> GetTypeXKOrdersAddToQueueToCall(string typeXK)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -470,7 +494,31 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && x.TypeProduct == OrderTypeProductCode.JUMBO
+                                                && x.TypeProduct == typeXK
+                                                && x.IsVoiced == false
+                                                && x.TimeConfirm3 < timeToAdd
+                                                && !ordersInQueue.Contains(x.DeliveryCode)
+                                    )
+                                    .OrderBy(x => x.TimeConfirm3)
+                                    .ToListAsync();
+                return orders;
+            }
+        }
+
+        public async Task<List<tblStoreOrderOperating>> GetTypeOtherOrdersAddToQueueToCall()
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                var timeToAdd = DateTime.Now.AddMinutes(-1);
+
+                var orders = await dbContext.tblStoreOrderOperatings
+                                    .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                && x.TypeProduct == OrderTypeProductCode.OTHER
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)
