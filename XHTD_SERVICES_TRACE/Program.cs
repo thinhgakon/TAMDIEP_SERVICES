@@ -10,7 +10,7 @@ namespace XHTD_SERVICES_TRACE
 {
     public static class Program
     {
-        public static string SignalRUrl = "http://117.4.184.50:7000/SystemTraceRequest";
+        public static string SignalRUrl = "http://113.160.202.32:7000/SystemTraceRequest";
         public static HubConnection HubConnection = new HubConnectionBuilder()
                   .WithUrl(SignalRUrl)
                   .Build();

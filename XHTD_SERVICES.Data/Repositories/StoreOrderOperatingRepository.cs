@@ -470,8 +470,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 var orders = await dbContext.tblStoreOrderOperatings
                                     .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
-                                                && (x.TypeXK == OrderTypeXKCode.JUMBO
-                                                || x.TypeXK == OrderTypeXKCode.SLING)
+                                                && x.TypeProduct == OrderTypeProductCode.JUMBO
                                                 && x.IsVoiced == false
                                                 && x.TimeConfirm3 < timeToAdd
                                                 && !ordersInQueue.Contains(x.DeliveryCode)

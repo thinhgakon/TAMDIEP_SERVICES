@@ -92,7 +92,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         vehicleWaitingCall.IsDone = true;
                         await db.SaveChangesAsync();
                     }
-
                     else
                     {
                         _gatewayCallLogger.LogInfo($"======== Gọi phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} lần thứ {vehicleWaitingCall.CountTry + 1} ========");
@@ -107,7 +106,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                             storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
                             storeOrderOperating.TimeConfirm4 = DateTime.Now;
                         }
-
                         else
                         {
                             storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào bãi chờ lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
@@ -117,9 +115,15 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
                         vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
 
+                        if (type == BAI_CHO && vehicleWaitingCall.CountTry == 3)
+                        {
+                            vehicleWaitingCall.IsDone = true;
+                        }
+
                         await db.SaveChangesAsync();
                     }
                 }
+
                 if (isWillCall)
                 {
                     // tiến hành gọi xe

@@ -250,6 +250,23 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Vào cổng tự động lúc {currentTime} ";
 
+                        // huy goi loa
+                        var orderInCalls = await dbContext.tblCallVehicleStatus
+                                .Where(x => x.IsDone == false
+                                        &&  x.StoreOrderOperatingId == order.Id
+                                    )
+                                .ToListAsync();
+                        if(orderInCalls != null && orderInCalls.Count > 0)
+                        {
+                           orderInCalls.ForEach(x =>
+                               {
+                                   x.IsDone = true;
+                                   x.LogCall = $@"{x.LogCall} #IsDone true khi xe vao cong lúc {DateTime.Now}";
+                               }
+                           );
+                        }
+
+                        // xep lai lot
                         var typeProductOrders = await dbContext.tblStoreOrderOperatings
                                                                .Where(x => x.TypeProduct.ToUpper() == order.TypeProduct.ToUpper() &&
                                                                           (x.Step == (int)OrderStep.DA_XAC_THUC || 

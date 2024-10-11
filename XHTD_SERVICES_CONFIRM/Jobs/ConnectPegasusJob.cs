@@ -92,20 +92,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                         Program.CountToSendFailPing = 0;
                     }
-
-                    //int port = PortHandle;
-                    //var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
-
-                    //if (openresult != 0)
-                    //{
-                    //    WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                    //}
-                    //else
-                    //{
-                    //    WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                    //}
-
-                    //WriteLogInfo("Connect fail. Start reconnect");
                 }
             }
             catch (Exception ex)
