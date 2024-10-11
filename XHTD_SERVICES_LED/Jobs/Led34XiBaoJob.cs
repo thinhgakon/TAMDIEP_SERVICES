@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using log4net;
 using Quartz;
+using SuperSimpleTcp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,9 +28,10 @@ namespace XHTD_SERVICES_LED.Jobs
         protected readonly TroughRepository _troughRepository;
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        static TcpClient client = new TcpClient();
-        static Stream stream = null;
+        static SimpleTcpClient client;
         static ASCIIEncoding encoding = new ASCIIEncoding();
+        static string MachineResponse = string.Empty;
+        static string TroughResponse = string.Empty;
 
         protected readonly string PLC_IP_ADDRESS = "192.168.13.210";
         protected readonly int PLC_PORT_NUMBER = 12000;
@@ -78,43 +80,48 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 WriteLogInfo($"Bat dau ket noi PLC --- IP:{PLC_IP_ADDRESS} - PORT:{PLC_PORT_NUMBER}");
 
-                client = new TcpClient();
-                client.ConnectAsync(PLC_IP_ADDRESS, PLC_PORT_NUMBER).Wait(2000);
-                stream = client.GetStream();
+                client = new SimpleTcpClient(PLC_IP_ADDRESS, PLC_PORT_NUMBER);
+                client.Keepalive.EnableTcpKeepAlives = true;
+                client.Settings.MutuallyAuthenticate = false;
+                client.Settings.AcceptInvalidCertificates = true;
+                client.Settings.ConnectTimeoutMs = 2000;
+                client.Settings.NoDelay = true;
 
-                WriteLogInfo($"Connected to machine : 3|4");
+                client.ConnectWithRetries(2000);
 
-                WriteLogInfo($"Đọc dữ liệu máng xuất");
-                var trough12Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_3_CODE);
-                if (trough12Codes != null)
+                if (client.IsConnected)
                 {
-                    await ReadMXData(trough12Codes, MACHINE_3_CODE);
-                }
+                    WriteLogInfo($"Connected to machine : 3|4");
 
-                Thread.Sleep(200);
+                    WriteLogInfo($"Đọc dữ liệu máng xuất");
+                    var trough12Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_3_CODE);
+                    trough12Codes = trough12Codes.Where(trough => trough != "9" && trough != "10").ToList();
 
-                WriteLogInfo($"Đọc dữ liệu máy đếm bao");
-                var trough34Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_4_CODE);
-                if (trough34Codes != null)
-                {
-                    await ReadMXData(trough34Codes, MACHINE_4_CODE);
-                }
+                    if (trough12Codes != null && trough12Codes.Count > 0)
+                    {
+                        await ReadMXData(trough12Codes, MACHINE_3_CODE);
+                    }
+                    else
+                    {
+                        DisplayScreenLed(DEFAULT_LED_CODE, MACHINE_3_CODE);
+                    }
 
-                //Thread.Sleep(200);
+                    Thread.Sleep(200);
 
-                //WriteLogInfo($"Đọc dữ liệu máy đếm bao");
-                //var machineCodes = new List<string> { "1" };
-                //await ReadMDBData(machineCodes);
+                    WriteLogInfo($"Đọc dữ liệu máy đếm bao");
+                    var trough34Codes = await _troughRepository.GetActiveTroughInMachine(MACHINE_4_CODE);
+                    trough34Codes = trough34Codes.Where(trough => trough != "9" && trough != "10").ToList();
 
-                if (client != null && client.Connected)
-                {
-                    client.Close();
-                    Thread.Sleep(2000);
-                }
+                    if (trough34Codes != null && trough34Codes.Count > 0)
+                    {
+                        await ReadMXData(trough34Codes, MACHINE_4_CODE);
+                    }
+                    else
+                    {
+                        DisplayScreenLed(DEFAULT_LED_CODE, MACHINE_4_CODE);
+                    }
 
-                if (stream != null)
-                {
-                    stream.Close();
+                    Thread.Sleep(200);
                 }
             }
             catch (Exception ex)
@@ -138,25 +145,21 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     WriteLogInfo($"Gửi lệnh: {command}");
 
-                    byte[] data1 = encoding.GetBytes($"{command}");
-                    stream.Write(data1, 0, data1.Length);
+                    client.Send(command);
+                    client.Events.DataReceived += Trough_DataReceived;
+                    Thread.Sleep(200);
 
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
-
-                    var response = encoding.GetString(data1).Trim();
-
-                    if (response == null || response.Length == 0)
+                    if (TroughResponse == null || TroughResponse.Length == 0)
                     {
-                        WriteLogInfo($"Khong co du lieu tra ve");
-                        return;
+                        WriteLogInfo($"2. Không có phản hồi");
+                        continue;
                     }
                     else
                     {
-                        WriteLogInfo($"Phản hồi: {response}");
+                        WriteLogInfo($"2. Phản hồi: {TroughResponse}");
                     }
 
-                    var result = GetInfo(response.Replace("\0", "").Replace("##", "#"));
+                    var result = GetInfo(TroughResponse.Replace("\0", "").Replace("##", "#"));
 
                     var isRunning = result.Item4 == "Run";
                     var deliveryCode = result.Item3;
@@ -226,25 +229,21 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     WriteLogInfo($"Gửi lệnh: {command}");
 
-                    byte[] data1 = encoding.GetBytes($"{command}");
-                    stream.Write(data1, 0, data1.Length);
+                    client.Send(command);
+                    client.Events.DataReceived += Machine_DataReceived;
+                    Thread.Sleep(200);
 
-                    data1 = new byte[BUFFER_SIZE];
-                    stream.Read(data1, 0, BUFFER_SIZE);
-
-                    var response = encoding.GetString(data1).Trim();
-
-                    if (response == null || response.Length == 0)
+                    if (MachineResponse == null || MachineResponse.Length == 0)
                     {
-                        WriteLogInfo($"Khong co du lieu tra ve");
-                        return;
+                        WriteLogInfo($"2. Không có phản hồi");
+                        continue;
                     }
                     else
                     {
-                        WriteLogInfo($"Phản hồi: {response}");
+                        WriteLogInfo($"2. Phản hồi: {MachineResponse}");
                     }
 
-                    var result = GetMDBInfo(response.Replace("\0", "").Replace("##", "#"));
+                    var result = GetMDBInfo(MachineResponse.Replace("\0", "").Replace("##", "#"));
 
                     var isRunning = result.Item4 == "Run";
                     var deliveryCode = result.Item3;
@@ -275,6 +274,8 @@ namespace XHTD_SERVICES_LED.Jobs
                 }
                 catch (Exception ex)
                 {
+                    WriteLogInfo($"ReadMDBData ERROR: Machine {machineCode} -- {ex.Message} --- {ex.StackTrace}");
+                    client.Disconnect();
                 }
             }
         }
@@ -329,36 +330,42 @@ namespace XHTD_SERVICES_LED.Jobs
             }
         }
 
-        public void DisplayScreenLed(string dataCode, string ledCode)
+        public void DisplayScreenLed(string dataCode, string machineCode)
         {
             WriteLogInfo($"Send led khi đọc từ MX: dataCode = {dataCode}");
 
-            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(ledCode, dataCode))
+            if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(machineCode, dataCode))
             {
-                WriteLogInfo($"LED Máy {ledCode} từ MX - OK");
+                WriteLogInfo($"LED Máy {machineCode} từ MX - OK");
             }
             else
             {
-                WriteLogInfo($"LED Máy {ledCode} từ MX - FAILED");
+                WriteLogInfo($"LED Máy {machineCode} từ MX - FAILED");
             }
+        }
+
+        private void Machine_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            MachineResponse = Encoding.UTF8.GetString(e.Data.ToArray());
+        }
+
+        private void Trough_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            TroughResponse = Encoding.UTF8.GetString(e.Data.ToArray());
         }
 
         public void Dispose()
         {
             try
             {
-                if (client != null && client?.Connected == true)
+                if (client != null)
                 {
-                    client.Close();
-                }
-                if (stream != null)
-                {
-                    stream.Close();
+                    client.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                WriteLogInfo($"SyncTroughJob34: Dispose error - {ex.Message} - {ex.StackTrace} - {ex.InnerException}");
             }
         }
 
