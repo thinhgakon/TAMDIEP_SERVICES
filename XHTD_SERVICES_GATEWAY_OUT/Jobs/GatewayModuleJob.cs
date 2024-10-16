@@ -195,16 +195,57 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             {
                 try
                 {
+                    #region Check ping anten
+                    Ping pingSender = new Ping();
+                    PingReply reply = pingSender.Send(PegasusAdr);
+
+                    if (reply.Status != IPStatus.Success)
+                    {
+                        _logger.LogInfo("Ping fail");
+
+                        Thread.Sleep(3000);
+
+                        continue;
+                    }
+                    #endregion
+
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
 
                     if (openResult != 0)
                     {
                         _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
 
+                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+
+                        Program.CountToSendFailOpenPort++;
+
+                        _logger.LogInfo($"Open netPort that bai lan thu: {Program.CountToSendFailOpenPort}");
+
+                        if (Program.CountToSendFailOpenPort == 3)
+                        {
+                            _logger.LogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailOpenPortLastTime}");
+
+                            if (Program.SendFailOpenPortLastTime == null || Program.SendFailOpenPortLastTime < DateTime.Now.AddMinutes(-3))
+                            {
+                                Program.SendFailOpenPortLastTime = DateTime.Now;
+
+                                // gửi thông báo ping thất bại
+                                var pushMessage = $"Cổng ra: mở kết nối không thành công đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+
+                                _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
+
+                                //SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            }
+
+                            Program.CountToSendFailOpenPort = 0;
+                        }
+
                         Thread.Sleep(5000);
                     }
                     else
                     {
+                        Program.CountToSendFailOpenPort = 0;
+
                         _logger.LogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
                     }
                 }
@@ -609,6 +650,19 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationAPI Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 
