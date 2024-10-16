@@ -474,12 +474,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
-                    var lot = dbContext.TblQualityCertificates
+                    var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
-                    .Where(X => X.FromDate.Date <= DateTime.Now.Date)
-                    .Where(x => x.ToDate.Date >= DateTime.Now.Date)
                     .Where(x => x.ItemCode == order.CatId.ToString())
-                    .FirstOrDefault();
+                    .ToList();
+
+                    var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
+                    .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
 
                     if (lot == null)
                     {
