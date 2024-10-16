@@ -307,12 +307,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
-                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
-                                    //if (driverUserName != null)
-                                    //{
-                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
-                                    //}
-
                                     WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
@@ -327,12 +321,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                         WriteLogInfo($"6.2. Update gia tri can vao");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        //WriteLogInfo($"6.3. Update trạng thái cân vào");
-                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
-
-                                        //WriteLogInfo($"6.2. Update gia tri can vao toan bo don hang theo vehicle code");
-                                        //await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightInByVehicleCode(scaleInfo.Vehicle, currentScaleValue);
-
                                         WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
                                         await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
                                     }
@@ -343,23 +331,13 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                         WriteLogInfo($"6.2. Update gia tri can vao");
                                         await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightIn(scaleInfo.DeliveryCode, currentScaleValue);
 
-                                        //WriteLogInfo($"6.3. Update trạng thái cân vào");
-                                        //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3(scaleInfo.DeliveryCode);
-
                                         WriteLogInfo($"6.3. Update trạng thái cân vào toan bo don hang theo vehicle code");
                                         await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm3ByVehicleCode(scaleInfo.Vehicle);
-
-                                        //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân vào tự động lúc {currentTime}");
                                     }
 
                                     // 8. Bật đèn xanh
                                     WriteLogInfo($"8. Bật đèn xanh");
                                     TurnOnGreenTrafficLight();
-
-                                    //Thread.Sleep(15000);
-
-                                    //WriteLogInfo($"9. Tắt đèn");
-                                    //TurnOffTrafficLight();
                                 }
                                 else
                                 {
@@ -424,12 +402,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
-                                    //var driverUserName = orders.FirstOrDefault()?.DriverUserName;
-                                    //if (driverUserName != null)
-                                    //{
-                                    //    _notification.SendPushNotification(driverUserName, $"Đơn hàng số hiệu {deliveryCodes} cân vào thành công lúc {currentTime}. Khối lượng {currentScaleValue}, vui lòng mở ứng dụng VICEM để xem chi tiết, trân trọng!");
-                                    //}
-
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
                                     // 5. Update gia tri can va trang thai Can ra
@@ -438,21 +410,11 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
 
                                     WriteLogInfo($"5.2. Update trạng thái cân ra");
-                                    //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7ByVehicleCode(scaleInfo.Vehicle);
-
-                                    //DIBootstrapper.Init().Resolve<Notification>().SendInforNotification($"{currentOrder.DriverUserName}", $"{scaleInfo.DeliveryCode} cân ra tự động lúc {currentTime}");
-
-                                    //Thread.Sleep(3000);
 
                                     // 7. Bật đèn xanh
                                     WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
-
-                                    //Thread.Sleep(15000);
-
-                                    //WriteLogInfo($"8. Tắt đèn");
-                                    //TurnOffTrafficLight();
 
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
                                     WriteLogInfo($". Cap nhat so lo");
