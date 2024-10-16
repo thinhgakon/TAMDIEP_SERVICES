@@ -200,7 +200,7 @@ namespace XHTD_SERVICES_XB_TROUGH_8.Jobs
                                 Program.SendFailOpenPortLastTime = DateTime.Now;
 
                                 // gửi thông báo ping thất bại
-                                var pushMessage = $"Điểm xác thực: mở kết nối không thành công đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+                                var pushMessage = $"Xi bao 8: mở kết nối không thành công đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
 
                                 _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
 
