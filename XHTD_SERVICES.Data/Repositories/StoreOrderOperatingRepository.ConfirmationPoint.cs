@@ -81,7 +81,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 var logProccess = "";
                 using (var db = new XHTD_Entities())
                 {
-                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC).ToList();
+                    var orders = db.tblStoreOrderOperatings.Where(x => x.Vehicle == vehicleCode && x.Step == (int)OrderStep.DA_XAC_THUC && (x.IsVoiced == null || x.IsVoiced == false)).ToList();
                     if (orders == null || orders.Count < 1) return;
 
                     foreach (var currentOrder in orders)
@@ -89,7 +89,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         if (currentOrder == null || currentOrder.IndexOrder > 0) return;
                         logProccess += $@"Don dang xu ly: {currentOrder.Id} loai sp: {currentOrder.TypeProduct}";
 
-                        var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct)).Max(x => x.IndexOrder) ?? 0;
+                        var orderIndexMax = db.tblStoreOrderOperatings.Where(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE || x.Step == (int)OrderStep.DANG_GOI_XE) && x.TypeProduct.Equals(currentOrder.TypeProduct) && (x.IsVoiced == null || x.IsVoiced == false)).Max(x => x.IndexOrder) ?? 0;
                         var indexOrderSet = orderIndexMax + 1;
                         logProccess += $@", xep lot cho xe {indexOrderSet}";
 
