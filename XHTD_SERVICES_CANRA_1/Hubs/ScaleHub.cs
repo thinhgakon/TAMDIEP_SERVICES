@@ -301,13 +301,10 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                 if (scaleInfoResult.Code == "01")
                                 {
                                     // Lưu giá trị cân thành công
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thành công");
+
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
-
-                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
-                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
-
-                                    WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
                                     WriteLogInfo($"6. Update gia tri can va trang thai Can vao");
@@ -338,17 +335,21 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     // 8. Bật đèn xanh
                                     WriteLogInfo($"8. Bat den xanh");
                                     TurnOnGreenTrafficLight();
+
+                                    WriteLogInfo($"9. Gửi thông báo qua app");
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
                                 }
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
+
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
-
-                                    WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 }
@@ -396,13 +397,10 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                 if (scaleInfoResult.Code == "01")
                                 {
                                     // Lưu giá trị cân thành công
+                                    WriteLogInfo($"4.1. Lưu giá trị cân thành công");
+
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
-
-                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
-                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
-
-                                    WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
                                     // 5. Update gia tri can va trang thai Can ra
                                     WriteLogInfo($"5. Update gia tri can va trang thai Can ra");
@@ -416,8 +414,12 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
 
+                                    WriteLogInfo($"8. Gửi thông báo qua app");
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
+
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
-                                    WriteLogInfo($". Cap nhat so lo");
+                                    WriteLogInfo($"9. Cap nhat so lo");
                                 }
                                 else
                                 {

@@ -301,13 +301,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                 if (scaleInfoResult.Code == "01")
                                 {
                                     // Lưu giá trị cân thành công
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thành công");
+
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
-
-                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
-                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
-
-                                    WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     // 6. Update gia tri can va trang thai Can vao
                                     WriteLogInfo($"6. Update gia tri can va trang thai Can vao");
@@ -338,6 +335,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     // 8. Bật đèn xanh
                                     WriteLogInfo($"8. Bật đèn xanh");
                                     TurnOnGreenTrafficLight();
+
+                                    WriteLogInfo($"9. Gửi thông báo qua app");
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
                                 }
                                 else
                                 {
@@ -396,13 +397,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                 if (scaleInfoResult.Code == "01")
                                 {
                                     // Lưu giá trị cân thành công
+                                    WriteLogInfo($"4.1. Lưu giá trị cân thành công");
+
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
-
-                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
-                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
-
-                                    WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
                                     // 5. Update gia tri can va trang thai Can ra
                                     WriteLogInfo($"5. Update gia tri can va trang thai Can ra");
@@ -416,8 +414,12 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     WriteLogInfo($"7. Bat den xanh");
                                     TurnOnGreenTrafficLight();
 
+                                    WriteLogInfo($"8. Gửi thông báo qua app");
+                                    var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
+                                    SendNotificationByRight(RightCode.SCALE, pushMessage);
+
+                                    WriteLogInfo($"9. Cap nhat so lo");
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
-                                    WriteLogInfo($". Cap nhat so lo");
                                 }
                                 else
                                 {
