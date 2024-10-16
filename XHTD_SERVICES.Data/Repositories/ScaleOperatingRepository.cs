@@ -30,6 +30,12 @@ namespace XHTD_SERVICES.Data.Repositories
                     return false;
                 }
 
+                if((bool)scaleInfo.IsScaling && scaleInfo.Vehicle == vehicle)
+                {
+                    log.Info($"Đã có thông tin xe đang cân của phương tiện {vehicle} => đã đánh dấu cân bằng anten khác");
+                    return false;
+                }
+
                 scaleInfo.DeliveryCode = deliveryCode;
                 scaleInfo.Vehicle = vehicle;
                 scaleInfo.CardNo = cardNo;
@@ -51,6 +57,12 @@ namespace XHTD_SERVICES.Data.Repositories
                 var scaleInfo = dbContext.tblScaleOperatings.FirstOrDefault(x => x.ScaleCode == scaleCode);
                 if (scaleInfo == null)
                 {
+                    return false;
+                }
+
+                if ((bool)scaleInfo.IsScaling && scaleInfo.Vehicle == vehicle)
+                {
+                    log.Info($"Đã có thông tin xe đang cân của phương tiện {vehicle} => đã đánh dấu cân bằng anten khác");
                     return false;
                 }
 
