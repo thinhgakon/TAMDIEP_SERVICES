@@ -254,7 +254,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                                 _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                                SendNotificationByRight(RightCode.SCALE, pushMessage);
                             }
 
                             Program.CountToSendFailOpenPort = 0;
