@@ -219,6 +219,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 try
                 {
+                    #region Check ping anten
+                    Ping pingSender = new Ping();
+                    PingReply reply = pingSender.Send(PegasusAdr);
+
+                    if (reply.Status != IPStatus.Success)
+                    {
+                        _logger.LogInfo("Ping fail");
+
+                        Thread.Sleep(3000);
+
+                        continue;
+                    }
+                    #endregion
+
                     openResult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
 
                     if (openResult != 0)
