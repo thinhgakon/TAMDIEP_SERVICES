@@ -270,6 +270,8 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.SumNumber = (decimal?)websaleOrder.bookQuantity;
                             order.OrderDate = orderDate;
 
+                            order.DocNum = websaleOrder.docnum;
+
                             order.UpdateDay = lastUpdatedDate;
 
                             order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
@@ -403,8 +405,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.WeightOut == null
                                                         ||
                                                         x.WeightOut == 0
-                                                        ||
-                                                        x.DocNum == null
+                                                        //||
+                                                        //x.DocNum == null
                                                     )
                                                );
 
@@ -432,7 +434,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightOut = (int)(weightOut * 1000);
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
-                        order.DocNum = docnum;
+                        //order.DocNum = docnum;
 
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
