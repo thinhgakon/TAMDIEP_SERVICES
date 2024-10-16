@@ -82,7 +82,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                             Program.SendFailPingLastTime = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"Cân ra 1: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 

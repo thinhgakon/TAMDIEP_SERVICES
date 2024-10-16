@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES_CANVAO_2.Devices;
 using log4net;
+using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_CANVAO_2.Jobs
 {
@@ -12,12 +14,15 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
+        protected readonly Notification _notification;
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.182";
 
-        public ConnectPegasusJob()
+        public ConnectPegasusJob(Notification notification)
         {
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -54,26 +59,38 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
                 if (reply.Status == IPStatus.Success)
                 {
-                    WriteLogInfo("Ping ok");
+                    WriteLogInfo("Ping success");
+
+                    Program.CountToSendFailPing = 0;
+
                     return;
                 }
                 else
                 {
                     WriteLogInfo("Ping fail");
 
-                    int port = PortHandle;
-                    var openresult = PegasusStaticClassReader.OpenNetPort(PortHandle, PegasusAdr, ref ComAddr, ref port);
+                    Program.CountToSendFailPing++;
 
-                    if (openresult != 0)
-                    {
-                        WriteLogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                    }
-                    else
-                    {
-                        WriteLogInfo($"Open netPort thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openresult}");
-                    }
+                    WriteLogInfo($"Lần thứ: {Program.CountToSendFailPing}");
 
-                    WriteLogInfo("Connect fail. Start reconnect");
+                    if (Program.CountToSendFailPing == 3)
+                    {
+                        WriteLogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailPingLastTime}");
+
+                        if (Program.SendFailPingLastTime == null || Program.SendFailPingLastTime < DateTime.Now.AddMinutes(-3))
+                        {
+                            Program.SendFailPingLastTime = DateTime.Now;
+
+                            // gửi thông báo ping thất bại
+                            var pushMessage = $"Cân vào 2: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+
+                            WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
+
+                            SendNotificationByRight(RightCode.SCALE, pushMessage);
+                        }
+
+                        Program.CountToSendFailPing = 0;
+                    }
                 }
             }
             catch (Exception ex)
@@ -86,6 +103,19 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
         {
             Console.WriteLine(message);
             _logger.Info(message);
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
         }
     }
 }
