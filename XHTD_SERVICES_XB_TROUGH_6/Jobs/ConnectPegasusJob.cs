@@ -4,6 +4,7 @@ using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Helper;
 using XHTD_SERVICES_XB_TROUGH_6.Devices;
 
 namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
@@ -12,12 +13,15 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
+        protected readonly Notification _notification;
+
         private byte ComAddr = 0xFF;
         private int PortHandle = 6000;
         private string PegasusAdr = "192.168.13.214";
 
-        public ConnectPegasusJob()
+        public ConnectPegasusJob(Notification notification)
         {
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -86,6 +90,19 @@ namespace XHTD_SERVICES_XB_TROUGH_6.Jobs
         {
             Console.WriteLine(message);
             _logger.Info(message);
+        }
+
+        public void SendNotificationByRight(string rightCode, string message)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
+                _notification.SendNotificationByRight(rightCode, message);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
         }
     }
 }
