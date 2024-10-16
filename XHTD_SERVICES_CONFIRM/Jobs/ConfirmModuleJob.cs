@@ -426,6 +426,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             // Xác thực thành công
             if (isConfirmSuccess)
             {
+                // Xếp số
+                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
+
                 SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
                 SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
 
@@ -504,9 +507,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                     SendPushNotification(driverUserName, pushMessage);
                 }
                 #endregion
-
-                // Xếp số
-                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
 
                 // Bật đèn xanh - đỏ
                 TurnOnTrafficLight();
