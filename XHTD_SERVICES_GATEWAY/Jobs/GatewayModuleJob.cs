@@ -225,6 +225,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     {
                         _logger.LogInfo($"Open netPort KHONG thanh cong: PegasusAdr={PegasusAdr} -- port={port} --  openResult={openResult}");
 
+                        PegasusStaticClassReader.CloseNetPort(PortHandle);
+
                         Program.CountToSendFailOpenPort++;
 
                         _logger.LogInfo($"Open netPort that bai lan thu: {Program.CountToSendFailOpenPort}");
