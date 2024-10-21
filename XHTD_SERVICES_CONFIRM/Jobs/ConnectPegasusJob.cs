@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Microsoft.AspNet.SignalR.Messaging;
 using Quartz;
 using System;
 using System.Net.NetworkInformation;
@@ -17,9 +18,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         protected readonly Notification _notification;
 
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.162";
+        private const string DXT_UHF_2 = "DXT_UHF_2";
+        private const string DXT_CAM = "DXT_CAM";
+        private const string DXT_DTH = "DXT_DTH";
 
         public ConnectPegasusJob(Notification notification)
         {
@@ -39,7 +40,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    CheckConnection();
+                    CheckConnection(DXT_UHF_2, DeviceCode.CONFIRM.GetIpAddress(DXT_UHF_2));
+
+                    CheckConnection(DXT_CAM, DeviceCode.CONFIRM.GetIpAddress(DXT_CAM));
+
+                    CheckConnection(DXT_DTH, DeviceCode.CONFIRM.GetIpAddress(DXT_DTH));
                 });
             }
             catch (Exception ex)
@@ -51,18 +56,20 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
         }
 
-        public void CheckConnection()
+        public void CheckConnection(string deviceCode, string ipAddress)
         {
             try
             {
                 Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr);
+                PingReply reply = pingSender.Send(ipAddress);
 
                 if (reply.Status == IPStatus.Success)
                 {
                     WriteLogInfo("Ping success");
 
                     Program.CountToSendFailPing = 0;
+
+                    SendNotificationHub(deviceCode, "OK");
 
                     return;
                 }
@@ -83,11 +90,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             Program.SendFailPingLastTime = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
                             SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            SendNotificationHub(deviceCode, "FAILED");
                         }
 
                         Program.CountToSendFailPing = 0;
@@ -116,6 +124,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             catch (Exception ex)
             {
                 WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationHub(string deviceCode, string status)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi signalR tín hiệu thiết bị {deviceCode} - trạng thái {status}");
+                _notification.SendDeviceStatus(deviceCode, status);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationHub Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

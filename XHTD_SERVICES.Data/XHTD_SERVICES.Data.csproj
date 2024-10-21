@@ -67,6 +67,7 @@
     <Compile Include="Common\ScaleCode.cs" />
     <Compile Include="Common\ScaleConfig.cs" />
     <Compile Include="Common\URIConfig.cs" />
+    <Compile Include="Common\DeviceCode.cs" />
     <Compile Include="Entities\tblAccount.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>

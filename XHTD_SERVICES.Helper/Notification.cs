@@ -273,5 +273,16 @@ namespace XHTD_SERVICES.Helper
         {
             HttpRequest.SendNotificationByRight(rightCode, message);
         }
+
+        public void SendDeviceStatus(string deviceCode, string status)
+        {
+            SendDeviceStatusRequest requestData = new SendDeviceStatusRequest()
+            {
+                DeviceCode = deviceCode,
+                Status = status
+            };
+
+            HttpRequest.SendDeviceStatus(requestData);
+        }
     }
 }
