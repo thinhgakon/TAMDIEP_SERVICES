@@ -83,7 +83,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                     Program.DeviceFailCount[deviceCode]++;
 
-                    WriteLogInfo($"Thiết bị {deviceCode} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
+                    WriteLogInfo($"Thiết bị: {deviceCode} - IP: {ipAddress} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
 
                     if (Program.DeviceFailCount[deviceCode] == 3)
                     {
