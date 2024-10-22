@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace XHTD_SERVICES.Data.Common
+{
+    public static class DeviceCode
+    {
+        public static Dictionary<string, string> CONFIRM = new Dictionary<string, string>()
+        {
+            { "DXT_UHF_2", "192.168.13.162" },
+            { "DXT_CAM", "192.168.13.163" },
+            { "DXT_DTH", "192.168.13.164" }
+        };
+
+        public static Dictionary<string, string> GATEWAY = new Dictionary<string, string>()
+        {
+            { "CONG_PLC", "192.168.13.166" },
+            { "CONG_CAM_IN", "192.168.13.167" },
+            { "CONG_UHF_IN", "192.168.13.168" }
+        };
+
+        public static Dictionary<string, string> SCALE = new Dictionary<string, string>()
+        {
+            { "TRAMCAN_PLC", "192.168.13.175" },
+            { "TRAMCAN_CAM_IN", "192.168.13.177" },
+            { "TRAMCAN_DTH_IN_1", "192.168.13.178" },
+            { "TRAMCAN_DTH_IN_2", "192.168.13.185" },
+
+            { "TRAMCAN_LED_IN", "192.168.13.180" },
+            { "TRAMCAN_UHF_IN_1", "192.168.13.181" },
+            { "TRAMCAN_UHF_IN_2", "192.168.13.182" }
+        };
+
+        public static string GetIpAddress(this Dictionary<string, string> dict, string deviceCode)
+        {
+            dict.TryGetValue(deviceCode, out string ipAddress);
+            return ipAddress;
+        }
+    }
+}
