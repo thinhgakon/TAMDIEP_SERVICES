@@ -896,7 +896,7 @@ namespace XHTD_SERVICES.Helper
         {
              var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
 
-            var client = new RestClient(apiUrl["SendConfirmNotification"]);
+            var client = new RestClient(apiUrl["SendDeviceStatus"]);
             var request = new RestRequest();
 
             request.Method = Method.POST;
