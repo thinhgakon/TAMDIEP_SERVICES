@@ -19,7 +19,8 @@ namespace XHTD_SERVICES.Data.Common
         {
             { "CONG_PLC", "192.168.13.166" },
             { "CONG_CAM_IN", "192.168.13.167" },
-            { "CONG_UHF_IN", "192.168.13.168" }
+            { "CONG_UHF_IN", "192.168.13.168" },
+            { "CONG_CAM_OUT", "192.168.13.169" }
         };
 
         public static Dictionary<string, string> SCALE_IN = new Dictionary<string, string>()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
@@ -14,18 +15,24 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly QueueToTroughLogger _queueToCallLogger;
+
+        private static bool isActiveService = true;
 
         public QueueToTroughPcb30Job(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
+            SystemParameterRepository systemParameterRepository,
             QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
+            _systemParameterRepository = systemParameterRepository;
             _queueToCallLogger = queueToCallLogger;
         }
 
@@ -40,6 +47,14 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
             {
                 QueueToCallProcess();
             });
+        }
+
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+
         }
 
         public async void QueueToCallProcess()
