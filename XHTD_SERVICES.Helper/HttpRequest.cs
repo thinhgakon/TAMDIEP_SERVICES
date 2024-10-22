@@ -867,7 +867,7 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse SendNotificationByRight(string rightCode, string message)
+        public static IRestResponse SendNotificationByRight(string rightCode, string message, string notificationType)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
 
@@ -878,7 +878,7 @@ namespace XHTD_SERVICES.Helper
             request.AddJsonBody(new
             {
                 RightCode = rightCode,
-                NotificationType = "XHTD",
+                NotificationType = notificationType,
                 SubTitle = "HỆ THỐNG XUẤT HÀNG TỰ ĐỘNG",
                 ContentMessage = message
             });

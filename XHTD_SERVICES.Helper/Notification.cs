@@ -269,9 +269,9 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendPushNotification(userName, message);
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType = "XHTD")
         {
-            HttpRequest.SendNotificationByRight(rightCode, message);
+            HttpRequest.SendNotificationByRight(rightCode, message, notificationType);
         }
 
         public void SendDeviceStatus(string deviceCode, string status)
