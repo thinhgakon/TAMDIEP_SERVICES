@@ -2,6 +2,7 @@
 using Microsoft.AspNet.SignalR.Messaging;
 using Quartz;
 using System;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,6 +61,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
         {
             try
             {
+                if (!Program.DeviceLastFailPingTime.ContainsKey(deviceCode))
+                {
+                    Program.DeviceFailCount[deviceCode] = 0;
+                    Program.DeviceLastFailPingTime[deviceCode] = null;
+                }
+
                 Ping pingSender = new Ping();
                 PingReply reply = pingSender.Send(ipAddress);
 
@@ -67,7 +74,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("Ping success");
 
-                    Program.CountToSendFailPing = 0;
+                    Program.DeviceFailCount[deviceCode] = 0;
 
                     SendNotificationHub(deviceCode, "OK");
 
@@ -77,17 +84,17 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("Ping fail");
 
-                    Program.CountToSendFailPing++;
+                    Program.DeviceFailCount[deviceCode]++;
 
-                    WriteLogInfo($"Lần thứ: {Program.CountToSendFailPing}");
+                    WriteLogInfo($"Thiết bị {deviceCode} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
 
-                    if (Program.CountToSendFailPing == 3)
+                    if (Program.DeviceFailCount[deviceCode] == 3)
                     {
-                        WriteLogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailPingLastTime}");
+                        WriteLogInfo($"Thiết bị {deviceCode} - Thời điểm gửi cảnh báo gần nhất: {Program.DeviceLastFailPingTime[deviceCode]}");
 
-                        if (Program.SendFailPingLastTime == null || Program.SendFailPingLastTime < DateTime.Now.AddMinutes(-3))
+                        if (Program.DeviceLastFailPingTime[deviceCode] == null || Program.DeviceLastFailPingTime[deviceCode] < DateTime.Now.AddMinutes(-3))
                         {
-                            Program.SendFailPingLastTime = DateTime.Now;
+                            Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
                             var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
@@ -98,7 +105,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             SendNotificationHub(deviceCode, "FAILED");
                         }
 
-                        Program.CountToSendFailPing = 0;
+                        Program.DeviceFailCount[deviceCode] = 0;
                     }
                 }
             }
