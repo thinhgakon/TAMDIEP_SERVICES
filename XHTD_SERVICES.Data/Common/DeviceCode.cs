@@ -33,11 +33,5 @@ namespace XHTD_SERVICES.Data.Common
             { "TRAMCAN_UHF_IN_1", "192.168.13.181" },
             { "TRAMCAN_UHF_IN_2", "192.168.13.182" }
         };
-
-        public static string GetIpAddress(this Dictionary<string, string> dict, string deviceCode)
-        {
-            dict.TryGetValue(deviceCode, out string ipAddress);
-            return ipAddress;
-        }
     }
 }

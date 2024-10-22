@@ -19,10 +19,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         protected readonly Notification _notification;
 
-        private const string DXT_UHF_2 = "DXT_UHF_2";
-        private const string DXT_CAM = "DXT_CAM";
-        private const string DXT_DTH = "DXT_DTH";
-
         public ConnectPegasusJob(Notification notification)
         {
             _notification = notification;
@@ -41,11 +37,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    CheckConnection(DXT_UHF_2, DeviceCode.CONFIRM.GetIpAddress(DXT_UHF_2));
-
-                    CheckConnection(DXT_CAM, DeviceCode.CONFIRM.GetIpAddress(DXT_CAM));
-
-                    CheckConnection(DXT_DTH, DeviceCode.CONFIRM.GetIpAddress(DXT_DTH));
+                    foreach (var device in DeviceCode.CONFIRM)
+                    {
+                        CheckConnection(device.Key, device.Value);
+                    }
                 });
             }
             catch (Exception ex)
