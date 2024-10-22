@@ -79,6 +79,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("Ping fail");
 
+                    SendNotificationHub(deviceCode, "FAILED");
+
                     Program.DeviceFailCount[deviceCode]++;
 
                     WriteLogInfo($"Thiết bị {deviceCode} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
@@ -97,7 +99,6 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
                             SendNotificationByRight(RightCode.CONFIRM, pushMessage);
-                            SendNotificationHub(deviceCode, "FAILED");
                         }
 
                         Program.DeviceFailCount[deviceCode] = 0;
