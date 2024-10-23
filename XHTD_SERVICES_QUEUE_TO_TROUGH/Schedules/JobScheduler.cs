@@ -27,15 +27,45 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Schedules
             await _scheduler.Start();
 
             // Xếp số vào máng xi bao
-            IJobDetail queueToTroughXibaoJob = JobBuilder.Create<QueueToTroughXibaoJob>().Build();
-            ITrigger queueToTroughXibaoTrigger = TriggerBuilder.Create()
+            IJobDetail queueToTroughPcb30Job = JobBuilder.Create<QueueToTroughPcb30Job>().Build();
+            ITrigger queueToTroughPcb30Trigger = TriggerBuilder.Create()
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
                      .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
                     .RepeatForever())
                 .Build();
-            await _scheduler.ScheduleJob(queueToTroughXibaoJob, queueToTroughXibaoTrigger);
+            await _scheduler.ScheduleJob(queueToTroughPcb30Job, queueToTroughPcb30Trigger);
+
+            IJobDetail queueToTroughPcb40Job = JobBuilder.Create<QueueToTroughPcb40Job>().Build();
+            ITrigger queueToTroughPcb40Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToTroughPcb40Job, queueToTroughPcb40Trigger);
+
+            IJobDetail queueToTroughC91Job = JobBuilder.Create<QueueToTroughC91Job>().Build();
+            ITrigger queueToTroughC91Trigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToTroughC91Job, queueToTroughC91Trigger);
+
+            IJobDetail queueToTroughOtherJob = JobBuilder.Create<QueueToTroughOtherJob>().Build();
+            ITrigger queueToTroughOtherTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(queueToTroughOtherJob, queueToTroughOtherTrigger);
 
             // Xếp số vào máng xi rời
             IJobDetail queueToTroughRoiJob = JobBuilder.Create<QueueToTroughRoiJob>().Build();

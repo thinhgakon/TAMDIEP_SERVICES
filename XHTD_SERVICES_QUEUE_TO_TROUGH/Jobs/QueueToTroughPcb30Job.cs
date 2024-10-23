@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
@@ -14,18 +15,26 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly CallToTroughRepository _callToTroughRepository;
 
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
         protected readonly QueueToTroughLogger _queueToCallLogger;
+
+        protected const string SERVICE_ACTIVE_CODE = "AUTO_QUEUE_TO_TROUGH_ACTIVE";
+
+        private static bool isActiveService = true;
 
         public QueueToTroughPcb30Job(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
+            SystemParameterRepository systemParameterRepository,
             QueueToTroughLogger queueToCallLogger
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
+            _systemParameterRepository = systemParameterRepository;
             _queueToCallLogger = queueToCallLogger;
         }
 
@@ -36,13 +45,37 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                QueueToCallProcess();
+                await LoadSystemParameters();
+
+                if (!isActiveService)
+                {
+                    _queueToCallLogger.LogInfo("Service tự động xếp xe vào máng đang TẮT");
+                    return;
+                }
+
+                await QueueToCallProcess();
             });
         }
 
-        public async void QueueToCallProcess()
+        public async Task LoadSystemParameters()
+        {
+            var parameters = await _systemParameterRepository.GetSystemParameters();
+
+            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
+            else
+            {
+                isActiveService = true;
+            }
+        }
+
+        public async Task QueueToCallProcess()
         {
             _queueToCallLogger.LogInfo("Start process QueueToCall PCB30 service");
 

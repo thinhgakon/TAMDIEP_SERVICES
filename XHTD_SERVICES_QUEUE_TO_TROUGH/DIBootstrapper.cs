@@ -19,6 +19,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH
             builder.RegisterType<StoreOrderOperatingRepository>().AsSelf();
             builder.RegisterType<TroughRepository>().AsSelf();
             builder.RegisterType<CallToTroughRepository>().AsSelf();
+            builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<QueueToTroughLogger>().AsSelf();
 
             RegisterScheduler(builder);
@@ -38,7 +39,10 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH
                 ConfigurationProvider = c => schedulerConfig
             });
 
-            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughXibaoJob).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughPcb30Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughPcb40Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughC91Job).Assembly));
+            builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughOtherJob).Assembly));
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughClinkerJob).Assembly));
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughJumboJob).Assembly));
             builder.RegisterModule(new QuartzAutofacJobsModule(typeof(QueueToTroughRoiJob).Assembly));
