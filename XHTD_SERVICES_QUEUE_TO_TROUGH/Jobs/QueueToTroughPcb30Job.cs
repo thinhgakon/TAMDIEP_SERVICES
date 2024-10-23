@@ -19,6 +19,8 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         protected readonly QueueToTroughLogger _queueToCallLogger;
 
+        protected const string SERVICE_ACTIVE_CODE = "AUTO_QUEUE_TO_TROUGH_ACTIVE";
+
         private static bool isActiveService = true;
 
         public QueueToTroughPcb30Job(
@@ -43,9 +45,17 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                QueueToCallProcess();
+                await LoadSystemParameters();
+
+                if (!isActiveService)
+                {
+                    _queueToCallLogger.LogInfo("Service tự động xếp xe vào máng đang TẮT");
+                    return;
+                }
+
+                await QueueToCallProcess();
             });
         }
 
@@ -55,9 +65,17 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
 
+            if (activeParameter == null || activeParameter.Value == "0")
+            {
+                isActiveService = false;
+            }
+            else
+            {
+                isActiveService = true;
+            }
         }
 
-        public async void QueueToCallProcess()
+        public async Task QueueToCallProcess()
         {
             _queueToCallLogger.LogInfo("Start process QueueToCall PCB30 service");
 
