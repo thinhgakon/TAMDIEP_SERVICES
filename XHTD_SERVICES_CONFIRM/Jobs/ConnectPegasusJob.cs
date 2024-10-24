@@ -94,7 +94,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
