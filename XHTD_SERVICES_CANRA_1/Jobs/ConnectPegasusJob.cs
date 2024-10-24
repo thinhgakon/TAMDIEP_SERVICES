@@ -16,10 +16,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
         protected readonly Notification _notification;
 
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.188";
-
         public ConnectPegasusJob(Notification notification)
         {
             _notification = notification;
@@ -36,9 +32,12 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo($"=================== Start JOB - IP: {PegasusAdr} ===================");
+                    WriteLogInfo("--------------- START JOB ---------------");
 
-                    CheckConnection();
+                    foreach (var device in DeviceCode.SCALE_OUT)
+                    {
+                        CheckConnection(device.Key, device.Value);
+                    }
                 });
             }
             catch (Exception ex)
@@ -50,18 +49,26 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
             }
         }
 
-        public void CheckConnection()
+        public void CheckConnection(string deviceCode, string ipAddress)
         {
             try
             {
+                if (!Program.DeviceLastFailPingTime.ContainsKey(deviceCode))
+                {
+                    Program.DeviceFailCount[deviceCode] = 0;
+                    Program.DeviceLastFailPingTime[deviceCode] = null;
+                }
+
                 Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr);
+                PingReply reply = pingSender.Send(ipAddress);
 
                 if (reply.Status == IPStatus.Success)
                 {
                     WriteLogInfo("Ping success");
 
-                    Program.CountToSendFailPing = 0;
+                    Program.DeviceFailCount[deviceCode] = 0;
+
+                    SendNotificationHub(deviceCode, "OK");
 
                     return;
                 }
@@ -69,27 +76,29 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                 {
                     WriteLogInfo("Ping fail");
 
-                    Program.CountToSendFailPing++;
+                    SendNotificationHub(deviceCode, "FAILED");
 
-                    WriteLogInfo($"Lần thứ: {Program.CountToSendFailPing}");
+                    Program.DeviceFailCount[deviceCode]++;
 
-                    if (Program.CountToSendFailPing == 3)
+                    WriteLogInfo($"Thiết bị: {deviceCode} - IP: {ipAddress} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
+
+                    if (Program.DeviceFailCount[deviceCode] == 3)
                     {
-                        WriteLogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailPingLastTime}");
+                        WriteLogInfo($"Thiết bị {deviceCode} - Thời điểm gửi cảnh báo gần nhất: {Program.DeviceLastFailPingTime[deviceCode]}");
 
-                        if (Program.SendFailPingLastTime == null || Program.SendFailPingLastTime < DateTime.Now.AddMinutes(-3))
+                        if (Program.DeviceLastFailPingTime[deviceCode] == null || Program.DeviceLastFailPingTime[deviceCode] < DateTime.Now.AddMinutes(-3))
                         {
-                            Program.SendFailPingLastTime = DateTime.Now;
+                            Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Cân ra 1: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
                             SendNotificationByRight(RightCode.SCALE, pushMessage);
                         }
 
-                        Program.CountToSendFailPing = 0;
+                        Program.DeviceFailCount[deviceCode] = 0;
                     }
                 }
             }
@@ -115,6 +124,19 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
             catch (Exception ex)
             {
                 WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationHub(string deviceCode, string status)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi signalR tín hiệu thiết bị {deviceCode} - trạng thái {status}");
+                _notification.SendDeviceStatus(deviceCode, status);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationHub Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
