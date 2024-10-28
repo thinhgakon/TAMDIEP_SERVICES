@@ -250,6 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DIBootstrapper.cs" />
+    <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Jobs\MachineJob12.cs" />
     <Compile Include="Jobs\MachineJob34.cs" />
     <Compile Include="Jobs\SyncTroughJob34.cs" />
