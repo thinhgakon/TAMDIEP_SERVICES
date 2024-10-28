@@ -20,8 +20,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly string DEVICE_CODE = "GATEWAY";
-
         public ConnectPegasusJob(Notification notification)
         {
             _notification = notification;

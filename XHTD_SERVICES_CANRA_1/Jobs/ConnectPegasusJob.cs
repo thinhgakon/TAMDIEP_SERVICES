@@ -17,8 +17,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
         protected readonly Notification _notification;
 
-        protected readonly string DEVICE_CODE = "SCALE_OUT";
-
         public ConnectPegasusJob(Notification notification)
         {
             _notification = notification;
