@@ -13,11 +13,14 @@ using XHTD_SERVICES_GATEWAY.Devices;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ConnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
         protected readonly Notification _notification;
+
+        protected readonly string DEVICE_CODE = "GATEWAY";
 
         public ConnectPegasusJob(Notification notification)
         {
@@ -37,9 +40,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    foreach (var device in DeviceCode.GATEWAY)
+                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.GATEWAY, out var devices))
                     {
-                        CheckConnection(device.Key, device.Value);
+                        foreach (var (deviceCode, deviceIp, deviceLocation) in devices)
+                        {
+                            CheckConnection(deviceCode, deviceIp, deviceLocation);
+                        }
                     }
                 });
             }
@@ -52,7 +58,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             }
         }
 
-        public void CheckConnection(string deviceCode, string ipAddress)
+        public void CheckConnection(string deviceCode, string ipAddress, string deviceLocation)
         {
             try
             {
@@ -94,11 +100,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"{deviceLocation}: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.GATEWAY, pushMessage);
+                            SendNotificationByRight(RightCode.GATEWAY, pushMessage, "SYSTEM");
                         }
 
                         Program.DeviceFailCount[deviceCode] = 0;
@@ -117,12 +123,12 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             _logger.Info(message);
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType)
         {
             try
             {
                 WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {
