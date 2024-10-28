@@ -40,9 +40,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     if (DeviceCode.CodeDict.TryGetValue(LocationCode.GATEWAY, out var devices))
                     {
-                        foreach (var (deviceCode, deviceIp, deviceLocation) in devices)
+                        foreach (var (deviceCode, deviceIp) in devices)
                         {
-                            CheckConnection(deviceCode, deviceIp, deviceLocation);
+                            CheckConnection(deviceCode, deviceIp, LocationCode.GATEWAY);
                         }
                     }
                 });

@@ -1,14 +1,15 @@
-﻿using Quartz;
+﻿using log4net;
+using Quartz;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.NetworkInformation;
-using System.Threading;
+using System.Text;
 using System.Threading.Tasks;
-using XHTD_SERVICES_CANRA_1.Devices;
-using log4net;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Helper;
 
-namespace XHTD_SERVICES_CANRA_1.Jobs
+namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
     [DisallowConcurrentExecution]
     public class ConnectPegasusJob : IJob
@@ -35,11 +36,11 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.SCALE_OUT, out var devices))
+                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.TROUGH_XI_BAO, out var devices))
                     {
                         foreach (var (deviceCode, deviceIp) in devices)
                         {
-                            CheckConnection(deviceCode, deviceIp, LocationCode.SCALE_OUT);
+                            CheckConnection(deviceCode, deviceIp, LocationCode.TROUGH_XI_BAO);
                         }
                     }
                 });
@@ -99,7 +100,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.SCALE, pushMessage, "SYSTEM");
+                            SendNotificationByRight(RightCode.TROUGH_XI_BAO, pushMessage, "SYSTEM");
                         }
 
                         Program.DeviceFailCount[deviceCode] = 0;

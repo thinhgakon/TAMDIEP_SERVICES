@@ -37,9 +37,9 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                     if (DeviceCode.CodeDict.TryGetValue(LocationCode.SCALE_IN, out var devices))
                     {
-                        foreach (var (deviceCode, deviceIp, deviceLocation) in devices)
+                        foreach (var (deviceCode, deviceIp) in devices)
                         {
-                            CheckConnection(deviceCode, deviceIp, deviceLocation);
+                            CheckConnection(deviceCode, deviceIp, LocationCode.SCALE_IN);
                         }
                     }
                 });
