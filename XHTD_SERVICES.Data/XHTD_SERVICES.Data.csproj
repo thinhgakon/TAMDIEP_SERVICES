@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\LocationCode.cs" />
     <Compile Include="Common\MachineCode.cs" />
     <Compile Include="Common\OrderProductCategoryCode.cs" />
     <Compile Include="Common\OrderTypeProductCode.cs" />
