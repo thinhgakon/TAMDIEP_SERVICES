@@ -39,9 +39,9 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                     if (DeviceCode.CodeDict.TryGetValue(LocationCode.CONFIRM, out var devices))
                     {
-                        foreach (var (deviceCode, deviceIp, deviceLocation) in devices)
+                        foreach (var (deviceCode, deviceIp) in devices)
                         {
-                            CheckConnection(deviceCode, deviceIp, deviceLocation);
+                            CheckConnection(deviceCode, deviceIp, LocationCode.CONFIRM);
                         }
                     }
                 });

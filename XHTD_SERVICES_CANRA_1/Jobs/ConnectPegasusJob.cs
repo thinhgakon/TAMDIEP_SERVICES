@@ -37,9 +37,9 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                     if (DeviceCode.CodeDict.TryGetValue(LocationCode.SCALE_OUT, out var devices))
                     {
-                        foreach (var (deviceCode, deviceIp, deviceLocation) in devices)
+                        foreach (var (deviceCode, deviceIp) in devices)
                         {
-                            CheckConnection(deviceCode, deviceIp, deviceLocation);
+                            CheckConnection(deviceCode, deviceIp, LocationCode.SCALE_OUT);
                         }
                     }
                 });

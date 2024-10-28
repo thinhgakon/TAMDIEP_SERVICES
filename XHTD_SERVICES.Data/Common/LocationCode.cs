@@ -8,12 +8,14 @@ namespace XHTD_SERVICES.Data.Common
 {
     public static class LocationCode
     {
-        public static string CONFIRM = "CONFIRM";
+        public static string CONFIRM = "Điểm xác thực";
 
-        public static string GATEWAY = "GATEWAY";
+        public static string GATEWAY = "Cổng vào";
 
-        public static string SCALE_IN = "SCALE_IN";
+        public static string SCALE_IN = "Trạm cân vào";
 
-        public static string SCALE_OUT = "SCALE_OUT";
+        public static string SCALE_OUT = "Trạm cân ra";
+
+        public static string TROUGH_XI_BAO = "Máng xuất xi bao";
     }
 }
