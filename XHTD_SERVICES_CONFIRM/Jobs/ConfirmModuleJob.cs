@@ -348,34 +348,34 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
 
+            var checkValidCardNoResult = OrderValidator.CheckValidOrderConfirmationPoint(currentOrder);
+
             // Nếu RFID không có đơn hàng
-            if (currentOrder == null)
+            if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_CO_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-
             // Nếu RFID không có đơn hàng hợp lệ
-            else if (isValidCardNo == false)
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-
             // Nếu RFID có đơn hàng hợp lệ
             else
             {

@@ -263,5 +263,29 @@ namespace XHTD_SERVICES.Helper
                 return false;
             }
         }
+
+        public static string CheckValidOrderConfirmationPoint(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if (
+                order.Step == (int)OrderStep.DA_NHAN_DON
+                && (order.DriverUserName ?? "") != ""
+                )
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+            }
+        }
     }
 }
