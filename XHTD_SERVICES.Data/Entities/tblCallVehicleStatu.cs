@@ -25,5 +25,6 @@ namespace XHTD_SERVICES.Data.Entities
         public string CallType { get; set; }
         public Nullable<int> CountReindex { get; set; }
         public Nullable<int> CountToCancel { get; set; }
+        public string Vehicle { get; set; }
     }
 }
