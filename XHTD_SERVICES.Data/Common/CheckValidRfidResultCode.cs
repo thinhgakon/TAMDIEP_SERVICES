@@ -12,6 +12,10 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly string CHUA_NHAN_DON = "CHUA_NHAN_DON";
 
+        public static readonly string CHUA_XAC_THUC = "CHUA_XAC_THUC";
+
+        public static readonly string CHUA_GOI_LOA = "CHUA_GOI_LOA";
+
         public static readonly string HOP_LE = "HOP_LE";
     }
 }
