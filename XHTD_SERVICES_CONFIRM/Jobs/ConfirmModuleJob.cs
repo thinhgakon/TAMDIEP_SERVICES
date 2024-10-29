@@ -355,6 +355,43 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
+                #region Gọi loa thông báo
+                using (var db = new XHTD_Entities())
+                {
+                    try
+                    {
+                        var timeToAdd = DateTime.Now.AddMinutes(-10);
+
+                        var checkExist = db.tblCallVehicleStatus
+                                            .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent 
+                                                            && x.CallType == CallType.CHUA_CO_DON
+                                                            && x.CreatedOn != null
+                                                            && x.CreatedOn > timeToAdd
+                                                            );
+
+                        if (checkExist == null) {
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                Vehicle = vehicleCodeCurrent,
+                                CountTry = 0,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe thông báo chưa nhận đơn lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.CHUA_CO_DON
+                            };
+
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInfo($"ERROR CHUA_CO_DON: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                    }
+                }
+                #endregion
+
                 SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
                 SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
 
