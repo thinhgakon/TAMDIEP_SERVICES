@@ -61,6 +61,37 @@ namespace XHTD_SERVICES.Helper
             return isValid;
         }
 
+        public static string CheckValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            foreach (var order in orders)
+            {
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => ((x.Step == (int)OrderStep.DA_XAC_THUC
+                                            || x.Step == (int)OrderStep.DANG_GOI_XE
+                                            || x.Step == (int)OrderStep.CHO_GOI_XE
+                                            )
+                                            && (x.DriverUserName ?? "") != "")
+                                    );
+
+            if (isValid)
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_XAC_THUC;
+            }
+        }
+
         public static List<tblStoreOrderOperating> ValidOrdersEntraceGateway(List<tblStoreOrderOperating> orders)
         {
             if (orders == null)
@@ -118,6 +149,57 @@ namespace XHTD_SERVICES.Helper
                                     );
 
             return isValid;
+        }
+
+        public static string CheckValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu VAO: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            foreach (var order in orders)
+            {
+                _logger.Info($"4.0. Kiem tra don hang chieu VAO: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => x.Step == (int)OrderStep.DANG_GOI_XE
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            var isValidConfirm = orders.Any(x => (x.Step == (int)OrderStep.DA_XAC_THUC || x.Step == (int)OrderStep.CHO_GOI_XE) 
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            var isValidReceivedOrder = orders.Any(x => x.Step == (int)OrderStep.DA_NHAN_DON
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            var isValidHasOrder = orders.Any(x => x.Step == (int)OrderStep.CHUA_NHAN_DON
+                                    );
+
+            if (isValid)
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else if (isValidConfirm)
+            {
+                return CheckValidRfidResultCode.CHUA_GOI_LOA;
+            }
+            else if (isValidReceivedOrder)
+            {
+                return CheckValidRfidResultCode.CHUA_XAC_THUC;
+            }
+            else if (isValidHasOrder)
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
         }
 
         public static List<tblStoreOrderOperating> ValidOrdersEntraceGatewayInCaseRequireCallVoice(List<tblStoreOrderOperating> orders)

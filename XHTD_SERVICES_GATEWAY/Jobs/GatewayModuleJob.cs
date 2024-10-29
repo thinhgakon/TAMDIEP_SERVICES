@@ -531,6 +531,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             List<tblStoreOrderOperating> currentOrders = null;
             var isValidCardNo = false;
 
+            var checkValidCardNoResult = "";
+
             if (isLuongVao)
             {
                 currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersEntraceGateway(vehicleCodeCurrent);
