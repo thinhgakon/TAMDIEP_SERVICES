@@ -342,11 +342,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             // Nếu RFID hợp lệ
             tblStoreOrderOperating currentOrder = null;
-            var isValidCardNo = false;
+            //var isValidCardNo = false;
 
             currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
 
-            isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
+            //isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
 
             var checkValidCardNoResult = OrderValidator.CheckValidOrderConfirmationPoint(currentOrder);
 
@@ -368,8 +368,8 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn");
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
