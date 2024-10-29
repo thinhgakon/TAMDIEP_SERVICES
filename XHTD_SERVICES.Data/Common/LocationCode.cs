@@ -17,5 +17,9 @@ namespace XHTD_SERVICES.Data.Common
         public static string SCALE_OUT = "Trạm cân ra";
 
         public static string TROUGH_XI_BAO = "Máng xuất xi bao";
+
+        public static string TROUGH_XI_ROI = "Máng xuất xi rời";
+
+        public static string TROUGH_CLINKER = "Máng xuất Clinker";
     }
 }

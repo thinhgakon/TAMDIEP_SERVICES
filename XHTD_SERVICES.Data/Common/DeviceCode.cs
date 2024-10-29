@@ -67,6 +67,23 @@ namespace XHTD_SERVICES.Data.Common
                     ("XIBAO_UHF_7", "192.168.13.217"),
                     ("XIBAO_UHF_8", "192.168.13.219")
                 }
+            },
+
+            { LocationCode.TROUGH_XI_ROI,
+                new List<(string, string)>
+                {
+                    ("XIROI_UHF", "192.168.13.230"),
+                    ("XIROI_LED", "192.168.13.232"),
+                    ("XIROI_DTH", "192.168.13.233")
+                }
+            },
+
+            { LocationCode.TROUGH_CLINKER,
+                new List<(string, string)>
+                {
+                    ("CLK_UHF", "192.168.13.237"),
+                    ("CLK_LED", "192.168.13.239")
+                }
             }
         };
     }

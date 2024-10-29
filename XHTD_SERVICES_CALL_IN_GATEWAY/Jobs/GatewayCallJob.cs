@@ -22,9 +22,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
-        protected readonly string CONG = CallType.CONG;
-        protected readonly string BAI_CHO = CallType.BAI_CHO;
-
         protected readonly GatewayCallLogger _gatewayCallLogger;
 
         public GatewayCallJob(
@@ -56,7 +53,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var isWillCall = false;
-                var type = CONG;
+                var type = CallType.CONG;
                 var vehiceCode = "";
                 using (var db = new XHTD_Entities())
                 {
@@ -100,7 +97,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         type = callVehicleItem.CallType;
                         vehiceCode = storeOrderOperating.Vehicle;
                         
-                        if (type == CONG)
+                        if (type == CallType.CONG)
                         {
                             storeOrderOperating.LogProcessOrder = storeOrderOperating.LogProcessOrder + $@" #Gọi xe vào cổng lúc {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}";
                             storeOrderOperating.Step = (int)OrderStep.DANG_GOI_XE;
@@ -115,7 +112,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
                         vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
 
-                        if (type == BAI_CHO && vehicleWaitingCall.CountTry == 3)
+                        if (type == CallType.BAI_CHO && vehicleWaitingCall.CountTry == 3)
                         {
                             vehicleWaitingCall.IsDone = true;
                         }
@@ -127,12 +124,12 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 if (isWillCall)
                 {
                     // tiến hành gọi xe
-                    if (type == CONG)
+                    if (type == CallType.CONG)
                     {
                         CallInGatewayBySystem(vehiceCode);
                     }
 
-                    else if (type == BAI_CHO)
+                    else if (type == CallType.BAI_CHO)
                     {
                         CallInYardBySystem(vehiceCode);
                     }
