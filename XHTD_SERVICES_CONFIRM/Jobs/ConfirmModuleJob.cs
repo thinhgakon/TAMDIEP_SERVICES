@@ -376,7 +376,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                 CountTry = 0,
                                 CreatedOn = DateTime.Now,
                                 ModifiledOn = DateTime.Now,
-                                LogCall = $@"Đưa xe thông báo chưa nhận đơn lúc {DateTime.Now}. ",
+                                LogCall = $@"Đưa xe thông báo chưa có đơn lúc {DateTime.Now}. ",
                                 IsDone = false,
                                 CallType = CallType.CHUA_CO_DON
                             };
@@ -404,6 +404,44 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+
+                #region Gọi loa thông báo
+                using (var db = new XHTD_Entities())
+                {
+                    try
+                    {
+                        var timeToAdd = DateTime.Now.AddMinutes(-10);
+
+                        var checkExist = db.tblCallVehicleStatus
+                                            .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent
+                                                            && x.CallType == CallType.CHUA_NHAN_DON
+                                                            && x.CreatedOn != null
+                                                            && x.CreatedOn > timeToAdd
+                                                            );
+
+                        if (checkExist == null)
+                        {
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                Vehicle = vehicleCodeCurrent,
+                                CountTry = 0,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe thông báo chưa nhận đơn lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.CHUA_CO_DON
+                            };
+
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInfo($"ERROR CHUA_NHAN_DON: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                    }
+                }
+                #endregion
 
                 SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
                 SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
