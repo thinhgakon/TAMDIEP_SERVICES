@@ -15,7 +15,7 @@ namespace XHTD_SERVICES.Data.Entities
     public partial class tblCallVehicleStatu
     {
         public int Id { get; set; }
-        public int StoreOrderOperatingId { get; set; }
+        public Nullable<int> StoreOrderOperatingId { get; set; }
         public Nullable<int> CountTry { get; set; }
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public Nullable<System.DateTime> ModifiledOn { get; set; }
@@ -25,5 +25,6 @@ namespace XHTD_SERVICES.Data.Entities
         public string CallType { get; set; }
         public Nullable<int> CountReindex { get; set; }
         public Nullable<int> CountToCancel { get; set; }
+        public string Vehicle { get; set; }
     }
 }

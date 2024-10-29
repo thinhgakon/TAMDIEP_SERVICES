@@ -251,47 +251,40 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (order.CatId == OrderCatIdCode.CLINKER)
+            if (
+                order.Step == (int)OrderStep.DA_NHAN_DON
+                && (order.DriverUserName ?? "") != ""
+                )
             {
-                if (
-                    order.Step == (int)OrderStep.DA_NHAN_DON
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (order.TypeXK == OrderTypeXKCode.JUMBO || order.TypeXK == OrderTypeXKCode.SLING)
-            {
-                if (
-                    order.Step == (int)OrderStep.DA_NHAN_DON
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
-                if (
-                    order.Step == (int)OrderStep.DA_NHAN_DON
-                    && (order.DriverUserName ?? "") != ""
-                    )
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
+            }
+        }
+
+        public static string CheckValidOrderConfirmationPoint(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            if (
+                order.Step == (int)OrderStep.DA_NHAN_DON
+                && (order.DriverUserName ?? "") != ""
+                )
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
             }
         }
     }
