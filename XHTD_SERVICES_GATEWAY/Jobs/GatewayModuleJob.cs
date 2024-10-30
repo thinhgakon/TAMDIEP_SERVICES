@@ -557,6 +557,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGateway(vehicleCodeCurrent);
 
                 isValidCardNo = OrderValidator.IsValidOrdersExitGateway(currentOrders);
+
+                checkValidCardNoResult = OrderValidator.CheckValidOrdersExitGateway(currentOrders);
             }
 
             if (currentOrders == null || currentOrders.Count == 0)

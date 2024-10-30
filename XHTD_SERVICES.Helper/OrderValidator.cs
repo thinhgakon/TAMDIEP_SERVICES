@@ -274,6 +274,34 @@ namespace XHTD_SERVICES.Helper
             return isValid;
         }
 
+        public static string CheckValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
+        {
+            if (orders == null)
+            {
+                _logger.Info($"4.0. Don hang chieu RA: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            foreach (var order in orders)
+            {
+                _logger.Info($"4.0. Kiem tra don hang chieu RA: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            }
+
+            var isValid = orders.Any(x => (x.Step == (int)OrderStep.DA_CAN_RA
+                                       && (x.DriverUserName ?? "") != "")
+                                    );
+
+            if (isValid)
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_CAN_RA;
+            }
+        }
+
         public static List<tblStoreOrderOperating> ValidOrdersExitGateway(List<tblStoreOrderOperating> orders)
         {
             if (orders == null)
