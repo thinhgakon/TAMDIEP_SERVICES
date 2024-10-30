@@ -365,6 +365,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         var checkExist = db.tblCallVehicleStatus
                                             .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent 
                                                             && x.CallType == CallType.CHUA_CO_DON
+                                                            && x.IsDone == false
                                                             && x.CreatedOn != null
                                                             && x.CreatedOn > timeToAdd
                                                             );
@@ -415,6 +416,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                         var checkExist = db.tblCallVehicleStatus
                                             .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent
                                                             && x.CallType == CallType.CHUA_NHAN_DON
+                                                            && x.IsDone == false
                                                             && x.CreatedOn != null
                                                             && x.CreatedOn > timeToAdd
                                                             );
