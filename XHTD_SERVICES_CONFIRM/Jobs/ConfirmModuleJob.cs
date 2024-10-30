@@ -431,7 +431,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                                 ModifiledOn = DateTime.Now,
                                 LogCall = $@"Đưa xe thông báo chưa nhận đơn lúc {DateTime.Now}. ",
                                 IsDone = false,
-                                CallType = CallType.CHUA_CO_DON
+                                CallType = CallType.CHUA_NHAN_DON
                             };
 
                             db.tblCallVehicleStatus.Add(newTblVehicleStatus);
