@@ -529,7 +529,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
             // 4. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
             List<tblStoreOrderOperating> currentOrders = null;
-            var isValidCardNo = false;
+            //var isValidCardNo = false;
 
             var checkValidCardNoResult = "";
 
@@ -540,14 +540,14 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 if (Program.IsRequireCallVoiceActive)
                 {
                     _logger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: BẬT");
-                    isValidCardNo = OrderValidator.IsValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
+                    //isValidCardNo = OrderValidator.IsValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
 
                     checkValidCardNoResult = OrderValidator.CheckValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
                 }
                 else
                 {
                     _logger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: TẮT");
-                    isValidCardNo = OrderValidator.IsValidOrdersEntraceGateway(currentOrders);
+                    //isValidCardNo = OrderValidator.IsValidOrdersEntraceGateway(currentOrders);
 
                     checkValidCardNoResult = OrderValidator.CheckValidOrdersEntraceGateway(currentOrders);
                 }
@@ -556,29 +556,65 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             {
                 currentOrders = await _storeOrderOperatingRepository.GetCurrentOrdersExitGateway(vehicleCodeCurrent);
 
-                isValidCardNo = OrderValidator.IsValidOrdersExitGateway(currentOrders);
+                //isValidCardNo = OrderValidator.IsValidOrdersExitGateway(currentOrders);
 
                 checkValidCardNoResult = OrderValidator.CheckValidOrdersExitGateway(currentOrders);
             }
 
-            if (currentOrders == null || currentOrders.Count == 0)
+            if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_CO_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                SendNotificationHub(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
-                SendNotificationAPI(inout, 0, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng", vehicleCodeCurrent);
+                SendNotificationHub(0, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng", vehicleCodeCurrent);
+                SendNotificationAPI(inout, 0, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng", vehicleCodeCurrent);
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-            else if (isValidCardNo == false)
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
-                _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: chưa nhận đơn => Ket thuc.");
 
-                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
-                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ", vehicleCodeCurrent);
+                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng", vehicleCodeCurrent);
+                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng", vehicleCodeCurrent);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_XAC_THUC)
+            {
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: chưa xác thực => Ket thuc.");
+
+                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được xác thực", vehicleCodeCurrent);
+                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được xác thực", vehicleCodeCurrent);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_GOI_LOA)
+            {
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: chưa gọi loa => Ket thuc.");
+
+                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được gọi loa vào", vehicleCodeCurrent);
+                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được gọi loa vào", vehicleCodeCurrent);
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_CAN_RA)
+            {
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: chưa cân ra => Ket thuc.");
+
+                SendNotificationHub(1, inout, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được cân ra", vehicleCodeCurrent);
+                SendNotificationAPI(inout, 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đơn hàng chưa được cân ra", vehicleCodeCurrent);
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
