@@ -71,6 +71,10 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
                         if (vehicleWaitingCall == null) return;
 
+                        vehicleWaitingCall.ModifiledOn = DateTime.Now;
+                        vehicleWaitingCall.CountTry = vehicleWaitingCall.CountTry + 1;
+                        vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Gọi xe {vehiceCode} vào lúc {DateTime.Now}";
+
                         if (vehicleWaitingCall.CountTry == 1)
                         {
                             vehicleWaitingCall.IsDone = true;
