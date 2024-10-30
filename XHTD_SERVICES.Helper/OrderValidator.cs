@@ -82,13 +82,28 @@ namespace XHTD_SERVICES.Helper
                                             && (x.DriverUserName ?? "") != "")
                                     );
 
+            var isValidReceivedOrder = orders.Any(x => x.Step == (int)OrderStep.DA_NHAN_DON
+                                        && (x.DriverUserName ?? "") != ""
+                                    );
+
+            var isValidHasOrder = orders.Any(x => x.Step == (int)OrderStep.CHUA_NHAN_DON
+                                    );
+
             if (isValid)
             {
                 return CheckValidRfidResultCode.HOP_LE;
             }
-            else
+            else if (isValidReceivedOrder)
             {
                 return CheckValidRfidResultCode.CHUA_XAC_THUC;
+            }
+            else if (isValidHasOrder)
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_CO_DON;
             }
         }
 

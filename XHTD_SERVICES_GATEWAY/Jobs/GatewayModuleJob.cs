@@ -541,11 +541,15 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 {
                     _logger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: BẬT");
                     isValidCardNo = OrderValidator.IsValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
+
+                    checkValidCardNoResult = OrderValidator.CheckValidOrdersEntraceGatewayInCaseRequireCallVoice(currentOrders);
                 }
                 else
                 {
                     _logger.LogInfo($"3.2. Bắt buộc gọi loa mới vào cổng: TẮT");
                     isValidCardNo = OrderValidator.IsValidOrdersEntraceGateway(currentOrders);
+
+                    checkValidCardNoResult = OrderValidator.CheckValidOrdersEntraceGateway(currentOrders);
                 }
             }
             else if (isLuongRa)
