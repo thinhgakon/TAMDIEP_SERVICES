@@ -67,6 +67,16 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         isWillCall = true;
                         type = callVehicleItem.CallType;
                         vehiceCode = callVehicleItem.Vehicle;
+
+                        var vehicleWaitingCall = db.tblCallVehicleStatus.FirstOrDefault(x => x.Id == callVehicleItem.Id);
+                        if (vehicleWaitingCall == null) return;
+
+                        if (vehicleWaitingCall.CountTry == 1)
+                        {
+                            vehicleWaitingCall.IsDone = true;
+                        }
+
+                        await db.SaveChangesAsync();
                     }
 
                     // check xem trong bảng tblStoreOrderOperating xem đơn hàng có đang yêu cầu gọi vào không
@@ -177,11 +187,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     // Xe chưa có đơn
-                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.CallType.ToUpper() == CallType.CHUA_CO_DON).OrderBy(x => x.Id).FirstOrDefault();
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.CHUA_CO_DON).OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     // Lái xe chưa nhận đơn
-                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.CallType.ToUpper() == CallType.CHUA_NHAN_DON).OrderBy(x => x.Id).FirstOrDefault();
+                    callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.CHUA_NHAN_DON).OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
                     for (int i = 0; i < 10; i++)
