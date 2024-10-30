@@ -27,6 +27,8 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
         protected readonly ReindexToGatewayLogger _reindexToGatewayLogger;
 
+        protected readonly Notification _notification;
+
         protected const string SERVICE_ACTIVE_CODE = "REINDEX_TO_TROUGH_ACTIVE";
 
         protected const string MAX_COUNT_TRY_CALL_CODE = "MAX_COUNT_TRY_CALL";
@@ -47,13 +49,15 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             CallToTroughRepository callToTroughRepository,
             SystemParameterRepository systemParameterRepository,
-            ReindexToGatewayLogger reindexToGatewayLogger
+            ReindexToGatewayLogger reindexToGatewayLogger,
+            Notification notification
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
             _reindexToGatewayLogger = reindexToGatewayLogger;
+            _notification = notification;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -200,12 +204,31 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
                         }
                         await db.SaveChangesAsync();
+
+                        foreach (var order in ordersToCancel)
+                        {
+                            var pushMessage = $"Đơn hàng số hiệu {order.DeliveryCode} đã bị hủy lốt do quá thời gian chờ. Xin mời lái xe xác thực lại";
+                            SendPushNotification(order.DriverUserName, pushMessage);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
                 _reindexToGatewayLogger.LogInfo($"{ex.Message}");
+            }
+        }
+
+        public void SendPushNotification(string userNameReceiver, string message)
+        {
+            try
+            {
+                _reindexToGatewayLogger.LogInfo($"Gửi push notification đến {userNameReceiver}, nội dung {message}");
+                _notification.SendPushNotification(userNameReceiver, message);
+            }
+            catch (Exception ex)
+            {
+                _reindexToGatewayLogger.LogInfo($"SendPushNotification Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

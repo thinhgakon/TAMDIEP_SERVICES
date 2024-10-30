@@ -20,6 +20,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY
             builder.RegisterType<CallToTroughRepository>().AsSelf();
             builder.RegisterType<SystemParameterRepository>().AsSelf();
             builder.RegisterType<ReindexToGatewayLogger>().AsSelf();
+            builder.RegisterType<Notification>().AsSelf();
 
             RegisterScheduler(builder);
 
