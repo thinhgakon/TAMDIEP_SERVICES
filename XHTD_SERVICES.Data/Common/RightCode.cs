@@ -13,5 +13,11 @@ namespace XHTD_SERVICES.Data.Common
         public static string GATEWAY = "R6.3";
 
         public static string SCALE = "R6.4";
+
+        public static string TROUGH_XI_BAO = "R6.5";
+
+        public static string TROUGH_XI_ROI = "R6.6";
+
+        public static string TROUGH_CLINKER = "R6.7";
     }
 }

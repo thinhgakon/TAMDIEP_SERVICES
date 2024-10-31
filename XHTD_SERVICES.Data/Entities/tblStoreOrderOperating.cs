@@ -133,6 +133,12 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> SourceDocumentId { get; set; }
         public string ItemAlias { get; set; }
         public Nullable<double> NetWeight { get; set; }
+        public Nullable<bool> IsScaleInVirtual { get; set; }
+        public Nullable<bool> IsScaleOutVirtual { get; set; }
+        public Nullable<System.DateTime> WeightInTimeVirtual { get; set; }
+        public Nullable<int> WeightInVirtual { get; set; }
+        public Nullable<System.DateTime> WeightOutTimeVirtual { get; set; }
+        public Nullable<int> WeightOutVirtual { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }

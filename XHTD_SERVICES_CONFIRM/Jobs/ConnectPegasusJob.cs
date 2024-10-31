@@ -37,9 +37,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    foreach (var device in DeviceCode.CONFIRM)
+                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.CONFIRM, out var devices))
                     {
-                        CheckConnection(device.Key, device.Value);
+                        foreach (var (deviceCode, deviceIp) in devices)
+                        {
+                            CheckConnection(deviceCode, deviceIp, LocationCode.CONFIRM);
+                        }
                     }
                 });
             }
@@ -52,7 +55,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
         }
 
-        public void CheckConnection(string deviceCode, string ipAddress)
+        public void CheckConnection(string deviceCode, string ipAddress, string deviceLocation)
         {
             try
             {
@@ -94,11 +97,11 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                             Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"{deviceLocation}: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            SendNotificationByRight(RightCode.CONFIRM, pushMessage, "SYSTEM");
                         }
 
                         Program.DeviceFailCount[deviceCode] = 0;
@@ -117,12 +120,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             _logger.Info(message);
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType)
         {
             try
             {
                 WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {

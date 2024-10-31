@@ -393,10 +393,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                     && scaleInfo.TimeIn > timeToRelease
                     )
                 {
-                    SendNotificationHub("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-                    SendNotificationAPI("Notification", $"== Can {SCALE_CODE} dang hoat dong => Ket thuc {cardNoCurrent} ==");
-
-                    // TODO: cần kiểm tra đơn hàng DeliveryCode, nếu chưa có weightIn thì mới bỏ qua RFID này
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                     return;
                 }

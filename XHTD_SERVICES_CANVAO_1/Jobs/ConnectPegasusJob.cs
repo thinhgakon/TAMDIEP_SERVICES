@@ -10,6 +10,7 @@ using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_CANVAO_1.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ConnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
@@ -34,9 +35,12 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 {
                     WriteLogInfo("--------------- START JOB ---------------");
 
-                    foreach (var device in DeviceCode.SCALE_IN)
+                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.SCALE_IN, out var devices))
                     {
-                        CheckConnection(device.Key, device.Value);
+                        foreach (var (deviceCode, deviceIp) in devices)
+                        {
+                            CheckConnection(deviceCode, deviceIp, LocationCode.SCALE_IN);
+                        }
                     }
                 });
             }
@@ -49,7 +53,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
         }
 
-        public void CheckConnection(string deviceCode, string ipAddress)
+        public void CheckConnection(string deviceCode, string ipAddress, string deviceLocation)
         {
             try
             {
@@ -91,11 +95,11 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                             Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Điểm xác thực: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"{deviceLocation}: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.SCALE, pushMessage);
+                            SendNotificationByRight(RightCode.SCALE, pushMessage, "SYSTEM");
                         }
 
                         Program.DeviceFailCount[deviceCode] = 0;
@@ -114,12 +118,12 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             _logger.Info(message);
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType)
         {
             try
             {
                 WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {

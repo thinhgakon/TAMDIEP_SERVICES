@@ -110,7 +110,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StoreOrderOperatingId" Type="int" Nullable="false" />
+          <Property Name="StoreOrderOperatingId" Type="int" />
           <Property Name="CountTry" Type="int" />
           <Property Name="CreatedOn" Type="datetime2" Precision="7" />
           <Property Name="ModifiledOn" Type="datetime2" Precision="7" />
@@ -120,6 +120,7 @@
           <Property Name="CallType" Type="nvarchar" MaxLength="50" />
           <Property Name="CountReindex" Type="int" />
           <Property Name="CountToCancel" Type="int" />
+          <Property Name="Vehicle" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tblCategories">
           <Key>
@@ -664,6 +665,12 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="SourceDocumentId" Type="int" />
           <Property Name="ItemAlias" Type="nvarchar" MaxLength="1000" />
           <Property Name="NetWeight" Type="float" />
+          <Property Name="IsScaleInVirtual" Type="bit" />
+          <Property Name="IsScaleOutVirtual" Type="bit" />
+          <Property Name="WeightInTimeVirtual" Type="datetime2" Precision="7" />
+          <Property Name="WeightInVirtual" Type="int" />
+          <Property Name="WeightOutTimeVirtual" Type="datetime2" Precision="7" />
+          <Property Name="WeightOutVirtual" Type="int" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1096,7 +1103,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="StoreOrderOperatingId" Type="Int32" Nullable="false" />
+          <Property Name="StoreOrderOperatingId" Type="Int32" />
           <Property Name="CountTry" Type="Int32" />
           <Property Name="CreatedOn" Type="DateTime" Precision="7" />
           <Property Name="ModifiledOn" Type="DateTime" Precision="7" />
@@ -1106,6 +1113,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="CallType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="CountReindex" Type="Int32" />
           <Property Name="CountToCancel" Type="Int32" />
+          <Property Name="Vehicle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblCategory">
           <Key>
@@ -1533,6 +1541,12 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="SourceDocumentId" Type="Int32" />
           <Property Name="ItemAlias" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="NetWeight" Type="Double" />
+          <Property Name="IsScaleInVirtual" Type="Boolean" />
+          <Property Name="IsScaleOutVirtual" Type="Boolean" />
+          <Property Name="WeightInTimeVirtual" Type="DateTime" Precision="7" />
+          <Property Name="WeightInVirtual" Type="Int32" />
+          <Property Name="WeightOutTimeVirtual" Type="DateTime" Precision="7" />
+          <Property Name="WeightOutVirtual" Type="Int32" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2103,6 +2117,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblCallVehicleStatus">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCallVehicleStatu">
               <MappingFragment StoreEntitySet="tblCallVehicleStatus">
+                <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
                 <ScalarProperty Name="CountToCancel" ColumnName="CountToCancel" />
                 <ScalarProperty Name="CountReindex" ColumnName="CountReindex" />
                 <ScalarProperty Name="CallType" ColumnName="CallType" />
@@ -2443,6 +2458,12 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="WeightOutVirtual" ColumnName="WeightOutVirtual" />
+                <ScalarProperty Name="WeightOutTimeVirtual" ColumnName="WeightOutTimeVirtual" />
+                <ScalarProperty Name="WeightInVirtual" ColumnName="WeightInVirtual" />
+                <ScalarProperty Name="WeightInTimeVirtual" ColumnName="WeightInTimeVirtual" />
+                <ScalarProperty Name="IsScaleOutVirtual" ColumnName="IsScaleOutVirtual" />
+                <ScalarProperty Name="IsScaleInVirtual" ColumnName="IsScaleInVirtual" />
                 <ScalarProperty Name="NetWeight" ColumnName="NetWeight" />
                 <ScalarProperty Name="ItemAlias" ColumnName="ItemAlias" />
                 <ScalarProperty Name="SourceDocumentId" ColumnName="SourceDocumentId" />

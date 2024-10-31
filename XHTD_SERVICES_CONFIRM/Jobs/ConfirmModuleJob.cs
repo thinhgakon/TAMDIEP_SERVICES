@@ -342,40 +342,117 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             // Nếu RFID hợp lệ
             tblStoreOrderOperating currentOrder = null;
-            var isValidCardNo = false;
+            //var isValidCardNo = false;
 
             currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderConfirmationPoint(vehicleCodeCurrent);
 
-            isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
+            //isValidCardNo = OrderValidator.IsValidOrderConfirmationPoint(currentOrder);
+
+            var checkValidCardNoResult = OrderValidator.CheckValidOrderConfirmationPoint(currentOrder);
 
             // Nếu RFID không có đơn hàng
-            if (currentOrder == null)
+            if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_CO_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang => Ket thuc.");
 
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng");
+                #region Gọi loa thông báo
+                using (var db = new XHTD_Entities())
+                {
+                    try
+                    {
+                        var timeToAdd = DateTime.Now.AddMinutes(-10);
+
+                        var checkExist = db.tblCallVehicleStatus
+                                            .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent 
+                                                            && x.CallType == CallType.CHUA_CO_DON
+                                                            && x.IsDone == false
+                                                            && x.CreatedOn != null
+                                                            && x.CreatedOn > timeToAdd
+                                                            );
+
+                        if (checkExist == null) {
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                Vehicle = vehicleCodeCurrent,
+                                CountTry = 0,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe thông báo chưa có đơn lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.CHUA_CO_DON
+                            };
+
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInfo($"ERROR CHUA_CO_DON: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                    }
+                }
+                #endregion
+
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} chưa có đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-
             // Nếu RFID không có đơn hàng hợp lệ
-            else if (isValidCardNo == false)
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
                 _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
 
-                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
-                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"Phương tiện {vehicleCodeCurrent} - RFID {cardNoCurrent} không có đơn hàng hợp lệ");
+                #region Gọi loa thông báo
+                using (var db = new XHTD_Entities())
+                {
+                    try
+                    {
+                        var timeToAdd = DateTime.Now.AddMinutes(-10);
+
+                        var checkExist = db.tblCallVehicleStatus
+                                            .FirstOrDefault(x => x.Vehicle == vehicleCodeCurrent
+                                                            && x.CallType == CallType.CHUA_NHAN_DON
+                                                            && x.IsDone == false
+                                                            && x.CreatedOn != null
+                                                            && x.CreatedOn > timeToAdd
+                                                            );
+
+                        if (checkExist == null)
+                        {
+                            var newTblVehicleStatus = new tblCallVehicleStatu
+                            {
+                                Vehicle = vehicleCodeCurrent,
+                                CountTry = 0,
+                                CreatedOn = DateTime.Now,
+                                ModifiledOn = DateTime.Now,
+                                LogCall = $@"Đưa xe thông báo chưa nhận đơn lúc {DateTime.Now}. ",
+                                IsDone = false,
+                                CallType = CallType.CHUA_NHAN_DON
+                            };
+
+                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInfo($"ERROR CHUA_NHAN_DON: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                    }
+                }
+                #endregion
+
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-
             // Nếu RFID có đơn hàng hợp lệ
             else
             {
