@@ -229,6 +229,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1200);
+
                 var count = 0;
                 foreach (char c in vehicle)
                 {
@@ -280,6 +281,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1200);
+
                 var count = 0;
                 foreach (char c in vehicle)
                 {
@@ -333,6 +335,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1200);
+
                 var count = 0;
                 foreach (char c in vehicle)
                 {
@@ -386,6 +389,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1200);
+
                 var count = 0;
                 foreach (char c in vehicle)
                 {
