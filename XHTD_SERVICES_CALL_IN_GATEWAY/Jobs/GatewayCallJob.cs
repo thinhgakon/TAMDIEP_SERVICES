@@ -219,11 +219,23 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+
+                string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/VicemBegin.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 30;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 70;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
 
                 wplayer.URL = VoiceFileInvite;
                 wplayer.settings.volume = 100;
@@ -266,11 +278,23 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+
+                string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 30;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 70;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
 
                 wplayer.URL = VoiceFileStart;
                 wplayer.settings.volume = 100;
@@ -320,11 +344,23 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+
+                string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 30;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 70;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
 
                 wplayer.URL = VoiceFileStart;
                 wplayer.settings.volume = 100;
@@ -374,11 +410,23 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
+
+                string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
                 string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 30;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
+
+                wplayer.URL = VoiceFileDing;
+                wplayer.settings.volume = 70;
+                wplayer.controls.play();
+                Thread.Sleep(1200);
 
                 wplayer.URL = VoiceFileStart;
                 wplayer.settings.volume = 100;
