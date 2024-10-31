@@ -214,6 +214,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             return callVehicleItem;
         }
 
+        // gọi vào cổng
         public void CallInGatewayBySystem(string vehicle)
         {
             try
@@ -273,6 +274,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
         }
 
+        // gọi vào bãi chờ
         public void CallInYardBySystem(string vehicle)
         {
             try
@@ -339,6 +341,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
         }
 
+        // chưa có đơn hàng
         public void OrderNotExistBySystem(string vehicle)
         {
             try
@@ -346,10 +349,8 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
 
                 string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
-                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
-                string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
-                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
-                string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
+                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/xe.wav";
+                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/chuacodonhang.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
 
                 wplayer.URL = VoiceFileDing;
@@ -366,11 +367,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1500);
-
-                wplayer.URL = VoiceFileInvite;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
-                Thread.Sleep(1200);
 
                 var count = 0;
                 foreach (char c in vehicle)
@@ -405,6 +401,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             }
         }
 
+        // chưa nhận đơn hàng
         public void OrderNotReceiveBySystem(string vehicle)
         {
             try
@@ -412,10 +409,8 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
 
                 string VoiceFileDing = $@"{PathAudioLib}/audio_generer/ding.wav";
-                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/chuadenluot.wav";
-                string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
-                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
-                string VoiceFileEnd = $@"{PathAudioLib}/audio_generer/VicemEnd.wav";
+                string VoiceFileStart = $@"{PathAudioLib}/audio_generer/laixe.wav";
+                string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/chuanhandonhang.wav";
                 WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
 
                 wplayer.URL = VoiceFileDing;
@@ -432,11 +427,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 wplayer.settings.volume = 100;
                 wplayer.controls.play();
                 Thread.Sleep(1500);
-
-                wplayer.URL = VoiceFileInvite;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
-                Thread.Sleep(1200);
 
                 var count = 0;
                 foreach (char c in vehicle)
