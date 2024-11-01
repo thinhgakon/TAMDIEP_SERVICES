@@ -198,10 +198,16 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         foreach (var order in ordersToCancel)
                         {
+                            var oldIndexOrder = order.IndexOrder;
+
                             order.Confirm10 = 0;
                             order.TimeConfirm10 = null;
                             order.Step = (int)OrderStep.DA_NHAN_DON;
+                            order.IndexOrder = 0;
+                            order.CountReindex = 0;
                             order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
+
+                            await _storeOrderOperatingRepository.ReindexOrder(order.TypeProduct, oldIndexOrder ?? 0);
                         }
                         await db.SaveChangesAsync();
 
