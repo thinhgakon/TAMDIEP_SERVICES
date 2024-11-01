@@ -19,6 +19,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> CheckOutTime { get; set; }
         public Nullable<int> AttactmentId { get; set; }
         public string LogProcess { get; set; }
+        public string Vehicle { get; set; }
     
         public virtual tblAttachment tblAttachment { get; set; }
     }

@@ -184,6 +184,7 @@
           <Property Name="CheckOutTime" Type="datetime" />
           <Property Name="AttactmentId" Type="int" />
           <Property Name="LogProcess" Type="nvarchar(max)" />
+          <Property Name="Vehicle" Type="nvarchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1813,6 +1814,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="AttactmentId" Type="Int32" />
           <Property Name="LogProcess" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="tblAttachment" Relationship="XHTD_SERVICES.Data.Entities.FK_tblCheckInOut_tblAttachment" FromRole="tblCheckInOut" ToRole="tblAttachment" />
+          <Property Name="Vehicle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblAttachment">
           <Key>
@@ -2732,6 +2734,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblCheckInOuts">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblCheckInOut">
               <MappingFragment StoreEntitySet="tblCheckInOut">
+                <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
                 <ScalarProperty Name="LogProcess" ColumnName="LogProcess" />
                 <ScalarProperty Name="AttactmentId" ColumnName="AttactmentId" />
                 <ScalarProperty Name="CheckOutTime" ColumnName="CheckOutTime" />

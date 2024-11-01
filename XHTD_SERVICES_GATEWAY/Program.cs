@@ -36,6 +36,9 @@ namespace XHTD_SERVICES_GATEWAY
         public static Dictionary<string, int> DeviceFailCount = new Dictionary<string, int>();
         public static Dictionary<string, DateTime?> DeviceLastFailPingTime = new Dictionary<string, DateTime?>();
 
+        public static string CurrentVehicleInGateway = string.Empty;
+        public static DateTime? LastTimeValidVehicle = null;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;

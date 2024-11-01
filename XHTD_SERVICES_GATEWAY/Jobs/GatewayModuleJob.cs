@@ -423,6 +423,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             if (!String.IsNullOrEmpty(vehicleCodeCurrent))
             {
                 _logger.LogInfo($"3. Tag hop le: vehicle={vehicleCodeCurrent}");
+                Program.CurrentVehicleInGateway = vehicleCodeCurrent;
+                Program.LastTimeValidVehicle = DateTime.Now;
             }
             else
             {
