@@ -61,6 +61,7 @@
     <Compile Include="Common\CheckValidRfidResultCode.cs" />
     <Compile Include="Common\LocationCode.cs" />
     <Compile Include="Common\MachineCode.cs" />
+    <Compile Include="Common\MachineStatus.cs" />
     <Compile Include="Common\OrderProductCategoryCode.cs" />
     <Compile Include="Common\OrderTypeProductCode.cs" />
     <Compile Include="Common\OrderTypeXKCode.cs" />
