@@ -52,7 +52,7 @@ namespace XHTD_SERVICES_CANVAO_1.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
+                     .WithIntervalInSeconds(5)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
