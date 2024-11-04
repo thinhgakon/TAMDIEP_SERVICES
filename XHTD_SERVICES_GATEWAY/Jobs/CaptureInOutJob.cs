@@ -122,7 +122,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                         string currentVehicle = null;
 
-                        if (Program.LastTimeValidVehicle <= DateTime.Now.AddSeconds(-15))
+                        if (Program.LastTimeValidVehicle >= DateTime.Now.AddSeconds(-15))
                         {
                             currentVehicle = Program.CurrentVehicleInGateway;
                         }
