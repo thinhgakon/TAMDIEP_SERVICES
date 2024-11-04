@@ -18,7 +18,7 @@ namespace XHTD_SERVICES.Data.Repositories
 {
     public class MachineRepository : BaseRepository<tblMachine>
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public MachineRepository(XHTD_Entities appDbContext) : base(appDbContext)
         {
