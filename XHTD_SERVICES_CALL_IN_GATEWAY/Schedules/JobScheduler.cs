@@ -32,7 +32,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
+                     .WithIntervalInSeconds(13)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(gatewayCallJob, gatewayCallTrigger);
