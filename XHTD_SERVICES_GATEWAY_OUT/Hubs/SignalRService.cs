@@ -13,7 +13,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Hubs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(SignalRService));
 
-        protected readonly string SIGNALR_START_ON_SERVICE_URL = URIConfig.SIGNALR_START_ON_GATEWAY_SERVICE_URL;
+        protected readonly string SIGNALR_START_ON_SERVICE_URL = URIConfig.SIGNALR_START_ON_GATEWAY_OUT_SERVICE_URL;
 
         public SignalRService()
         {

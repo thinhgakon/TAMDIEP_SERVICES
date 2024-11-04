@@ -23,8 +23,10 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Hubs
         {
             try
             {
-                var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
-                broadcast.Clients.All.SendMessage(name, message);
+                _logger.Info($"name: {name} - message: {message}");
+
+                //var broadcast = GlobalHost.ConnectionManager.GetHubContext<GatewayHub>();
+                //broadcast.Clients.All.SendMessage(name, message);
             }
             catch (Exception ex)
             {
