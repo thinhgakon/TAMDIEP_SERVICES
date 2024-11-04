@@ -51,7 +51,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
                 if (!isActiveService)
                 {
-                    _queueToCallLogger.LogInfo("Service tự động xếp xe vào máng đang TẮT");
+                    _queueToCallLogger.LogInfo("Service tự động xếp xe vào máng C91 đang TẮT");
                     return;
                 }
 
