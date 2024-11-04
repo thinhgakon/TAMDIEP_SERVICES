@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using log4net;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Repositories;
@@ -9,6 +10,8 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
     public class QueueToTroughPcb40Job : IJob
     {
+        ILog _logger = LogManager.GetLogger("Pcb30FileAppender");
+
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
 
         protected readonly TroughRepository _troughRepository;
@@ -16,8 +19,6 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
         protected readonly CallToTroughRepository _callToTroughRepository;
 
         protected readonly SystemParameterRepository _systemParameterRepository;
-
-        protected readonly QueueToTroughLogger _queueToCallLogger;
 
         protected const string SERVICE_ACTIVE_CODE = "AUTO_QUEUE_TO_TROUGH_ACTIVE";
 
@@ -27,15 +28,13 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             TroughRepository troughRepository,
             CallToTroughRepository callToTroughRepository,
-            SystemParameterRepository systemParameterRepository,
-            QueueToTroughLogger queueToCallLogger
+            SystemParameterRepository systemParameterRepository
             )
         {
             _storeOrderOperatingRepository = storeOrderOperatingRepository;
             _troughRepository = troughRepository;
             _callToTroughRepository = callToTroughRepository;
             _systemParameterRepository = systemParameterRepository;
-            _queueToCallLogger = queueToCallLogger;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -51,7 +50,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
                 if (!isActiveService)
                 {
-                    _queueToCallLogger.LogInfo("Service tự động xếp xe vào máng PCB40 đang TẮT");
+                    _logger.Info("Service tự động xếp xe vào máng PCB40 đang TẮT");
                     return;
                 }
 
@@ -77,7 +76,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
         public async Task QueueToCallProcess()
         {
-            _queueToCallLogger.LogInfo("Start process QueueToCall PCB40 service");
+            _logger.Info("Start process QueueToCall PCB40 service");
 
             try
             {
@@ -101,7 +100,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
                     var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.PCB40, OrderProductCategoryCode.XI_BAO);
 
-                    _queueToCallLogger.LogInfo($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
+                    _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
                     if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
                     {
@@ -111,7 +110,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
             }
             catch (Exception ex)
             {
-                _queueToCallLogger.LogInfo($"Errrrorrr: {ex.Message} ==== {ex.StackTrace} ===== {ex.InnerException}");
+                _logger.Info($"Errrrorrr: {ex.Message} ==== {ex.StackTrace} ===== {ex.InnerException}");
             }
         }
     }
