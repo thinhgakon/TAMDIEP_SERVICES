@@ -18,7 +18,7 @@ namespace XHTD_SERVICES.Data.Repositories
 {
     public class MachineRepository : BaseRepository<tblMachine>
     {
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public MachineRepository(XHTD_Entities appDbContext) : base(appDbContext)
         {
@@ -222,21 +222,21 @@ namespace XHTD_SERVICES.Data.Repositories
                         if (callToTroughEntity != null)
                         {
                             callToTroughEntity.IsDone = true;
-                        }
 
-                        List<tblCallToTrough> callToTroughRunning = await dbContext.tblCallToTroughs
+                            List<tblCallToTrough> callToTroughRunning = await dbContext.tblCallToTroughs
                                                                                    .Where(x => x.Machine == callToTroughEntity.Machine &&
                                                                                                x.IndexTrough > callToTroughEntity.IndexTrough &&
                                                                                               (x.IsDone == null || x.IsDone == false))
                                                                                    .ToListAsync();
 
-                        if (callToTroughRunning != null && callToTroughRunning.Count > 0)
-                        {
-                            foreach (var callToTrough in callToTroughRunning)
+                            if (callToTroughRunning != null && callToTroughRunning.Count > 0)
                             {
-                                if (callToTrough.IndexTrough > 1)
+                                foreach (var callToTrough in callToTroughRunning)
                                 {
-                                    callToTrough.IndexTrough--;
+                                    if (callToTrough.IndexTrough > 1)
+                                    {
+                                        callToTrough.IndexTrough--;
+                                    }
                                 }
                             }
                         }
