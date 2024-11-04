@@ -61,6 +61,7 @@
     <Compile Include="Common\CheckValidRfidResultCode.cs" />
     <Compile Include="Common\LocationCode.cs" />
     <Compile Include="Common\MachineCode.cs" />
+    <Compile Include="Common\MachineStatus.cs" />
     <Compile Include="Common\OrderProductCategoryCode.cs" />
     <Compile Include="Common\OrderTypeProductCode.cs" />
     <Compile Include="Common\OrderTypeXKCode.cs" />
@@ -224,7 +225,7 @@
     <Compile Include="Repositories\AttachmentRepository.cs" />
     <Compile Include="Repositories\CallToTroughRepository.cs" />
     <Compile Include="Repositories\CheckInOutRepository.cs" />
-    <Compile Include="Repositories\MachineRepository .cs" />
+    <Compile Include="Repositories\MachineRepository.cs" />
     <Compile Include="Repositories\PrintRepository.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.ConfirmationPoint.cs" />
     <Compile Include="Repositories\StoreOrderOperatingRepository.Led.cs" />

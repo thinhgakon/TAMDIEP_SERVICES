@@ -293,28 +293,11 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                             {
                                 _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {trough.Code} - máy {machine.Code}");
 
-                                var requestData = new MachineControlRequest
-                                {
-                                    MachineCode = machine.Code,
-                                    TroughCode = trough.Code,
-                                    CurrentDeliveryCode = websaleOrder.deliveryCode
-                                };
+                                _syncOrderLogger.LogInfo($"Stop Machine API Request Data: MachineCode = {machine.Code} ---- TroughCode = {trough.Code} ---- DeliveryCode = {websaleOrder.deliveryCode}");
 
-                                _syncOrderLogger.LogInfo($"Stop Machine API Request Data: MachineCode = {requestData.MachineCode} ---- TroughCode = {requestData.TroughCode} ---- DeliveryCode = {requestData.CurrentDeliveryCode}");
+                                var response = await _machineRepository.Stop(machine.Code, trough.Code, websaleOrder.deliveryCode);
 
-                                var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
-
-                                _syncOrderLogger.LogInfo($"Stop Machine API Response: Status = {apiResponse.Status} ---- Message = {apiResponse.MessageObject.Message}");
-
-                                if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                                {
-                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thành công!");
-                                }
-
-                                else
-                                {
-                                    _syncOrderLogger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {trough.Code} - DeliveryCode: {websaleOrder.deliveryCode} - lỗi: {apiResponse.MessageObject.Message} - {apiResponse.MessageObject.MessageDetail}");
-                                }
+                                _syncOrderLogger.LogInfo($"Stop Machine Response: Status = {response}");
                             }
                         }
                         else
