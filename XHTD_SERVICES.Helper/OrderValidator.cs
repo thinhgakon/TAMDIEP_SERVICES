@@ -400,12 +400,17 @@ namespace XHTD_SERVICES.Helper
 
             _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
 
-            if (
-                order.Step == (int)OrderStep.DA_NHAN_DON
-                && (order.DriverUserName ?? "") != ""
-                )
+            var isValid = order.Step == (int)OrderStep.DA_NHAN_DON && (order.DriverUserName ?? "") != "";
+
+            var isValidConfirm = order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "";
+
+            if (isValid)
             {
                 return CheckValidRfidResultCode.HOP_LE;
+            }
+            else if (isValidConfirm)
+            {
+                return CheckValidRfidResultCode.DA_XAC_THUC;
             }
             else
             {

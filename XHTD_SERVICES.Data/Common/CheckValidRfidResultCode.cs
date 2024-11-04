@@ -14,6 +14,8 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly string CHUA_XAC_THUC = "CHUA_XAC_THUC";
 
+        public static readonly string DA_XAC_THUC = "DA_XAC_THUC";
+
         public static readonly string CHUA_GOI_LOA = "CHUA_GOI_LOA";
 
         public static readonly string CHUA_CAN_RA = "CHUA_CAN_RA";

@@ -401,10 +401,10 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 return;
             }
-            // Nếu RFID không có đơn hàng hợp lệ
+            // Nếu RFID không có đơn hàng hợp lệ: chưa nhập đơn
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
-                _logger.LogInfo($"4. Tag KHONG co don hang hop le => Ket thuc.");
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: chưa nhận đơn => Ket thuc.");
 
                 #region Gọi loa thông báo
                 using (var db = new XHTD_Entities())
@@ -447,6 +447,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                 SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
                 SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} lái xe chưa nhận đơn hàng");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            // Nếu RFID không có đơn hàng hợp lệ: đã xác thực
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.DA_XAC_THUC)
+            {
+                _logger.LogInfo($"4. Tag KHONG co don hang hop le: đã xác thực => Ket thuc.");
+
+                SendNotificationHub("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đã xác thực thành công");
+                SendNotificationAPI("CONFIRM_VEHICLE", 1, cardNoCurrent, $"{vehicleCodeCurrent} - RFID {cardNoCurrent} đã xác thực thành công");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
