@@ -407,9 +407,9 @@ namespace XHTD_SERVICES.Data.Repositories
                             typeProductOrder.IndexOrder--;
                         }
                     }
-                }
 
-                await dbContext.SaveChangesAsync();
+                    await dbContext.SaveChangesAsync();
+                }
             }
         }
 
