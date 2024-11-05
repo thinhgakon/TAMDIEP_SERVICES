@@ -345,6 +345,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
+                    var oldIndexOrder = order.IndexOrder ?? 0;
+
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
 
@@ -353,6 +355,9 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
+
+                    // Xếp lại lốt
+                    await UpdateIndexOrder(oldIndexOrder, order.TypeProduct);
 
                     await _appDbContext.SaveChangesAsync();
 
