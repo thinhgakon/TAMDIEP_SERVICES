@@ -190,11 +190,11 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                     if (ordersToCancel == null || ordersToCancel.Count == 0)
                     {
-                        _reindexToGatewayLogger.LogInfo("3. Không có đơn nào đủ đk hủy => Bỏ qua");
+                        _reindexToGatewayLogger.LogInfo("3. Không có đơn nào đủ đk hủy xác thực => Bỏ qua");
                     }
                     else
                     {
-                        _reindexToGatewayLogger.LogInfo($"3. Hủy các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
+                        _reindexToGatewayLogger.LogInfo($"3. Hủy xác thực các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
 
                         foreach (var order in ordersToCancel)
                         {
