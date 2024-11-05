@@ -62,7 +62,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
         {
             var parameters = await _systemParameterRepository.GetSystemParameters();
 
-            var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
+            var activeParameter = parameters.FirstOrDefault(x => x.Code.ToUpper().Trim() == SERVICE_ACTIVE_CODE.ToUpper().Trim());
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
