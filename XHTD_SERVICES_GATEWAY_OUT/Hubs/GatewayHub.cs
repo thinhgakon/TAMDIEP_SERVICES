@@ -51,29 +51,29 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Hubs
         public void OpenManualBarrierIn(string name)
         {
             _logger.Info("Open Manual Barrier In");
-            //bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleIn();
-            //if (isOpened)
-            //{
-            //    _logger.Info("Mở thành công");
-            //}
-            //else
-            //{
-            //    _logger.Info("Mở thất bại");
-            //}
+            bool isOpened = DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierIn();
+            if (isOpened)
+            {
+                _logger.Info("Mở thành công");
+            }
+            else
+            {
+                _logger.Info("Mở thất bại");
+            }
         }
 
         public void OpenManualBarrierOut(string name)
         {
             _logger.Info("Open Manual Barrier Out");
-            //bool isOpened = DIBootstrapper.Init().Resolve<BarrierControl>().OpenBarrierScaleOut();
-            //if (isOpened)
-            //{
-            //    _logger.Info("Mở thành công");
-            //}
-            //else
-            //{
-            //    _logger.Info("Mở thất bại");
-            //}
+            bool isOpened = DIBootstrapper.Init().Resolve<S71200Control>().OpenBarrierOut();
+            if (isOpened)
+            {
+                _logger.Info("Mở thành công");
+            }
+            else
+            {
+                _logger.Info("Mở thất bại");
+            }
         }
     }
 }
