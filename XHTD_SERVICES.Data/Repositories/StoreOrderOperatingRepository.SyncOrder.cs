@@ -345,8 +345,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
-                    var oldIndexOrder = order.IndexOrder ?? 0;
-
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
 
@@ -358,7 +356,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     await _appDbContext.SaveChangesAsync();
 
                     // Xếp lại lốt
-                    await ReindexOrder(order.TypeProduct);
+                    var message = $"#Đơn hàng được xếp lại lốt, lý do: Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
+                    await ReindexOrder(order.TypeProduct, message);
 
                     Console.WriteLine($@"Update Receiving Order {orderId}");
                     log.Info($@"Update Receiving Order {orderId}");

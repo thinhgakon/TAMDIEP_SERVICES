@@ -384,7 +384,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task ReindexOrder(string typeProduct)
+        public async Task ReindexOrder(string typeProduct, string message = null)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -404,6 +404,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (typeProductOrder.IndexOrder != indexOrder)
                     {
                         typeProductOrder.IndexOrder = indexOrder;
+                        typeProductOrder.LogProcessOrder += message;
                     }
                     indexOrder++;
                 }

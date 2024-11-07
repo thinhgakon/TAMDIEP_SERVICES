@@ -241,8 +241,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     foreach (var order in orders)
                     {
-                        var oldIndexOrder = order.IndexOrder;
-
                         order.Confirm2 = (int)ConfirmType.RFID;
                         order.TimeConfirm2 = DateTime.Now;
                         order.Step = (int)OrderStep.DA_VAO_CONG;
@@ -265,8 +263,14 @@ namespace XHTD_SERVICES.Data.Repositories
                                }
                            );
                         }
+                    }
 
-                        await ReindexOrder(order.TypeProduct);
+                    // Xếp lại lốt
+                    var message = $"#Đơn hàng được xếp lại lốt, lý do: Đơn hàng số hiệu {string.Join(", ", orders.Select(x => x.DeliveryCode))} vào cổng lúc {DateTime.Now} ";
+                    var typeProductList = orders.Select(x => x.TypeProduct).Distinct().ToList();
+                    foreach (var typeProduct in typeProductList)
+                    {
+                        await ReindexOrder(typeProduct, message);
                     }
 
                     await dbContext.SaveChangesAsync();
