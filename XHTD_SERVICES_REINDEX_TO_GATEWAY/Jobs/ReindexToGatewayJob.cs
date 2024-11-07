@@ -206,10 +206,15 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             order.IndexOrder = 0;
                             order.CountReindex = 0;
                             order.LogProcessOrder += $"#Hủy xác thực do vượt quá số lần gọi loa lúc {DateTime.Now}";
-
-                            await _storeOrderOperatingRepository.ReindexOrder(order.TypeProduct, oldIndexOrder ?? 0);
                         }
                         await db.SaveChangesAsync();
+
+                        // Xếp lại lốt
+                        var typeProductList = ordersToCancel.Select(x => x.TypeProduct).Distinct().ToList();
+                        foreach (var typeProduct in typeProductList)
+                        {
+                            await _storeOrderOperatingRepository.ReindexOrder(typeProduct);
+                        }
 
                         foreach (var order in ordersToCancel)
                         {

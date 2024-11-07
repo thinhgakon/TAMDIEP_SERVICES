@@ -8,6 +8,7 @@ using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Common;
+using System.Web.Configuration;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -380,6 +381,33 @@ namespace XHTD_SERVICES.Data.Repositories
                 var newIndex = maxIndex + 1;
 
                 await UpdateIndex(orderExist.Id, newIndex);
+            }
+        }
+
+        public async Task ReindexOrder(string typeProduct)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var typeProductOrders = await dbContext.tblStoreOrderOperatings
+                                                       .Where(x => x.TypeProduct.ToUpper() == typeProduct.ToUpper() &&
+                                                                  (x.Step == (int)OrderStep.DA_XAC_THUC ||
+                                                                   x.Step == (int)OrderStep.CHO_GOI_XE ||
+                                                                   x.Step == (int)OrderStep.DANG_GOI_XE) &&
+                                                                   x.IndexOrder != 0 &&
+                                                                   x.IsVoiced == false)
+                                                       .OrderBy(x => x.TimeConfirm10)
+                                                       .ToListAsync();
+
+                var indexOrder = 1;
+                foreach (var typeProductOrder in typeProductOrders)
+                {
+                    if (typeProductOrder.IndexOrder != indexOrder)
+                    {
+                        typeProductOrder.IndexOrder = indexOrder;
+                    }
+                    indexOrder++;
+                }
+                await dbContext.SaveChangesAsync();
             }
         }
 
