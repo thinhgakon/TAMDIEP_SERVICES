@@ -11,6 +11,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public double? ouId { get; set; }
         public int? id { get; set; }
         public string deliveryCode { get; set; }
+        public string deliveryCodeTgc { get; set; }
         public string orderDate { get; set; }
         public string deliveryDate { get; set; }
         public string customerId { get; set; }

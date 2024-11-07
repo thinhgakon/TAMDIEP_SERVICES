@@ -143,35 +143,26 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             OracleHelper oracleHelper = new OracleHelper(connectionString);
 
-            string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
-                                     VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
-                                     TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID
+            string query = $@"SELECT DELIVERY_CODE, DELIVERY_CODE_TGC, VEHICLE_CODE, TIMEIN, TIMEOUT, ORDER_DATE, LOADWEIGHTNULL, LOADWEIGHTFULL, STATUS, PRINT_STATUS,
+                                     ORDER_QUANTITY, LAST_UPDATE_DATE, DOC_NUM, CUSTOMER_ID, CUSTOMER_NUMBER, CUSTOMER_NAME
                             FROM apps.dev_sales_orders_mbf_v 
-                            WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
+                            WHERE DELIVERY_CODE_TGC IS NOT NULL AND LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
-                id = Convert.ToInt32(reader["ORDER_ID"]),
                 deliveryCode = reader["DELIVERY_CODE"]?.ToString(),
-                timeIn = reader["TIMEIN"] == DBNull.Value ? null : reader.GetDateTime(2).ToString("yyyy-MM-ddTHH:mm:ss"),
-                timeOut = reader["TIMEOUT"] == DBNull.Value ? null : reader.GetDateTime(3).ToString("yyyy-MM-ddTHH:mm:ss"),
+                deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
+                vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
+                timeIn = reader["TIMEIN"] == DBNull.Value ? null : reader.GetDateTime(3).ToString("yyyy-MM-ddTHH:mm:ss"),
+                timeOut = reader["TIMEOUT"] == DBNull.Value ? null : reader.GetDateTime(4).ToString("yyyy-MM-ddTHH:mm:ss"),
+                orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(5).ToString("yyyy-MM-ddTHH:mm:ss"),
                 loadweightnull = reader["LOADWEIGHTNULL"]?.ToString(),
                 loadweightfull = reader["LOADWEIGHTFULL"]?.ToString(),
                 status = reader["STATUS"]?.ToString(),
-                productName = reader["PRODUCT_NAME"]?.ToString(),
-                vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
-                driverName = reader["DRIVER_NAME"]?.ToString(),
-                customerName = reader["CUSTOMER_NAME"]?.ToString(),
+                orderPrintStatus = reader["PRINT_STATUS"]?.ToString(),
                 bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
-                orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
-                moocCode = reader["MOOC_CODE"]?.ToString(),
-                locationCode = reader["LOCATION_CODE"]?.ToString(),
-                transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(), out int i) ? i : default,
-                lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(16).ToString("yyyy-MM-ddTHH:mm:ss"),
-                itemCategory = reader["ITEM_CATEGORY"].ToString(),
+                lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(11).ToString("yyyy-MM-ddTHH:mm:ss"),
                 docnum = reader["DOC_NUM"].ToString(),
-                sourceDocumentId = reader["ORDER_REQ_ID"] != DBNull.Value ? reader["ORDER_REQ_ID"].ToString() :
-                                   reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
