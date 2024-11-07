@@ -146,6 +146,7 @@
     <Compile Include="Jobs\SyncChangedOrderJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderJob.cs" />
+    <Compile Include="Jobs\SyncOutSourceOrderFromViewJob.cs" />
     <Compile Include="Models\Response\MachineResponse.cs" />
     <Compile Include="SyncOrderLogger.cs" />
     <Compile Include="Jobs\SyncOrderJob.cs" />
