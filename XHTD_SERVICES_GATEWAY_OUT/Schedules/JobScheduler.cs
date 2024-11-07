@@ -28,25 +28,25 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
             await _scheduler.Start();
 
             // Xác thực cổng bảo vệ
-            IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
-            ITrigger syncOrderTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
+            //IJobDetail syncOrderJob = JobBuilder.Create<GatewayModuleJob>().Build();
+            //ITrigger syncOrderTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(syncOrderJob, syncOrderTrigger);
 
-            IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
-            ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
+            //IJobDetail reConnectPegasusJob = JobBuilder.Create<ReconnectPegasusJob>().Build();
+            //ITrigger reConnectPegasusrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(10)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
 
             // Reset PLC cổng bảo vệ
             IJobDetail resetPLCJob = JobBuilder.Create<ResetGatewayPLCJob>().Build();
@@ -69,15 +69,15 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Schedules
                 .Build();
             await _scheduler.ScheduleJob(captureJob, captureTrigger);
 
-            IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            ITrigger reconnectTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
+            //IJobDetail reconnectJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            //ITrigger reconnectTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(5)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(reconnectJob, reconnectTrigger);
         }
     }
 }
