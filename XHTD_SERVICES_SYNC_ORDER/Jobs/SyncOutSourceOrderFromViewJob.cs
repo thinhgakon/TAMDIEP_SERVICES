@@ -46,6 +46,10 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         private static int numberHoursSearchOrder = 48;
 
+        protected const string BIMSON_CUSTOMER_NUMBER = "44";
+
+        protected const string HOANGTHACH_CUSTOMER_NUMBER = "56";
+
         public SyncOutSourceOrderFromViewJob(
             StoreOrderOperatingRepository storeOrderOperatingRepository,
             VehicleRepository vehicleRepository,
@@ -123,16 +127,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 return;
             }
 
-            bool isChanged = false;
-
             foreach (var websaleOrder in websaleOrders)
             {
-                // Không đồng bộ các đơn tại sông Thao
-                if (websaleOrder.shippointId != "13")
+                // Hoang Thach
+                if (websaleOrder.customerNumber == HOANGTHACH_CUSTOMER_NUMBER)
                 {
                     bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
-
-                    if (!isChanged) isChanged = isSynced;
+                }
+                // Bim Son
+                else if (websaleOrder.customerNumber == BIMSON_CUSTOMER_NUMBER)
+                {
+                    bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
                 }
             }
         }
