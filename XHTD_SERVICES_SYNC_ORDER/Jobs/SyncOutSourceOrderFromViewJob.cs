@@ -163,6 +163,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
                 lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(11).ToString("yyyy-MM-ddTHH:mm:ss"),
                 docnum = reader["DOC_NUM"].ToString(),
+                customerId = reader["CUSTOMER_ID"].ToString(),
+                customerNumber = reader["CUSTOMER_NUMBER"].ToString(),
+                customerName = reader["CUSTOMER_NAME"].ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
