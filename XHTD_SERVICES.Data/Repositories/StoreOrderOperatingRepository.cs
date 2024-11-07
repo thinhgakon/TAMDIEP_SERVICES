@@ -399,10 +399,12 @@ namespace XHTD_SERVICES.Data.Repositories
                                                        .ToListAsync();
 
                 var indexOrder = 1;
-
                 foreach (var typeProductOrder in typeProductOrders)
                 {
-                    typeProductOrder.IndexOrder = indexOrder;
+                    if (typeProductOrder.IndexOrder != indexOrder)
+                    {
+                        typeProductOrder.IndexOrder = indexOrder;
+                    }
                     indexOrder++;
                 }
                 await dbContext.SaveChangesAsync();

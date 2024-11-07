@@ -210,7 +210,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                         await db.SaveChangesAsync();
 
                         // Xếp lại lốt
-                        var typeProductList = ordersToCancel.Select(x => x.TypeProduct).ToList();
+                        var typeProductList = ordersToCancel.Select(x => x.TypeProduct).Distinct().ToList();
                         foreach (var typeProduct in typeProductList)
                         {
                             await _storeOrderOperatingRepository.ReindexOrder(typeProduct);
