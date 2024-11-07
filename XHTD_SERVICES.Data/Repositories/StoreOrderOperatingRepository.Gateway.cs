@@ -266,7 +266,7 @@ namespace XHTD_SERVICES.Data.Repositories
                            );
                         }
 
-                        await ReindexOrder(order.TypeProduct, oldIndexOrder ?? 0);
+                        await ReindexOrder(order.TypeProduct);
                     }
 
                     await dbContext.SaveChangesAsync();
@@ -277,31 +277,6 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     log.Error($@"Xác thực vào cổng VehicleCode={vehicleCode} error: " + ex.Message);
                     return false;
-                }
-            }
-        }
-
-        public async Task ReindexOrder(string typeProduct, int oldIndexOrder)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                // xep lai lot
-                var typeProductOrders = await dbContext.tblStoreOrderOperatings
-                                                       .Where(x => x.TypeProduct.ToUpper() == typeProduct.ToUpper() &&
-                                                                  (x.Step == (int)OrderStep.DA_XAC_THUC ||
-                                                                   x.Step == (int)OrderStep.CHO_GOI_XE ||
-                                                                   x.Step == (int)OrderStep.DANG_GOI_XE) &&
-                                                                   x.IndexOrder > oldIndexOrder &&
-                                                                   x.IsVoiced == false)
-                                                       .OrderBy(x => x.IndexOrder)
-                                                       .ToListAsync();
-
-                foreach (var typeProductOrder in typeProductOrders)
-                {
-                    if (typeProductOrder.IndexOrder > 1)
-                    {
-                        typeProductOrder.IndexOrder--;
-                    }
                 }
             }
         }

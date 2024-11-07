@@ -355,11 +355,10 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
+                    await _appDbContext.SaveChangesAsync();
 
                     // Xếp lại lốt
-                    await UpdateIndexOrder(oldIndexOrder, order.TypeProduct);
-
-                    await _appDbContext.SaveChangesAsync();
+                    await ReindexOrder(order.TypeProduct);
 
                     Console.WriteLine($@"Update Receiving Order {orderId}");
                     log.Info($@"Update Receiving Order {orderId}");
