@@ -177,114 +177,27 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             bool isSynced = false;
 
             var stateId = 0;
-            switch (websaleOrder.status.ToUpper())
+
+            if(websaleOrder.status.ToUpper() == "BOOKED" && websaleOrder.orderPrintStatus.ToUpper() == "PRINTED")
             {
-                case "BOOKED":
-                    stateId = (int)OrderState.DA_DAT_HANG;
-                    break;
-                case "VOIDED":
-                    stateId = (int)OrderState.DA_HUY_DON;
-                    break;
-                case "RECEIVING":
-                    stateId = (int)OrderState.DANG_LAY_HANG;
-                    break;
-                case "RECEIVED":
-                    stateId = (int)OrderState.DA_XUAT_HANG;
-                    break;
+                stateId = (int)OrderState.DANG_LAY_HANG;
+            }
+            else if (websaleOrder.status.ToUpper() == "RECEIVED" && !String.IsNullOrEmpty(websaleOrder.docnum))
+            {
+                stateId = (int)OrderState.DA_XUAT_HANG;
             }
 
             if (stateId == (int)OrderState.DANG_LAY_HANG)
             {
-                if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
-                {
-                    isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+                // gui du lieu lan 1 khi in phieu thanh cong
 
-                    if (isSynced)
-                    {
-                        var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                        await _vehicleRepository.CreateAsync(vehicleCode);
-                    }
-                }
-                else
-                {
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull);
-
-                    if (isSynced)
-                    {
-                        // Cân vào, gửi tín hiệu signalR tới in phun
-                    }
-                }
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
-                // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
-                await _callToTroughRepository.UpdateWhenCanRa(websaleOrder.deliveryCode);
+                // gui du lieu lan 2 khi can ra va co pkx
 
-                if (!_storeOrderOperatingRepository.CheckExist(websaleOrder.id))
-                {
-                    isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
-
-                    if (isSynced)
-                    {
-                        var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                        await _vehicleRepository.CreateAsync(vehicleCode);
-                    }
-                }
-                else
-                {
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
-                    _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
-
-                    if (isSynced)
-                    {
-                        // Cân ra, nếu trong máng chưa stop
-                        var trough = await _troughRepository.GetTroughByDeliveryCode(websaleOrder.deliveryCode);
-                        if (trough != null)
-                        {
-                            _syncOrderLogger.LogInfo($"Máng {trough.Code} đang xuất đơn hàng {websaleOrder.deliveryCode}");
-
-                            var machine = await _machineRepository.GetMachineByTroughCode(trough.Code);
-                            if (machine != null)
-                            {
-                                _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra trong máng {trough.Code} - máy {machine.Code}");
-
-                                _syncOrderLogger.LogInfo($"Stop Machine API Request Data: MachineCode = {machine.Code} ---- TroughCode = {trough.Code} ---- DeliveryCode = {websaleOrder.deliveryCode}");
-
-                                var response = await _machineRepository.Stop(machine.Code, trough.Code, websaleOrder.deliveryCode);
-
-                                _syncOrderLogger.LogInfo($"Stop Machine Response: Status = {response}");
-                            }
-                        }
-                        else
-                        {
-                            _syncOrderLogger.LogInfo($"Không tìm thấy máng đang xuất đơn {websaleOrder.deliveryCode} => Bỏ qua");
-                        }
-                    }
-                }
             }
-            else if (stateId == (int)OrderState.DA_HUY_DON)
-            {
-                // Kiểm tra có deliveryCode và isDone = false trong tblCallToTrough không => nếu có thì set isDone = true
-                await _callToTroughRepository.UpdateWhenHuyDon(websaleOrder.deliveryCode);
 
-                isSynced = await _storeOrderOperatingRepository.CancelOrder(websaleOrder.id);
-
-                if (isSynced)
-                {
-                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                    await _vehicleRepository.CreateAsync(vehicleCode);
-
-                    // Gửi notification đơn bị hủy đến app lái xe
-                    var canceledOrder = await _storeOrderOperatingRepository.GetDetail(websaleOrder.deliveryCode);
-                    if (canceledOrder != null && !String.IsNullOrEmpty(canceledOrder.DriverUserName))
-                    {
-                        var currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
-                        //SendInfoNotification("khoanv", $"{websaleOrder.deliveryCode} {canceledOrder.DriverUserName} đã bị hủy lúc {currentTime}");
-                    }
-                }
-            }
-            _syncOrderLogger.LogInfo($"Sync status: {isSynced}, {websaleOrder.deliveryCode}, {websaleOrder.status}");
             return isSynced;
         }
     }
