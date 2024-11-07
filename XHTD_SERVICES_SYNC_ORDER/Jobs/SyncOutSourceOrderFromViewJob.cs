@@ -132,12 +132,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 // Hoang Thach
                 if (websaleOrder.customerNumber == HOANGTHACH_CUSTOMER_NUMBER)
                 {
-                    bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
+                    bool isSynced = await SyncWebsaleOrderToHoangThach(websaleOrder);
                 }
                 // Bim Son
                 else if (websaleOrder.customerNumber == BIMSON_CUSTOMER_NUMBER)
                 {
-                    bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
+                    bool isSynced = await SyncWebsaleOrderToBimSon(websaleOrder);
                 }
             }
         }
@@ -177,7 +177,56 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             return result;
         }
 
-        public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
+        public async Task<bool> SyncWebsaleOrderToHoangThach(OrderItemResponse websaleOrder)
+        {
+            bool isSynced = false;
+
+            var stateId = 0;
+
+            var type = 1;
+            var userName = "vicemtamdiep";
+            var password = "77889911";
+            var data = "";
+
+            if (websaleOrder.status.ToUpper() == "BOOKED" && websaleOrder.orderPrintStatus.ToUpper() == "PRINTED")
+            {
+                stateId = (int)OrderState.DANG_LAY_HANG;
+            }
+            else if (websaleOrder.status.ToUpper() == "RECEIVED" && !String.IsNullOrEmpty(websaleOrder.docnum))
+            {
+                stateId = (int)OrderState.DA_XUAT_HANG;
+            }
+
+            if (stateId == (int)OrderState.DANG_LAY_HANG)
+            {
+                // gui du lieu lan 1 khi in phieu thanh cong
+                var obj = new
+                {
+                    DELIVERY_CODE_TD = websaleOrder.deliveryCode,
+                    DELIVERY_CODE_HT = websaleOrder.deliveryCodeTgc,
+                    VEHICLE_CODE = websaleOrder.vehicleCode,
+                    TIME_IN = websaleOrder.timeIn,
+                    TIME_OUT = websaleOrder.timeOut,
+                    ORDER_DATE = websaleOrder.orderDate,
+                    LOADWEIGHTNULL = websaleOrder.loadweightnull,
+                    LOADWEIGHTFULL = websaleOrder.loadweightfull,
+                    SO_STATUS = websaleOrder.status,
+                    ORDER_QUANTITY = websaleOrder.orderQuantity,
+                };
+
+                data = JsonConvert.SerializeObject(obj);
+
+            }
+            else if (stateId == (int)OrderState.DA_XUAT_HANG)
+            {
+                // gui du lieu lan 2 khi can ra va co pkx
+
+            }
+
+            return isSynced;
+        }
+
+        public async Task<bool> SyncWebsaleOrderToBimSon(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
 
