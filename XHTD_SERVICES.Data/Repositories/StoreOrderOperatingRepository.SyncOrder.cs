@@ -356,7 +356,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     await _appDbContext.SaveChangesAsync();
 
                     // Xếp lại lốt
-                    var message = $"#Đơn hàng được xếp lại lốt, lý do: Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
+                    var message = $"Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
                     await ReindexOrder(order.TypeProduct, message);
 
                     Console.WriteLine($@"Update Receiving Order {orderId}");

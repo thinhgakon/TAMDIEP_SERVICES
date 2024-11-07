@@ -404,7 +404,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     if (typeProductOrder.IndexOrder != indexOrder)
                     {
                         typeProductOrder.IndexOrder = indexOrder;
-                        typeProductOrder.LogProcessOrder += message;
+                        typeProductOrder.LogProcessOrder += $"#Đơn hàng được xếp lại lốt: {indexOrder}, lý do: {message} ";
                     }
                     indexOrder++;
                 }

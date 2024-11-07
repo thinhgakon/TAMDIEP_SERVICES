@@ -209,7 +209,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
 
                         // Xếp lại lốt
                         var typeProductList = ordersToCancel.Select(x => x.TypeProduct).Distinct().ToList();
-                        var message = $"#Đơn hàng được xếp lại lốt, lý do: Đơn hàng số hiệu {string.Join(", ", ordersToCancel.Select(x => x.DeliveryCode))} bị hủy xác thực lúc {DateTime.Now} do vượt quá số lần gọi loa ";
+                        var message = $"Đơn hàng số hiệu {string.Join(", ", ordersToCancel.Select(x => x.DeliveryCode))} bị hủy xác thực lúc {DateTime.Now} do vượt quá số lần gọi loa";
                         foreach (var typeProduct in typeProductList)
                         {
                             await _storeOrderOperatingRepository.ReindexOrder(typeProduct, message);
