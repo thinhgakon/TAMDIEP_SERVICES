@@ -589,5 +589,37 @@ namespace XHTD_SERVICES.Data.Repositories
                 }
             }
         }
+
+        public async Task<bool> MarkIsSyncedOutSource2(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                bool isUpdated = false;
+
+                try
+                {
+                    var order = dbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode);
+                    if (order != null)
+                    {
+                        order.IsSyncedOutSource2 = true;
+
+                        await dbContext.SaveChangesAsync();
+
+                        isUpdated = true;
+
+                        log.Info($@"Danh dau IsSyncedOutSource2: {deliveryCode}");
+                    }
+
+                    return isUpdated;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"MarkIsSyncedOutSource2 Error: " + ex.Message);
+                    Console.WriteLine($@"MarkIsSyncedOutSource2 Error: " + ex.Message);
+
+                    return isUpdated;
+                }
+            }
+        }
     }
 }
