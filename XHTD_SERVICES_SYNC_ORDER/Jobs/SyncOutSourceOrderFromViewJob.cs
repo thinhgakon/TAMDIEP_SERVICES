@@ -16,6 +16,7 @@ using XHTD_SERVICES.Helper.Models.Request;
 using Autofac;
 using XHTD_SERVICES_SYNC_ORDER.Business;
 using XHTD_SERVICES_SYNC_ORDER.ws.hoangthach;
+using XHTD_SERVICES_SYNC_ORDER.Models.Request;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -200,19 +201,18 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             if (stateId == (int)OrderState.DANG_LAY_HANG)
             {
-                // gui du lieu lan 1 khi in phieu thanh cong
-                var obj = new
+                var obj = new HTOrderRequest
                 {
                     DELIVERY_CODE_TD = websaleOrder.deliveryCode,
                     DELIVERY_CODE_HT = websaleOrder.deliveryCodeTgc,
                     VEHICLE_CODE = websaleOrder.vehicleCode,
-                    TIME_IN = websaleOrder.timeIn,
-                    TIME_OUT = websaleOrder.timeOut,
+                    TIME_IN = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"),
+                    TIME_OUT = null,
                     ORDER_DATE = websaleOrder.orderDate,
-                    LOADWEIGHTNULL = websaleOrder.loadweightnull,
-                    LOADWEIGHTFULL = websaleOrder.loadweightfull,
-                    SO_STATUS = websaleOrder.status,
-                    ORDER_QUANTITY = websaleOrder.orderQuantity,
+                    LOADWEIGHTNULL = 0.0,
+                    LOADWEIGHTFULL = 0.0,
+                    SO_STATUS = "RECEIVING",
+                    //ORDER_QUANTITY = 0.0,
                 };
 
                 data = JsonConvert.SerializeObject(obj);
@@ -228,7 +228,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 var ws_ht = new DongBoGiaCongHoangThachTamDiep();
                 var wsResult = ws_ht.ReciverData(1, data, userName, password);
 
-                if (wsResult == "SUCCESS")
+                if (wsResult == "ReceivedData")
                 {
                     // Đánh dấu MSGH này đã được đồng bộ sang HT
                     await _storeOrderOperatingRepository.MarkIsSyncedOutSource1(websaleOrder.deliveryCode);
@@ -238,7 +238,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
                 // gui du lieu lan 2 khi can ra va co pkx
-                var obj = new
+                var obj = new 
                 {
                     DELIVERY_CODE_TD = websaleOrder.deliveryCode,
                     DELIVERY_CODE_HT = websaleOrder.deliveryCodeTgc,
