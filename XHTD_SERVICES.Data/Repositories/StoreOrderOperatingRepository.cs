@@ -384,7 +384,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task ReindexOrder(string typeProduct, string message = null)
+        public async Task<List<tblStoreOrderOperating>> ReindexOrder(string typeProduct, string message = null)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -398,6 +398,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                        .OrderBy(x => x.TimeConfirm10)
                                                        .ToListAsync();
 
+                var result = new List<tblStoreOrderOperating>();
+
                 var indexOrder = 1;
                 foreach (var typeProductOrder in typeProductOrders)
                 {
@@ -405,10 +407,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProductOrder.IndexOrder = indexOrder;
                         typeProductOrder.LogProcessOrder += $"#Đơn hàng được xếp lại lốt: {indexOrder}, lý do: {message} ";
+
+                        result.Add(typeProductOrder);
                     }
                     indexOrder++;
                 }
                 await dbContext.SaveChangesAsync();
+                return result;
             }
         }
 

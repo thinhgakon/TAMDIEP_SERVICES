@@ -24,6 +24,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using XHTD_SERVICES_GATEWAY.Devices;
+using System.Data.Entity;
+using XHTD_SERVICES.Data.Models.Values;
+using Microsoft.AspNet.SignalR.Messaging;
 
 namespace XHTD_SERVICES_GATEWAY.Jobs
 {
@@ -710,6 +713,19 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     if (driverUserName != null)
                     {
                         SendPushNotification(driverUserName, pushMessage);
+                    }
+
+                    // Xếp lại lốt
+                    var reason = $"Đơn hàng số hiệu {string.Join(", ", validOrders.Select(x => x.DeliveryCode))} vào cổng lúc {DateTime.Now}";
+                    var typeProductList = validOrders.Select(x => x.TypeProduct).Distinct().ToList();
+                    foreach (var typeProduct in typeProductList)
+                    {
+                        var ordersChanged = await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
+                        foreach (var orderChanged in ordersChanged)
+                        {
+                            var changedMessage = $"#Đơn hàng số hiệu {orderChanged.DeliveryCode} được xếp lại lốt: {orderChanged.IndexOrder}, lý do: {reason}";
+                            SendPushNotification(orderChanged.DriverUserName, changedMessage);
+                        }
                     }
                 }
                 else
