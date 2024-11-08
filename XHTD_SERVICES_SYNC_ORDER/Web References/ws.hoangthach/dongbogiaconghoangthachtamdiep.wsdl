@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://tempuri.org/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="ReciverData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="Kieu" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ReciverDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ReciverDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ReciverDataSoapIn">
+    <wsdl:part name="parameters" element="tns:ReciverData" />
+  </wsdl:message>
+  <wsdl:message name="ReciverDataSoapOut">
+    <wsdl:part name="parameters" element="tns:ReciverDataResponse" />
+  </wsdl:message>
+  <wsdl:portType name="DongBoGiaCongHoangThachTamDiepSoap">
+    <wsdl:operation name="ReciverData">
+      <wsdl:input message="tns:ReciverDataSoapIn" />
+      <wsdl:output message="tns:ReciverDataSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DongBoGiaCongHoangThachTamDiepSoap" type="tns:DongBoGiaCongHoangThachTamDiepSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ReciverData">
+      <soap:operation soapAction="http://tempuri.org/ReciverData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="DongBoGiaCongHoangThachTamDiepSoap12" type="tns:DongBoGiaCongHoangThachTamDiepSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ReciverData">
+      <soap12:operation soapAction="http://tempuri.org/ReciverData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DongBoGiaCongHoangThachTamDiep">
+    <wsdl:port name="DongBoGiaCongHoangThachTamDiepSoap" binding="tns:DongBoGiaCongHoangThachTamDiepSoap">
+      <soap:address location="https://hoangthach.vn:61000/dongbogiaconghoangthachtamdiep.asmx" />
+    </wsdl:port>
+    <wsdl:port name="DongBoGiaCongHoangThachTamDiepSoap12" binding="tns:DongBoGiaCongHoangThachTamDiepSoap12">
+      <soap12:address location="https://hoangthach.vn:61000/dongbogiaconghoangthachtamdiep.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
