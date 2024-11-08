@@ -120,11 +120,20 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                             return;
                         }
 
+                        string currentVehicle = null;
+
+                        if (Program.LastTimeValidVehicle >= DateTime.Now.AddSeconds(-15))
+                        {
+                            currentVehicle = Program.CurrentVehicleInGateway;
+                        }
+
                         _checkInOutRepository.Create(new XHTD_SERVICES.Data.Entities.tblCheckInOut()
                         {
                             AttactmentId = attachmentId,
-                            CheckInTime = DateTime.Now,
-                            LogProcess = $"#CheckIn time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
+                            CheckInTime = null,
+                            CheckOutTime = DateTime.Now,
+                            LogProcess = $"#CheckOut time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
+                            Vehicle = currentVehicle
                         });
 
                         Console.WriteLine("Capture success");

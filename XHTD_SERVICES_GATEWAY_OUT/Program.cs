@@ -35,6 +35,9 @@ namespace XHTD_SERVICES_GATEWAY_OUT
 
         public static int CountToSendFailOpenPort = 0;
 
+        public static string CurrentVehicleInGateway = string.Empty;
+        public static DateTime? LastTimeValidVehicle = null;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
