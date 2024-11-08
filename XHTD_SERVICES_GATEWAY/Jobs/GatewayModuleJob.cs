@@ -723,7 +723,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         var ordersChanged = await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
                         foreach (var orderChanged in ordersChanged)
                         {
-                            var changedMessage = $"#Đơn hàng số hiệu {orderChanged.DeliveryCode} được xếp lại lốt: {orderChanged.IndexOrder}";
+                            var changedMessage = $"Đơn hàng số hiệu {orderChanged.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{orderChanged.IndexOrder}";
                             SendPushNotification(orderChanged.DriverUserName, changedMessage);
                         }
                     }
