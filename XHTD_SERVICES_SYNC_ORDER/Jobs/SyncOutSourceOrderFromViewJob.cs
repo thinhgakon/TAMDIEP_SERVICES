@@ -15,6 +15,7 @@ using System.Globalization;
 using XHTD_SERVICES.Helper.Models.Request;
 using Autofac;
 using XHTD_SERVICES_SYNC_ORDER.Business;
+using XHTD_SERVICES_SYNC_ORDER.ws.hoangthach;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -216,11 +217,45 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
                 data = JsonConvert.SerializeObject(obj);
 
+                // kiểm tra MSGH đã được đồng bộ 
+
+                var ws_ht = new DongBoGiaCongHoangThachTamDiep();
+                var wsResult = ws_ht.ReciverData(1, data, userName, password);
+
+                if (wsResult == "SUCCESS")
+                {
+                    // Đánh dấu MSGH này đã được đồng bộ sang HT
+                }
+
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
                 // gui du lieu lan 2 khi can ra va co pkx
+                var obj = new
+                {
+                    DELIVERY_CODE_TD = websaleOrder.deliveryCode,
+                    DELIVERY_CODE_HT = websaleOrder.deliveryCodeTgc,
+                    VEHICLE_CODE = websaleOrder.vehicleCode,
+                    TIME_IN = websaleOrder.timeIn,
+                    TIME_OUT = websaleOrder.timeOut,
+                    ORDER_DATE = websaleOrder.orderDate,
+                    LOADWEIGHTNULL = websaleOrder.loadweightnull,
+                    LOADWEIGHTFULL = websaleOrder.loadweightfull,
+                    SO_STATUS = websaleOrder.status,
+                    ORDER_QUANTITY = websaleOrder.orderQuantity,
+                };
 
+                data = JsonConvert.SerializeObject(obj);
+
+                // kiểm tra MSGH đã được đồng bộ 
+
+                var ws_ht = new DongBoGiaCongHoangThachTamDiep();
+                var wsResult = ws_ht.ReciverData(1, data, userName, password);
+
+                if (wsResult == "SUCCESS")
+                {
+                    // Đánh dấu MSGH này đã được đồng bộ sang HT
+                }
             }
 
             return isSynced;
