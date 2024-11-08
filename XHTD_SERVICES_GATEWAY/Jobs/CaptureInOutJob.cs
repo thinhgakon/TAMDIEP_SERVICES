@@ -131,6 +131,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         {
                             AttactmentId = attachmentId,
                             CheckInTime = DateTime.Now,
+                            CheckOutTime = null,
                             LogProcess = $"#CheckIn time {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}",
                             Vehicle = currentVehicle
                         });
