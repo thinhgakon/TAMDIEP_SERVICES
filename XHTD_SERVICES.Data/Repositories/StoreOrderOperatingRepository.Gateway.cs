@@ -265,14 +265,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         }
                     }
 
-                    // Xếp lại lốt
-                    var message = $"Đơn hàng số hiệu {string.Join(", ", orders.Select(x => x.DeliveryCode))} vào cổng lúc {DateTime.Now}";
-                    var typeProductList = orders.Select(x => x.TypeProduct).Distinct().ToList();
-                    foreach (var typeProduct in typeProductList)
-                    {
-                        await ReindexOrder(typeProduct, message);
-                    }
-
                     await dbContext.SaveChangesAsync();
                     return true;
 
