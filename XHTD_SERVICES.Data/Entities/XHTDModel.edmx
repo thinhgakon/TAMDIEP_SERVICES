@@ -672,6 +672,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="WeightInVirtual" Type="int" />
           <Property Name="WeightOutTimeVirtual" Type="datetime2" Precision="7" />
           <Property Name="WeightOutVirtual" Type="int" />
+          <Property Name="IsSyncedOutSource1" Type="bit" />
+          <Property Name="IsSyncedOutSource2" Type="bit" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1548,6 +1550,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="WeightInVirtual" Type="Int32" />
           <Property Name="WeightOutTimeVirtual" Type="DateTime" Precision="7" />
           <Property Name="WeightOutVirtual" Type="Int32" />
+          <Property Name="IsSyncedOutSource1" Type="Boolean" />
+          <Property Name="IsSyncedOutSource2" Type="Boolean" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2460,6 +2464,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="IsSyncedOutSource2" ColumnName="IsSyncedOutSource2" />
+                <ScalarProperty Name="IsSyncedOutSource1" ColumnName="IsSyncedOutSource1" />
                 <ScalarProperty Name="WeightOutVirtual" ColumnName="WeightOutVirtual" />
                 <ScalarProperty Name="WeightOutTimeVirtual" ColumnName="WeightOutTimeVirtual" />
                 <ScalarProperty Name="WeightInVirtual" ColumnName="WeightInVirtual" />

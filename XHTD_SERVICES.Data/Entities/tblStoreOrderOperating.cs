@@ -139,6 +139,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> WeightInVirtual { get; set; }
         public Nullable<System.DateTime> WeightOutTimeVirtual { get; set; }
         public Nullable<int> WeightOutVirtual { get; set; }
+        public Nullable<bool> IsSyncedOutSource1 { get; set; }
+        public Nullable<bool> IsSyncedOutSource2 { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
