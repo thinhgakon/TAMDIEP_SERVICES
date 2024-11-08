@@ -38,5 +38,25 @@ namespace XHTD_SERVICES.Data.Repositories
                 return order;
             }
         }
+
+        public bool CheckIsSyncedOutSource1(string deliveryCode)
+        {
+            var orderExist = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.IsSyncedOutSource1 == true);
+            if (orderExist != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool CheckIsSyncedOutSource2(string deliveryCode)
+        {
+            var orderExist = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.DeliveryCode == deliveryCode && x.IsSyncedOutSource2 == true);
+            if (orderExist != null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

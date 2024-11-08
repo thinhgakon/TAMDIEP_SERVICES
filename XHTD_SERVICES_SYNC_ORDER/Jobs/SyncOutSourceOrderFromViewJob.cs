@@ -248,6 +248,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 data = JsonConvert.SerializeObject(obj);
 
                 // kiểm tra MSGH đã được đồng bộ 
+                var isSyncedOutSource1 = _storeOrderOperatingRepository.CheckIsSyncedOutSource1(websaleOrder.deliveryCode);
+                if (isSyncedOutSource1)
+                {
+                    _syncOrderLogger.LogInfo($"Đơn hàng đã được đồng bộ lần 1 => Kết thúc");
+                    return isSynced;
+                }
 
                 var ws_ht = new DongBoGiaCongHoangThachTamDiep();
                 var wsResult = ws_ht.ReciverData(1, data, userName, password);
@@ -255,6 +261,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 if (wsResult == "SUCCESS")
                 {
                     // Đánh dấu MSGH này đã được đồng bộ sang HT
+                    await _storeOrderOperatingRepository.MarkIsSyncedOutSource1(websaleOrder.deliveryCode);
                 }
             }
 
