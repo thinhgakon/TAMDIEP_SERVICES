@@ -237,25 +237,36 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
             {
+                var orderDateString = websaleOrder?.orderDate;
+                DateTime orderDate = DateTime.ParseExact(orderDateString, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder?.timeIn) ?
+                                        DateTime.ParseExact(websaleOrder?.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                                        DateTime.MinValue;
+
+                DateTime timeOutDate = !string.IsNullOrEmpty(websaleOrder?.timeOut) ?
+                                        DateTime.ParseExact(websaleOrder?.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                                        DateTime.MinValue;
+
                 // gui du lieu lan 2 khi can ra va co pkx
-                var obj = new 
+                var obj = new HTOrderRequest
                 {
                     DELIVERY_CODE_TD = websaleOrder.deliveryCode,
                     DELIVERY_CODE_HT = websaleOrder.deliveryCodeTgc,
                     VEHICLE_CODE = websaleOrder.vehicleCode,
-                    TIME_IN = websaleOrder.timeIn,
-                    TIME_OUT = websaleOrder.timeOut,
-                    ORDER_DATE = websaleOrder.orderDate,
-                    LOADWEIGHTNULL = websaleOrder.loadweightnull,
-                    LOADWEIGHTFULL = websaleOrder.loadweightfull,
-                    SO_STATUS = websaleOrder.status,
-                    ORDER_QUANTITY = websaleOrder.orderQuantity,
+                    TIME_IN = !string.IsNullOrEmpty(websaleOrder.timeIn) ? timeInDate.ToString("dd/MM/yyyy HH:mm:ss") : null,
+                    TIME_OUT = !string.IsNullOrEmpty(websaleOrder.timeOut) ? timeOutDate.ToString("dd/MM/yyyy HH:mm:ss") : null,
+                    ORDER_DATE = orderDate.ToString("dd/MM/yyyy HH:mm:ss"),
+                    LOADWEIGHTNULL = !string.IsNullOrEmpty(websaleOrder.loadweightnull) ? Double.Parse(websaleOrder.loadweightnull) : 0.0,
+                    LOADWEIGHTFULL = !string.IsNullOrEmpty(websaleOrder.loadweightfull) ? Double.Parse(websaleOrder.loadweightfull) : 0.0,
+                    SO_STATUS = "RECEIVED",
+                    ORDER_QUANTITY = (double)websaleOrder.bookQuantity,
                 };
 
                 data = JsonConvert.SerializeObject(obj);
 
                 // kiểm tra MSGH đã được đồng bộ 
-                var isSyncedOutSource2 = _storeOrderOperatingRepository.CheckIsSyncedOutSource1(websaleOrder.deliveryCode);
+                var isSyncedOutSource2 = _storeOrderOperatingRepository.CheckIsSyncedOutSource2(websaleOrder.deliveryCode);
                 if (isSyncedOutSource2)
                 {
                     _syncOrderLogger.LogInfo($"Đơn hàng đã được đồng bộ lần 2 => Kết thúc");
@@ -265,7 +276,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 var ws_ht = new DongBoGiaCongHoangThachTamDiep();
                 var wsResult = ws_ht.ReciverData(1, data, userName, password);
 
-                if (wsResult == "SUCCESS")
+                if (wsResult == "ReceivedData")
                 {
                     // Đánh dấu MSGH này đã được đồng bộ sang HT
                     await _storeOrderOperatingRepository.MarkIsSyncedOutSource2(websaleOrder.deliveryCode);
