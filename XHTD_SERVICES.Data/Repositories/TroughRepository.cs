@@ -323,7 +323,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                    into callToTroughs
 
                                    where machine.ProductCategory == productCategory &&
-                                         machineTypeProducts.Any(mtp => mtp.TypeProduct == typeProduct) 
+                                         machineTypeProducts.Any(mtp => mtp.TypeProduct == typeProduct) &&
+                                         trough.State == true
 
                                    select new
                                    {

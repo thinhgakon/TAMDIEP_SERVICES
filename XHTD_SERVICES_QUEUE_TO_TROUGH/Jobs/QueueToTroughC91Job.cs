@@ -105,7 +105,8 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
                         var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
                                                                                              x.ItemId == order.ItemId &&
-                                                                                             x.Vehicle == order.Vehicle)
+                                                                                             x.Vehicle == order.Vehicle &&
+                                                                                             x.IsVoiced == false)
                                                                                  .ToListAsync();
 
                         var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.C91, OrderProductCategoryCode.XI_BAO);
