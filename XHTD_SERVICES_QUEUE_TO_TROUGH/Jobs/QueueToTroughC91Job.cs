@@ -94,35 +94,34 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 // 3. Tim may xuat hien tai co it khoi luong don nhat (tuong ung voi type product)
                 // 4. Tim STT lon nhat trong may tim duoc o B3: maxIndex
                 // 5. Them don hang vao may o B3 voi index = maxIndex + 1
-                foreach (var order in orders)
+                using (var dbContext = new XHTD_Entities())
                 {
-                    var orderId = (int)order.OrderId;
-                    var deliveryCode = order.DeliveryCode;
-                    var vehicle = order.Vehicle;
-                    var sumNumber = (decimal)order.SumNumber;
-
-                    var splitOrders = new List<tblStoreOrderOperating>();
-                    using (var dbContext = new XHTD_Entities())
+                    foreach (var order in orders)
                     {
-                        splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
-                                                                                         x.ItemId == order.ItemId &&
-                                                                                         x.Vehicle == order.Vehicle)
-                                                                             .ToListAsync();
-                    }
+                        var orderId = (int)order.OrderId;
+                        var deliveryCode = order.DeliveryCode;
+                        var vehicle = order.Vehicle;
+                        var sumNumber = (decimal)order.SumNumber;
 
-                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.C91, OrderProductCategoryCode.XI_BAO);
+                        var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
+                                                                                             x.ItemId == order.ItemId &&
+                                                                                             x.Vehicle == order.Vehicle)
+                                                                                 .ToListAsync();
 
-                    _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
+                        var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.C91, OrderProductCategoryCode.XI_BAO);
 
-                    if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
-                    {
-                        await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                        _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
 
-                        if (splitOrders != null && splitOrders.Count > 0)
+                        if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
                         {
-                            foreach (var splitOrder in splitOrders)
+                            await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+
+                            if (splitOrders != null && splitOrders.Count > 0)
                             {
-                                await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                foreach (var splitOrder in splitOrders)
+                                {
+                                    await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                }
                             }
                         }
                     }
