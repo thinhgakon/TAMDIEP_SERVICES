@@ -8,6 +8,7 @@ using XHTD_SERVICES_CLK_TROUGH_1.Devices;
 
 namespace XHTD_SERVICES_CLK_TROUGH_1.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ReconnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ReconnectFileAppender");
