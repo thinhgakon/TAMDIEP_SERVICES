@@ -7,6 +7,7 @@ using log4net;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
@@ -106,6 +107,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                         var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
                                                                                              x.ItemId == order.ItemId &&
                                                                                              x.Vehicle == order.Vehicle &&
+                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO &&
                                                                                              x.IsVoiced == false)
                                                                                  .ToListAsync();
 
