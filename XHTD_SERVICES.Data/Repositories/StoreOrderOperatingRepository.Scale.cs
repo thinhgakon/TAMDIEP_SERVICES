@@ -140,8 +140,15 @@ namespace XHTD_SERVICES.Data.Repositories
                     var orders = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
-                                                     && x.Step >= (int)OrderStep.DA_VAO_CONG
-                                                     && x.Step < (int)OrderStep.DA_CAN_VAO
+                                                     && (
+                                                        x.Step == (int)OrderStep.DA_XAC_THUC
+                                                        ||
+                                                        x.Step == (int)OrderStep.CHO_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DANG_GOI_XE
+                                                        ||
+                                                        x.Step == (int)OrderStep.DA_VAO_CONG
+                                                        )
                                                     )
                                             .ToListAsync();
 
