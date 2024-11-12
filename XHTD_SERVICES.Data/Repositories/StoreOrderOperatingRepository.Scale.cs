@@ -95,7 +95,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     var order = await dbContext.tblStoreOrderOperatings
                                             .Where(x => x.DeliveryCode == deliveryCode
                                                      && (
-                                                        x.Step < (int)OrderStep.DA_CAN_VAO
+                                                        x.Step == (int)OrderStep.DA_CAN_VAO
                                                         ||
                                                         x.Step == (int)OrderStep.DA_XAC_THUC
                                                         ||
