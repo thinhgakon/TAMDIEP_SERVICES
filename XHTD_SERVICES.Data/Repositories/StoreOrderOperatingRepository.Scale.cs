@@ -22,13 +22,23 @@ namespace XHTD_SERVICES.Data.Repositories
                                             .Where(x => x.Vehicle == vehicleCode
                                                      && x.IsVoiced == false
                                                         && (
-                                                            x.Step < (int)OrderStep.DA_CAN_RA
+                                                            x.Step == (int)OrderStep.CHUA_NHAN_DON
+                                                            ||
+                                                            x.Step == (int)OrderStep.DA_NHAN_DON
                                                             ||
                                                             x.Step == (int)OrderStep.DA_XAC_THUC
                                                             ||
                                                             x.Step == (int)OrderStep.CHO_GOI_XE
                                                             ||
                                                             x.Step == (int)OrderStep.DANG_GOI_XE
+                                                            ||
+                                                            x.Step == (int)OrderStep.DA_VAO_CONG
+                                                            ||
+                                                            x.Step == (int)OrderStep.DA_CAN_VAO
+                                                            ||
+                                                            x.Step == (int)OrderStep.DANG_LAY_HANG
+                                                            ||
+                                                            x.Step == (int)OrderStep.DA_LAY_HANG
                                                         )
                                                    )
                                             .OrderByDescending(x => x.Step)
