@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using log4net;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
@@ -91,20 +95,38 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 // 3. Tim may xuat hien tai co it khoi luong don nhat (tuong ung voi type product)
                 // 4. Tim STT lon nhat trong may tim duoc o B3: maxIndex
                 // 5. Them don hang vao may o B3 voi index = maxIndex + 1
-                foreach (var order in orders)
+                using (var dbContext = new XHTD_Entities())
                 {
-                    var orderId = (int)order.OrderId;
-                    var deliveryCode = order.DeliveryCode;
-                    var vehicle = order.Vehicle;
-                    var sumNumber = (decimal)order.SumNumber;
-
-                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.PCB40, OrderProductCategoryCode.XI_BAO);
-
-                    _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
-
-                    if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                    foreach (var order in orders)
                     {
-                        await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                        var orderId = (int)order.OrderId;
+                        var deliveryCode = order.DeliveryCode;
+                        var vehicle = order.Vehicle;
+                        var sumNumber = (decimal)order.SumNumber;
+
+                        var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
+                                                                                             x.ItemId == order.ItemId &&
+                                                                                             x.Vehicle == order.Vehicle &&
+                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO &&
+                                                                                             x.IsVoiced == false)
+                                                                                 .ToListAsync();
+
+                        var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.PCB40, OrderProductCategoryCode.XI_BAO);
+
+                        _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
+
+                        if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                        {
+                            await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+
+                            if (splitOrders != null && splitOrders.Count > 0)
+                            {
+                                foreach (var splitOrder in splitOrders)
+                                {
+                                    await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                }
+                            }
+                        }
                     }
                 }
             }

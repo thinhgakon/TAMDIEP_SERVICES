@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using log4net;
 using Quartz;
 using XHTD_SERVICES.Data.Common;
+using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
@@ -91,20 +93,30 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 // 3. Tim may xuat hien tai co it khoi luong don nhat (tuong ung voi type product)
                 // 4. Tim STT lon nhat trong may tim duoc o B3: maxIndex
                 // 5. Them don hang vao may o B3 voi index = maxIndex + 1
-                foreach (var order in orders)
+                using (var dbContext = new XHTD_Entities())
                 {
-                    var orderId = (int)order.OrderId;
-                    var deliveryCode = order.DeliveryCode;
-                    var vehicle = order.Vehicle;
-                    var sumNumber = (decimal)order.SumNumber;
-
-                    var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.OTHER, OrderProductCategoryCode.XI_BAO);
-
-                    _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
-
-                    if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                    foreach (var order in orders)
                     {
-                        await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                        var orderId = (int)order.OrderId;
+                        var deliveryCode = order.DeliveryCode;
+                        var vehicle = order.Vehicle;
+                        var sumNumber = (decimal)order.SumNumber;
+
+                        var machineCode = await _troughRepository.GetMinQuantityTrough(OrderTypeProductCode.OTHER, OrderProductCategoryCode.XI_BAO);
+
+                        _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
+
+                        if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                        {
+                            var existedCallToTrough = await dbContext.tblCallToTroughs.Where(x => x.Vehicle == order.Vehicle &&
+                                                                                                  x.IsDone == false)
+                                                                                      .FirstOrDefaultAsync();
+
+                            if (existedCallToTrough == null)
+                            {
+                                await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                            }
+                        }
                     }
                 }
             }
