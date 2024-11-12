@@ -38,37 +38,37 @@ namespace XHTD_SERVICES_PING.Schedules
             await _scheduler.ScheduleJob(gatewayPingJob, gatewayPingTrigger);
 
             // Tram9511 Ping server
-            IJobDetail tram9511PingJob = JobBuilder.Create<Tram9511PingJob>().Build();
-            ITrigger tram9511PingTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(tram9511PingJob, tram9511PingTrigger);
+            //IJobDetail tram9511PingJob = JobBuilder.Create<Tram9511PingJob>().Build();
+            //ITrigger tram9511PingTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(10)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(tram9511PingJob, tram9511PingTrigger);
 
-            // Tram9512 Ping server
-            IJobDetail tram9512PingJob = JobBuilder.Create<Tram9512PingJob>().Build();
-            ITrigger tram9512PingTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(tram9512PingJob, tram9512PingTrigger);
+            //// Tram9512 Ping server
+            //IJobDetail tram9512PingJob = JobBuilder.Create<Tram9512PingJob>().Build();
+            //ITrigger tram9512PingTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(10)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(tram9512PingJob, tram9512PingTrigger);
 
-            // Tram481 Ping server
-            IJobDetail tram481PingJob = JobBuilder.Create<Tram481PingJob>().Build();
-            ITrigger tram481PingTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(tram481PingJob, tram481PingTrigger);
+            //// Tram481 Ping server
+            //IJobDetail tram481PingJob = JobBuilder.Create<Tram481PingJob>().Build();
+            //ITrigger tram481PingTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(10)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(tram481PingJob, tram481PingTrigger);
         }
     }
 }
