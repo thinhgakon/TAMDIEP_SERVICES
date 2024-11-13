@@ -117,13 +117,19 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 
                         if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
                         {
-                            await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
-
-                            if (splitOrders != null && splitOrders.Count > 0)
+                            var existedTrough = await dbContext.tblCallToTroughs.AnyAsync(x => x.Vehicle == order.Vehicle &&
+                                                                                               x.IsDone == false);
+                            
+                            if (!existedTrough)
                             {
-                                foreach (var splitOrder in splitOrders)
+                                await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+
+                                if (splitOrders != null && splitOrders.Count > 0)
                                 {
-                                    await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                    foreach (var splitOrder in splitOrders)
+                                    {
+                                        await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                    }
                                 }
                             }
                         }
