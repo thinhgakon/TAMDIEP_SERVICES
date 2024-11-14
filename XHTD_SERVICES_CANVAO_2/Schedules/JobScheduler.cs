@@ -47,15 +47,15 @@ namespace XHTD_SERVICES_CANVAO_2.Schedules
                 .Build();
             await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
 
-            IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            ITrigger connectPegasusrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(10)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
+            //IJobDetail connectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            //ITrigger connectPegasusrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(10)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(connectPegasusJob, connectPegasusrigger);
 
             IJobDetail scaleSocketJob = JobBuilder.Create<ScaleSocketJob>().Build();
             ITrigger scaleSocketTrigger = TriggerBuilder.Create()
