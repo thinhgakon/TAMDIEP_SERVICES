@@ -178,7 +178,15 @@ namespace XHTD_SERVICES_LED.Jobs
                         {
                             vehicleCode = order.Vehicle;
                             planQuantity = (int)(order.SumNumber * 20);
-                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                            if (!String.IsNullOrEmpty(order.ItemAlias))
+                            {
+                                typeProduct = order.ItemAlias;
+                            }
+                            else 
+                            { 
+                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                            }
                         }
 
                         sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{deliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{countQuantity}[!]";
@@ -197,7 +205,17 @@ namespace XHTD_SERVICES_LED.Jobs
                         {
                             var vehicleCode = order.Vehicle;
                             var planQuantity = (int)(order.SumNumber * 20);
-                            var typeProduct = !string.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                            var typeProduct = "---";
+                            if (!String.IsNullOrEmpty(order.ItemAlias))
+                            {
+                                typeProduct = order.ItemAlias;
+                            }
+                            else
+                            {
+                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                            }
+
                             var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
@@ -260,8 +278,15 @@ namespace XHTD_SERVICES_LED.Jobs
                         {
                             vehicleCode = order.Vehicle;
                             planQuantity = (int)(order.SumNumber * 20);
-                            typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
 
+                            if (!String.IsNullOrEmpty(order.ItemAlias))
+                            {
+                                typeProduct = order.ItemAlias;
+                            }
+                            else
+                            {
+                                typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                            }
                         }
 
                         DisplayScreenMDBLed($"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]");

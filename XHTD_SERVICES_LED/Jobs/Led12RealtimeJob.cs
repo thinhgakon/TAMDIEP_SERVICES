@@ -247,7 +247,15 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     vehicleCode = order.Vehicle;
                     planQuantity = (int)(order.SumNumber * 20);
-                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                    if (!String.IsNullOrEmpty(order.ItemAlias))
+                    {
+                        typeProduct = order.ItemAlias;
+                    }
+                    else
+                    {
+                        typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                    }
                 }
                 else
                 {
@@ -281,8 +289,15 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     vehicleCode = order.Vehicle;
                     planQuantity = (int)(order.SumNumber * 20);
-                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
-
+                    
+                    if (!String.IsNullOrEmpty(order.ItemAlias))
+                    {
+                        typeProduct = order.ItemAlias;
+                    }
+                    else
+                    {
+                        typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                    }
                 }
 
                 var sendCode = $"*[H1][C1]{typeProduct}[H2][C1]{planQuantity - countQuantity}[H3][C1]---[H4][Cy]---[!]";

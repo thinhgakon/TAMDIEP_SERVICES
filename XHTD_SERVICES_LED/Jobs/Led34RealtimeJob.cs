@@ -244,7 +244,15 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     vehicleCode = order.Vehicle;
                     planQuantity = (int)(order.SumNumber * 20);
-                    typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+
+                    if (!String.IsNullOrEmpty(order.ItemAlias))
+                    {
+                        typeProduct = order.ItemAlias;
+                    }
+                    else
+                    {
+                        typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
+                    }
                 }
                 else
                 {
