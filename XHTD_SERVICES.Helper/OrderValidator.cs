@@ -430,27 +430,6 @@ namespace XHTD_SERVICES.Helper
                         (
                             order.Step == (int)OrderStep.CHUA_NHAN_DON
                         );
-
-                if (isValid)
-                {
-                    return CheckValidRfidResultCode.HOP_LE;
-                }
-                else if (isValidScaledIn)
-                {
-                    return CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO;
-                }
-                else if (isValidReceivedOrder)
-                {
-                    return CheckValidRfidResultCode.CHUA_XAC_THUC;
-                }
-                else if (isValidHasOrder)
-                {
-                    return CheckValidRfidResultCode.CHUA_NHAN_DON;
-                }
-                else
-                {
-                    return CheckValidRfidResultCode.CHUA_CO_DON;
-                }
             }
             else
             {
@@ -483,23 +462,27 @@ namespace XHTD_SERVICES.Helper
                         (
                             order.Step == (int)OrderStep.CHUA_NHAN_DON
                         );
+            }
 
-                if (isValid)
-                {
-                    return CheckValidRfidResultCode.HOP_LE;
-                }
-                else if (isValidReceivedOrder)
-                {
-                    return CheckValidRfidResultCode.CHUA_XAC_THUC;
-                }
-                else if (isValidHasOrder)
-                {
-                    return CheckValidRfidResultCode.CHUA_NHAN_DON;
-                }
-                else
-                {
-                    return CheckValidRfidResultCode.CHUA_CO_DON;
-                }
+            if (isValid)
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else if (isValidScaledIn)
+            {
+                return CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO;
+            }
+            else if (isValidReceivedOrder)
+            {
+                return CheckValidRfidResultCode.CHUA_XAC_THUC;
+            }
+            else if (isValidHasOrder)
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_CO_DON;
             }
         }
 
