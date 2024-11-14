@@ -14,6 +14,7 @@ using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
 using XHTD_SERVICES.Data.Models.Values;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 {
@@ -101,6 +102,24 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         {
                             _gatewayCallLogger.LogInfo($"Không tìm thấy đơn hàng => Kết thúc");
                             return;
+                        }
+
+                        // Nếu trạm cân nhận thêm đơn, xác thực thủ công khi xe đang đứng ở cân thì không gọi loa
+                        var waitingToCallOrders = (from orders in db.tblStoreOrderOperatings
+                                                   join callVehicles in db.tblCallVehicleStatus
+                                                   on orders.Id equals callVehicles.StoreOrderOperatingId
+                                                   where (orders.Step == (int)OrderStep.DA_VAO_CONG ||
+                                                          orders.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                          orders.Step == (int)OrderStep.DANG_LAY_HANG ||
+                                                          orders.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                          orders.Vehicle == storeOrderOperating.Vehicle &&
+                                                          orders.IsVoiced == false
+                                                   select callVehicles).ToList();
+
+                        if (waitingToCallOrders != null && waitingToCallOrders.Count > 0)
+                        {
+                            waitingToCallOrders.ForEach(x => x.IsDone = true);
+                            await db.SaveChangesAsync();
                         }
 
                         if (storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
