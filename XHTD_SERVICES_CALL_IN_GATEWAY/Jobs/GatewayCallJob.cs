@@ -105,20 +105,16 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         }
 
                         // Nếu trạm cân nhận thêm đơn, xác thực thủ công khi xe đang đứng ở cân thì không gọi loa
-                        var waitingToCallOrders = (from orders in db.tblStoreOrderOperatings
-                                                   join callVehicles in db.tblCallVehicleStatus
-                                                   on orders.Id equals callVehicles.StoreOrderOperatingId
-                                                   where (orders.Step == (int)OrderStep.DA_VAO_CONG ||
-                                                          orders.Step == (int)OrderStep.DA_CAN_VAO ||
-                                                          orders.Step == (int)OrderStep.DANG_LAY_HANG ||
-                                                          orders.Step == (int)OrderStep.DA_LAY_HANG) &&
-                                                          orders.Vehicle == storeOrderOperating.Vehicle &&
-                                                          orders.IsVoiced == false
-                                                   select callVehicles).ToList();
+                        var isVehicleInFactory = await db.tblStoreOrderOperatings.AnyAsync(x => x.Vehicle == storeOrderOperating.Vehicle &&
+                                                                                               (x.Step == (int)OrderStep.DA_VAO_CONG ||
+                                                                                                x.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                                                                x.Step == (int)OrderStep.DANG_LAY_HANG ||
+                                                                                                x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                                x.IsVoiced == false);
 
-                        if (waitingToCallOrders != null && waitingToCallOrders.Count > 0)
+                        if (isVehicleInFactory)
                         {
-                            waitingToCallOrders.ForEach(x => x.IsDone = true);
+                            vehicleWaitingCall.IsDone = true;
                             await db.SaveChangesAsync();
                         }
 
