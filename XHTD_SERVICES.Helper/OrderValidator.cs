@@ -383,16 +383,19 @@ namespace XHTD_SERVICES.Helper
         {
             if (order == null)
             {
-                _logger.Info($"4.0. Don hang: order = null");
+                _logger.Info($"4.0. Don hang tai can: order = null");
 
                 return CheckValidRfidResultCode.CHUA_CO_DON;
             }
 
-            _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+            _logger.Info($"4.0. Kiem tra don hang tai can: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}, WeightIn = {order.WeightIn}, SumNumber = {order.SumNumber}");
 
-            var isValid = order.Step == (int)OrderStep.DA_NHAN_DON && (order.DriverUserName ?? "") != "";
+            var isValid = false;
+            var isValidConfirm = false;
 
-            var isValidConfirm = order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "";
+            isValid = order.Step == (int)OrderStep.DA_NHAN_DON && (order.DriverUserName ?? "") != "";
+
+            isValidConfirm = order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "";
 
             if (isValid)
             {
