@@ -18,6 +18,8 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly string CHUA_GOI_LOA = "CHUA_GOI_LOA";
 
+        public static readonly string XI_ROI_DA_CAN_VAO = "XI_ROI_DA_CAN_VAO";
+
         public static readonly string CHUA_CAN_RA = "CHUA_CAN_RA";
 
         public static readonly string HOP_LE = "HOP_LE";
