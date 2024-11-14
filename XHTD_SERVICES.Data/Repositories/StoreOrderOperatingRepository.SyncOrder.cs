@@ -353,6 +353,14 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
+
+                    if (order.TimeConfirm2 == null)
+                    {
+                        order.TimeConfirm2 = DateTime.Now.AddMinutes(-1);
+                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đặt lại time vào cổng lúc {syncTime}; ";
+                        order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
+                    }
+
                     await _appDbContext.SaveChangesAsync();
 
                     // Xếp lại lốt
