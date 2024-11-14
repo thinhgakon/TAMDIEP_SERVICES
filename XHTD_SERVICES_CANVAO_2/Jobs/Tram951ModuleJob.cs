@@ -445,26 +445,57 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
             // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
             var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
-            var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
+            //var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
+            var checkValidCardNoResult = OrderValidator.CheckValidOrderScaleStation(currentOrder);
 
-            if (currentOrder == null)
+            if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_CO_DON)
             {
                 _logger.LogInfo($"2. Tag KHONG co don hang => Ket thuc");
 
-                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng");
-                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} chưa có đơn hàng");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} chưa có đơn hàng");
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
 
                 return;
             }
-            else if (isValidCardNo == false)
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
             {
-                _logger.LogInfo($"2. Tag KHONG co don hang hop le => Ket thuc");
+                _logger.LogInfo($"2. Tag KHONG co don hang hop le: chưa nhận đơn => Ket thuc");
 
-                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng hợp lệ");
-                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} không có đơn hàng hợp lệ");
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} lái xe chưa nhận đơn hàng");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} lái xe chưa nhận đơn hàng");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_XAC_THUC)
+            {
+                _logger.LogInfo($"2. Tag KHONG co don hang hop le: chưa xác thực => Ket thuc");
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} đơn hàng chưa được xác thực");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} đơn hàng chưa được xác thực");
+
+                SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+                SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
+
+                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                tmpInvalidCardNoLst.Add(newCardNoLog);
+
+                return;
+            }
+            else if (checkValidCardNoResult == CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO)
+            {
+                _logger.LogInfo($"2. ag KHONG co don hang hop le: xi rời đã cân vào => Ket thuc");
+
+                SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
+                SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
 
                 SendNotificationHub($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
                 SendNotificationAPI($"{SCALE_DELIVERY_CODE}", $"{currentOrder.DeliveryCode}");
