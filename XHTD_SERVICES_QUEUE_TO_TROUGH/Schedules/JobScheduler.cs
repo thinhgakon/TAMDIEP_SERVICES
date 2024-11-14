@@ -68,26 +68,26 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Schedules
             await _scheduler.ScheduleJob(queueToTroughOtherJob, queueToTroughOtherTrigger);
 
             // Xếp số vào máng xi rời
-            IJobDetail queueToTroughRoiJob = JobBuilder.Create<QueueToTroughRoiJob>().Build();
-            ITrigger queueToTroughRoiTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(queueToTroughRoiJob, queueToTroughRoiTrigger);
+            //IJobDetail queueToTroughRoiJob = JobBuilder.Create<QueueToTroughRoiJob>().Build();
+            //ITrigger queueToTroughRoiTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(queueToTroughRoiJob, queueToTroughRoiTrigger);
 
             // Xếp số vào máng clinker
-            IJobDetail queueToTroughClinkerJob = JobBuilder.Create<QueueToTroughClinkerJob>().Build();
-            ITrigger queueToTroughClinkerTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(queueToTroughClinkerJob, queueToTroughClinkerTrigger);
+            //IJobDetail queueToTroughClinkerJob = JobBuilder.Create<QueueToTroughClinkerJob>().Build();
+            //ITrigger queueToTroughClinkerTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Queue_To_Trough_Interval_In_Seconds")))
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(queueToTroughClinkerJob, queueToTroughClinkerTrigger);
 
             // Xếp số vào máng jumbo
             IJobDetail queueToTroughJumboJob = JobBuilder.Create<QueueToTroughJumboJob>().Build();
