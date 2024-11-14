@@ -327,7 +327,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             CountTry = 0,
                             CountReindex = 0,
                             IsDone = false,
-                            CallLog = $@"#Xe được xếp vào máng lúc {DateTime.Now}.",
+                            CallLog = $@"#Xe được tự động xếp vào máng lúc {DateTime.Now}.",
                             CreateDay = DateTime.Now,
                             UpdateDay = DateTime.Now,
                         };
