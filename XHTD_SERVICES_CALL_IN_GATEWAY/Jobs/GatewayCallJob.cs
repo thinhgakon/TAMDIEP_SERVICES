@@ -116,6 +116,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         {
                             vehicleWaitingCall.IsDone = true;
                             await db.SaveChangesAsync();
+                            return;
                         }
 
                         if (storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
