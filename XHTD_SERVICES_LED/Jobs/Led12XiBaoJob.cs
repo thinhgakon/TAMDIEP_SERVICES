@@ -191,8 +191,16 @@ namespace XHTD_SERVICES_LED.Jobs
                         if (order != null) 
                         {
                             vehicleCode = order.Vehicle;
-                            planQuantity = (int)(order.SumNumber * 20);
-                            
+
+                            if (order.NetWeight != null && order.NetWeight != 0)
+                            {
+                                planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                            }
+                            else
+                            {
+                                planQuantity = (int)(order.SumNumber * 1000 / 50);
+                            }
+
                             if (!String.IsNullOrEmpty(order.ItemAlias))
                             {
                                 typeProduct = order.ItemAlias;
@@ -218,7 +226,16 @@ namespace XHTD_SERVICES_LED.Jobs
                         if (order != null)
                         {
                             var vehicleCode = order.Vehicle;
-                            var planQuantity = (int)(order.SumNumber * 20);
+
+                            var planQuantity = 0;
+                            if (order.NetWeight != null && order.NetWeight != 0)
+                            {
+                                planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                            }
+                            else
+                            {
+                                planQuantity = (int)(order.SumNumber * 1000 / 50);
+                            }
 
                             var typeProduct = "---";
                             if (!String.IsNullOrEmpty(order.ItemAlias))
@@ -291,7 +308,15 @@ namespace XHTD_SERVICES_LED.Jobs
                         if (order != null)
                         {
                             vehicleCode = order.Vehicle;
-                            planQuantity = (int)(order.SumNumber * 20);
+
+                            if (order.NetWeight != null && order.NetWeight != 0)
+                            {
+                                planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                            }
+                            else
+                            {
+                                planQuantity = (int)(order.SumNumber * 1000 / 50);
+                            }
 
                             if (!String.IsNullOrEmpty(order.ItemAlias))
                             {
