@@ -430,27 +430,76 @@ namespace XHTD_SERVICES.Helper
                         (
                             order.Step == (int)OrderStep.CHUA_NHAN_DON
                         );
-            }
 
-            if (isValid)
-            {
-                return CheckValidRfidResultCode.HOP_LE;
-            }
-            else if (isValidScaledIn)
-            {
-                return CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO;
-            }
-            else if (isValidReceivedOrder)
-            {
-                return CheckValidRfidResultCode.CHUA_XAC_THUC;
-            }
-            else if (isValidHasOrder)
-            {
-                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+                if (isValid)
+                {
+                    return CheckValidRfidResultCode.HOP_LE;
+                }
+                else if (isValidScaledIn)
+                {
+                    return CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO;
+                }
+                else if (isValidReceivedOrder)
+                {
+                    return CheckValidRfidResultCode.CHUA_XAC_THUC;
+                }
+                else if (isValidHasOrder)
+                {
+                    return CheckValidRfidResultCode.CHUA_NHAN_DON;
+                }
+                else
+                {
+                    return CheckValidRfidResultCode.CHUA_CO_DON;
+                }
             }
             else
             {
-                return CheckValidRfidResultCode.CHUA_CO_DON;
+                isValid = (order.DriverUserName ?? "") != ""
+                        &&
+                        (
+                            order.Step == (int)OrderStep.DA_XAC_THUC
+                            ||
+                            order.Step == (int)OrderStep.CHO_GOI_XE
+                            ||
+                            order.Step == (int)OrderStep.DANG_GOI_XE
+                            ||
+                            order.Step == (int)OrderStep.DA_VAO_CONG
+                            ||
+                            order.Step == (int)OrderStep.DA_CAN_VAO
+                            ||
+                            order.Step == (int)OrderStep.DANG_LAY_HANG
+                            ||
+                            order.Step == (int)OrderStep.DA_LAY_HANG
+                        );
+
+                isValidReceivedOrder = (order.DriverUserName ?? "") != ""
+                        &&
+                        (
+                            order.Step == (int)OrderStep.DA_NHAN_DON
+                        );
+
+                isValidHasOrder = (order.DriverUserName ?? "") != ""
+                        &&
+                        (
+                            order.Step == (int)OrderStep.CHUA_NHAN_DON
+                        );
+
+                if (isValid)
+                {
+                    return CheckValidRfidResultCode.HOP_LE;
+                }
+                else if (isValidReceivedOrder)
+                {
+                    return CheckValidRfidResultCode.CHUA_XAC_THUC;
+                }
+                else if (isValidHasOrder)
+                {
+                    return CheckValidRfidResultCode.CHUA_NHAN_DON;
+                }
+                else
+                {
+                    return CheckValidRfidResultCode.CHUA_CO_DON;
+                }
             }
         }
 
