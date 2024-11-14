@@ -418,18 +418,6 @@ namespace XHTD_SERVICES.Helper
                             ||
                             order.Step == (int)OrderStep.DA_LAY_HANG
                         );
-
-                isValidReceivedOrder = (order.DriverUserName ?? "") != ""
-                        &&
-                        (
-                            order.Step == (int)OrderStep.DA_NHAN_DON
-                        );
-
-                isValidHasOrder = (order.DriverUserName ?? "") != ""
-                        &&
-                        (
-                            order.Step == (int)OrderStep.CHUA_NHAN_DON
-                        );
             }
             else
             {
@@ -450,19 +438,19 @@ namespace XHTD_SERVICES.Helper
                             ||
                             order.Step == (int)OrderStep.DA_LAY_HANG
                         );
-
-                isValidReceivedOrder = (order.DriverUserName ?? "") != ""
-                        &&
-                        (
-                            order.Step == (int)OrderStep.DA_NHAN_DON
-                        );
-
-                isValidHasOrder = (order.DriverUserName ?? "") != ""
-                        &&
-                        (
-                            order.Step == (int)OrderStep.CHUA_NHAN_DON
-                        );
             }
+
+            isValidReceivedOrder = (order.DriverUserName ?? "") != ""
+                                &&
+                                (
+                                    order.Step == (int)OrderStep.DA_NHAN_DON
+                                );
+
+            isValidHasOrder = (order.DriverUserName ?? "") != ""
+                            &&
+                            (
+                                order.Step == (int)OrderStep.CHUA_NHAN_DON
+                            );
 
             if (isValid)
             {
