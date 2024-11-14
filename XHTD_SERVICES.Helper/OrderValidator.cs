@@ -379,6 +379,35 @@ namespace XHTD_SERVICES.Helper
             }
         }
 
+        public static string CheckValidOrderScaleStation(tblStoreOrderOperating order)
+        {
+            if (order == null)
+            {
+                _logger.Info($"4.0. Don hang: order = null");
+
+                return CheckValidRfidResultCode.CHUA_CO_DON;
+            }
+
+            _logger.Info($"4.0. Kiem tra don hang: DeliveryCode = {order.DeliveryCode}, CatId = {order.CatId}, TypeXK = {order.TypeXK}, Step = {order.Step}, DriverUserName = {order.DriverUserName}");
+
+            var isValid = order.Step == (int)OrderStep.DA_NHAN_DON && (order.DriverUserName ?? "") != "";
+
+            var isValidConfirm = order.Step == (int)OrderStep.DA_XAC_THUC && (order.DriverUserName ?? "") != "";
+
+            if (isValid)
+            {
+                return CheckValidRfidResultCode.HOP_LE;
+            }
+            else if (isValidConfirm)
+            {
+                return CheckValidRfidResultCode.DA_XAC_THUC;
+            }
+            else
+            {
+                return CheckValidRfidResultCode.CHUA_NHAN_DON;
+            }
+        }
+
         public static bool IsValidOrderConfirmationPoint(tblStoreOrderOperating order)
         {
             if (order == null)
