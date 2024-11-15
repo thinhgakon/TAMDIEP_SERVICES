@@ -105,18 +105,29 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         }
 
                         // Nếu trạm cân nhận thêm đơn, xác thực thủ công khi xe đang đứng ở cân thì không gọi loa
-                        var isVehicleInFactory = await db.tblStoreOrderOperatings.AnyAsync(x => x.Vehicle == storeOrderOperating.Vehicle &&
-                                                                                               (x.Step == (int)OrderStep.DA_VAO_CONG ||
-                                                                                                x.Step == (int)OrderStep.DA_CAN_VAO ||
-                                                                                                x.Step == (int)OrderStep.DANG_LAY_HANG ||
-                                                                                                x.Step == (int)OrderStep.DA_LAY_HANG) &&
-                                                                                                x.IsVoiced == false);
+                        var isVehicleInFactory = await db.tblStoreOrderOperatings
+                                                            .AnyAsync(x => x.Vehicle == storeOrderOperating.Vehicle 
+                                                                        && x.IsVoiced == false 
+                                                                        && (
+                                                                            x.Step == (int)OrderStep.DA_VAO_CONG 
+                                                                            ||
+                                                                            x.Step == (int)OrderStep.DA_CAN_VAO 
+                                                                            ||
+                                                                            x.Step == (int)OrderStep.DANG_LAY_HANG 
+                                                                            ||
+                                                                            x.Step == (int)OrderStep.DA_LAY_HANG)
+                                                                            );
 
                         if (isVehicleInFactory)
                         {
+                            _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} có 1 đơn hàng đang ở trong nhà máy. Trường hợp nhận thêm lệnh thủ công => Kết thúc ========");
+
+                            vehicleWaitingCall.ModifiledOn = DateTime.Now;
                             vehicleWaitingCall.IsDone = true;
-                            storeOrderOperating.LogProcessOrder += $@" #Phương tiện {storeOrderOperating.Vehicle} đã ở trong nhà máy";
+                            vehicleWaitingCall.LogCall = $@"{vehicleWaitingCall.LogCall} # Hủy gọi xe khi có đơn trong nhà máy, lúc {DateTime.Now}";
+
                             await db.SaveChangesAsync();
+
                             return;
                         }
 
