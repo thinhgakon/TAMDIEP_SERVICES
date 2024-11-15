@@ -542,13 +542,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                             config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
                             var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, 0);
-                            currentNumberWaitingVehicleInFactory = ordersInFactory.Select(x => x.Vehicle).Distinct().ToList().Count;
+                            currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
                         }
                         else
                         {
                             _logger.LogInfo($"Don hang co cau hinh ke hoach rieng");
                             var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
-                            currentNumberWaitingVehicleInFactory = ordersInFactory.Select(x => x.Vehicle).Distinct().ToList().Count;
+                            currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
                         }
 
                         _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
