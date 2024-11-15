@@ -248,14 +248,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                             decimal? exportedNumber = 0;
 
-                            if(order.NetWeight != null && order.NetWeight != 0)
-                            {
-                                exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / (decimal)order.NetWeight : 0;
-                            }
-                            else
-                            {
-                                exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / 50 : 0;
-                            }
+                            exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / (decimal)orderNetWeight : 0;
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
                             DisplayScreenLed(sendCode, machineCode);
@@ -317,15 +310,14 @@ namespace XHTD_SERVICES_LED.Jobs
                         {
                             vehicleCode = order.Vehicle;
 
+                            double? orderNetWeight = 50;
                             if (order.NetWeight != null && order.NetWeight != 0)
                             {
-                                planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                                orderNetWeight = order.NetWeight;
                             }
-                            else
-                            {
-                                planQuantity = (int)(order.SumNumber * 1000 / 50);
-                            }
-
+                            
+                            planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
+                            
                             if (!String.IsNullOrEmpty(order.ItemAlias))
                             {
                                 typeProduct = order.ItemAlias;
