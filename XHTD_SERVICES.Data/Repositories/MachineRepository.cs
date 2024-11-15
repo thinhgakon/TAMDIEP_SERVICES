@@ -148,18 +148,24 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                                               x.IsVoiced == false)
                                                                                   .ToListAsync();
 
+                        double? orderNetWeight = 50;
+                        if(order.NetWeight != null && order.NetWeight != 0)
+                        {
+                            orderNetWeight = order.NetWeight;
+                        }
+
                         if (splitOrders == null || splitOrders.Count == 0)
                         {
                             order.ExportedNumber = (trough != null && order.DeliveryCode == trough.DeliveryCodeCurrent) ?
-                                                   (decimal?)(trough.CountQuantityCurrent / 1000 * 50) : 0;
-                            order.MachineExportedNumber = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * 50);
+                                                   (decimal?)(trough.CountQuantityCurrent / 1000 * orderNetWeight) : 0;
+                            order.MachineExportedNumber = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * orderNetWeight);
                         }
 
                         else
                         {
                             var totalExported = (trough != null && order.DeliveryCode == trough.DeliveryCodeCurrent) ?
-                                                (decimal?)(trough.CountQuantityCurrent / 1000 * 50) : 0;
-                            var machineTotalExported = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * 50);
+                                                (decimal?)(trough.CountQuantityCurrent / 1000 * orderNetWeight) : 0;
+                            var machineTotalExported = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * orderNetWeight);
 
                             order.ExportedNumber = (totalExported - order.SumNumber) >= 0 ? order.SumNumber : totalExported;
                             order.MachineExportedNumber = (machineTotalExported - order.SumNumber) >= 0 ? order.SumNumber : machineTotalExported;
@@ -208,18 +214,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         if (currentExportHistory != null)
                         {
-                            double? countQuantityEnd = 0;
-
-                            if(order.NetWeight != null & order.NetWeight == 0)
-                            {
-                                countQuantityEnd = order.ExportedNumber != null ? (double?)((double)order.ExportedNumber * 1000 / order.NetWeight) : 0;
-                            }
-                            else
-                            {
-                                countQuantityEnd = order.ExportedNumber != null ? (double?)(order.ExportedNumber * 1000 / 50) : 0;
-                            }
-
-                            currentExportHistory.CountQuantityEnd = countQuantityEnd;
+                            currentExportHistory.CountQuantityEnd = order.ExportedNumber != null ? (double?)((double)order.ExportedNumber * 1000 / orderNetWeight) : 0;
                             currentExportHistory.TimeEnd = DateTime.Now;
                             currentExportHistory.MachineExportedNumber = order.MachineExportedNumber;
                             currentExportHistory.FirstSensorCountQuantityEnd = trough.FirstSensorQuantityCurrent;
