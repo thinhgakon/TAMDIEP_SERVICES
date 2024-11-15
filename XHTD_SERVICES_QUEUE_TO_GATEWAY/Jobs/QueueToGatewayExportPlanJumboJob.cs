@@ -80,7 +80,10 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             try
             {
                 //get sl xe trong bãi chờ máng ứng với sp
-                var vehicleFrontYard = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
+                var orders = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(TYPE_PRODUCT, sourceDocumentId);
+                WriteLogInfo($@"1. Các đơn {TYPE_PRODUCT} đang trong nhà máy hiện tại: {string.Join(",", orders.Select(x => x.DeliveryCode))}");
+
+                var vehicleFrontYard = orders.Select(x => x.Vehicle).Distinct().ToList().Count;
 
                 WriteLogInfo($@"1. Số xe chờ lấy hàng: {vehicleFrontYard}");
 

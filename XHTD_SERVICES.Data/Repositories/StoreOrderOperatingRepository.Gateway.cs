@@ -300,7 +300,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public int CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int? sourceDocumentId)
+        public List<tblStoreOrderOperating> CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(string typeProduct, int? sourceDocumentId)
         {
             var validStep = new[] {
                                     OrderStep.CHO_GOI_XE,
@@ -337,9 +337,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     query = query.Where(x => (x.SourceDocumentId == null || x.SourceDocumentId == 0) || x.SourceDocumentId != null);
                 }
 
-                var orders = query.ToList();
-
-                return orders.Count;
+                return query.ToList();
             }
         }
     }
