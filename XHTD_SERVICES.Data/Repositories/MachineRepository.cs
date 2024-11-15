@@ -151,15 +151,15 @@ namespace XHTD_SERVICES.Data.Repositories
                         if (splitOrders == null || splitOrders.Count == 0)
                         {
                             order.ExportedNumber = (trough != null && order.DeliveryCode == trough.DeliveryCodeCurrent) ?
-                                                   (decimal?)(trough.CountQuantityCurrent / 20) : 0;
-                            order.MachineExportedNumber = (decimal?)(trough.FirstSensorQuantityCurrent / 20);
+                                                   (decimal?)(trough.CountQuantityCurrent / 1000 * 50) : 0;
+                            order.MachineExportedNumber = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * 50);
                         }
 
                         else
                         {
                             var totalExported = (trough != null && order.DeliveryCode == trough.DeliveryCodeCurrent) ?
-                                                (decimal?)(trough.CountQuantityCurrent / 20) : 0;
-                            var machineTotalExported = (decimal?)(trough.FirstSensorQuantityCurrent / 20);
+                                                (decimal?)(trough.CountQuantityCurrent / 1000 * 50) : 0;
+                            var machineTotalExported = (decimal?)(trough.FirstSensorQuantityCurrent / 1000 * 50);
 
                             order.ExportedNumber = (totalExported - order.SumNumber) >= 0 ? order.SumNumber : totalExported;
                             order.MachineExportedNumber = (machineTotalExported - order.SumNumber) >= 0 ? order.SumNumber : machineTotalExported;

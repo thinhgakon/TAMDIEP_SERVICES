@@ -172,7 +172,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             trough.FirstCountFirstSensor = firstCountFirstSensor;
                         }
 
-                        order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 20);
+                        order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 1000 * 50);
 
                         await dbContext.SaveChangesAsync();
 
@@ -211,7 +211,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             trough.FirstCountLastSensor = firstCountLastSensor;
                         }
 
-                        order.ExportedNumber = (decimal?)(countQuantity / 20);
+                        order.ExportedNumber = (decimal?)(countQuantity / 1000 * 50);
 
                         await dbContext.SaveChangesAsync();
 
