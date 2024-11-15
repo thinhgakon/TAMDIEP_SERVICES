@@ -155,7 +155,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                     // Tăng số lần CountToCancel
                     var callVehicleStatusRetry = await db.tblCallVehicleStatus
                                                          .Where(x => x.CallType == CallType.CONG &&
-                                                                     x.CountTry == 3 &&
+                                                                     x.CountReindex == 3 &&
                                                                     (x.CountToCancel == null || x.CountToCancel < 3) &&
                                                                      x.ModifiledOn <= last5Min &&
                                                                      x.IsDone == false)
