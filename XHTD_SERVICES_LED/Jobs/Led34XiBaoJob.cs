@@ -233,7 +233,16 @@ namespace XHTD_SERVICES_LED.Jobs
                                 typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             }
 
-                            var exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 20 : 0;
+                            decimal? exportedNumber = 0;
+
+                            if (order.NetWeight != null && order.NetWeight != 0)
+                            {
+                                exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / (decimal)order.NetWeight : 0;
+                            }
+                            else
+                            {
+                                exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / 50 : 0;
+                            }
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
                             DisplayScreenLed(sendCode, machineCode);

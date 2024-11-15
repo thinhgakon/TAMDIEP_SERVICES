@@ -208,7 +208,18 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         if (currentExportHistory != null)
                         {
-                            currentExportHistory.CountQuantityEnd = order.ExportedNumber != null ? (double?)(order.ExportedNumber * 20) : 0;
+                            double? countQuantityEnd = 0;
+
+                            if(order.NetWeight != null & order.NetWeight == 0)
+                            {
+                                countQuantityEnd = order.ExportedNumber != null ? (double?)((double)order.ExportedNumber * 1000 / order.NetWeight) : 0;
+                            }
+                            else
+                            {
+                                countQuantityEnd = order.ExportedNumber != null ? (double?)(order.ExportedNumber * 1000 / 50) : 0;
+                            }
+
+                            currentExportHistory.CountQuantityEnd = countQuantityEnd;
                             currentExportHistory.TimeEnd = DateTime.Now;
                             currentExportHistory.MachineExportedNumber = order.MachineExportedNumber;
                             currentExportHistory.FirstSensorCountQuantityEnd = trough.FirstSensorQuantityCurrent;
