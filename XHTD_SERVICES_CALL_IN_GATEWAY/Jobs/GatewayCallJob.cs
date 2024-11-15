@@ -115,6 +115,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         if (isVehicleInFactory)
                         {
                             vehicleWaitingCall.IsDone = true;
+                            storeOrderOperating.LogProcessOrder += $@" #Phương tiện {storeOrderOperating.Vehicle} đã ở trong nhà máy";
                             await db.SaveChangesAsync();
                             return;
                         }
