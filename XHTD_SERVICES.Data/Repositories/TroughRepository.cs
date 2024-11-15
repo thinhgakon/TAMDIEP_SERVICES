@@ -172,7 +172,13 @@ namespace XHTD_SERVICES.Data.Repositories
                             trough.FirstCountFirstSensor = firstCountFirstSensor;
                         }
 
-                        order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 1000 * 50);
+                        double? orderNetWeight = 50;
+                        if (order.NetWeight != null && order.NetWeight != 0)
+                        {
+                            orderNetWeight = order.NetWeight;
+                        }
+
+                        order.MachineExportedNumber = (decimal?)(firstSensorQuantity / 1000 * orderNetWeight);
 
                         await dbContext.SaveChangesAsync();
 
@@ -211,7 +217,13 @@ namespace XHTD_SERVICES.Data.Repositories
                             trough.FirstCountLastSensor = firstCountLastSensor;
                         }
 
-                        order.ExportedNumber = (decimal?)(countQuantity / 1000 * 50);
+                        double? orderNetWeight = 50;
+                        if (order.NetWeight != null && order.NetWeight != 0)
+                        {
+                            orderNetWeight = order.NetWeight;
+                        }
+
+                        order.ExportedNumber = (decimal?)(countQuantity / 1000 * orderNetWeight);
 
                         await dbContext.SaveChangesAsync();
 
