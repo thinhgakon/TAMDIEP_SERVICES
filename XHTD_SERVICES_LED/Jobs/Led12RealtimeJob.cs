@@ -247,14 +247,13 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     vehicleCode = order.Vehicle;
 
+                    double? orderNetWeight = 50;
                     if (order.NetWeight != null && order.NetWeight != 0)
                     {
-                        planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                        orderNetWeight = order.NetWeight;
                     }
-                    else
-                    {
-                        planQuantity = (int)(order.SumNumber * 1000 / 50);
-                    }
+
+                    planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
 
                     if (!String.IsNullOrEmpty(order.ItemAlias))
                     {
@@ -297,14 +296,13 @@ namespace XHTD_SERVICES_LED.Jobs
                 {
                     vehicleCode = order.Vehicle;
 
+                    double? orderNetWeight = 50;
                     if (order.NetWeight != null && order.NetWeight != 0)
                     {
-                        planQuantity = (int)((double)order.SumNumber * 1000 / order.NetWeight);
+                        orderNetWeight = order.NetWeight;
                     }
-                    else
-                    {
-                        planQuantity = (int)(order.SumNumber * 1000 / 50);
-                    }
+                    
+                    planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
 
                     if (!String.IsNullOrEmpty(order.ItemAlias))
                     {
