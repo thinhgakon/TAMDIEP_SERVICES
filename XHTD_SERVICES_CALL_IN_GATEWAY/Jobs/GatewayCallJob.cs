@@ -14,6 +14,7 @@ using System.Threading;
 using XHTD_SERVICES.Data.Entities;
 using System.Data.SqlClient;
 using XHTD_SERVICES.Data.Models.Values;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
 {
@@ -100,6 +101,22 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         if (storeOrderOperating == null)
                         {
                             _gatewayCallLogger.LogInfo($"Không tìm thấy đơn hàng => Kết thúc");
+                            return;
+                        }
+
+                        // Nếu trạm cân nhận thêm đơn, xác thực thủ công khi xe đang đứng ở cân thì không gọi loa
+                        var isVehicleInFactory = await db.tblStoreOrderOperatings.AnyAsync(x => x.Vehicle == storeOrderOperating.Vehicle &&
+                                                                                               (x.Step == (int)OrderStep.DA_VAO_CONG ||
+                                                                                                x.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                                                                x.Step == (int)OrderStep.DANG_LAY_HANG ||
+                                                                                                x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                                x.IsVoiced == false);
+
+                        if (isVehicleInFactory)
+                        {
+                            vehicleWaitingCall.IsDone = true;
+                            storeOrderOperating.LogProcessOrder += $@" #Phương tiện {storeOrderOperating.Vehicle} đã ở trong nhà máy";
+                            await db.SaveChangesAsync();
                             return;
                         }
 
