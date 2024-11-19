@@ -360,9 +360,6 @@ namespace XHTD_SERVICES_XB_TROUGH_7.Jobs
                     _logger.LogInfo($"Start Machine Response: Status = {response}");
                 }
 
-                    else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
-                }
-
                 else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
             }
             else
