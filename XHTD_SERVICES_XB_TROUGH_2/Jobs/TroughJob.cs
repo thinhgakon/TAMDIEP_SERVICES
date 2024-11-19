@@ -346,47 +346,18 @@ namespace XHTD_SERVICES_XB_TROUGH_2.Jobs
                     {
                         if (oldOrder.ExportedNumber == oldOrder.SumNumber && machine.StartStatus == "ON" && machine.StopStatus == "OFF")
                         {
-                            var requestData = new MachineControlRequest
-                            {
-                                MachineCode = machine.Code,
-                                TroughCode = TROUGH_CODE,
-                                CurrentDeliveryCode = oldOrder.DeliveryCode
-                            };
+                            var response = await _machineRepository.Stop(machine.Code, trough.Code, oldOrder.DeliveryCode);
 
-                            var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StopMachine(requestData);
-
-                            if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                            {
-                                _logger.LogInfo($"3. Stop Machine {machine.Code} thành công cho đơn hàng {oldOrder.DeliveryCode} đã cân ra!");
-                            }
-
-                            else _logger.LogInfo($"3. Stop Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {oldOrder.Vehicle} - DeliveryCode: {oldOrder.DeliveryCode}");
+                            _logger.LogInfo($"Stop Machine Response: Status = {response}");
                         }
                     }
                 }
 
                 if (orderInTrough != null && vehicleCodeCurrent.ToUpper() == orderInTrough.Vehicle.ToUpper())
                 {
-                    if (machine.StartStatus == "OFF" && machine.StopStatus == "ON")
-                    {
-                        var requestData = new MachineControlRequest
-                        {
-                            MachineCode = machine.Code,
-                            TroughCode = TROUGH_CODE,
-                            CurrentDeliveryCode = orderInTrough.DeliveryCode
-                        };
+                    var response = await _machineRepository.Start(machine.Code, trough.Code, orderInTrough.DeliveryCode);
 
-                        var apiResponse = DIBootstrapper.Init().Resolve<MachineApiLib>().StartMachine(requestData);
-
-                        if (apiResponse != null && apiResponse.Status == true && apiResponse.MessageObject.Code == "0103")
-                        {
-                            _logger.LogInfo($"3. Start Machine {machine.Code} thành công!");
-                        }
-
-                        else _logger.LogInfo($"3. Start Machine {machine.Code} thất bại! => Trough: {TROUGH_CODE} - Vehicle: {vehicleCodeCurrent} - DeliveryCode: {orderInTrough.DeliveryCode}");
-                    }
-
-                    else _logger.LogInfo($"3. Máy đang chạy hoặc đang PENDING! => Kết thúc");
+                    _logger.LogInfo($"Start Machine Response: Status = {response}");
                 }
 
                 else _logger.LogInfo($"3. Phương tiện {vehicleCodeCurrent} không phải là phương tiện đầu tiên trong máng! => Kết thúc");
