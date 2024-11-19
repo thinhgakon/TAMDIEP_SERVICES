@@ -134,6 +134,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             WriteLogInfo($"2.1. Start thành công");
 
+                            string troughCode = string.Empty;
                             string vehicle = string.Empty;
                             string bookQuantity = string.Empty;
                             string locationCodeTgc = string.Empty;
@@ -147,6 +148,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                     if (trough != null)
                                     {
                                         trough.DeliveryCodeCurrent = machine.CurrentDeliveryCode;
+                                        troughCode = trough.Code;
                                         await db.SaveChangesAsync();
                                     }
                                 }
@@ -161,9 +163,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             }
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStartNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
-
-                            WriteLogInfo($"Gửi signalR: Machine: {machine.Code} - DeliveryCode: {machine.CurrentDeliveryCode} - Vehicle: {vehicle} - BookQuantity: {bookQuantity} - LocationCodeTgc: {locationCodeTgc}");
+                            SendMachineStartNotification(machine.Code, troughCode, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
                         }
                         else
                         {
@@ -239,6 +239,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             try
             {
                 _notification.SendTroughStartData(machineCode, troughCode, deliveryCode, vehicle, bookQuantity, locationCodeTgc);
+                WriteLogInfo($"Gửi signalR thành công: Machine: {machineCode} - Trough: {troughCode} - DeliveryCode: {deliveryCode} - Vehicle: {vehicle} - BookQuantity: {bookQuantity} - LocationCodeTgc: {locationCodeTgc}");
             }
             catch (Exception ex)
             {
