@@ -336,30 +336,31 @@ namespace XHTD_SERVICES_CLK_TROUGH_1.Jobs
                                                                                             (x.Step == (int)OrderStep.DA_CAN_VAO ||
                                                                                              x.Step == (int)OrderStep.DA_LAY_HANG) &&
                                                                                              x.IsVoiced == false);
-                }
 
-                if (currentOrder == null)
-                {
-                    _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
-                    return;
-                }
+                    if (currentOrder == null)
+                    {
+                        _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
+                        return;
+                    }
 
-                await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
-                _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+                    await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
+                    _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
 
-                List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
-                List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+                    currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
+                    currentOrder.TimeConfirm5 = DateTime.Now;
+                    currentOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}. ";
 
-                using (var db = new XHTD_Entities())
-                {
+                    List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
+                    List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+
                     callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
-                                                                                x.Machine == TROUGH_CODE && 
+                                                                                x.Machine == TROUGH_CODE &&
                                                                                 x.IsDone == false).ToListAsync();
 
                     ordersInTrough = await (from orders in db.tblStoreOrderOperatings
                                             join callToTroughs in db.tblCallToTroughs
                                             on orders.DeliveryCode equals callToTroughs.DeliveryCode
-                                            where callToTroughs.Machine == TROUGH_CODE && 
+                                            where callToTroughs.Machine == TROUGH_CODE &&
                                                   callToTroughs.IsDone == false &&
                                                   callToTroughs.DeliveryCode != currentOrder.DeliveryCode &&
                                                   orders.Step == (int)OrderStep.DANG_LAY_HANG
