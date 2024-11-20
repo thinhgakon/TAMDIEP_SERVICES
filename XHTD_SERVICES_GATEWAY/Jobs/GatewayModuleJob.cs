@@ -720,12 +720,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                     var typeProductList = validOrders.Select(x => x.TypeProduct).Distinct().ToList();
                     foreach (var typeProduct in typeProductList)
                     {
-                        var ordersChanged = await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
-                        foreach (var orderChanged in ordersChanged)
-                        {
-                            var changedMessage = $"Đơn hàng số hiệu {orderChanged.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{orderChanged.IndexOrder}";
-                            SendPushNotification(orderChanged.DriverUserName, changedMessage);
-                        }
+                        await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
                     }
                 }
                 else
