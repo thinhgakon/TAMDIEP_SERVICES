@@ -159,11 +159,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                     vehicle = currentOrder.Vehicle;
                                     bookQuantity = currentOrder.SumNumber.ToString();
                                     locationCodeTgc = currentOrder.LocationCodeTgc;
+
+                                    SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                                    SendMachineStartNotification(machine.Code, troughCode, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
                                 }
                             }
-
-                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStartNotification(machine.Code, troughCode, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
                         }
                         else
                         {
