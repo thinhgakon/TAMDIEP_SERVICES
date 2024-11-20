@@ -128,7 +128,8 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                                                 (x.SourceDocumentId != null && !sourceDocumentIds.Contains(x.SourceDocumentId)));
                     }
 
-                    var orders = query.OrderBy(x => x.TimeConfirm10)
+                    var orders = query.OrderBy(x => x.IndexOrder)
+                                      .ThenBy(x => x.TimeConfirm10)
                                       .Take(topX)
                                       .ToList();
 
