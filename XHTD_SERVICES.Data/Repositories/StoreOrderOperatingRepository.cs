@@ -9,6 +9,9 @@ using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Common;
 using System.Web.Configuration;
+using System.Collections.Specialized;
+using System.Configuration;
+using RestSharp;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -407,8 +410,10 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProductOrder.IndexOrder = indexOrder;
                         typeProductOrder.LogProcessOrder += $"#Đơn hàng được xếp lại lốt: {indexOrder}, lý do: {message} ";
-
                         result.Add(typeProductOrder);
+
+                        var pushMessage = $"Đơn hàng số hiệu {typeProductOrder.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{typeProductOrder.IndexOrder}";
+                        SendPushNotification(typeProductOrder.DriverUserName, pushMessage);
                     }
                     indexOrder++;
                 }
@@ -625,6 +630,32 @@ namespace XHTD_SERVICES.Data.Repositories
                     return isUpdated;
                 }
             }
+        }
+
+        public static IRestResponse SendPushNotification(string userName, string message)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendPushNotification"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new
+            {
+                ContentMessage = message,
+                NotificationType = "XHTD",
+                SubTitle = "HỆ THỐNG XUẤT HÀNG TỰ ĐỘNG",
+                UserNameReceiver = userName,
+                UserNameSender = "XHTD"
+            });
+
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
         }
     }
 }
