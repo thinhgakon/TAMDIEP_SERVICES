@@ -38,6 +38,7 @@ namespace XHTD_SERVICES_CANRA_1
             builder.RegisterType<TrafficLightControl>().AsSelf();
             builder.RegisterType<BarrierControl>().AsSelf();
             builder.RegisterType<SensorControl>().AsSelf();
+            builder.RegisterType<S7SensorControl>().AsSelf();
 
             builder.RegisterType<ScaleBusiness>().AsSelf();
             builder.RegisterType<UnladenWeightBusiness>().AsSelf();
