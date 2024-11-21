@@ -132,8 +132,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         }
 
                         // Nếu đơn đã vào cổng
-                        if (storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
-                            storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
+                        if (storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
                             storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE)
                         {
                             _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} đã vào cổng ========");
@@ -141,13 +140,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                             vehicleWaitingCall.ModifiledOn = DateTime.Now;
                             vehicleWaitingCall.IsDone = true;
                             await db.SaveChangesAsync();
-                        }
-
-                        // Nếu đơn bị xoay lốt
-                        else if (storeOrderOperating.Step == (int)OrderStep.DA_XAC_THUC)
-                        {
-                            _gatewayCallLogger.LogInfo($"======== Đơn hàng {storeOrderOperating.DeliveryCode} bị xoay lốt => Chưa đến lượt gọi, bỏ qua ========");
-                            return;
                         }
 
                         // Gọi bình thường
