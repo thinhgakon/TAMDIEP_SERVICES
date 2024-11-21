@@ -142,6 +142,13 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                             await db.SaveChangesAsync();
                         }
 
+                        // Nếu đơn bị xoay lốt
+                        else if (storeOrderOperating.Step == (int)OrderStep.DA_XAC_THUC)
+                        {
+                            _gatewayCallLogger.LogInfo($"======== Đơn hàng {storeOrderOperating.DeliveryCode} bị xoay lốt => Chưa đến lượt gọi, bỏ qua ========");
+                            return;
+                        }
+
                         // Gọi bình thường
                         else
                         {
