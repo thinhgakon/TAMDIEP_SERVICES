@@ -126,18 +126,24 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                                 if (!existedTrough)
                                 {
                                     _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
-
                                     await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                                    order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                    order.TimeConfirm5 = DateTime.Now;
+                                    order.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
 
                                     if (splitOrders != null && splitOrders.Count > 0)
                                     {
                                         foreach (var splitOrder in splitOrders)
                                         {
                                             _logger.Info($"Thuc hien them orderId {splitOrder.OrderId} deliveryCode {splitOrder.DeliveryCode} vao may {machineCode}");
-
                                             await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                            splitOrder.Step = (int)OrderStep.DANG_LAY_HANG;
+                                            splitOrder.TimeConfirm5 = DateTime.Now;
+                                            splitOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
                                         }
                                     }
+
+                                    await dbContext.SaveChangesAsync();
                                 }
                             }
                         }

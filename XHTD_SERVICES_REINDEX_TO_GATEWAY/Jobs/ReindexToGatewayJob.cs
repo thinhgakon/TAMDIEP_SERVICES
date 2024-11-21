@@ -212,12 +212,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                         var reason = $"Đơn hàng số hiệu {string.Join(", ", ordersToCancel.Select(x => x.DeliveryCode))} bị hủy xác thực lúc {DateTime.Now} do vượt quá số lần gọi loa";
                         foreach (var typeProduct in typeProductList)
                         {
-                            var ordersChanged = await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
-                            foreach (var orderChanged in ordersChanged)
-                            {
-                                var changedMessage = $"Đơn hàng số hiệu {orderChanged.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{orderChanged.IndexOrder}";
-                                SendPushNotification(orderChanged.DriverUserName, changedMessage);
-                            }
+                            await _storeOrderOperatingRepository.ReindexOrder(typeProduct, reason);
                         }
 
                         foreach (var order in ordersToCancel)

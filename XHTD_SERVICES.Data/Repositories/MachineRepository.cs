@@ -117,6 +117,90 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
+        public async Task<string> Start(string machineCode, string troughCode, string deliveryCode)
+        {
+            try
+            {
+                using (var dbContext = new XHTD_Entities())
+                {
+                    var machine = await dbContext.tblMachines.FirstOrDefaultAsync(x => x.Code == machineCode);
+                    if (machine == null)
+                    {
+                        return "Không tìm thấy máy xuất";
+                    }
+
+                    var trough = await dbContext.tblTroughs.FirstOrDefaultAsync(x => x.Code == troughCode);
+                    if (trough == null)
+                    {
+                        return "Không tìm thấy máng xuất";
+                    }
+
+                    if (machine.StartStatus == MachineStatus.OFF.ToString() && machine.StopStatus == MachineStatus.ON.ToString())
+                    {
+                        var currentOrder = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
+
+                        if (machine.ProductCategory.ToUpper() == OrderProductCategoryCode.XI_BAO)
+                        {
+                            machine.StartStatus = MachineStatus.PENDING.ToString();
+                        }
+
+                        else if (machine.ProductCategory.ToUpper() == OrderProductCategoryCode.XI_ROI)
+                        {
+                            machine.StartStatus = MachineStatus.ON.ToString();
+                            machine.StopStatus = MachineStatus.OFF.ToString();
+                        }
+
+                        machine.CurrentDeliveryCode = deliveryCode;
+                        machine.StartCountingFrom = (double?)(currentOrder.ExportedNumber * 20) ?? 0;
+                        await dbContext.SaveChangesAsync();
+
+                        var exportHistory = await dbContext.tblExportHistories.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode &&
+                                                                                                        x.MachineCode == machineCode &&
+                                                                                                        x.TroughCode == troughCode &&
+                                                                                                        x.CountQuantityEnd == null &&
+                                                                                                        x.TimeEnd == null);
+
+                        if (exportHistory == null)
+                        {
+                            var newExportHistories = new tblExportHistory
+                            {
+                                OrderId = currentOrder.Id,
+                                DeliveryCode = deliveryCode,
+                                TroughCode = troughCode,
+                                MachineCode = machineCode,
+                                MachineExportedNumber = currentOrder.MachineExportedNumber,
+                                CountQuantityStart = currentOrder.ExportedNumber != null ? (double?)(currentOrder.ExportedNumber * 20) : 0,
+                                CountQuantityEnd = null,
+                                FirstSensorCountQuantityStart = machine.StartCountingFrom,
+                                FirstSensorCountQuantityEnd = 0,
+                                RemainingCountQuantity = null,
+                                TimeStart = DateTime.Now,
+                                TimeEnd = null,
+                                TimeGetInTrough = DateTime.Now,
+                                TimeGetOutTrough = null,
+                                LastTimeChangeTrough = DateTime.Now
+                            };
+                            dbContext.tblExportHistories.Add(newExportHistories);
+                        }
+
+                        else exportHistory.TimeStart = DateTime.Now;
+
+                        await dbContext.SaveChangesAsync();
+                        return "OK";
+                    }
+
+                    else
+                    {
+                        return "Máy đang chạy => Không thể START";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Lỗi - {ex.Message} - {ex.InnerException} - {ex.StackTrace}"; ;
+            }
+        }
+
         public async Task<string> Stop(string machineCode, string troughCode, string deliveryCode)
         {
             try
@@ -295,9 +379,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         machine.StartCountingFrom = 0;
                     }
 
-                    await dbContext.SaveChangesAsync();
-                    return "OK";
-                }
+                   await dbContext.SaveChangesAsync();
+                   return "OK";
+               }
             }
             catch (Exception ex)
             {
