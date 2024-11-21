@@ -153,6 +153,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             if (currentRetryOrder != null)
                             {
                                 currentRetryOrder.Step = (int)OrderStep.DA_XAC_THUC;
+                                currentRetryOrder.LogProcessOrder += $"Đơn hàng bị xoay lốt vào lúc {DateTime.Now} ";
                                 await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt #{currentRetryOrder.IndexOrder}");
                             }
                         }
