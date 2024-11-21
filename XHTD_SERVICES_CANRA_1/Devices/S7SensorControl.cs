@@ -23,8 +23,8 @@ namespace XHTD_SERVICES_CANRA_1.Devices
         private const short RACK = 0;
         private const short SLOT = 1;
 
-        private const string SCALE_IN_I = "I0.4"; /*"Q0.0"; */
-        private const string SCALE_OUT_I = "I0.5"; /*"Q0.2";*/
+        private const string SCALE_IN_I = "I0.2"; /*"Q0.0"; */
+        private const string SCALE_OUT_I = "I0.3"; /*"Q0.2";*/
 
         protected readonly string SCALE_CB_1_CODE = ScaleCode.CODE_951_2_CB_1;
 
