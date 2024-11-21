@@ -387,7 +387,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<List<tblStoreOrderOperating>> ReindexOrder(string typeProduct, string message = null)
+        public async Task ReindexOrder(string typeProduct, string message = null)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -401,8 +401,6 @@ namespace XHTD_SERVICES.Data.Repositories
                                                        .OrderBy(x => x.TimeConfirm10)
                                                        .ToListAsync();
 
-                var result = new List<tblStoreOrderOperating>();
-
                 var indexOrder = 1;
                 foreach (var typeProductOrder in typeProductOrders)
                 {
@@ -410,7 +408,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         typeProductOrder.IndexOrder = indexOrder;
                         typeProductOrder.LogProcessOrder += $"#Đơn hàng được xếp lại lốt: {indexOrder}, lý do: {message} ";
-                        result.Add(typeProductOrder);
 
                         var pushMessage = $"Đơn hàng số hiệu {typeProductOrder.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{typeProductOrder.IndexOrder}";
                         SendPushNotification(typeProductOrder.DriverUserName, pushMessage);
@@ -418,7 +415,46 @@ namespace XHTD_SERVICES.Data.Repositories
                     indexOrder++;
                 }
                 await dbContext.SaveChangesAsync();
-                return result;
+            }
+        }
+
+        public async Task ReindexOrderToLastIndex(int orderId, string message = null)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var currentOrder = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == orderId);
+                if (currentOrder != null)
+                {
+                    var typeProductOrders = await dbContext.tblStoreOrderOperatings
+                                                           .Where(x => x.TypeProduct.ToUpper() == currentOrder.TypeProduct.ToUpper() &&
+                                                                      (x.Step == (int)OrderStep.DA_XAC_THUC ||
+                                                                       x.Step == (int)OrderStep.CHO_GOI_XE ||
+                                                                       x.Step == (int)OrderStep.DANG_GOI_XE) &&
+                                                                       x.IndexOrder != 0 &&
+                                                                       x.Id != currentOrder.Id &&
+                                                                       x.IsVoiced == false)
+                                                           .OrderBy(x => x.TimeConfirm10)
+                                                           .ToListAsync();
+
+                    var indexOrder = 1;
+                    foreach (var typeProductOrder in typeProductOrders)
+                    {
+                        if (typeProductOrder.IndexOrder != indexOrder)
+                        {
+                            typeProductOrder.IndexOrder = indexOrder;
+                            typeProductOrder.LogProcessOrder += $"#Đơn hàng được xếp lại lốt: {indexOrder}, lý do: {message} ";
+
+                            var pushMessage = $"Đơn hàng số hiệu {typeProductOrder.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{typeProductOrder.IndexOrder}";
+                            SendPushNotification(typeProductOrder.DriverUserName, pushMessage);
+                        }
+                        indexOrder++;
+                    }
+                    currentOrder.IndexOrder = indexOrder;
+                    var pushMessageChanged = $"Đơn hàng số hiệu {currentOrder.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{currentOrder.IndexOrder}";
+                    SendPushNotification(currentOrder.DriverUserName, pushMessageChanged);
+
+                    await dbContext.SaveChangesAsync();
+                }
             }
         }
 
