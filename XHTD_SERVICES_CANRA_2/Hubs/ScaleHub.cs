@@ -190,6 +190,8 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
 
                             Program.scaleValues.Clear();
 
+                            WriteLogInfo($"Vi phạm cảm biến cân => Reset giá trị cân");
+
                             return;
                         }
                         else
