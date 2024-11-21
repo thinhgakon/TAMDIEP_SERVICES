@@ -150,7 +150,7 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             callVehicleStatus.CountTry = 0;
 
                             var currentRetryOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == callVehicleStatus.StoreOrderOperatingId);
-                            if (currentRetryOrder != null)
+                            if (currentRetryOrder != null && currentRetryOrder.Step == (int)OrderStep.DANG_GOI_XE)
                             {
                                 await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt #{currentRetryOrder.IndexOrder}");
                             }
