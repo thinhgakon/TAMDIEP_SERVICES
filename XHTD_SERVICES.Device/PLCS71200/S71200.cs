@@ -1,10 +1,13 @@
-﻿using S7.Net;
+﻿using log4net;
+using S7.Net;
+using S7.Net.Types;
 using System;
 
 namespace XHTD_SERVICES.Device.PLCS71200
 {
     public abstract class S71200
     {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(S71200));
         protected Plc _plc;
 
         protected S71200(Plc plc)
@@ -70,8 +73,9 @@ namespace XHTD_SERVICES.Device.PLCS71200
                 _plc.Open();
                 return ErrorCode.NoError;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Info($@"PLC Open ERROR: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
                 return ErrorCode.ConnectionError;
             }
         }

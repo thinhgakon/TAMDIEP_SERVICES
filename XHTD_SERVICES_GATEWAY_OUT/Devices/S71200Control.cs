@@ -73,7 +73,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Devices
                     Console.WriteLine($@"OpenBarrierScaleIn: count={count}");
                     _logger.Info($@"OpenBarrierScaleIn: count={count}");
 
-                    _barrier.Open();
+                    var openStatus = _barrier.Open();
 
                     if (_barrier.IsConnected)
                     {
@@ -115,7 +115,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {ErrorCode.ConnectionError}");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {openStatus}");
 
                         Thread.Sleep(1000);
                     }
@@ -143,7 +143,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Devices
 
                     _logger.Info($@"OpenBarrierScaleIn: count={count}");
 
-                    _barrier.Open();
+                    var openStatus = _barrier.Open();
 
                     if (_barrier.IsConnected)
                     {
@@ -185,7 +185,7 @@ namespace XHTD_SERVICES_GATEWAY_OUT.Devices
                     }
                     else
                     {
-                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {ErrorCode.ConnectionError}");
+                        _logger.Info($"OpenBarrier count={count}: Ket noi PLC khong thanh cong {openStatus}");
 
                         Thread.Sleep(1000);
                     }
