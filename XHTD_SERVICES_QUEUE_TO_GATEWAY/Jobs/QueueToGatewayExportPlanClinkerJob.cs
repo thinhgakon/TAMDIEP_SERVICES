@@ -129,7 +129,6 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
                     }
 
                     var orders = query.OrderBy(x => x.IndexOrder)
-                                      .ThenBy(x => x.TimeConfirm10)
                                       .Take(topX)
                                       .ToList();
 
