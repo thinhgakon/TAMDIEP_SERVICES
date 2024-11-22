@@ -132,8 +132,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         }
 
                         // Nếu đơn đã vào cổng
-                        if (storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
-                            storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE)
+                        if ((callVehicleItem.CallType == CallType.CONG ||
+                             callVehicleItem.CallType == "MANUAL") &&
+                             storeOrderOperating.Step != (int)OrderStep.DA_XAC_THUC &&
+                             storeOrderOperating.Step != (int)OrderStep.CHO_GOI_XE &&
+                             storeOrderOperating.Step != (int)OrderStep.DANG_GOI_XE)
                         {
                             _gatewayCallLogger.LogInfo($"======== Phương tiện {storeOrderOperating.Vehicle} - đơn hàng {storeOrderOperating.DeliveryCode} đã vào cổng ========");
 
@@ -143,7 +146,9 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                         }
 
                         // Nếu đơn bị xoay lốt
-                        else if (storeOrderOperating.Step == (int)OrderStep.DA_XAC_THUC)
+                        else if ((callVehicleItem.CallType == CallType.CONG ||
+                                  callVehicleItem.CallType == "MANUAL") && 
+                                  storeOrderOperating.Step == (int)OrderStep.DA_XAC_THUC)
                         {
                             _gatewayCallLogger.LogInfo($"======== Đơn hàng {storeOrderOperating.DeliveryCode} bị xoay lốt => Chưa đến lượt gọi, bỏ qua ========");
                             return;
@@ -239,7 +244,7 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     {
                         // Tự động
                         var typeCurrent = Program.roundRobinList.Next();
-                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && (x.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(x.CallType))).OrderBy(x => x.Id).FirstOrDefault();
+                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && (x.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(x.CallType))).OrderByDescending(x => x.Id).FirstOrDefault();
                         if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
                     }
                 }

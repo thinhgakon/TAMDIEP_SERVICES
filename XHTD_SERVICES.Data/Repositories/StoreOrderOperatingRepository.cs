@@ -433,7 +433,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                                                        x.IndexOrder != 0 &&
                                                                        x.Id != currentOrder.Id &&
                                                                        x.IsVoiced == false)
-                                                           .OrderBy(x => x.TimeConfirm10)
+                                                           .OrderBy(x => x.IndexOrder)
                                                            .ToListAsync();
 
                     var indexOrder = 1;

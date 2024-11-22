@@ -148,12 +148,6 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                         {
                             callVehicleStatus.CountReindex = callVehicleStatus.CountReindex == null ? 1 : callVehicleStatus.CountReindex + 1;
                             callVehicleStatus.CountTry = 0;
-
-                            var currentRetryOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == callVehicleStatus.StoreOrderOperatingId);
-                            if (currentRetryOrder != null && currentRetryOrder.Step == (int)OrderStep.DANG_GOI_XE)
-                            {
-                                await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt vào lúc {DateTime.Now}. ");
-                            }
                         }
                         await db.SaveChangesAsync();
                     }
@@ -180,6 +174,12 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             callVehicleStatus.CountToCancel = callVehicleStatus.CountToCancel == null ? 1 : callVehicleStatus.CountToCancel + 1;
                             callVehicleStatus.CountTry = 0;
                             callVehicleStatus.CountReindex = 0;
+
+                            var currentRetryOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == callVehicleStatus.StoreOrderOperatingId);
+                            if (currentRetryOrder != null && currentRetryOrder.Step == (int)OrderStep.DANG_GOI_XE)
+                            {
+                                await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt vào lúc {DateTime.Now}. ");
+                            }
                         }
                         await db.SaveChangesAsync();
                     }
