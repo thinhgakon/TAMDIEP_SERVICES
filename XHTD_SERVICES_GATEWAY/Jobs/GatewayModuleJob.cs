@@ -848,7 +848,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             try
             {
                 _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {
