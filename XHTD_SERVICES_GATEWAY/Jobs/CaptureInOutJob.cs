@@ -151,6 +151,8 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
                     Program.IsFirstTimeChange = true;
                 }
+
+                _sensor.Close();
             }
             catch (Exception ex)
             {
