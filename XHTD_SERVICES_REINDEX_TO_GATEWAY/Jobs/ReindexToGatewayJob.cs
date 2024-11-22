@@ -150,10 +150,9 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                             callVehicleStatus.CountTry = 0;
 
                             var currentRetryOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Id == callVehicleStatus.StoreOrderOperatingId);
-                            if (currentRetryOrder != null)
+                            if (currentRetryOrder != null && currentRetryOrder.Step == (int)OrderStep.DANG_GOI_XE)
                             {
-                                currentRetryOrder.Step = (int)OrderStep.DA_XAC_THUC;
-                                await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt #{currentRetryOrder.IndexOrder}");
+                                await _storeOrderOperatingRepository.ReindexOrderToLastIndex(currentRetryOrder.Id, $"Đơn hàng số hiệu {currentRetryOrder.DeliveryCode} xoay lốt vào lúc {DateTime.Now}. ");
                             }
                         }
                         await db.SaveChangesAsync();
