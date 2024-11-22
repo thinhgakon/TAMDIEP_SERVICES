@@ -452,7 +452,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     currentOrder.IndexOrder = indexOrder;
                     currentOrder.Step = (int)OrderStep.DA_XAC_THUC;
-                    currentOrder.LogProcessOrder += $"Đơn hàng bị xoay lốt vào lúc {DateTime.Now} ";
+                    currentOrder.LogProcessOrder += $"#Đơn hàng bị xoay lốt vào lúc {DateTime.Now}. ";
 
                     var pushMessageChanged = $"Đơn hàng số hiệu {currentOrder.DeliveryCode} thay đổi số thứ tự chờ vào cổng lấy hàng: #{currentOrder.IndexOrder}";
                     SendPushNotification(currentOrder.DriverUserName, pushMessageChanged);
