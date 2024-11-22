@@ -254,7 +254,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
                                 _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                                SendNotificationByRight(RightCode.SCALE, pushMessage);
+                                SendNotificationByRight(RightCode.SCALE, pushMessage, "SYSTEM");
                             }
 
                             Program.CountToSendFailOpenPort = 0;
@@ -629,12 +629,12 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             }
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType = null)
         {
             try
             {
                 _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {

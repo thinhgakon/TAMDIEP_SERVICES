@@ -208,7 +208,7 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
                                 _logger.LogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                                SendNotificationByRight(RightCode.CONFIRM, pushMessage, "SYSTEM");
                             }
 
                             Program.CountToSendFailOpenPort = 0;
@@ -743,12 +743,12 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
             }
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType = null)
         {
             try
             {
                 _logger.LogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {
