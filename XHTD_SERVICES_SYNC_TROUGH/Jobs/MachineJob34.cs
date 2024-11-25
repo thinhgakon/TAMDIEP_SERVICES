@@ -197,6 +197,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
                             machine.CurrentDeliveryCode = null;
+                            machine.StartCountingFrom = 0;
 
                             await _machineRepository.UpdateMachine(machine);
 
