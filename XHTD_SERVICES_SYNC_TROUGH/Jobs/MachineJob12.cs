@@ -174,7 +174,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (machine.StopStatus == "PENDING")
                     {
-                        WriteLogInfo($"Stop machine code: {machine.Code} ============================================");
+                        var currentDeliveryCode = machine.CurrentDeliveryCode;
+
+                        WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {currentDeliveryCode} ============================================");
 
                         var command = $"*[Stop][MDB][{machine.Code}][!]";
 
@@ -201,7 +203,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             WriteLogInfo($"2.1. Stop thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStopNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty);
+                            SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty);
                         }
                         else
                         {
