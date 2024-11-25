@@ -67,7 +67,8 @@ namespace XHTD_SERVICES.Data.Common
                     ("XIBAO_UHF_7", "192.168.13.217"),
                     ("XIBAO_UHF_8", "192.168.13.219"),
                     ("XIBAO_UHF_9", "192.168.13.242"),
-                    ("XIBAO_UHF_10", "192.168.13.244")
+                    ("XIBAO_UHF_10", "192.168.13.244"),
+                    ("XIBAO_UHF_MDB_1", "192.168.13.222")
                 }
             },
 
