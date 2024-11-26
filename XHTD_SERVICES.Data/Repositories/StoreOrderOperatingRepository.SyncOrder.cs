@@ -26,53 +26,68 @@ namespace XHTD_SERVICES.Data.Repositories
                 string productNameUpper = websaleOrder.productName.ToUpper();
                 string itemCategory = websaleOrder.itemCategory;
 
-                if (itemCategory == OrderCatIdCode.CLINKER)
+                var productId = !string.IsNullOrEmpty(websaleOrder.productId) ? Int32.Parse(websaleOrder.productId) : 0;
+                var itemConfig = _appDbContext.tblItemConfigs.FirstOrDefault(x => x.ItemIdSyn == productId);
+                typeProduct = itemConfig?.TypeProductCode ?? OrderTypeProductCode.OTHER;
+
+                if(typeProduct == OrderTypeProductCode.JUMBO)
                 {
-                    typeProduct = OrderTypeProductCode.CLINKER;
+                    typeXK = OrderTypeXKCode.JUMBO;
                 }
-                else if (itemCategory == OrderCatIdCode.XI_MANG_XA)
+                else if (typeProduct == OrderTypeProductCode.SLING)
                 {
-                    typeProduct = OrderTypeProductCode.ROI;
+                    typeXK = OrderTypeXKCode.SLING;
                 }
-                else
-                {
-                    // Type XK
-                    if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
-                    {
-                        typeXK = OrderTypeXKCode.JUMBO;
-                        typeProduct = OrderTypeProductCode.JUMBO;
-                    }
-                    else if (productNameUpper.Contains(OrderTypeXKCode.SLING)
-                        || productNameUpper.Contains(OrderTypeXKCode.SILING))
-                    {
-                        typeXK = OrderTypeXKCode.SLING;
-                        typeProduct = OrderTypeProductCode.SLING;
-                    }
-                    else if (productNameUpper.Contains("PCB30") 
-                        || productNameUpper.Contains("PCB 30")
-                        || productNameUpper.Contains("MAX PRO")
-                        )
-                    {
-                        typeProduct = OrderTypeProductCode.PCB30;
-                    }
-                    else if (productNameUpper.Contains("PCB40") 
-                        || productNameUpper.Contains("PCB 40")
-                        || productNameUpper.Contains("PC40")
-                        )
-                    {
-                        typeProduct = OrderTypeProductCode.PCB40;
-                    }
-                    else if (productNameUpper.Contains("C91") 
-                        || productNameUpper.Contains("XÂY TRÁT")
-                        )
-                    {
-                        typeProduct = OrderTypeProductCode.C91;
-                    }
-                    else
-                    {
-                        typeProduct = OrderTypeProductCode.OTHER;
-                    }
-                }
+
+                #region Old: Set type product
+                //if (itemCategory == OrderCatIdCode.CLINKER)
+                //{
+                //    typeProduct = OrderTypeProductCode.CLINKER;
+                //}
+                //else if (itemCategory == OrderCatIdCode.XI_MANG_XA)
+                //{
+                //    typeProduct = OrderTypeProductCode.ROI;
+                //}
+                //else
+                //{
+                //    // Type XK
+                //    if (productNameUpper.Contains(OrderTypeXKCode.JUMBO))
+                //    {
+                //        typeXK = OrderTypeXKCode.JUMBO;
+                //        typeProduct = OrderTypeProductCode.JUMBO;
+                //    }
+                //    else if (productNameUpper.Contains(OrderTypeXKCode.SLING)
+                //        || productNameUpper.Contains(OrderTypeXKCode.SILING))
+                //    {
+                //        typeXK = OrderTypeXKCode.SLING;
+                //        typeProduct = OrderTypeProductCode.SLING;
+                //    }
+                //    else if (productNameUpper.Contains("PCB30")
+                //        || productNameUpper.Contains("PCB 30")
+                //        || productNameUpper.Contains("MAX PRO")
+                //        )
+                //    {
+                //        typeProduct = OrderTypeProductCode.PCB30;
+                //    }
+                //    else if (productNameUpper.Contains("PCB40")
+                //        || productNameUpper.Contains("PCB 40")
+                //        || productNameUpper.Contains("PC40")
+                //        )
+                //    {
+                //        typeProduct = OrderTypeProductCode.PCB40;
+                //    }
+                //    else if (productNameUpper.Contains("C91")
+                //        || productNameUpper.Contains("XÂY TRÁT")
+                //        )
+                //    {
+                //        typeProduct = OrderTypeProductCode.C91;
+                //    }
+                //    else
+                //    {
+                //        typeProduct = OrderTypeProductCode.OTHER;
+                //    }
+                //}
+                #endregion
 
                 var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
                 var rfidItem = _appDbContext.tblRfids.FirstOrDefault(x => x.Vehicle.Contains(vehicleCode));
