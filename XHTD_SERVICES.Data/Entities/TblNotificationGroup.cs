@@ -12,31 +12,27 @@ namespace XHTD_SERVICES.Data.Entities
     using System;
     using System.Collections.Generic;
     
-    public partial class TblQualityCertificate
+    public partial class TblNotificationGroup
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TblQualityCertificate()
+        public TblNotificationGroup()
         {
-            this.TblQualityCertificatePartners = new HashSet<TblQualityCertificatePartner>();
+            this.tblNotifications = new HashSet<tblNotification>();
         }
     
         public int Id { get; set; }
-        public string Code { get; set; }
-        public System.DateTime FromDate { get; set; }
-        public System.DateTime ToDate { get; set; }
-        public double ExpectNumber { get; set; }
-        public string ItemCode { get; set; }
-        public string ItemName { get; set; }
-        public string State { get; set; }
-        public string Note { get; set; }
-        public Nullable<System.Guid> TempReferenceId { get; set; }
-        public Nullable<System.Guid> ReferenceId { get; set; }
+        public string UserNameSender { get; set; }
+        public string ContentMessage { get; set; }
+        public Nullable<System.DateTime> DayCreate { get; set; }
+        public Nullable<bool> IsSent { get; set; }
+        public Nullable<System.DateTime> TimeSent { get; set; }
         public Nullable<System.DateTime> CreateDay { get; set; }
         public string CreateBy { get; set; }
         public Nullable<System.DateTime> UpdateDay { get; set; }
         public string UpdateBy { get; set; }
+        public string SubTitle { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TblQualityCertificatePartner> TblQualityCertificatePartners { get; set; }
+        public virtual ICollection<tblNotification> tblNotifications { get; set; }
     }
 }

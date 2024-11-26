@@ -74,6 +74,12 @@
     <Compile Include="Common\ScaleConfig.cs" />
     <Compile Include="Common\URIConfig.cs" />
     <Compile Include="Common\DeviceCode.cs" />
+    <Compile Include="Entities\Item.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\ItemFormula.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblAccount.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -113,6 +119,9 @@
     <Compile Include="Entities\tblConfigApp.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblConfigOperating.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblDevice.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -140,6 +149,9 @@
     <Compile Include="Entities\tblFunction.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblItemConfig.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblLongVehicle.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -155,6 +167,9 @@
     <Compile Include="Entities\tblNotification.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblNotificationGroup.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\TblPrint.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -164,6 +179,9 @@
     <Compile Include="Entities\TblQualityCertificate.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblQualityCertificatePartner.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblRfid.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -171,6 +189,9 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblScaleOperating.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TblSendTroughStatu.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblStoreOrderLocation.cs">

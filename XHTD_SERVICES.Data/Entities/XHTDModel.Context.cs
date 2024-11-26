@@ -67,5 +67,12 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblExportPlan> tblExportPlans { get; set; }
         public virtual DbSet<TblQualityCertificate> TblQualityCertificates { get; set; }
         public virtual DbSet<tblExportPlanDetail> tblExportPlanDetails { get; set; }
+        public virtual DbSet<ItemFormula> ItemFormulas { get; set; }
+        public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<tblConfigOperating> tblConfigOperatings { get; set; }
+        public virtual DbSet<tblItemConfig> tblItemConfigs { get; set; }
+        public virtual DbSet<TblNotificationGroup> TblNotificationGroups { get; set; }
+        public virtual DbSet<TblQualityCertificatePartner> TblQualityCertificatePartners { get; set; }
+        public virtual DbSet<TblSendTroughStatu> TblSendTroughStatus { get; set; }
     }
 }

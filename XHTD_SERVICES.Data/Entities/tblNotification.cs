@@ -30,5 +30,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> TimeSent { get; set; }
         public string NotificationType { get; set; }
         public string SubTitle { get; set; }
+    
+        public virtual TblNotificationGroup TblNotificationGroup { get; set; }
     }
 }
