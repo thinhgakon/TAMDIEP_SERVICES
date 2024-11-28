@@ -46,15 +46,15 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Schedules
                 .Build();
             await _scheduler.ScheduleJob(reConnectPegasusJob, reConnectPegasusrigger);
 
-            IJobDetail ConnectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
-            ITrigger ConnectPegasusTrigger = TriggerBuilder.Create()
-                .WithPriority(1)
-                 .StartNow()
-                 .WithSimpleSchedule(x => x
-                     .WithIntervalInSeconds(5)
-                    .RepeatForever())
-                .Build();
-            await _scheduler.ScheduleJob(ConnectPegasusJob, ConnectPegasusTrigger);
+            //IJobDetail ConnectPegasusJob = JobBuilder.Create<ConnectPegasusJob>().Build();
+            //ITrigger ConnectPegasusTrigger = TriggerBuilder.Create()
+            //    .WithPriority(1)
+            //     .StartNow()
+            //     .WithSimpleSchedule(x => x
+            //         .WithIntervalInSeconds(5)
+            //        .RepeatForever())
+            //    .Build();
+            //await _scheduler.ScheduleJob(ConnectPegasusJob, ConnectPegasusTrigger);
         }
     }
 }

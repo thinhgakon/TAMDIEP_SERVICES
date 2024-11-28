@@ -21,5 +21,7 @@ namespace XHTD_SERVICES.Data.Common
         public static string TROUGH_XI_ROI = "Máng xuất xi rời";
 
         public static string TROUGH_CLINKER = "Máng xuất Clinker";
+
+        public static string TROUGH_SLING = "Máng xuất Sling";
     }
 }
