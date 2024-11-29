@@ -619,9 +619,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
         </EntityType>
         <EntityType Name="TblSendTroughStatus">
           <Key>
-            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="TransactionId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MachineCode" Type="nvarchar(max)" />
           <Property Name="TroughCode" Type="nvarchar(max)" />
           <Property Name="DeliveryCode" Type="nvarchar(max)" />
@@ -629,6 +629,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="BookQuantity" Type="nvarchar(max)" />
           <Property Name="LocationCodeTgc" Type="nvarchar(max)" />
           <Property Name="IsSent" Type="bit" Nullable="false" />
+          <Property Name="IsSentStart" Type="bit" />
+          <Property Name="IsSentStop" Type="bit" />
         </EntityType>
         <EntityType Name="tblStoreOrderLocation">
           <Key>
@@ -772,6 +774,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="WeightOutVirtual" Type="int" />
           <Property Name="IsSyncedOutSource1" Type="bit" />
           <Property Name="IsSyncedOutSource2" Type="bit" />
+          <Property Name="SealCount" Type="int" />
+          <Property Name="SealDes" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1708,6 +1712,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="WeightOutVirtual" Type="Int32" />
           <Property Name="IsSyncedOutSource1" Type="Boolean" />
           <Property Name="IsSyncedOutSource2" Type="Boolean" />
+          <Property Name="SealCount" Type="Int32" />
+          <Property Name="SealDes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2312,9 +2318,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
         </EntityType>
         <EntityType Name="TblSendTroughStatu">
           <Key>
-            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="TransactionId" Type="Guid" Nullable="false" />
           <Property Name="MachineCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DeliveryCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -2322,6 +2327,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="BookQuantity" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LocationCodeTgc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsSent" Type="Boolean" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IsSentStart" Type="Boolean" />
+          <Property Name="IsSentStop" Type="Boolean" />
         </EntityType>
         <Association Name="FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id">
           <End Type="XHTD_SERVICES.Data.Entities.ItemFormula" Role="ItemFormula" Multiplicity="0..1" />
@@ -2780,6 +2788,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="SealDes" ColumnName="SealDes" />
+                <ScalarProperty Name="SealCount" ColumnName="SealCount" />
                 <ScalarProperty Name="IsSyncedOutSource2" ColumnName="IsSyncedOutSource2" />
                 <ScalarProperty Name="IsSyncedOutSource1" ColumnName="IsSyncedOutSource1" />
                 <ScalarProperty Name="WeightOutVirtual" ColumnName="WeightOutVirtual" />
@@ -3293,6 +3303,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblSendTroughStatus">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblSendTroughStatu">
               <MappingFragment StoreEntitySet="TblSendTroughStatus">
+                <ScalarProperty Name="IsSentStop" ColumnName="IsSentStop" />
+                <ScalarProperty Name="IsSentStart" ColumnName="IsSentStart" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="IsSent" ColumnName="IsSent" />
                 <ScalarProperty Name="LocationCodeTgc" ColumnName="LocationCodeTgc" />
                 <ScalarProperty Name="BookQuantity" ColumnName="BookQuantity" />
@@ -3300,7 +3313,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
                 <ScalarProperty Name="MachineCode" ColumnName="MachineCode" />
-                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

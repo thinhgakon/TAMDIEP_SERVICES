@@ -14,7 +14,6 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class TblSendTroughStatu
     {
-        public System.Guid TransactionId { get; set; }
         public string MachineCode { get; set; }
         public string TroughCode { get; set; }
         public string DeliveryCode { get; set; }
@@ -22,5 +21,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string BookQuantity { get; set; }
         public string LocationCodeTgc { get; set; }
         public bool IsSent { get; set; }
+        public int Id { get; set; }
+        public Nullable<bool> IsSentStart { get; set; }
+        public Nullable<bool> IsSentStop { get; set; }
     }
 }
