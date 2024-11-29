@@ -10,15 +10,12 @@ using XHTD_SERVICES_SLING_TROUGH_9.Devices;
 
 namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ConnectPegasusJob : IJob
     {
         ILog _logger = LogManager.GetLogger("ConnectFileAppender");
 
         protected readonly Notification _notification;
-
-        private byte ComAddr = 0xFF;
-        private int PortHandle = 6000;
-        private string PegasusAdr = "192.168.13.242";
 
         public ConnectPegasusJob(Notification notification)
         {
@@ -36,9 +33,15 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
             {
                 await Task.Run(() =>
                 {
-                    WriteLogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
+                    WriteLogInfo("--------------- START JOB ---------------");
 
-                    CheckConnection();
+                    if (DeviceCode.CodeDict.TryGetValue(LocationCode.TROUGH_SLING, out var devices))
+                    {
+                        foreach (var (deviceCode, deviceIp) in devices)
+                        {
+                            CheckConnection(deviceCode, deviceIp, LocationCode.TROUGH_SLING);
+                        }
+                    }
                 });
             }
             catch (Exception ex)
@@ -50,18 +53,26 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
             }
         }
 
-        public void CheckConnection()
+        public void CheckConnection(string deviceCode, string ipAddress, string deviceLocation)
         {
             try
             {
+                if (!Program.DeviceLastFailPingTime.ContainsKey(deviceCode))
+                {
+                    Program.DeviceFailCount[deviceCode] = 0;
+                    Program.DeviceLastFailPingTime[deviceCode] = null;
+                }
+
                 Ping pingSender = new Ping();
-                PingReply reply = pingSender.Send(PegasusAdr);
+                PingReply reply = pingSender.Send(ipAddress);
 
                 if (reply.Status == IPStatus.Success)
                 {
                     WriteLogInfo("Ping success");
 
-                    Program.CountToSendFailPing = 0;
+                    Program.DeviceFailCount[deviceCode] = 0;
+
+                    SendNotificationHub(deviceCode, "OK");
 
                     return;
                 }
@@ -69,27 +80,29 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                 {
                     WriteLogInfo("Ping fail");
 
-                    Program.CountToSendFailPing++;
+                    SendNotificationHub(deviceCode, "FAILED");
 
-                    WriteLogInfo($"Lần thứ: {Program.CountToSendFailPing}");
+                    Program.DeviceFailCount[deviceCode]++;
 
-                    if (Program.CountToSendFailPing == 3)
+                    WriteLogInfo($"Thiết bị: {deviceCode} - IP: {ipAddress} - KHÔNG ping được lần thứ: {Program.DeviceFailCount[deviceCode]}");
+
+                    if (Program.DeviceFailCount[deviceCode] == 3)
                     {
-                        WriteLogInfo($"Thời điểm gửi cảnh báo gần nhất: {Program.SendFailPingLastTime}");
+                        WriteLogInfo($"Thiết bị {deviceCode} - Thời điểm gửi cảnh báo gần nhất: {Program.DeviceLastFailPingTime[deviceCode]}");
 
-                        if (Program.SendFailPingLastTime == null || Program.SendFailPingLastTime < DateTime.Now.AddMinutes(-3))
+                        if (Program.DeviceLastFailPingTime[deviceCode] == null || Program.DeviceLastFailPingTime[deviceCode] < DateTime.Now.AddMinutes(-3))
                         {
-                            Program.SendFailPingLastTime = DateTime.Now;
+                            Program.DeviceLastFailPingTime[deviceCode] = DateTime.Now;
 
                             // gửi thông báo ping thất bại
-                            var pushMessage = $"Sling 9: mất kết nối đến anten {PegasusAdr}. Vui lòng báo kỹ thuật kiểm tra";
+                            var pushMessage = $"{deviceLocation}: mất kết nối đến thiết bị: {deviceCode} - IP: {ipAddress}. Vui lòng báo kỹ thuật kiểm tra";
 
                             WriteLogInfo($"Gửi cảnh báo: {pushMessage}");
 
-                            SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+                            SendNotificationByRight(RightCode.TROUGH_XI_BAO, pushMessage, "SYSTEM");
                         }
 
-                        Program.CountToSendFailPing = 0;
+                        Program.DeviceFailCount[deviceCode] = 0;
                     }
                 }
             }
@@ -105,16 +118,29 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
             _logger.Info(message);
         }
 
-        public void SendNotificationByRight(string rightCode, string message)
+        public void SendNotificationByRight(string rightCode, string message, string notificationType)
         {
             try
             {
                 WriteLogInfo($"Gửi push notification đến các user với quyền {rightCode}, nội dung {message}");
-                _notification.SendNotificationByRight(rightCode, message);
+                _notification.SendNotificationByRight(rightCode, message, notificationType);
             }
             catch (Exception ex)
             {
                 WriteLogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendNotificationHub(string deviceCode, string status)
+        {
+            try
+            {
+                WriteLogInfo($"Gửi signalR tín hiệu thiết bị {deviceCode} - trạng thái {status}");
+                _notification.SendDeviceStatus(deviceCode, status);
+            }
+            catch (Exception ex)
+            {
+                WriteLogInfo($"SendNotificationHub Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
