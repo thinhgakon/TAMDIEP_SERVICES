@@ -202,7 +202,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else 
                 { 
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull, websaleOrder.sideSealCount, websaleOrder.sideSealDes);
                 }
             }
             else if (stateId == (int)OrderState.DA_XUAT_HANG)
@@ -216,7 +216,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else 
                 { 
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.sideSealCount, websaleOrder.sideSealDes);
                 }
             }
             else if (stateId == (int)OrderState.DA_HUY_DON)

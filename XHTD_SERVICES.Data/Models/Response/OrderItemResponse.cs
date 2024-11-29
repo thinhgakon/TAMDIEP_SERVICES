@@ -95,5 +95,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string locationCodeTgc { get; set; }
         public string itemalias { get; set; }
         public string netweight { get; set; }
+        public int? sideSealCount { get; set; }
+        public string sideSealDes { get; set; }
     }
 }

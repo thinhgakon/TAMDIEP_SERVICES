@@ -151,6 +151,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         SourceDocumentId = sourceDocumentId,
                         ItemAlias = websaleOrder.itemalias,
                         NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0,
+                        SealCount = websaleOrder.sideSealCount,
+                        SealDes = websaleOrder.sideSealDes
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -302,6 +304,9 @@ namespace XHTD_SERVICES.Data.Repositories
 
                             order.DocNum = websaleOrder.docnum;
 
+                            order.SealCount = websaleOrder.sideSealCount;
+                            order.SealDes = websaleOrder.sideSealDes;
+
                             order.UpdateDay = lastUpdatedDate;
 
                             order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
@@ -325,7 +330,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull)
+        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes)
         {
             bool isSynced = false;
 
@@ -381,6 +386,9 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.WeightIn = (int)(weightIn * 1000);
                     order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
+                    order.SealCount = sealCount;
+                    order.SealDes = sealDes;
+                    
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
@@ -414,7 +422,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, string docnum = null)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum = null)
         {
             bool isSynced = false;
 
@@ -474,6 +482,9 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.WeightOut = (int)(weightOut * 1000);
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+
+                        order.SealCount = sealCount;
+                        order.SealDes = sealDes;
 
                         //order.DocNum = docnum;
 

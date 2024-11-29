@@ -183,7 +183,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
                                      VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
-                                     TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID
+                                     TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID, SIDE_SEAL_COUNT, SIDE_SEAL_DES
                             FROM apps.dev_sales_orders_mbf_v 
                             WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
@@ -209,7 +209,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 itemCategory = reader["ITEM_CATEGORY"].ToString(),
                 docnum = reader["DOC_NUM"].ToString(),
                 sourceDocumentId = reader["ORDER_REQ_ID"] != DBNull.Value ? reader["ORDER_REQ_ID"].ToString() :
-                                   reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null
+                                   reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
+                sideSealCount = int.TryParse(reader["SIDE_SEAL_COUNT"]?.ToString(), out int ssc) ? ssc : default,
+                sideSealDes = reader["SIDE_SEAL_DES"].ToString()
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
@@ -251,7 +253,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else
                 {
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull, websaleOrder.sideSealCount, websaleOrder.sideSealDes);
 
                     if (isSynced)
                     {
@@ -277,7 +279,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else
                 {
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.docnum);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, websaleOrder.sideSealCount, websaleOrder.sideSealDes, websaleOrder.docnum);
                     _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
 
                     if (isSynced)
