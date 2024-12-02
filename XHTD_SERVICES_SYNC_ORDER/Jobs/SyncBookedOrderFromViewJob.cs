@@ -122,7 +122,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, ORDER_QUANTITY, ORDER_ID, DELIVERY_CODE, 
                                        ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, 
                                        ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID,
-                                       ITEM_ALIAS, NET_WEIGHT
+                                       ITEM_ALIAS, NET_WEIGHT, TOP_SEAL_COUNT, TOP_SEAL_DES
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
@@ -153,6 +153,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 customerId = reader["CUSTOMER_ID"].ToString(),
                 itemalias = reader["ITEM_ALIAS"] == DBNull.Value ? null : reader["ITEM_ALIAS"].ToString(),
                 netweight = reader["NET_WEIGHT"] == DBNull.Value ? null : reader["NET_WEIGHT"].ToString(),
+                topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
+                topSealDes = reader["TOP_SEAL_DES"]?.ToString()
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });
