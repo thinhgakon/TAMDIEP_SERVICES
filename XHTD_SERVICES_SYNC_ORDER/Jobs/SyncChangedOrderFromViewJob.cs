@@ -135,7 +135,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
                                      VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
                                      TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID,
-                                     INVENTORY_ITEM_ID, CUSTOMER_ID, ITEM_ALIAS, NET_WEIGHT, SIDE_SEAL_COUNT, SIDE_SEAL_DES
+                                     INVENTORY_ITEM_ID, CUSTOMER_ID, ITEM_ALIAS, NET_WEIGHT, TOP_SEAL_COUNT, TOP_SEAL_DES
                             FROM apps.dev_sales_orders_mbf_v 
                             WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
@@ -167,8 +167,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 customerId = reader["CUSTOMER_ID"].ToString(),
                 itemalias = reader["ITEM_ALIAS"] == DBNull.Value? null : reader["ITEM_ALIAS"].ToString(),
                 netweight = reader["NET_WEIGHT"] == DBNull.Value? null : reader["NET_WEIGHT"].ToString(),
-                sideSealCount = int.TryParse(reader["SIDE_SEAL_COUNT"]?.ToString(), out int ssc) ? ssc : default,
-                sideSealDes = reader["SIDE_SEAL_DES"].ToString()
+                topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
+                topSealDes = reader["TOP_SEAL_DES"]?.ToString()
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);

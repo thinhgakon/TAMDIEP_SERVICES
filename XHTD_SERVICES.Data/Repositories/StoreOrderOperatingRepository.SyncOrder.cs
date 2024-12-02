@@ -151,8 +151,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         SourceDocumentId = sourceDocumentId,
                         ItemAlias = websaleOrder.itemalias,
                         NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0,
-                        SealCount = websaleOrder.sideSealCount,
-                        SealDes = websaleOrder.sideSealDes
+                        SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0,
+                        SealDes = websaleOrder.topSealDes
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -304,8 +304,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                             order.DocNum = websaleOrder.docnum;
 
-                            order.SealCount = websaleOrder.sideSealCount;
-                            order.SealDes = websaleOrder.sideSealDes;
+                            order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
+                            order.SealDes = websaleOrder.topSealDes;
 
                             order.UpdateDay = lastUpdatedDate;
 
@@ -536,6 +536,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {syncTime};";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {syncTime};";
 
+                        order.SealCount = sealCount;
+                        order.SealDes = sealDes;
+
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
@@ -580,6 +583,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {syncTime};";
+
+                        order.SealCount = sealCount;
+                        order.SealDes = sealDes;
 
                         await _appDbContext.SaveChangesAsync();
 
