@@ -116,13 +116,13 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Jobs
                 await Task.Run(async () =>
                 {
                     // Get System Parameters
-                    await LoadSystemParameters();
+                    //await LoadSystemParameters();
 
-                    if (!isActiveService)
-                    {
-                        _logger.LogInfo("Service nhận diện RFID đang TẮT.");
-                        return;
-                    }
+                    //if (!isActiveService)
+                    //{
+                    //    _logger.LogInfo("Service nhận diện RFID đang TẮT.");
+                    //    return;
+                    //}
 
                     _logger.LogInfo($"--------------- START JOB - IP: {PegasusAdr} ---------------");
 
@@ -312,94 +312,98 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Jobs
 
             _logger.LogInfo($"2. Kiểm tra tag đã check trước đó");
 
-            var machineCode = string.Empty;
-            using (var db = new XHTD_Entities())
-            {
-                var machineTrough = await db.TblMachineTroughs.FirstOrDefaultAsync(x => x.TroughCode == TROUGH_CODE);
-                if (machineTrough == null) return;
+            #region Code gốc
+            //var machineCode = string.Empty;
+            //using (var db = new XHTD_Entities())
+            //{
+            //    var machineTrough = await db.TblMachineTroughs.FirstOrDefaultAsync(x => x.TroughCode == TROUGH_CODE);
+            //    if (machineTrough == null) return;
 
-                machineCode = machineTrough.MachineCode;
-            }
+            //    machineCode = machineTrough.MachineCode;
+            //}
 
-            // Kiểm tra RFID có hợp lệ hay không
-            string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
+            //// Kiểm tra RFID có hợp lệ hay không
+            //string vehicleCodeCurrent = _rfidRepository.GetVehicleCodeByCardNo(cardNoCurrent);
 
-            if (!String.IsNullOrEmpty(vehicleCodeCurrent))
-            {
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpValidCardNoLst.Add(newCardNoLog);
+            //if (!String.IsNullOrEmpty(vehicleCodeCurrent))
+            //{
+            //    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+            //    tmpValidCardNoLst.Add(newCardNoLog);
 
-                _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
-                SendNotificationHub("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
-                SendNotificationAPI("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
+            //    _logger.LogInfo($"3. Tag hợp lệ: vehicle: {vehicleCodeCurrent}");
+            //    SendNotificationHub("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
+            //    SendNotificationAPI("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
 
-                tblStoreOrderOperating currentOrder = null;
+            //    tblStoreOrderOperating currentOrder = null;
 
-                using (var db = new XHTD_Entities())
-                {
-                    currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
-                                                                                             x.CatId == OrderCatIdCode.XI_MANG_BAO &&
-                                                                                             x.TypeXK == OrderTypeXKCode.SLING &&
-                                                                                            (x.Step == (int)OrderStep.DA_CAN_VAO ||
-                                                                                             x.Step == (int)OrderStep.DA_LAY_HANG) &&
-                                                                                             x.IsVoiced == false);
-                }
+            //    using (var db = new XHTD_Entities())
+            //    {
+            //        currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
+            //                                                                                 x.CatId == OrderCatIdCode.XI_MANG_BAO &&
+            //                                                                                 x.TypeXK == OrderTypeXKCode.SLING &&
+            //                                                                                (x.Step == (int)OrderStep.DA_CAN_VAO ||
+            //                                                                                 x.Step == (int)OrderStep.DA_LAY_HANG) &&
+            //                                                                                 x.IsVoiced == false);
+            //    }
 
-                if (currentOrder == null)
-                {
-                    _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
-                    return;
-                }
+            //    if (currentOrder == null)
+            //    {
+            //        _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
+            //        return;
+            //    }
 
-                await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
-                _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+            //    await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
+            //    _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
 
-                currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
-                currentOrder.TimeConfirm5 = DateTime.Now;
-                currentOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}. ";
+            //    currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
+            //    currentOrder.TimeConfirm5 = DateTime.Now;
+            //    currentOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}. ";
 
-                List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
-                List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+            //    List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
+            //    List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
 
-                using (var db = new XHTD_Entities())
-                {
-                    callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
-                                                                                x.Machine == TROUGH_CODE &&
-                                                                                x.IsDone == false).ToListAsync();
+            //    using (var db = new XHTD_Entities())
+            //    {
+            //        callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
+            //                                                                    x.Machine == TROUGH_CODE &&
+            //                                                                    x.IsDone == false).ToListAsync();
 
-                    ordersInTrough = await (from orders in db.tblStoreOrderOperatings
-                                            join callToTroughs in db.tblCallToTroughs
-                                            on orders.DeliveryCode equals callToTroughs.DeliveryCode
-                                            where callToTroughs.Machine == TROUGH_CODE &&
-                                                    callToTroughs.IsDone == false &&
-                                                    callToTroughs.DeliveryCode != currentOrder.DeliveryCode &&
-                                                    orders.Step == (int)OrderStep.DANG_LAY_HANG
-                                            select orders).ToListAsync();
+            //        ordersInTrough = await (from orders in db.tblStoreOrderOperatings
+            //                                join callToTroughs in db.tblCallToTroughs
+            //                                on orders.DeliveryCode equals callToTroughs.DeliveryCode
+            //                                where callToTroughs.Machine == TROUGH_CODE &&
+            //                                        callToTroughs.IsDone == false &&
+            //                                        callToTroughs.DeliveryCode != currentOrder.DeliveryCode &&
+            //                                        orders.Step == (int)OrderStep.DANG_LAY_HANG
+            //                                select orders).ToListAsync();
 
-                    foreach (var callToTroughEntity in callToTroughEntities)
-                    {
-                        callToTroughEntity.IsDone = true;
-                    }
+            //        foreach (var callToTroughEntity in callToTroughEntities)
+            //        {
+            //            callToTroughEntity.IsDone = true;
+            //        }
 
-                    foreach (var order in ordersInTrough)
-                    {
-                        order.Step = (int)OrderStep.DA_LAY_HANG;
-                        order.TimeConfirm6 = DateTime.Now;
-                        order.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
-                    }
+            //        foreach (var order in ordersInTrough)
+            //        {
+            //            order.Step = (int)OrderStep.DA_LAY_HANG;
+            //            order.TimeConfirm6 = DateTime.Now;
+            //            order.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
+            //        }
 
-                    await db.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                _logger.LogInfo($"3. Tag KHÔNG hợp lệ! => Kết thúc");
+            //        await db.SaveChangesAsync();
+            //    }
+            //}
+            //else
+            //{
+            //    _logger.LogInfo($"3. Tag KHÔNG hợp lệ! => Kết thúc");
 
-                var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
-                tmpInvalidCardNoLst.Add(newCardNoLog);
+            //    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+            //    tmpInvalidCardNoLst.Add(newCardNoLog);
 
-                return;
-            }
+            //    return;
+            //}
+            #endregion
+
+            SendTroughRfid("SLING_UHF_2", cardNoCurrent);
 
             _logger.LogInfo($"10. Giải phóng RFID");
 
@@ -438,6 +442,19 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendTroughRfid(string locationCode, string rfid)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi signalR rfid với mã {rfid}");
+                _notification.SendTroughRfid(locationCode, rfid);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendTroughRfid Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

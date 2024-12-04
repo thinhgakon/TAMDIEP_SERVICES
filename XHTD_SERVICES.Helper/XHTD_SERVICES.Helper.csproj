@@ -83,6 +83,7 @@
     <Compile Include="Models\Request\SendTroughControlRequest.cs" />
     <Compile Include="Models\Request\SendTroughDataRequest.cs" />
     <Compile Include="Models\Request\SendTroughNotificationRequest.cs" />
+    <Compile Include="Models\Request\SendTroughRfidRequest.cs" />
     <Compile Include="Models\Request\UpdateWeightRequest.cs" />
     <Compile Include="OrderValidator.cs" />
     <Compile Include="Calculator.cs" />
