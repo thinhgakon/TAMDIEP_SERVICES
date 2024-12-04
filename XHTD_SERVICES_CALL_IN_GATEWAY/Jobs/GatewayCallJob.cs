@@ -298,11 +298,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                     else if (count == 3)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1200);
                     }
                     else
                     {
-                        Thread.Sleep(600);
+                        Thread.Sleep(700);
                     }
                 }
 
