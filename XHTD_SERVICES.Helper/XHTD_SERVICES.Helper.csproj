@@ -98,6 +98,7 @@
     <Compile Include="Models\Request\SearchOrderRequest.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response\ErpLoginDto.cs" />
     <Compile Include="Response\GetDMSTokenResponse.cs" />
     <Compile Include="Response\GetTokenResponse.cs" />
     <Compile Include="TroughHelper.cs" />
