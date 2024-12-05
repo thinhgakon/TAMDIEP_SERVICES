@@ -152,7 +152,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         ItemAlias = websaleOrder.itemalias,
                         NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0,
                         SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0,
-                        SealDes = websaleOrder.topSealDes
+                        SealDes = websaleOrder.topSealDes,
+                        DeliveryCodeTgc = websaleOrder.deliveryCodeTgc
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -306,6 +307,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
+
+                            order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc
 
                             order.UpdateDay = lastUpdatedDate;
 
