@@ -12,12 +12,39 @@ using RestSharp;
 using Newtonsoft.Json;
 using log4net;
 using XHTD_SERVICES.Data.Entities;
+using XHTD_SERVICES.Helper.Response;
 
 namespace XHTD_SERVICES.Helper
 {
     public static class HttpRequest
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(HttpRequest));
+
+        public static ERPLoginResultDto GetErpToken()
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_Erp/Url") as NameValueCollection;
+            var account = ConfigurationManager.GetSection("API_Erp/Account") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["GetToken"]);
+            var request = new RestRequest();
+
+            var requestData = new ERPLoginRequestDto
+            {
+                UserName = account["UserName"],
+                Password = account["PassWord"],
+                RememberMe = true
+            };
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+            var result = JsonConvert.DeserializeObject<ERPLoginResultDto>(response.Content);
+            return result;
+        }
 
         public static IRestResponse GetWebsaleToken()
         {
@@ -350,6 +377,24 @@ namespace XHTD_SERVICES.Helper
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
 
             var client = new RestClient(apiUrl["SendVehicleInTroughData"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse SendTroughRfid(SendTroughRfidRequest requestData)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendTroughRfid"]);
             var request = new RestRequest();
 
             request.Method = Method.POST;
@@ -922,6 +967,25 @@ namespace XHTD_SERVICES.Helper
             };
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse UpdateLotNumber(string deliveryCode, string lotNumber)
+        {
+            var erpLoginResult = GetErpToken();
+
+            var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
+            var client = new RestClient($"{apiUrl["UpdateLotNumber"]}?delivery_code={deliveryCode}&lot_number={lotNumber}");
+            
+            var request = new RestRequest();
+            request.Method = Method.POST;
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", $"Bearer {erpLoginResult.Token}");
             request.RequestFormat = DataFormat.Json;
 
             IRestResponse response = client.Execute(request);

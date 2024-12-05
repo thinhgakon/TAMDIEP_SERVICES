@@ -83,6 +83,7 @@
     <Compile Include="Models\Request\SendTroughControlRequest.cs" />
     <Compile Include="Models\Request\SendTroughDataRequest.cs" />
     <Compile Include="Models\Request\SendTroughNotificationRequest.cs" />
+    <Compile Include="Models\Request\SendTroughRfidRequest.cs" />
     <Compile Include="Models\Request\UpdateWeightRequest.cs" />
     <Compile Include="OrderValidator.cs" />
     <Compile Include="Calculator.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Models\Request\SearchOrderRequest.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Response\ErpLoginDto.cs" />
     <Compile Include="Response\GetDMSTokenResponse.cs" />
     <Compile Include="Response\GetTokenResponse.cs" />
     <Compile Include="TroughHelper.cs" />

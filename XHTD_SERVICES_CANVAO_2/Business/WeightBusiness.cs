@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
+using XHTD_SERVICES.Helper;
+using XHTD_SERVICES_CANVAO_2.Models.Response;
 
 namespace XHTD_SERVICES_CANVAO_2.Business
 {
@@ -38,9 +43,40 @@ namespace XHTD_SERVICES_CANVAO_2.Business
             await _storeOrderOperatingRepository.UpdateWeightOut(deliveryCode, weightOut);
         }
 
-        public async Task UpdateLotNumber(string deliveryCode)
+        public async Task<DesicionScaleResponse> UpdateLotNumber(string deliveryCode)
         {
-            await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
+            bool isSucess = await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
+
+            // Nếu cập nhật số lô thành công thì gọi api ERP cập nhật lại số lô
+            if (isSucess)
+            {
+                var order = new tblStoreOrderOperating();
+                using (var dbContext = new XHTD_Entities())
+                {
+                    order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
+                }
+
+                var updateResponse = HttpRequest.UpdateLotNumber(deliveryCode, order.LotNumber);
+                if (updateResponse.StatusDescription.Equals("Unauthorized"))
+                {
+                    var unauthorizedResponse = new DesicionScaleResponse();
+                    unauthorizedResponse.Code = "02";
+                    unauthorizedResponse.Message = "Xác thực API cân WebSale không thành công";
+                    return unauthorizedResponse;
+                }
+
+                var updateResponseContent = updateResponse.Content;
+                var response = JsonConvert.DeserializeObject<DesicionScaleResponse>(updateResponseContent);
+                return response;
+            }
+
+            var resultResponse = new DesicionScaleResponse
+            {
+                Code = "02",
+                Message = "Cập nhật số lô thất bại, không tìm thấy số lô hợp lệ"
+            };
+
+            return resultResponse;
         }
     }
 }

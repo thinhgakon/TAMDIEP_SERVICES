@@ -178,6 +178,17 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendVehicleInTroughData(notification);
         }
 
+        public void SendTroughRfid(string locationCode, string rfid)
+        {
+            SendTroughRfidRequest request = new SendTroughRfidRequest
+            {
+                LocationCode = locationCode,
+                Rfid = rfid
+            };
+
+            HttpRequest.SendTroughRfid(request);
+        }
+
         public void SendOrderSendOrderToleranceWarning(string deliveryCode, string vehicle, decimal? sumNumber, int? weightIn, int? weightOut, double? tolerance)
         {
             SendOrderToleranceWarningRequest warning = new SendOrderToleranceWarningRequest
