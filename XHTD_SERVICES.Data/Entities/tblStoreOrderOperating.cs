@@ -143,6 +143,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<bool> IsSyncedOutSource2 { get; set; }
         public Nullable<int> SealCount { get; set; }
         public string SealDes { get; set; }
+        public string DeliveryCodeTgc { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
