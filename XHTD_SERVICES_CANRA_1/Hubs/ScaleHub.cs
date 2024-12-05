@@ -420,8 +420,10 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
-                                    await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
-                                    WriteLogInfo($"9. Cap nhat so lo");
+                                    var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
+                                    var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
+                                    SendMessage(notificationType, updateLotNumberResponse.Message);
+                                    WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
                                 }
                                 else
                                 {
