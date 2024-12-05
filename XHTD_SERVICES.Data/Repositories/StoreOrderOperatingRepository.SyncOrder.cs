@@ -308,7 +308,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
 
-                            order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc
+                            order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc;
 
                             order.UpdateDay = lastUpdatedDate;
 
