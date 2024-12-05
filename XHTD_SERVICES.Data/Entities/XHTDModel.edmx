@@ -555,6 +555,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="UpdateDay" Type="datetime2" Precision="7" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
+          <Property Name="Source" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="TblQualityCertificatePartner">
           <Key>
@@ -776,6 +777,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="IsSyncedOutSource2" Type="bit" />
           <Property Name="SealCount" Type="int" />
           <Property Name="SealDes" Type="nvarchar(max)" />
+          <Property Name="DeliveryCodeTgc" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1714,6 +1716,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="IsSyncedOutSource2" Type="Boolean" />
           <Property Name="SealCount" Type="Int32" />
           <Property Name="SealDes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DeliveryCodeTgc" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2194,6 +2197,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="UpdateDay" Type="DateTime" Precision="7" />
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="TblQualityCertificatePartners" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificatePartner_TblQualityCertificate_QualityCertificateId" FromRole="TblQualityCertificate" ToRole="TblQualityCertificatePartner" />
+          <Property Name="Source" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="tblExportPlanDetail">
           <Key>
@@ -2788,6 +2792,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="DeliveryCodeTgc" ColumnName="DeliveryCodeTgc" />
                 <ScalarProperty Name="SealDes" ColumnName="SealDes" />
                 <ScalarProperty Name="SealCount" ColumnName="SealCount" />
                 <ScalarProperty Name="IsSyncedOutSource2" ColumnName="IsSyncedOutSource2" />
@@ -3174,6 +3179,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblQualityCertificates">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificate">
               <MappingFragment StoreEntitySet="TblQualityCertificate">
+                <ScalarProperty Name="Source" ColumnName="Source" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
                 <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />

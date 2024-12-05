@@ -251,6 +251,7 @@ namespace XHTD_SERVICES_CLK_TROUGH_1.Jobs
                             Program.LastTimeReceivedUHF = DateTime.Now;
 
                             _logger.LogInfo($"====== CardNo : {cardNoCurrent}");
+                            SendTroughRfid("CLK_UHF", cardNoCurrent);
 
                             await ReadDataProcess(cardNoCurrent);
                         }
@@ -428,6 +429,19 @@ namespace XHTD_SERVICES_CLK_TROUGH_1.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendTroughRfid(string locationCode, string rfid)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi signalR rfid với mã {rfid}");
+                _notification.SendTroughRfid(locationCode, rfid);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendTroughRfid Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
