@@ -992,5 +992,26 @@ namespace XHTD_SERVICES.Helper
 
             return response;
         }
+
+        public static IRestResponse SendInvoiceXHTD(string deliveryCode)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["InvoiceXHTD"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new
+            {
+                deliveryCode = deliveryCode
+            });
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
     }
 }
