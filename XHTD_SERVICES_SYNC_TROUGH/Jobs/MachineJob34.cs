@@ -14,6 +14,7 @@ using SuperSimpleTcp;
 using XHTD_SERVICES.Helper;
 using System.Data.Entity;
 using log4net;
+using XHTD_SERVICES.Data.Models.Values;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 {
@@ -175,6 +176,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machine.StopStatus == "PENDING")
                     {
                         var currentDeliveryCode = machine.CurrentDeliveryCode;
+                        var order = new tblStoreOrderOperating();
+                        using (var db = new XHTD_Entities())
+                        {
+                            order = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
+                        }
 
                         WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {currentDeliveryCode} ============================================");
 
@@ -204,7 +210,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             WriteLogInfo($"2.1. Stop thành công");
 
                             SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty);
+
+                            var isFromWeightOut = order?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                            SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
                         }
                         else
                         {
@@ -250,11 +258,12 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public void SendMachineStopNotification(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendMachineStopNotification(string machineCode, string troughCode, string deliveryCode, string vehicle, bool isFromWeightOut)
         {
             try
             {
-                _notification.SendTroughStopData(machineCode, troughCode, deliveryCode, vehicle);
+                _notification.SendTroughStopData(machineCode, troughCode, deliveryCode, vehicle, isFromWeightOut);
+                WriteLogInfo($"Gửi signalR thành công: Machine: {machineCode} - Trough: {troughCode} - DeliveryCode: {deliveryCode} - Vehicle: {vehicle} - IsFromWeightOut: {isFromWeightOut}");
             }
             catch (Exception ex)
             {
