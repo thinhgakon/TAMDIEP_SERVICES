@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES.Helper;
+using XHTD_SERVICES.Helper.Response;
 using XHTD_SERVICES_CANVAO_1.Models.Response;
 
 namespace XHTD_SERVICES_CANVAO_1.Business
@@ -77,6 +78,14 @@ namespace XHTD_SERVICES_CANVAO_1.Business
             };
 
             return resultResponse;
+        }
+
+        public async Task<DmsApiResponse> InvoiceXHTD(string deliveryCode)
+        {
+            var updateResponse = HttpRequest.SendInvoiceXHTD(deliveryCode);
+            var updateResponseContent = updateResponse.Content;
+            var response = JsonConvert.DeserializeObject<DmsApiResponse>(updateResponseContent);
+            return response;
         }
     }
 }
