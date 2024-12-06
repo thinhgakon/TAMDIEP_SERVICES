@@ -150,14 +150,15 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendTroughStartData(notification);
         }
 
-        public void SendTroughStopData(string machineCode, string troughCode, string deliveryCode, string vehicle)
+        public void SendTroughStopData(string machineCode, string troughCode, string deliveryCode, string vehicle, bool isFromWeightOut)
         {
             SendTroughControlRequest notification = new SendTroughControlRequest
             {
                 MachineCode = machineCode,
                 TroughCode = troughCode,
                 DeliveryCode = deliveryCode,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                IsFromWeightOut = isFromWeightOut
             };
 
             HttpRequest.SendTroughStopData(notification);

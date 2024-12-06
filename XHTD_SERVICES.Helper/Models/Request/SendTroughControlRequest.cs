@@ -19,5 +19,7 @@ namespace XHTD_SERVICES.Helper.Models.Request
         public string BookQuantity { get; set; }
 
         public string LocationCodeTgc { get; set; }
+
+        public bool? IsFromWeightOut { get; set; }
     }
 }
