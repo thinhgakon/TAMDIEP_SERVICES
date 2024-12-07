@@ -150,7 +150,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                     {
                                         trough.DeliveryCodeCurrent = machine.CurrentDeliveryCode;
                                         troughCode = trough.Code;
-                                        await db.SaveChangesAsync();
                                     }
                                 }
 
@@ -167,6 +166,8 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                     SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                                     SendMachineStartNotification(machine.Code, troughCode, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
                                 }
+
+                                await db.SaveChangesAsync();
                             }
                         }
                         else
@@ -179,11 +180,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machine.StopStatus == "PENDING")
                     {
                         var currentDeliveryCode = machine.CurrentDeliveryCode;
-                        var currentOrder = new tblStoreOrderOperating();
-                        using (var db = new XHTD_Entities())
-                        {
-                            currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
-                        }
 
                         WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {currentDeliveryCode} ============================================");
 
@@ -212,12 +208,18 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             WriteLogInfo($"2.1. Stop thành công");
 
-                            var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
-                            currentOrder.StopPrintData = DateTime.Now;
-                            currentOrder.IsFromWeightOut = isFromWeightOut;
+                            using (var db = new XHTD_Entities())
+                            {
+                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
+                                var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                                currentOrder.StopPrintData = DateTime.Now;
+                                currentOrder.IsFromWeightOut = isFromWeightOut;
 
-                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                            SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
+                                await db.SaveChangesAsync();
+
+                                SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                                SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
+                            }
                         }
                         else
                         {
