@@ -778,6 +778,11 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="SealCount" Type="int" />
           <Property Name="SealDes" Type="nvarchar(max)" />
           <Property Name="DeliveryCodeTgc" Type="varchar" MaxLength="20" />
+          <Property Name="IsFromWeightOut" Type="bit" />
+          <Property Name="PrintMachineCode" Type="nvarchar(max)" />
+          <Property Name="StartPrintData" Type="datetime2" Precision="7" />
+          <Property Name="StopPrintData" Type="datetime2" Precision="7" />
+          <Property Name="PrintTroughCode" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -1717,6 +1722,11 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="SealCount" Type="Int32" />
           <Property Name="SealDes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DeliveryCodeTgc" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsFromWeightOut" Type="Boolean" />
+          <Property Name="PrintMachineCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartPrintData" Type="DateTime" Precision="7" />
+          <Property Name="StopPrintData" Type="DateTime" Precision="7" />
+          <Property Name="PrintTroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2792,6 +2802,11 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="PrintTroughCode" ColumnName="PrintTroughCode" />
+                <ScalarProperty Name="StopPrintData" ColumnName="StopPrintData" />
+                <ScalarProperty Name="StartPrintData" ColumnName="StartPrintData" />
+                <ScalarProperty Name="PrintMachineCode" ColumnName="PrintMachineCode" />
+                <ScalarProperty Name="IsFromWeightOut" ColumnName="IsFromWeightOut" />
                 <ScalarProperty Name="DeliveryCodeTgc" ColumnName="DeliveryCodeTgc" />
                 <ScalarProperty Name="SealDes" ColumnName="SealDes" />
                 <ScalarProperty Name="SealCount" ColumnName="SealCount" />
