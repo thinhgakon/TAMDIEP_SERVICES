@@ -179,7 +179,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                     if (machine.StopStatus == "PENDING")
                     {
-                        WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {machine.CurrentDeliveryCode} ============================================");
+                        var currentDeliveryCode = machine.CurrentDeliveryCode;
+
+                        WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {currentDeliveryCode} ============================================");
 
                         var command = $"*[Stop][MDB][{machine.Code}][!]";
 
@@ -208,7 +210,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             using (var db = new XHTD_Entities())
                             {
-                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == machine.CurrentDeliveryCode);
+                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
                                 var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
                                 currentOrder.StopPrintData = DateTime.Now;
                                 currentOrder.IsFromWeightOut = isFromWeightOut;
@@ -216,7 +218,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                 await db.SaveChangesAsync();
 
                                 SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                                SendMachineStopNotification(machine.Code, string.Empty, machine.CurrentDeliveryCode, string.Empty, isFromWeightOut);
+                                SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
                             }
                         }
                         else
