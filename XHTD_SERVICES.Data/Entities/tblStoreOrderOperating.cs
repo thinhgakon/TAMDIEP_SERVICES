@@ -144,6 +144,11 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> SealCount { get; set; }
         public string SealDes { get; set; }
         public string DeliveryCodeTgc { get; set; }
+        public Nullable<bool> IsFromWeightOut { get; set; }
+        public string PrintMachineCode { get; set; }
+        public Nullable<System.DateTime> StartPrintData { get; set; }
+        public Nullable<System.DateTime> StopPrintData { get; set; }
+        public string PrintTroughCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }
