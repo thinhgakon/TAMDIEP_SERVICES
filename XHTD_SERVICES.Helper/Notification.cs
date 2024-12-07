@@ -174,7 +174,8 @@ namespace XHTD_SERVICES.Helper
                 DeliveryCode = deliveryCode,
                 Vehicle = vehicle,
                 BookQuantity = bookQuantity,
-                LocationCodeTgc = locationCodeTgc
+                LocationCodeTgc = locationCodeTgc,
+                IsFromWeightOut = false
             };
 
             HttpRequest.SendVehicleInTroughData(notification);
