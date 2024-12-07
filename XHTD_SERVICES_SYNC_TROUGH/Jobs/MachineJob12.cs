@@ -160,6 +160,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                                     vehicle = currentOrder.Vehicle;
                                     bookQuantity = currentOrder.SumNumber.ToString();
                                     locationCodeTgc = currentOrder.LocationCodeTgc;
+                                    currentOrder.StartPrintData = DateTime.Now;
+                                    currentOrder.PrintMachineCode = machine.Code;
+                                    currentOrder.PrintTroughCode = troughCode;
 
                                     SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                                     SendMachineStartNotification(machine.Code, troughCode, machine.CurrentDeliveryCode, vehicle, bookQuantity, locationCodeTgc);
@@ -176,10 +179,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     if (machine.StopStatus == "PENDING")
                     {
                         var currentDeliveryCode = machine.CurrentDeliveryCode;
-                        var order = new tblStoreOrderOperating();
+                        var currentOrder = new tblStoreOrderOperating();
                         using (var db = new XHTD_Entities())
                         {
-                            order = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
+                            currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
                         }
 
                         WriteLogInfo($"Stop machine code: {machine.Code} -- msgh: {currentDeliveryCode} ============================================");
@@ -209,9 +212,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                             WriteLogInfo($"2.1. Stop thành công");
 
-                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                            var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                            currentOrder.StopPrintData = DateTime.Now;
+                            currentOrder.IsFromWeightOut = isFromWeightOut;
 
-                            var isFromWeightOut = order?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                            SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
                             SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
                         }
                         else
