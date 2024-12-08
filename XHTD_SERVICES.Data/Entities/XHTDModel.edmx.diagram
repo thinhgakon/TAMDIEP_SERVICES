@@ -66,6 +66,7 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblNotification_TblNotificationGroup_NotificationGroupId" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificatePartner_TblQualityCertificate_QualityCertificateId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" Width="1.5" PointX="17.375" PointY="20.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
