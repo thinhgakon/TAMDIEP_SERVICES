@@ -74,5 +74,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<TblNotificationGroup> TblNotificationGroups { get; set; }
         public virtual DbSet<TblQualityCertificatePartner> TblQualityCertificatePartners { get; set; }
         public virtual DbSet<TblSendTroughStatu> TblSendTroughStatus { get; set; }
+        public virtual DbSet<tblStoreOrderOperatingHistory> tblStoreOrderOperatingHistories { get; set; }
     }
 }

@@ -784,6 +784,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="StopPrintData" Type="datetime2" Precision="7" />
           <Property Name="PrintTroughCode" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="tblStoreOrderOperatingHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeliveryCode" Type="nvarchar(max)" />
+          <Property Name="Vehicle" Type="nvarchar(max)" />
+          <Property Name="TypeProduct" Type="nvarchar(max)" />
+          <Property Name="SumNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="NameDistributor" Type="nvarchar(max)" />
+          <Property Name="OrderDate" Type="datetime2" Precision="7" />
+          <Property Name="LogChange" Type="nvarchar(max)" />
+          <Property Name="TimeChange" Type="datetime2" Precision="7" />
+        </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
             <PropertyRef Name="Id" />
@@ -1112,6 +1126,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySet Name="TblSendTroughStatus" EntityType="Self.TblSendTroughStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblStoreOrderLocation" EntityType="Self.tblStoreOrderLocation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblStoreOrderOperating" EntityType="Self.tblStoreOrderOperating" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblStoreOrderOperatingHistory" EntityType="Self.tblStoreOrderOperatingHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblStoreOrderOperatingPriority" EntityType="Self.tblStoreOrderOperatingPriority" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblSystemParameter" EntityType="Self.tblSystemParameter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblTrough" EntityType="Self.tblTrough" Schema="dbo" store:Type="Tables" />
@@ -2001,6 +2016,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <End Role="TblQualityCertificate" EntitySet="TblQualityCertificates" />
             <End Role="TblQualityCertificatePartner" EntitySet="TblQualityCertificatePartners" />
           </AssociationSet>
+          <EntitySet Name="tblStoreOrderOperatingHistories" EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" />
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -2383,6 +2399,20 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="tblStoreOrderOperatingHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeliveryCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Vehicle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TypeProduct" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SumNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="NameDistributor" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OrderDate" Type="DateTime" Precision="7" />
+          <Property Name="LogChange" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TimeChange" Type="DateTime" Precision="7" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3334,6 +3364,21 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
                 <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
                 <ScalarProperty Name="TroughCode" ColumnName="TroughCode" />
                 <ScalarProperty Name="MachineCode" ColumnName="MachineCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblStoreOrderOperatingHistories">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory">
+              <MappingFragment StoreEntitySet="tblStoreOrderOperatingHistory">
+                <ScalarProperty Name="TimeChange" ColumnName="TimeChange" />
+                <ScalarProperty Name="LogChange" ColumnName="LogChange" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="NameDistributor" ColumnName="NameDistributor" />
+                <ScalarProperty Name="SumNumber" ColumnName="SumNumber" />
+                <ScalarProperty Name="TypeProduct" ColumnName="TypeProduct" />
+                <ScalarProperty Name="Vehicle" ColumnName="Vehicle" />
+                <ScalarProperty Name="DeliveryCode" ColumnName="DeliveryCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -199,6 +199,23 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
 
                         if (MachineResponse.Contains($"*[Stop][MDB][{machine.Code}]#OK#"))
                         {
+                            using (var db = new XHTD_Entities())
+                            {
+                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
+                                var isFromWeightOut = false;
+                                
+                                if (currentOrder != null)
+                                {
+                                    isFromWeightOut = currentOrder.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                                    currentOrder.StopPrintData = DateTime.Now;
+                                    currentOrder.IsFromWeightOut = isFromWeightOut;
+                                    await db.SaveChangesAsync();
+                                }
+
+                                SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
+                                SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
+                            }
+
                             machine.StartStatus = "OFF";
                             machine.StopStatus = "ON";
                             machine.CurrentDeliveryCode = null;
@@ -207,19 +224,6 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             await _machineRepository.UpdateMachine(machine);
 
                             WriteLogInfo($"2.1. Stop thành công");
-
-                            using (var db = new XHTD_Entities())
-                            {
-                                var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
-                                var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
-                                currentOrder.StopPrintData = DateTime.Now;
-                                currentOrder.IsFromWeightOut = isFromWeightOut;
-
-                                await db.SaveChangesAsync();
-
-                                SendNotificationAPI(string.Empty, machine.Code, machine.StartStatus, machine.StopStatus);
-                                SendMachineStopNotification(machine.Code, string.Empty, currentDeliveryCode, string.Empty, isFromWeightOut);
-                            }
                         }
                         else
                         {
