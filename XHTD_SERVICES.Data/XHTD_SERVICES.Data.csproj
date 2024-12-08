@@ -200,6 +200,9 @@
     <Compile Include="Entities\tblStoreOrderOperating.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblStoreOrderOperatingHistory.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblStoreOrderOperatingPriority.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
