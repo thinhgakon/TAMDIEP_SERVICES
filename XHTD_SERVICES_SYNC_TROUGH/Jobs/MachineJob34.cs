@@ -202,10 +202,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                             using (var db = new XHTD_Entities())
                             {
                                 var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == currentDeliveryCode);
-                                var isFromWeightOut = currentOrder?.Step == (int)OrderStep.DA_CAN_RA ? true : false;
+                                var isFromWeightOut = false;
                                 
                                 if (currentOrder != null)
                                 {
+                                    isFromWeightOut = currentOrder.Step == (int)OrderStep.DA_CAN_RA ? true : false;
                                     currentOrder.StopPrintData = DateTime.Now;
                                     currentOrder.IsFromWeightOut = isFromWeightOut;
                                     await db.SaveChangesAsync();
