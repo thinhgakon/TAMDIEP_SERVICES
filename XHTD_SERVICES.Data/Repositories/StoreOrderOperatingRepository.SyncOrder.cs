@@ -157,6 +157,20 @@ namespace XHTD_SERVICES.Data.Repositories
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
+
+                    var newHistory = new tblStoreOrderOperatingHistory
+                    {
+                        DeliveryCode = newOrderOperating.DeliveryCode,
+                        Vehicle = newOrderOperating.Vehicle,
+                        TypeProduct = newOrderOperating.TypeProduct,
+                        SumNumber = newOrderOperating.SumNumber,
+                        NameDistributor = newOrderOperating.NameDistributor,
+                        OrderDate = newOrderOperating.OrderDate,
+                        LogChange = $"Đơn hàng được tạo lúc {DateTime.Now} ",
+                        TimeChange = DateTime.Now
+                    };
+                    _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+
                     await _appDbContext.SaveChangesAsync();
 
                     Console.WriteLine($@"Inserted order orderId={websaleOrder.id} createDate={websaleOrder.createDate} lúc {syncTime}");
@@ -315,9 +329,24 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
                             order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
 
+                            var newHistory = new tblStoreOrderOperatingHistory
+                            {
+                                DeliveryCode = order.DeliveryCode,
+                                Vehicle = order.Vehicle,
+                                TypeProduct = order.TypeProduct,
+                                SumNumber = order.SumNumber,
+                                NameDistributor = order.NameDistributor,
+                                OrderDate = order.OrderDate,
+                                LogChange = $"Đơn hàng thay đổi lúc {DateTime.Now} ",
+                                TimeChange = DateTime.Now
+                            };
+                            _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+
                             await _appDbContext.SaveChangesAsync();
 
                             log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
+
+                            isSynced = true;
                         }
                     }
                 }
@@ -402,11 +431,24 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
                     }
 
-                    await _appDbContext.SaveChangesAsync();
-
                     // Xếp lại lốt
                     var message = $"Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
                     await ReindexOrder(order.TypeProduct, message);
+
+                    var newHistory = new tblStoreOrderOperatingHistory
+                    {
+                        DeliveryCode = order.DeliveryCode,
+                        Vehicle = order.Vehicle,
+                        TypeProduct = order.TypeProduct,
+                        SumNumber = order.SumNumber,
+                        NameDistributor = order.NameDistributor,
+                        OrderDate = order.OrderDate,
+                        LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
+                        TimeChange = DateTime.Now
+                    };
+                    _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+
+                    await _appDbContext.SaveChangesAsync();
 
                     Console.WriteLine($@"Update Receiving Order {orderId}");
                     log.Info($@"Update Receiving Order {orderId}");
@@ -494,6 +536,19 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
 
+                        var newHistory = new tblStoreOrderOperatingHistory
+                        {
+                            DeliveryCode = order.DeliveryCode,
+                            Vehicle = order.Vehicle,
+                            TypeProduct = order.TypeProduct,
+                            SumNumber = order.SumNumber,
+                            NameDistributor = order.NameDistributor,
+                            OrderDate = order.OrderDate,
+                            LogChange = $"Đơn hàng cân ra lúc {DateTime.Now} ",
+                            TimeChange = DateTime.Now
+                        };
+                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {orderId}");
@@ -541,6 +596,19 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
+
+                        var newHistory = new tblStoreOrderOperatingHistory
+                        {
+                            DeliveryCode = order.DeliveryCode,
+                            Vehicle = order.Vehicle,
+                            TypeProduct = order.TypeProduct,
+                            SumNumber = order.SumNumber,
+                            NameDistributor = order.NameDistributor,
+                            OrderDate = order.OrderDate,
+                            LogChange = $"Đơn hàng ra cổng lúc {DateTime.Now} ",
+                            TimeChange = DateTime.Now
+                        };
+                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
@@ -590,6 +658,19 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
 
+                        var newHistory = new tblStoreOrderOperatingHistory
+                        {
+                            DeliveryCode = order.DeliveryCode,
+                            Vehicle = order.Vehicle,
+                            TypeProduct = order.TypeProduct,
+                            SumNumber = order.SumNumber,
+                            NameDistributor = order.NameDistributor,
+                            OrderDate = order.OrderDate,
+                            LogChange = $"Đơn hàng được giao lúc {DateTime.Now} ",
+                            TimeChange = DateTime.Now
+                        };
+                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
@@ -629,6 +710,19 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.IsVoiced = true;
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Hủy đơn lúc {syncTime} ";
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Hủy đơn lúc {syncTime} ";
+
+                    var newHistory = new tblStoreOrderOperatingHistory
+                    {
+                        DeliveryCode = order.DeliveryCode,
+                        Vehicle = order.Vehicle,
+                        TypeProduct = order.TypeProduct,
+                        SumNumber = order.SumNumber,
+                        NameDistributor = order.NameDistributor,
+                        OrderDate = order.OrderDate,
+                        LogChange = $"Đơn hàng bị hủy lúc {DateTime.Now} ",
+                        TimeChange = DateTime.Now
+                    };
+                    _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                     await _appDbContext.SaveChangesAsync();
 
