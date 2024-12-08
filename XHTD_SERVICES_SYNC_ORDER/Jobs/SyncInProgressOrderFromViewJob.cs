@@ -301,7 +301,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                             if (machine != null)
                             {
                                 _syncOrderLogger.LogInfo($"Tự động kết thúc đơn hàng đã cân ra: MachineCode = {machine.Code} ---- TroughCode = {trough.Code} ---- DeliveryCode = {websaleOrder.deliveryCode}");
-                                var response = await _machineRepository.Stop(machine.Code, trough.Code, websaleOrder.deliveryCode);
+                                var response = await _machineRepository.Stop(machine.Code, trough.Code, websaleOrder.deliveryCode, true);
                                 _syncOrderLogger.LogInfo($"Stop Machine Response: Status = {response}");
                             }
                         }
