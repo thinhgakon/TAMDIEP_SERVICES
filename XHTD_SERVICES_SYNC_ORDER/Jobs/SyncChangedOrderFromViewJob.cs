@@ -160,7 +160,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 transportMethodId = int.TryParse(reader["TRANSPORT_METHOD_ID"]?.ToString(), out int i) ? i : default,
                 lastUpdatedDate = reader["LAST_UPDATE_DATE"] == DBNull.Value ? null : reader.GetDateTime(16).ToString("yyyy-MM-ddTHH:mm:ss"),
                 itemCategory = reader["ITEM_CATEGORY"].ToString(),
-                docnum = reader["DOC_NUM"].ToString(),
+                docnum = reader["DOC_NUM"]?.ToString(),
                 sourceDocumentId = reader["ORDER_REQ_ID"] != DBNull.Value ? reader["ORDER_REQ_ID"].ToString() :
                                    reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
                 productId = reader["INVENTORY_ITEM_ID"].ToString(),
@@ -169,7 +169,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 netweight = reader["NET_WEIGHT"] == DBNull.Value? null : reader["NET_WEIGHT"].ToString(),
                 topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
-                deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString()
+                deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
