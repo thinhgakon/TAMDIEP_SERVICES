@@ -8,6 +8,9 @@ using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES.Data.Models.Response;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Common;
+using RestSharp;
+using System.Collections.Specialized;
+using System.Configuration;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -175,6 +178,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     Console.WriteLine($@"Inserted order orderId={websaleOrder.id} createDate={websaleOrder.createDate} lúc {syncTime}");
                     log.Info($@"Inserted order orderId={websaleOrder.id} createDate={websaleOrder.createDate} lúc {syncTime}");
+
+                    SendOrderHistory(newHistory);
 
                     isSynced = true;
                 }
@@ -346,6 +351,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                             log.Info($@"Sync Update after orderId={websaleOrder.id} Vehicle={vehicleCode} DriverName={websaleOrder.driverName} CardNo={cardNo} SumNumber={websaleOrder.bookQuantity}");
 
+                            SendOrderHistory(newHistory);
+
                             isSynced = true;
                         }
                     }
@@ -453,6 +460,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     Console.WriteLine($@"Update Receiving Order {orderId}");
                     log.Info($@"Update Receiving Order {orderId}");
 
+                    SendOrderHistory(newHistory);
+
                     isSynced = true;
                 }
 
@@ -554,6 +563,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {orderId}");
                         log.Info($@"Sync Update Received => DA_CAN_RA Order {orderId}");
 
+                        SendOrderHistory(newHistory);
+
                         isSynced = true;
                     }
                 }
@@ -614,6 +625,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
                         log.Info($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
+
+                        SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -676,6 +689,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
                         log.Info($@"Update Received => DA_GIAO_HANG Order {orderId}");
 
+                        SendOrderHistory(newHistory);
+
                         isSynced = true;
                     }
                 }
@@ -729,6 +744,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     Console.WriteLine($@"Cancel Order {orderId}");
                     log.Info($@"Cancel Order {orderId}");
 
+                    SendOrderHistory(newHistory);
+
                     isSynced = true;
                 }
 
@@ -741,6 +758,36 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 return isSynced;
             }
+        }
+
+        public static IRestResponse SendOrderHistory(tblStoreOrderOperatingHistory orderHistory)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendOrderHistory"]);
+            var request = new RestRequest();
+
+            var requestData = new
+            {
+                DeliveryCode = orderHistory.DeliveryCode,
+                Vehicle = orderHistory.Vehicle,
+                TypeProduct = orderHistory.TypeProduct,
+                SumNumber = orderHistory.SumNumber,
+                NameDistributor = orderHistory.NameDistributor,
+                OrderDate = orderHistory.OrderDate,
+                LogChange = orderHistory.LogChange,
+                TimeChange = orderHistory.TimeChange
+            };
+
+            request.Method = Method.POST;
+            request.AddJsonBody(requestData);
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
         }
     }
 }

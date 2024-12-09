@@ -139,6 +139,17 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         var currentOrder = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
 
+                        List<tblStoreOrderOperating> splitOrders = await dbContext.tblStoreOrderOperatings
+                                                                                  .Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
+                                                                                              x.Vehicle == currentOrder.Vehicle &&
+                                                                                              x.TypeProduct == currentOrder.TypeProduct &&
+                                                                                              x.NameProduct.ToUpper() == currentOrder.NameProduct.ToUpper() &&
+                                                                                             (x.Step == (int)OrderStep.DA_CAN_VAO ||
+                                                                                              x.Step == (int)OrderStep.DANG_LAY_HANG ||
+                                                                                              x.Step == (int)OrderStep.DA_LAY_HANG) &&
+                                                                                              x.IsVoiced == false)
+                                                                                  .ToListAsync();
+
                         if (machine.ProductCategory.ToUpper() == OrderProductCategoryCode.XI_BAO)
                         {
                             machine.StartStatus = MachineStatus.PENDING.ToString();
@@ -152,7 +163,16 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         machine.CurrentDeliveryCode = deliveryCode;
                         machine.StartCountingFrom = (double?)(currentOrder.ExportedNumber * 20) ?? 0;
-                        await dbContext.SaveChangesAsync();
+
+                        if (splitOrders != null && splitOrders.Count > 0)
+                        {
+                            foreach (var splitOrder in splitOrders)
+                            {
+                                splitOrder.StartPrintData = DateTime.Now;
+                                splitOrder.PrintMachineCode = machine.Code;
+                                splitOrder.PrintTroughCode = trough.Code;
+                            }
+                        }
 
                         var exportHistory = await dbContext.tblExportHistories.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode &&
                                                                                                         x.MachineCode == machineCode &&
@@ -201,7 +221,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<string> Stop(string machineCode, string troughCode, string deliveryCode)
+        public async Task<string> Stop(string machineCode, string troughCode, string deliveryCode, bool isFromWeightOut = false)
         {
             try
             {
@@ -264,9 +284,11 @@ namespace XHTD_SERVICES.Data.Repositories
 
                                 splitOrder.ExportedNumber = (totalExported - splitOrder.SumNumber) >= 0 ? splitOrder.SumNumber : (splitOrder.ExportedNumber + totalExported);
                                 splitOrder.MachineExportedNumber = (machineTotalExported - splitOrder.SumNumber) >= 0 ? splitOrder.SumNumber : (splitOrder.MachineExportedNumber + machineTotalExported);
-                                splitOrder.Step = (int)OrderStep.DA_LAY_HANG;
+                                splitOrder.Confirm6 = 1;
                                 splitOrder.TimeConfirm6 = DateTime.Now;
                                 splitOrder.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
+                                splitOrder.StopPrintData = DateTime.Now;
+                                splitOrder.IsFromWeightOut = isFromWeightOut;
 
                                 totalExported -= splitOrder.SumNumber;
                                 machineTotalExported -= splitOrder.SumNumber;
@@ -286,9 +308,11 @@ namespace XHTD_SERVICES.Data.Repositories
                             }
                         }
 
-                        order.Step = (int)OrderStep.DA_LAY_HANG;
+                        order.Confirm6 = 1;
                         order.TimeConfirm6 = DateTime.Now;
                         order.LogProcessOrder += $"#Xe lấy hàng lúc {DateTime.Now:dd/MM/yyyy HH:mm:ss} ";
+                        order.StopPrintData = DateTime.Now;
+                        order.IsFromWeightOut = isFromWeightOut;
 
                         var currentExportHistory = await dbContext.tblExportHistories.FirstOrDefaultAsync(x => x.DeliveryCode == order.DeliveryCode &&
                                                                                                                 x.MachineCode == machineCode &&

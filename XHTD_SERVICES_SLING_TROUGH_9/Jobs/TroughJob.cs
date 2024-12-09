@@ -401,6 +401,8 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
                 return;
             }
 
+            SendTroughRfid("SLING_UHF_1", cardNoCurrent);
+
             _logger.LogInfo($"10. Giải phóng RFID");
 
             Program.IsLockingRfid = false;
@@ -438,6 +440,19 @@ namespace XHTD_SERVICES_SLING_TROUGH_9.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationByRight Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        public void SendTroughRfid(string locationCode, string rfid)
+        {
+            try
+            {
+                _logger.LogInfo($"Gửi signalR rfid với mã {rfid}");
+                _notification.SendTroughRfid(locationCode, rfid);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendTroughRfid Ex: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }

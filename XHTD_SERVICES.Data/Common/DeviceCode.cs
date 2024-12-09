@@ -92,6 +92,7 @@ namespace XHTD_SERVICES.Data.Common
             { LocationCode.TROUGH_SLING,
                 new List<(string, string)>
                 {
+                    ("SLING_UHF_1", "192.168.13.242"),
                     ("SLING_CAM_1", "192.168.13.243"),
                     ("SLING_UHF_2", "192.168.13.244"),
                     ("SLING_CAM_2", "192.168.13.244")
