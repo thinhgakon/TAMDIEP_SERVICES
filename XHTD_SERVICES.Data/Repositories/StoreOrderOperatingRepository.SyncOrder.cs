@@ -156,7 +156,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         NetWeight = !string.IsNullOrEmpty(websaleOrder.netweight) ? Double.Parse(websaleOrder.netweight) : 0,
                         SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0,
                         SealDes = websaleOrder.topSealDes,
-                        DeliveryCodeTgc = websaleOrder.deliveryCodeTgc
+                        DeliveryCodeTgc = websaleOrder.deliveryCodeTgc,
+                        DocNum = websaleOrder.docnum
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -369,7 +370,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes)
+        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes, string docNum)
         {
             bool isSynced = false;
 
@@ -427,7 +428,9 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.SealCount = sealCount;
                     order.SealDes = sealDes;
-                    
+
+                    order.DocNum = docNum;
+
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
@@ -476,7 +479,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum = null)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum)
         {
             bool isSynced = false;
 
@@ -540,7 +543,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
 
-                        //order.DocNum = docnum;
+                        order.DocNum = docnum;
 
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";

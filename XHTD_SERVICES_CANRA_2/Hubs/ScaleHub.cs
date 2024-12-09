@@ -413,9 +413,9 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                     //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7ByVehicleCode(scaleInfo.Vehicle);
 
-                                    WriteLogInfo($"5.3. Gửi phiếu xuất kho");
-                                    var response = await DIBootstrapper.Init().Resolve<WeightBusiness>().InvoiceXHTD(scaleInfo.DeliveryCode);
-                                    WriteLogInfo($"5.3. api/Invoice/XHTD response: {response.MessageObject.Message} - {response.MessageObject.MessageDetail}");
+                                    //WriteLogInfo($"5.3. Gửi phiếu xuất kho");
+                                    //var response = await DIBootstrapper.Init().Resolve<WeightBusiness>().InvoiceXHTD(scaleInfo.DeliveryCode);
+                                    //WriteLogInfo($"5.3. api/Invoice/XHTD response: {response.MessageObject.Message} - {response.MessageObject.MessageDetail}");
 
                                     // 7. Bật đèn xanh
                                     WriteLogInfo($"7. Bat den xanh");
