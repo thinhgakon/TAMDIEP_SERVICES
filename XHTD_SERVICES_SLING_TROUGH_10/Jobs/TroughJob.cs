@@ -334,36 +334,40 @@ namespace XHTD_SERVICES_SLING_TROUGH_10.Jobs
                 SendNotificationHub("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
                 SendNotificationAPI("SLING", machineCode, TROUGH_CODE, vehicleCodeCurrent);
 
-                tblStoreOrderOperating currentOrder = null;
-
                 using (var db = new XHTD_Entities())
                 {
-                    currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
+                    var currentOrder = await db.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.Vehicle == vehicleCodeCurrent &&
                                                                                              x.CatId == OrderCatIdCode.XI_MANG_BAO &&
                                                                                              x.TypeXK == OrderTypeXKCode.SLING &&
                                                                                             (x.Step == (int)OrderStep.DA_CAN_VAO ||
                                                                                              x.Step == (int)OrderStep.DA_LAY_HANG) &&
                                                                                              x.IsVoiced == false);
-                }
 
-                if (currentOrder == null)
-                {
-                    _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
-                    return;
-                }
+                    if (currentOrder == null)
+                    {
+                        _logger.LogInfo($"3. Tag KHÔNG có đơn hàng hợp lệ hoặc KHÔNG tìm thấy đơn hàng => Kết thúc");
+                        return;
+                    }
 
-                await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
-                _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
+                    var isOrderInAnotherTrough = await db.tblCallToTroughs.AnyAsync(x => x.DeliveryCode == currentOrder.DeliveryCode &&
+                                                                                         x.IsDone == false &&
+                                                                                         x.Machine != TROUGH_CODE);
+                    if (isOrderInAnotherTrough)
+                    {
+                        _logger.LogInfo($"3. Đơn hàng hiện đang ở trong máng khác => Kết thúc");
+                        return;
+                    }
 
-                currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
-                currentOrder.TimeConfirm5 = DateTime.Now;
-                currentOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}. ";
+                    await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
+                    _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
 
-                List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
-                List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+                    currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
+                    currentOrder.TimeConfirm5 = DateTime.Now;
+                    currentOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}. ";
 
-                using (var db = new XHTD_Entities())
-                {
+                    List<tblStoreOrderOperating> ordersInTrough = new List<tblStoreOrderOperating>();
+                    List<tblCallToTrough> callToTroughEntities = new List<tblCallToTrough>();
+
                     callToTroughEntities = await db.tblCallToTroughs.Where(x => x.DeliveryCode != currentOrder.DeliveryCode &&
                                                                                 x.Machine == TROUGH_CODE &&
                                                                                 x.IsDone == false).ToListAsync();
