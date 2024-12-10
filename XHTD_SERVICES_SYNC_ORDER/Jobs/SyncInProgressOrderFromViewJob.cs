@@ -214,7 +214,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
                 deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
-                orderQuantity = decimal.TryParse(reader["QUANTITY_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
+                orderQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
