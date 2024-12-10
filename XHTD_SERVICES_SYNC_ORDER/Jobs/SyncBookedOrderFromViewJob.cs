@@ -136,7 +136,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 productName = reader["PRODUCT_NAME"].ToString(),
-                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"].ToString(), out decimal d) ? d : default ,
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"].ToString(), out decimal d) ? d : default ,
                 id = int.TryParse(reader["ORDER_ID"]?.ToString(), out int i) ? i : default,
                 deliveryCode = reader["DELIVERY_CODE"].ToString(),
                 orderDate = reader["ORDER_DATE"]?.ToString() == null ? null : reader.GetDateTime(7).ToString("yyyy-MM-ddTHH:mm:ss"),
@@ -157,7 +157,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
                 deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
                 docnum = reader["DOC_NUM"]?.ToString(),
-                orderQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
+                orderQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });

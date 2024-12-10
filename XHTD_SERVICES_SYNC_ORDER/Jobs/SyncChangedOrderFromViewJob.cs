@@ -152,7 +152,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
                 driverName = reader["DRIVER_NAME"]?.ToString(),
                 customerName = reader["CUSTOMER_NAME"]?.ToString(),
-                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
                 orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
                 moocCode = reader["MOOC_CODE"]?.ToString(),
                 locationCode = reader["LOCATION_CODE"]?.ToString(),
@@ -170,7 +170,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
                 deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
-                orderQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
+                orderQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
