@@ -38,7 +38,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string areaCode { get; set; }
         public string rootAreaCode { get; set; }
         public decimal? bookQuantity { get; set; }
-        public string orderQuantity { get; set; }
+        public decimal? orderQuantity { get; set; }
         public string realQuantity { get; set; }
         public string orderAmount { get; set; }
         public string priceId { get; set; }

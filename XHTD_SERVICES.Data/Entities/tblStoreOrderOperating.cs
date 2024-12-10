@@ -149,6 +149,7 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.DateTime> StartPrintData { get; set; }
         public Nullable<System.DateTime> StopPrintData { get; set; }
         public string PrintTroughCode { get; set; }
+        public Nullable<decimal> RealNumber { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }

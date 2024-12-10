@@ -184,7 +184,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string query = $@"SELECT ORDER_ID, DELIVERY_CODE, TIMEIN, TIMEOUT, LOADWEIGHTNULL, STATUS, LOADWEIGHTFULL, PRODUCT_NAME, 
                                      VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, ORDER_QUANTITY, ORDER_DATE, MOOC_CODE, LOCATION_CODE, 
                                      TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID, 
-                                     TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC
+                                     TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC, BOOK_QUANTITY
                             FROM apps.dev_sales_orders_mbf_v 
                             WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
@@ -201,7 +201,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 vehicleCode = reader["VEHICLE_CODE"]?.ToString(),
                 driverName = reader["DRIVER_NAME"]?.ToString(),
                 customerName = reader["CUSTOMER_NAME"]?.ToString(),
-                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"]?.ToString(), out decimal bq) ? bq : default,
                 orderDate = reader["ORDER_DATE"] == DBNull.Value ? null : reader.GetDateTime(12).ToString("yyyy-MM-ddTHH:mm:ss"),
                 moocCode = reader["MOOC_CODE"]?.ToString(),
                 locationCode = reader["LOCATION_CODE"]?.ToString(),
@@ -213,7 +213,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                    reader["BLANKET_ID"] != DBNull.Value ? reader["BLANKET_ID"].ToString() : null,
                 topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
-                deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString()
+                deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
+                orderQuantity = decimal.TryParse(reader["QUANTITY_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(query, mapFunc);
@@ -258,7 +259,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     var sealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                     var sealDes = websaleOrder.topSealDes;
 
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull, sealCount, sealDes, websaleOrder.docnum);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull, sealCount, sealDes, websaleOrder.docnum, websaleOrder.orderQuantity);
 
                     if (isSynced)
                     {
@@ -287,7 +288,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     var sealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                     var sealDes = websaleOrder.topSealDes;
 
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, sealCount, sealDes, websaleOrder.docnum);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, sealCount, sealDes, websaleOrder.docnum, websaleOrder.orderQuantity);
                     _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
 
                     if (isSynced)

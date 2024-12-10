@@ -122,7 +122,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
             string sqlQuery = @"SELECT VEHICLE_CODE, DRIVER_NAME, CUSTOMER_NAME, PRODUCT_NAME, ORDER_QUANTITY, ORDER_ID, DELIVERY_CODE, 
                                        ORDER_DATE, MOOC_CODE, LOCATION_CODE, TRANSPORT_METHOD_ID, STATUS, LAST_UPDATE_DATE, 
                                        ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID,
-                                       ITEM_ALIAS, NET_WEIGHT, TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC, DOC_NUM
+                                       ITEM_ALIAS, NET_WEIGHT, TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC, DOC_NUM, BOOK_QUANTITY
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
                                 WHERE CREATION_DATE BETWEEN :startDate AND :endDate
                                 ORDER BY STATUS ASC";
@@ -136,7 +136,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 driverName = reader["DRIVER_NAME"].ToString(),
                 customerName = reader["CUSTOMER_NAME"].ToString(),
                 productName = reader["PRODUCT_NAME"].ToString(),
-                bookQuantity = decimal.TryParse(reader["ORDER_QUANTITY"].ToString(), out decimal d) ? d : default ,
+                bookQuantity = decimal.TryParse(reader["BOOK_QUANTITY"].ToString(), out decimal d) ? d : default ,
                 id = int.TryParse(reader["ORDER_ID"]?.ToString(), out int i) ? i : default,
                 deliveryCode = reader["DELIVERY_CODE"].ToString(),
                 orderDate = reader["ORDER_DATE"]?.ToString() == null ? null : reader.GetDateTime(7).ToString("yyyy-MM-ddTHH:mm:ss"),
@@ -156,7 +156,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 topSealCount = reader["TOP_SEAL_COUNT"]?.ToString(),
                 topSealDes = reader["TOP_SEAL_DES"]?.ToString(),
                 deliveryCodeTgc = reader["DELIVERY_CODE_TGC"]?.ToString(),
-                docnum = reader["DOC_NUM"]?.ToString()
+                docnum = reader["DOC_NUM"]?.ToString(),
+                orderQuantity = decimal.TryParse(reader["ORDER_QUANTITY"]?.ToString(), out decimal oq) ? oq : default,
             };
 
             List<OrderItemResponse> result = oracleHelper.GetDataFromOracle(sqlQuery, mapFunc, new[] { new OracleParameter("startDate", startDate), new OracleParameter("endDate", endDate) });

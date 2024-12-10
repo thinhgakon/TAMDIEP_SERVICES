@@ -74,7 +74,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
 
                 if(callToTrough != null && order != null)
                 {
-                    dataCode = $"*[H1][C1]HE THONG XUAT HANG KHONG DUNG[H2][C1][1]BSX[2]{callToTrough.Vehicle}[H3][C1][1]MSGH[2]{callToTrough.DeliveryCode}[H4][C1][1]DAT[2]{order.SumNumber}[!]";
+                    dataCode = $"*[H1][C1][1]BSX[2]{callToTrough.Vehicle}[H2][C1][1]MSGH[2]{callToTrough.DeliveryCode}[H3][C1][1]SP[2]{order.ItemAlias}[H4][C1][1]DAT[2]{order.SumNumber}[!]";
                 }
 
                 DisplayScreenLed(dataCode);
