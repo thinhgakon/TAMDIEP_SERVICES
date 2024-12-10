@@ -446,25 +446,25 @@ namespace XHTD_SERVICES.Data.Repositories
                     var message = $"Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
                     await ReindexOrder(order.TypeProduct, message);
 
-                    var newHistory = new tblStoreOrderOperatingHistory
-                    {
-                        DeliveryCode = order.DeliveryCode,
-                        Vehicle = order.Vehicle,
-                        TypeProduct = order.TypeProduct,
-                        SumNumber = order.SumNumber,
-                        NameDistributor = order.NameDistributor,
-                        OrderDate = order.OrderDate,
-                        LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
-                        TimeChange = DateTime.Now
-                    };
-                    _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                    //var newHistory = new tblStoreOrderOperatingHistory
+                    //{
+                    //    DeliveryCode = order.DeliveryCode,
+                    //    Vehicle = order.Vehicle,
+                    //    TypeProduct = order.TypeProduct,
+                    //    SumNumber = order.SumNumber,
+                    //    NameDistributor = order.NameDistributor,
+                    //    OrderDate = order.OrderDate,
+                    //    LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
+                    //    TimeChange = DateTime.Now
+                    //};
+                    //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                     await _appDbContext.SaveChangesAsync();
 
                     Console.WriteLine($@"Update Receiving Order {websaleOrder.id}");
                     log.Info($@"Update Receiving Order {websaleOrder.id}");
 
-                    SendOrderHistory(newHistory);
+                    //SendOrderHistory(newHistory);
 
                     isSynced = true;
                 }
@@ -547,25 +547,25 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
 
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng cân ra lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng cân ra lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {websaleOrder.id}");
                         log.Info($@"Sync Update Received => DA_CAN_RA Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -612,25 +612,25 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
 
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng ra cổng lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng ra cổng lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {websaleOrder.id}");
                         log.Info($@"Sync Update Received => DA_HOAN_THANH Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -677,25 +677,25 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
 
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng được giao lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng được giao lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
                         Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {websaleOrder.id}");
                         log.Info($@"Update Received => DA_GIAO_HANG Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
