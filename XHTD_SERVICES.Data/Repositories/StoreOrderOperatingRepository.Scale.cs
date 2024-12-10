@@ -506,7 +506,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
-                    .Where(x => x.ItemCode == order.CatId.ToString())
+                    .Where(x => x.ItemCode == order.ItemId.ToString())
                     .ToList();
 
                     var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
