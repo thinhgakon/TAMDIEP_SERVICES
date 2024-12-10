@@ -618,6 +618,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
 
+                        order.DocNum = docnum;
+
                         order.RealNumber = realNumber;
 
                         var newHistory = new tblStoreOrderOperatingHistory
@@ -682,6 +684,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
+
+                        order.DocNum = docnum;
 
                         order.RealNumber = realNumber;
 
