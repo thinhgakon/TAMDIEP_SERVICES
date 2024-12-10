@@ -157,7 +157,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0,
                         SealDes = websaleOrder.topSealDes,
                         DeliveryCodeTgc = websaleOrder.deliveryCodeTgc,
-                        DocNum = websaleOrder.docnum
+                        DocNum = websaleOrder.docnum,
+                        RealNumber = (decimal?)websaleOrder.orderQuantity
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
@@ -325,6 +326,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                             order.DocNum = websaleOrder.docnum;
 
+                            order.RealNumber = (decimal?)websaleOrder.orderQuantity;
+
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
 
@@ -370,7 +373,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes, string docNum)
+        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes, string docNum, decimal? realNumber)
         {
             bool isSynced = false;
 
@@ -431,6 +434,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.DocNum = docNum;
 
+                    order.RealNumber = realNumber;
+
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
@@ -479,7 +484,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum)
+        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum, decimal? realNumber)
         {
             bool isSynced = false;
 
@@ -544,6 +549,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.SealDes = sealDes;
 
                         order.DocNum = docnum;
+
+                        order.RealNumber = realNumber;
 
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
@@ -611,6 +618,8 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
 
+                        order.RealNumber = realNumber;
+
                         var newHistory = new tblStoreOrderOperatingHistory
                         {
                             DeliveryCode = order.DeliveryCode,
@@ -673,6 +682,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.SealCount = sealCount;
                         order.SealDes = sealDes;
+
+                        order.RealNumber = realNumber;
 
                         var newHistory = new tblStoreOrderOperatingHistory
                         {
