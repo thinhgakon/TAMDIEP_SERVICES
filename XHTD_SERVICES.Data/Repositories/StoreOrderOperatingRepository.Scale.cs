@@ -504,8 +504,16 @@ namespace XHTD_SERVICES.Data.Repositories
                         return false;
                     }
 
+                    string source = "TAM_DIEP";
+
+                    if(order.IDDistributorSyn == 1065)
+                    {
+                        source = "BIM_SON";
+                    }
+
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
+                    .Where(x=>x.Source == source)
                     .Where(x => x.ItemCode == order.ItemId.ToString())
                     .ToList();
 
