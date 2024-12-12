@@ -256,10 +256,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else
                 {
-                    var sealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
-                    var sealDes = websaleOrder.topSealDes;
-
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder.id, websaleOrder.timeIn, websaleOrder.loadweightnull, sealCount, sealDes, websaleOrder.docnum, websaleOrder.orderQuantity);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivingOrder(websaleOrder);
 
                     if (isSynced)
                     {
@@ -285,10 +282,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                 }
                 else
                 {
-                    var sealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
-                    var sealDes = websaleOrder.topSealDes;
-
-                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder.id, websaleOrder.timeOut, websaleOrder.loadweightfull, sealCount, sealDes, websaleOrder.docnum, websaleOrder.orderQuantity);
+                    isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder);
                     _syncOrderLogger.LogInfo($"{websaleOrder.deliveryCode} - isSynced = {isSynced}");
 
                     if (isSynced)
