@@ -506,10 +506,18 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     string source = "TAM_DIEP";
 
-                    if(order.IDDistributorSyn == 1065)
+                    switch (order.IDDistributorSyn)
                     {
-                        source = "BIM_SON";
+                        case 1065: source = "BIM_SON";
+                            break;
+                        case 47: source = "HAI_PHONG";
+                            break;
+                        case 56: source = "HOANG_THACH";
+                            break;
+                        case 32: source = "BUT_SON";
+                            break;
                     }
+
 
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
