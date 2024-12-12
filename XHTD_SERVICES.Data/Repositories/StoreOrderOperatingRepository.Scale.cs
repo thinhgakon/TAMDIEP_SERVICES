@@ -510,11 +510,11 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         case 1065: source = "BIM_SON";
                             break;
-                        case 47: source = "HAI_PHONG";
+                        case 1067: source = "HAI_PHONG";
                             break;
-                        case 56: source = "HOANG_THACH";
+                        case 1072: source = "HOANG_THACH";
                             break;
-                        case 32: source = "BUT_SON";
+                        case 1058: source = "BUT_SON";
                             break;
                     }
 
