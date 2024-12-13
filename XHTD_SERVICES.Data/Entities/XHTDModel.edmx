@@ -784,6 +784,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="StopPrintData" Type="datetime2" Precision="7" />
           <Property Name="PrintTroughCode" Type="nvarchar(max)" />
           <Property Name="RealNumber" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="ErrorLog" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingHistory">
           <Key>
@@ -1744,6 +1745,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="StopPrintData" Type="DateTime" Precision="7" />
           <Property Name="PrintTroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="RealNumber" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ErrorLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2834,6 +2836,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="ErrorLog" ColumnName="ErrorLog" />
                 <ScalarProperty Name="RealNumber" ColumnName="RealNumber" />
                 <ScalarProperty Name="PrintTroughCode" ColumnName="PrintTroughCode" />
                 <ScalarProperty Name="StopPrintData" ColumnName="StopPrintData" />

@@ -497,6 +497,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
 
                 var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+                
+                using (var dbContext = new XHTD_Entities())
+                {
+                    currentOrder.ErrorLog = pushMessage;
+                    await dbContext.SaveChangesAsync();
+                }
+
                 SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
@@ -626,6 +633,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+
+                using (var dbContext = new XHTD_Entities())
+                {
+                    currentOrder.ErrorLog = pushMessage;
+                    await dbContext.SaveChangesAsync();
+                }
+
                 SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;

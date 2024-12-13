@@ -261,6 +261,7 @@
     <Compile Include="Devices\PegasusStaticClassReader.cs" />
     <Compile Include="Devices\TCPLed.cs" />
     <Compile Include="Devices\TCPLedControl.cs" />
+    <Compile Include="Devices\TCPTrafficLightControl.cs" />
     <Compile Include="DIBootstrapper.cs" />
     <Compile Include="Jobs\ConnectPegasusJob.cs" />
     <Compile Include="Jobs\LedJob.cs" />
