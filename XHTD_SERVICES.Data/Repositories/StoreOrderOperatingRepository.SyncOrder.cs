@@ -325,11 +325,11 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.OrderDate = orderDate;
 
                             order.DocNum = websaleOrder.docnum;
-
                             order.RealNumber = (decimal?)websaleOrder.orderQuantity;
 
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
+                            order.MoocCode = websaleOrder.moocCode;
 
                             order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc;
 
