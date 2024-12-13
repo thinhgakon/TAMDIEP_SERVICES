@@ -15,6 +15,9 @@ using System.Globalization;
 using XHTD_SERVICES.Helper.Models.Request;
 using Autofac;
 using XHTD_SERVICES_SYNC_ORDER.Business;
+using XHTD_SERVICES.Data.Entities;
+using System.Data.Entity;
+using XHTD_SERVICES.Data.Common;
 
 namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 {
@@ -315,7 +318,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                             var tolerance = ((decimal)(weightOut - weightIn) - (decimal)websaleOrder.bookQuantity) / (decimal)websaleOrder.bookQuantity;
                             tolerance = tolerance < 0 ? -1 * tolerance : tolerance;
 
-                            if (tolerance > (decimal)0.01)
+                            var catId = string.Empty;
+                            using (var dbContext = new XHTD_Entities())
+                            {
+                                var order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == websaleOrder.deliveryCode);
+                                if (order != null)
+                                {
+                                    catId = order.CatId;
+                                }
+                            }
+
+                            if (tolerance > (decimal)0.01 && catId == OrderCatIdCode.XI_MANG_BAO)
                             {
                                 SendToleranceWarning(websaleOrder.deliveryCode, websaleOrder.vehicleCode, websaleOrder.bookQuantity * 1000, (int?)(weightIn * 1000), (int?)(weightOut * 1000), (double?)tolerance);
                             }
