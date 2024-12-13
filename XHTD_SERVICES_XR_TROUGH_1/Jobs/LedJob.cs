@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Entities;
 using XHTD_SERVICES_XR_TROUGH_1.Devices;
@@ -19,6 +20,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
         protected readonly string LED_IP_ADDRESS = "192.168.13.232";
 
         private readonly string TROUGH_CODE = "11";
+
+        private readonly string DEFAULT_LED_CODE = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
         public LedJob()
         {
@@ -73,7 +76,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                     }
                 }
 
-                string dataCode = $"*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
+                string dataCode = DEFAULT_LED_CODE;
 
                 if(callToTrough != null && order != null)
                 {
@@ -81,6 +84,16 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                 }
 
                 DisplayScreenLed(dataCode);
+
+                if (dataCode != DEFAULT_LED_CODE)
+                {
+                    TurnOnRedTrafficLight();
+                }
+
+                else
+                {
+                    TurnOnGreenTrafficLight();
+                }
             }
             catch (Exception ex)
             {
@@ -92,11 +105,37 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
         {
             if (DIBootstrapper.Init().Resolve<TCPLedControl>().DisplayScreen(LED_IP_ADDRESS, dataCode))
             {
-                WriteLogInfo("3.1. Thành công");
+                WriteLogInfo($"3.1. Gửi mã LED thành công - dataCode: {dataCode}");
             }
             else
             {
-                WriteLogInfo($"3.1. Thất bại");
+                WriteLogInfo($"3.1. Gửi mã LED thất bại - dataCode: {dataCode}");
+            }
+        }
+
+        public void TurnOnRedTrafficLight()
+        {
+            WriteLogInfo($@"6.1. Bật đèn ĐỎ");
+            if (DIBootstrapper.Init().Resolve<TCPTrafficLightControl>().TurnOnRedTrafficLight())
+            {
+                WriteLogInfo($@"6.1.1. Bật đèn ĐỎ thành công");
+            }
+            else
+            {
+                WriteLogInfo($@"6.1.1. Bật đèn ĐỎ thất bại");
+            }
+        }
+
+        public void TurnOnGreenTrafficLight()
+        {
+            WriteLogInfo($@"6.1. Bật đèn XANH");
+            if (DIBootstrapper.Init().Resolve<TCPTrafficLightControl>().TurnOnGreenTrafficLight())
+            {
+                WriteLogInfo($@"6.1.1. Bật đèn XANH thành công");
+            }
+            else
+            {
+                WriteLogInfo($@"6.1.1. Bật đèn XANH thất bại");
             }
         }
 

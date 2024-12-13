@@ -36,6 +36,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1
             builder.RegisterType<MachineApiLib>().AsSelf();
             builder.RegisterType<TCPLed>().AsSelf();
             builder.RegisterType<TCPLedControl>().AsSelf();
+            builder.RegisterType<TCPTrafficLightControl>().AsSelf();
 
             RegisterScheduler(builder);
 
