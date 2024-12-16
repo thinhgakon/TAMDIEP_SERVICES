@@ -427,13 +427,13 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
-                                    //foreach (var deliveryCode in deliveryCodes.Split(';'))
-                                    //{
-                                    //    var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
-                                    //    var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
-                                    //    SendMessage(notificationType, updateLotNumberResponse.Message);
-                                    //    WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
-                                    //}
+                                    foreach (var deliveryCode in deliveryCodes.Split(';'))
+                                    {
+                                        var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
+                                        var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
+                                        SendMessage(notificationType, updateLotNumberResponse.Message);
+                                        WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
+                                    }
                                 }
                                 else
                                 {
