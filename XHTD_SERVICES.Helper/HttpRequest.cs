@@ -974,24 +974,24 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
-        public static IRestResponse UpdateLotNumber(string deliveryCode, string lotNumber)
-        {
-            var erpLoginResult = GetErpToken();
+        //public static IRestResponse UpdateLotNumber(string deliveryCode, string lotNumber)
+        //{
+        //    var erpLoginResult = GetErpToken();
 
-            var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
-            var client = new RestClient($"{apiUrl["UpdateLotNumber"]}?delivery_code={deliveryCode}&lot_number={lotNumber}");
+        //    var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
+        //    var client = new RestClient($"{apiUrl["UpdateLotNumber"]}?delivery_code={deliveryCode}&lot_number={lotNumber}");
             
-            var request = new RestRequest();
-            request.Method = Method.POST;
-            request.AddHeader("Accept", "application/json");
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", $"Bearer {erpLoginResult.Token}");
-            request.RequestFormat = DataFormat.Json;
+        //    var request = new RestRequest();
+        //    request.Method = Method.POST;
+        //    request.AddHeader("Accept", "application/json");
+        //    request.AddHeader("Content-Type", "application/json");
+        //    request.AddHeader("Authorization", $"Bearer {erpLoginResult.Token}");
+        //    request.RequestFormat = DataFormat.Json;
 
-            IRestResponse response = client.Execute(request);
+        //    IRestResponse response = client.Execute(request);
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public static IRestResponse SendInvoiceXHTD(string deliveryCode)
         {
