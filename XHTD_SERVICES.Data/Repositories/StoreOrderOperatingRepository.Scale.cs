@@ -610,13 +610,6 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
 
-
-                    dbContext.TblQualityCertificateCCCLProcesses.Add(new TblQualityCertificateCCCLProcess()
-                    {
-                        CCCLCode = cccl.Code,
-                        Log = $"Đã cấp chứng chỉ chất lượng cho đơn hàng {order.DeliveryCode}"
-                    });
-
                     await dbContext.SaveChangesAsync();
                     log.Info($"Cập nhật chứng chỉ chất lượng {deliveryCode} - {cccl.Code}");
                     return;
