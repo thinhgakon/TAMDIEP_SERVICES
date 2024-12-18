@@ -430,6 +430,8 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     bool updateLotNumberResult = true;
                                     foreach (var deliveryCode in deliveryCodes.Split(';'))
                                     {
+                                        await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().UpdateCCCL(deliveryCode);
+
                                         var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
                                         var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
                                         SendMessage(notificationType, updateLotNumberResponse.Message);
@@ -439,8 +441,6 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                         {
                                             updateLotNumberResult = false;
                                         }
-
-                                        await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().UpdateCCCL(deliveryCode);
                                     }
                                 }
                                 else

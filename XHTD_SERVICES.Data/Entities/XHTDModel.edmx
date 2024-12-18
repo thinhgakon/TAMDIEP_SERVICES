@@ -555,6 +555,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="PartnerId" Type="int" />
           <Property Name="PartnerName" Type="nvarchar(max)" />
+          <Property Name="CCCLCode" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="TblQualityCertificateCCCL">
           <Key>
@@ -1057,6 +1058,18 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
+          <End Role="TblQualityCertificateCCCL" Type="Self.TblQualityCertificateCCCL" Multiplicity="0..1" />
+          <End Role="TblQualityCertificate" Type="Self.TblQualityCertificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificateCCCL">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblQualityCertificate">
+              <PropertyRef Name="CCCLCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
           <End Role="TblQualityCertificateCCCL" Type="Self.TblQualityCertificateCCCL" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1230,6 +1243,10 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <AssociationSet Name="FK_tblNotification_TblNotificationGroup_NotificationGroupId" Association="Self.FK_tblNotification_TblNotificationGroup_NotificationGroupId">
             <End Role="TblNotificationGroup" EntitySet="TblNotificationGroup" />
             <End Role="tblNotification" EntitySet="tblNotification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" Association="Self.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
+            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCL" />
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificate" />
           </AssociationSet>
           <AssociationSet Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" Association="Self.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
             <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCL" />
@@ -2061,6 +2078,10 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCLs" />
             <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
           </AssociationSet>
+          <AssociationSet Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
+            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCLs" />
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificates" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -2425,6 +2446,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PartnerId" Type="Int32" />
           <Property Name="PartnerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CCCLCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TblQualityCertificateCCCL" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificate" ToRole="TblQualityCertificateCCCL" />
         </EntityType>
         <EntityType Name="TblQualityCertificateCCCL">
           <Key>
@@ -2447,6 +2470,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="TempReferenceId" Type="Guid" />
           <NavigationProperty Name="TblQualityCertificateCCCLProcesses" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="TblQualityCertificateCCCLProcess" />
           <NavigationProperty Name="tblStoreOrderOperatings" Relationship="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="tblStoreOrderOperating" />
+          <NavigationProperty Name="TblQualityCertificates" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="TblQualityCertificate" />
         </EntityType>
         <EntityType Name="TblQualityCertificateCCCLProcess">
           <Key>
@@ -2481,6 +2505,18 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
               <PropertyRef Name="Code" />
             </Principal>
             <Dependent Role="tblStoreOrderOperating">
+              <PropertyRef Name="CCCLCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Role="TblQualityCertificateCCCL" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Role="TblQualityCertificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificateCCCL">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblQualityCertificate">
               <PropertyRef Name="CCCLCode" />
             </Dependent>
           </ReferentialConstraint>
@@ -3424,6 +3460,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblQualityCertificates">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificate">
               <MappingFragment StoreEntitySet="TblQualityCertificate">
+                <ScalarProperty Name="CCCLCode" ColumnName="CCCLCode" />
                 <ScalarProperty Name="PartnerName" ColumnName="PartnerName" />
                 <ScalarProperty Name="PartnerId" ColumnName="PartnerId" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />

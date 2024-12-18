@@ -505,7 +505,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         return null;
                     }
 
-                    var lotData = dbContext.TblQualityCertificates
+                    var lotData = dbContext.TblQualityCertificates.Include(x=>x.TblQualityCertificateCCCL)
                     .Where(x => x.State == "CHUA_KHOA")
                     .Where(x => x.PartnerId == order.IDDistributorSyn)
                     .Where(x => x.ItemCode == order.ItemId.ToString())
@@ -534,6 +534,11 @@ namespace XHTD_SERVICES.Data.Repositories
                     }
 
                     order.LotNumber = lot.Code;
+
+                    if (!string.IsNullOrEmpty(lot.CCCLCode))
+                    {
+                        order.CCCLCode = lot.CCCLCode;
+                    }
 
                     dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
 
