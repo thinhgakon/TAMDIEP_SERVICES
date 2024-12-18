@@ -505,70 +505,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         return null;
                     }
 
-                    var lotData = dbContext.TblQualityCertificates.Include(x=>x.TblQualityCertificateCCCL)
-                    .Where(x => x.State == "CHUA_KHOA")
-                    .Where(x => x.PartnerId == order.IDDistributorSyn)
-                    .Where(x => x.ItemCode == order.ItemId.ToString())
-                    .ToList();
-
-                    if (lotData == null || lotData.Count == 0)
-                    {
-                        lotData = dbContext.TblQualityCertificates
-                            .Where(x => x.State == "CHUA_KHOA")
-                            .Where(x => x.PartnerId == null)
-                            .Where(x => x.ItemCode == order.ItemId.ToString())
-                            .ToList();
-                    }
-
-                    var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
-                    .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
-
-                    if (lot == null)
-                    {
-                        return null;
-                    }
-
-                    if (string.IsNullOrEmpty(lot?.Code))
-                    {
-                        return null;
-                    }
-
-                    order.LotNumber = lot.Code;
-
-                    if (!string.IsNullOrEmpty(lot.CCCLCode))
-                    {
-                        order.CCCLCode = lot.CCCLCode;
-                    }
-
-                    dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
-
-                    await dbContext.SaveChangesAsync();
-                    log.Info($"Cập nhật số lô {deliveryCode} - {lot.Code}");
-                    return lot.Code;
-                }
-                catch (Exception ex)
-                {
-                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
-                    return null;
-                }
-            }
-        }
-
-        public async Task UpdateCCCL(string deliveryCode)
-        {
-            using (var dbContext = new XHTD_Entities())
-            {
-                try
-                {
-                    var order = await dbContext.tblStoreOrderOperatings
-                                                .Where(x => x.DeliveryCode == deliveryCode)
-                                                .FirstOrDefaultAsync();
-
-                    if (order == null)
-                    {
-                        return;
-                    }
-
                     string source = "TAM_DIEP";
 
                     switch (order.IDDistributorSyn)
@@ -587,37 +523,49 @@ namespace XHTD_SERVICES.Data.Repositories
                             break;
                     }
 
-                    var cccls = dbContext.TblQualityCertificateCCCLs
+                    var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
-                    .Where(x => x.Source == source)
+                    .Where(x => x.PartnerId == order.IDDistributorSyn)
                     .Where(x => x.ItemCode == order.ItemId.ToString())
+                    .Where(x=>x.Source == source)
                     .ToList();
 
-                    var cccl = cccls.Where(X => X.FromDate.Date <= DateTime.Now.Date)
+                    if (lotData == null || lotData.Count == 0)
+                    {
+                        lotData = dbContext.TblQualityCertificates
+                            .Where(x => x.State == "CHUA_KHOA")
+                            .Where(x => x.PartnerId == null)
+                            .Where(x => x.ItemCode == order.ItemId.ToString())
+                            .Where(x => x.Source == source)
+                            .ToList();
+                    }
+
+
+                    var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
                     .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
 
-                    if (cccl == null)
+                    if (lot == null)
                     {
-                        return;
+                        return null;
                     }
 
-                    if (string.IsNullOrEmpty(cccl?.Code))
+                    if (string.IsNullOrEmpty(lot?.Code))
                     {
-                        return;
+                        return null;
                     }
 
-                    order.CCCLCode = cccl.Code;
+                    order.LotNumber = lot.Code;
 
                     dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
 
                     await dbContext.SaveChangesAsync();
-                    log.Info($"Cập nhật chứng chỉ chất lượng {deliveryCode} - {cccl.Code}");
-                    return;
+                    log.Info($"Cập nhật số lô {deliveryCode} - {lot.Code}");
+                    return lot.Code;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cập nhật chứng chỉ chất lượng {deliveryCode} Error: " + ex.Message);
-                    return;
+                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
+                    return null;
                 }
             }
         }

@@ -29,8 +29,8 @@ namespace XHTD_SERVICES.Data.Entities
         public string UpdateBy { get; set; }
         public Nullable<int> PartnerId { get; set; }
         public string PartnerName { get; set; }
-        public string CCCLCode { get; set; }
-    
-        public virtual TblQualityCertificateCCCL TblQualityCertificateCCCL { get; set; }
+        public Nullable<System.Guid> ReferenceId { get; set; }
+        public string Source { get; set; }
+        public Nullable<System.Guid> TempReferenceId { get; set; }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1" ZoomLevel="76">
+      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1" ZoomLevel="71">
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccount" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroup" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroupFunction" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
@@ -64,12 +64,7 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblNotification_TblNotificationGroup_NotificationGroupId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" Width="1.5" PointX="17.375" PointY="20.75" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="19.375" PointY="10.75" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Width="1.5" PointX="6.5" PointY="27" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess" Width="1.5" PointX="8.75" PointY="44" />
-        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" />
-        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" />
-        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="3.375" PointX="19.375" PointY="10.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
