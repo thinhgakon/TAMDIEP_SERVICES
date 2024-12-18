@@ -179,7 +179,10 @@
     <Compile Include="Entities\TblQualityCertificate.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\TblQualityCertificatePartner.cs">
+    <Compile Include="Entities\TblQualityCertificateCCCL.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TblQualityCertificateCCCLProcess.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblRfid.cs">

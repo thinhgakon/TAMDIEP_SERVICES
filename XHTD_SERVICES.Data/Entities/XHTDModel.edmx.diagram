@@ -53,7 +53,6 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" Width="1.5" PointX="13.375" PointY="17.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" Width="1.5" PointX="19.375" PointY="6" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="19.375" PointY="10.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Width="1.5" PointX="21.625" PointY="5.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.ItemFormula" Width="1.5" PointX="19.375" PointY="17.375" />
@@ -61,12 +60,15 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblConfigOperating" Width="1.5" PointX="15.375" PointY="19.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblItemConfig" Width="1.5" PointX="20.375" PointY="0.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblNotificationGroup" Width="1.5" PointX="2.5" PointY="26.25" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificatePartner" Width="1.5" PointX="21.625" PointY="11.375" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblSendTroughStatu" Width="1.5" PointX="5.375" PointY="20.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblNotification_TblNotificationGroup_NotificationGroupId" />
-        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificatePartner_TblQualityCertificate_QualityCertificateId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" Width="1.5" PointX="17.375" PointY="20.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="19.375" PointY="10.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Width="1.5" PointX="6.5" PointY="27" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess" Width="1.5" PointX="8.75" PointY="44" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

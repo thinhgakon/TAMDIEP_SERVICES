@@ -505,30 +505,20 @@ namespace XHTD_SERVICES.Data.Repositories
                         return null;
                     }
 
-                    string source = "TAM_DIEP";
-
-                    switch (order.IDDistributorSyn)
-                    {
-                        case 1065:
-                            source = "BIM_SON";
-                            break;
-                        case 1067:
-                            source = "HAI_PHONG";
-                            break;
-                        case 1072:
-                            source = "HOANG_THACH";
-                            break;
-                        case 1058:
-                            source = "BUT_SON";
-                            break;
-                    }
-
-
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
-                    .Where(x => x.Source == source)
+                    .Where(x => x.PartnerId == order.IDDistributorSyn)
                     .Where(x => x.ItemCode == order.ItemId.ToString())
                     .ToList();
+
+                    if (lotData == null || lotData.Count == 0)
+                    {
+                        lotData = dbContext.TblQualityCertificates
+                            .Where(x => x.State == "CHUA_KHOA")
+                            .Where(x => x.PartnerId == null)
+                            .Where(x => x.ItemCode == order.ItemId.ToString())
+                            .ToList();
+                    }
 
                     var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
                     .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
@@ -550,6 +540,81 @@ namespace XHTD_SERVICES.Data.Repositories
                     await dbContext.SaveChangesAsync();
                     log.Info($"Cập nhật số lô {deliveryCode} - {lot.Code}");
                     return lot.Code;
+                }
+                catch (Exception ex)
+                {
+                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
+        public async Task<string> UpdateCCCL(string deliveryCode)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                try
+                {
+                    var order = await dbContext.tblStoreOrderOperatings
+                                                .Where(x => x.DeliveryCode == deliveryCode)
+                                                .FirstOrDefaultAsync();
+
+                    if (order == null)
+                    {
+                        return null;
+                    }
+
+                    string source = "TAM_DIEP";
+
+                    switch (order.IDDistributorSyn)
+                    {
+                        case 1065:
+                            source = "BIM_SON";
+                            break;
+                        case 1067:
+                            source = "HAI_PHONG";
+                            break;
+                        case 1072:
+                            source = "HOANG_THACH";
+                            break;
+                        case 1058:
+                            source = "BUT_SON";
+                            break;
+                    }
+
+                    var cccls = dbContext.TblQualityCertificateCCCLs
+                    .Where(x => x.State == "CHUA_KHOA")
+                    .Where(x => x.Source == source)
+                    .Where(x => x.ItemCode == order.ItemId.ToString())
+                    .ToList();
+
+                    var cccl = cccls.Where(X => X.FromDate.Date <= DateTime.Now.Date)
+                    .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
+
+                    if (cccl == null)
+                    {
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(cccl?.Code))
+                    {
+                        return null;
+                    }
+
+                    order.CCCLCode = cccl.Code;
+
+                    dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
+
+
+                    dbContext.TblQualityCertificateCCCLProcesses.Add(new TblQualityCertificateCCCLProcess()
+                    {
+                        CCCLCode = cccl.Code,
+                        Log = $"Đã cấp chứng chỉ chất lượng cho đơn hàng {order.DeliveryCode}"
+                    });
+
+                    await dbContext.SaveChangesAsync();
+                    log.Info($"Cập nhật chứng chỉ chất lượng {deliveryCode} - {cccl.Code}");
+                    return cccl.Code;
                 }
                 catch (Exception ex)
                 {
