@@ -505,7 +505,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         return null;
                     }
 
-                    var lotData = dbContext.TblQualityCertificates
+                    var lotData = dbContext.TblQualityCertificates.Include(x=>x.TblQualityCertificateCCCL)
                     .Where(x => x.State == "CHUA_KHOA")
                     .Where(x => x.PartnerId == order.IDDistributorSyn)
                     .Where(x => x.ItemCode == order.ItemId.ToString())
@@ -535,6 +535,11 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.LotNumber = lot.Code;
 
+                    if (!string.IsNullOrEmpty(lot.CCCLCode))
+                    {
+                        order.CCCLCode = lot.CCCLCode;
+                    }
+
                     dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
 
                     await dbContext.SaveChangesAsync();
@@ -549,7 +554,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<string> UpdateCCCL(string deliveryCode)
+        public async Task UpdateCCCL(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -561,7 +566,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order == null)
                     {
-                        return null;
+                        return;
                     }
 
                     string source = "TAM_DIEP";
@@ -593,33 +598,26 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (cccl == null)
                     {
-                        return null;
+                        return;
                     }
 
                     if (string.IsNullOrEmpty(cccl?.Code))
                     {
-                        return null;
+                        return;
                     }
 
                     order.CCCLCode = cccl.Code;
 
                     dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
 
-
-                    dbContext.TblQualityCertificateCCCLProcesses.Add(new TblQualityCertificateCCCLProcess()
-                    {
-                        CCCLCode = cccl.Code,
-                        Log = $"Đã cấp chứng chỉ chất lượng cho đơn hàng {order.DeliveryCode}"
-                    });
-
                     await dbContext.SaveChangesAsync();
                     log.Info($"Cập nhật chứng chỉ chất lượng {deliveryCode} - {cccl.Code}");
-                    return cccl.Code;
+                    return;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
-                    return null;
+                    log.Error($@"Cập nhật chứng chỉ chất lượng {deliveryCode} Error: " + ex.Message);
+                    return;
                 }
             }
         }

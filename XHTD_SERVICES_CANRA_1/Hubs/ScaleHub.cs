@@ -430,6 +430,8 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     bool updateLotNumberResult = true;
                                     foreach (var deliveryCode in deliveryCodes.Split(';'))
                                     {
+                                        await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().UpdateCCCL(deliveryCode);
+
                                         var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
                                         var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
                                         SendMessage(notificationType, updateLotNumberResponse.Message);
@@ -439,14 +441,6 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                         {
                                             updateLotNumberResult = false;
                                         }
-                                    }
-
-                                    if (updateLotNumberResult == false)
-                                    {
-                                        WriteLogInfo($"9.1. Bat den do");
-                                        TurnOnRedTrafficLight();
-                                        WriteLogInfo($"9.1. Thông báo");
-                                        SendMessage("WarningNotification", $"{deliveryCodes} Chưa có số lô; Vui lòng liên hệ KCS để nhập ngay chứng chỉ chất lượng vào hệ thống");
                                     }
                                 }
                                 else

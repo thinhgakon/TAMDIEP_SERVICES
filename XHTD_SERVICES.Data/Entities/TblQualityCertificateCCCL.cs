@@ -19,6 +19,7 @@ namespace XHTD_SERVICES.Data.Entities
         {
             this.TblQualityCertificateCCCLProcesses = new HashSet<TblQualityCertificateCCCLProcess>();
             this.tblStoreOrderOperatings = new HashSet<tblStoreOrderOperating>();
+            this.TblQualityCertificates = new HashSet<TblQualityCertificate>();
         }
     
         public string Code { get; set; }
@@ -41,5 +42,7 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual ICollection<TblQualityCertificateCCCLProcess> TblQualityCertificateCCCLProcesses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblStoreOrderOperating> tblStoreOrderOperatings { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TblQualityCertificate> TblQualityCertificates { get; set; }
     }
 }

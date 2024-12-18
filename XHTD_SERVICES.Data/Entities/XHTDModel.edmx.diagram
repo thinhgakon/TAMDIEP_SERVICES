@@ -69,6 +69,7 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess" Width="1.5" PointX="8.75" PointY="44" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
