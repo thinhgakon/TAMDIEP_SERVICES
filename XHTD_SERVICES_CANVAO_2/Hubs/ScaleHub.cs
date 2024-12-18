@@ -427,12 +427,26 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
+                                    bool updateLotNumberResult = true;
                                     foreach (var deliveryCode in deliveryCodes.Split(';'))
                                     {
                                         var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
                                         var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
                                         SendMessage(notificationType, updateLotNumberResponse.Message);
                                         WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
+
+                                        if (updateLotNumberResponse.Code == "02")
+                                        {
+                                            updateLotNumberResult = false;
+                                        }
+                                    }
+
+                                    if(updateLotNumberResult == false)
+                                    {
+                                        WriteLogInfo($"9.1. Bat den do");
+                                        TurnOnRedTrafficLight();
+                                        WriteLogInfo($"9.1. Thông báo");
+                                        SendMessage("WarningNotification", $"{deliveryCodes} Chưa có số lô; Vui lòng liên hệ KCS để nhập ngay chứng chỉ chất lượng vào hệ thống");
                                     }
                                 }
                                 else
