@@ -14,6 +14,12 @@ namespace XHTD_SERVICES.Data.Entities
     
     public partial class tblCallToGatewayConfig
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tblCallToGatewayConfig()
+        {
+            this.tblTypeProductCallToGatewayConfigs = new HashSet<tblTypeProductCallToGatewayConfig>();
+        }
+    
         public int Id { get; set; }
         public Nullable<int> ExportPlanId { get; set; }
         public string ExportPlanName { get; set; }
@@ -28,5 +34,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<int> Status { get; set; }
         public Nullable<int> SourceDocumentId { get; set; }
         public string SourceDocumentName { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tblTypeProductCallToGatewayConfig> tblTypeProductCallToGatewayConfigs { get; set; }
     }
 }

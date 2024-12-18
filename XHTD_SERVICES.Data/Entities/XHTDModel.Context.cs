@@ -76,5 +76,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<TblQualityCertificate> TblQualityCertificates { get; set; }
         public virtual DbSet<TblQualityCertificateCCCL> TblQualityCertificateCCCLs { get; set; }
         public virtual DbSet<TblQualityCertificateCCCLProcess> TblQualityCertificateCCCLProcesses { get; set; }
+        public virtual DbSet<tblTypeProductCallToGatewayConfig> tblTypeProductCallToGatewayConfigs { get; set; }
     }
 }
