@@ -74,36 +74,6 @@ namespace XHTD_SERVICES_CANRA_1.Business
             return resultResponse;
         }
 
-        public async Task<DesicionScaleResponse> UpdateCCCL(string deliveryCode)
-        {
-            var lotNumber = await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
-
-            // Nếu cập nhật số lô thành công thì gọi api ERP cập nhật lại số lô
-            if (!string.IsNullOrEmpty(lotNumber))
-            {
-                var updateResponse = HttpRequest.UpdateLotNumber(deliveryCode, lotNumber);
-                if (updateResponse.StatusDescription.Equals("Unauthorized"))
-                {
-                    var unauthorizedResponse = new DesicionScaleResponse();
-                    unauthorizedResponse.Code = "02";
-                    unauthorizedResponse.Message = "Xác thực API cân WebSale không thành công";
-                    return unauthorizedResponse;
-                }
-
-                var updateResponseContent = updateResponse.Content;
-                var response = JsonConvert.DeserializeObject<DesicionScaleResponse>(updateResponseContent);
-                return response;
-            }
-
-            var resultResponse = new DesicionScaleResponse
-            {
-                Code = "02",
-                Message = "Cập nhật số lô thất bại, không tìm thấy số lô hợp lệ"
-            };
-
-            return resultResponse;
-        }
-
         public async Task<DmsApiResponse> InvoiceXHTD(string deliveryCode)
         {
             var updateResponse = HttpRequest.SendInvoiceXHTD(deliveryCode);

@@ -439,14 +439,8 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                                         {
                                             updateLotNumberResult = false;
                                         }
-                                    }
 
-                                    if(updateLotNumberResult == false)
-                                    {
-                                        WriteLogInfo($"9.1. Bat den do");
-                                        TurnOnRedTrafficLight();
-                                        WriteLogInfo($"9.1. Thông báo");
-                                        SendMessage("WarningNotification", $"{deliveryCodes} Chưa có số lô; Vui lòng liên hệ KCS để nhập ngay chứng chỉ chất lượng vào hệ thống");
+                                        await DIBootstrapper.Init().Resolve<StoreOrderOperatingRepository>().UpdateCCCL(deliveryCode);
                                     }
                                 }
                                 else

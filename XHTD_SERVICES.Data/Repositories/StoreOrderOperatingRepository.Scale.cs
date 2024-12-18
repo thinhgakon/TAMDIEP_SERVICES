@@ -549,7 +549,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<string> UpdateCCCL(string deliveryCode)
+        public async Task UpdateCCCL(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -561,7 +561,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order == null)
                     {
-                        return null;
+                        return;
                     }
 
                     string source = "TAM_DIEP";
@@ -593,12 +593,12 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (cccl == null)
                     {
-                        return null;
+                        return;
                     }
 
                     if (string.IsNullOrEmpty(cccl?.Code))
                     {
-                        return null;
+                        return;
                     }
 
                     order.CCCLCode = cccl.Code;
@@ -614,12 +614,12 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     await dbContext.SaveChangesAsync();
                     log.Info($"Cập nhật chứng chỉ chất lượng {deliveryCode} - {cccl.Code}");
-                    return cccl.Code;
+                    return;
                 }
                 catch (Exception ex)
                 {
-                    log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
-                    return null;
+                    log.Error($@"Cập nhật chứng chỉ chất lượng {deliveryCode} Error: " + ex.Message);
+                    return;
                 }
             }
         }
