@@ -218,6 +218,9 @@
     <Compile Include="Entities\tblTypeProduct.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\tblTypeProductCallToGatewayConfig.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblVehicle.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
