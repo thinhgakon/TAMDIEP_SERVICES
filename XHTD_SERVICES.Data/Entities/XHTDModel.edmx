@@ -555,37 +555,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="PartnerId" Type="int" />
           <Property Name="PartnerName" Type="nvarchar(max)" />
-          <Property Name="CCCLCode" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="TblQualityCertificateCCCL">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="500" Nullable="false" />
-          <Property Name="FromDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="ToDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="ItemCode" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="ItemName" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="State" Type="varchar" MaxLength="20" Nullable="false" />
-          <Property Name="Note" Type="nvarchar(max)" />
-          <Property Name="Source" Type="varchar" MaxLength="20" />
-          <Property Name="CreateDay" Type="datetime2" Precision="7" />
-          <Property Name="CreateBy" Type="nvarchar" MaxLength="50" />
-          <Property Name="UpdateDay" Type="datetime2" Precision="7" />
-          <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
           <Property Name="ReferenceId" Type="uniqueidentifier" />
+          <Property Name="Source" Type="varchar" MaxLength="20" />
           <Property Name="TempReferenceId" Type="uniqueidentifier" />
-        </EntityType>
-        <EntityType Name="TblQualityCertificateCCCLProcess">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Log" Type="nvarchar" MaxLength="500" Nullable="false" />
-          <Property Name="AttachmentId" Type="int" />
-          <Property Name="CCCLCode" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="TempAttachmentId" Type="int" />
         </EntityType>
         <EntityType Name="tblRfid">
           <Key>
@@ -801,7 +773,6 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="PrintTroughCode" Type="nvarchar(max)" />
           <Property Name="RealNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ErrorLog" Type="nvarchar(max)" />
-          <Property Name="CCCLCode" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingHistory">
           <Key>
@@ -1067,47 +1038,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
-          <End Role="TblQualityCertificateCCCL" Type="Self.TblQualityCertificateCCCL" Multiplicity="0..1" />
-          <End Role="TblQualityCertificate" Type="Self.TblQualityCertificate" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TblQualityCertificateCCCL">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="TblQualityCertificate">
-              <PropertyRef Name="CCCLCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
-          <End Role="TblQualityCertificateCCCL" Type="Self.TblQualityCertificateCCCL" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="TblQualityCertificateCCCLProcess" Type="Self.TblQualityCertificateCCCLProcess" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TblQualityCertificateCCCL">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="TblQualityCertificateCCCLProcess">
-              <PropertyRef Name="CCCLCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <!--Errors Found During Generation:
 warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
         <Association Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" />-->
-        <Association Name="FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode">
-          <End Role="TblQualityCertificateCCCL" Type="Self.TblQualityCertificateCCCL" Multiplicity="0..1" />
-          <End Role="tblStoreOrderOperating" Type="Self.tblStoreOrderOperating" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TblQualityCertificateCCCL">
-              <PropertyRef Name="Code" />
-            </Principal>
-            <Dependent Role="tblStoreOrderOperating">
-              <PropertyRef Name="CCCLCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_tblTroughTypeProduct_tblTrough_TroughCode">
           <End Role="tblTrough" Type="Self.tblTrough" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1183,8 +1116,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySet Name="TblPrint" EntityType="Self.TblPrint" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblPrintConfig" EntityType="Self.tblPrintConfig" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TblQualityCertificate" EntityType="Self.TblQualityCertificate" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TblQualityCertificateCCCL" EntityType="Self.TblQualityCertificateCCCL" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TblQualityCertificateCCCLProcess" EntityType="Self.TblQualityCertificateCCCLProcess" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfid" EntityType="Self.tblRfid" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblRfidSign" EntityType="Self.tblRfidSign" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblScaleOperating" EntityType="Self.tblScaleOperating" Schema="dbo" store:Type="Tables" />
@@ -1265,18 +1196,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <AssociationSet Name="FK_tblNotification_TblNotificationGroup_NotificationGroupId" Association="Self.FK_tblNotification_TblNotificationGroup_NotificationGroupId">
             <End Role="TblNotificationGroup" EntitySet="TblNotificationGroup" />
             <End Role="tblNotification" EntitySet="tblNotification" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" Association="Self.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCL" />
-            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificate" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" Association="Self.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCL" />
-            <End Role="TblQualityCertificateCCCLProcess" EntitySet="TblQualityCertificateCCCLProcess" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" Association="Self.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCL" />
-            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperating" />
           </AssociationSet>
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
@@ -1822,8 +1741,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="PrintTroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="RealNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ErrorLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CCCLCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="TblQualityCertificateCCCL" Relationship="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" FromRole="tblStoreOrderOperating" ToRole="TblQualityCertificateCCCL" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2094,26 +2011,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           </AssociationSet>
           <EntitySet Name="tblStoreOrderOperatingHistories" EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" />
           <EntitySet Name="TblQualityCertificates" EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" />
-          <EntitySet Name="TblQualityCertificateCCCLs" EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" />
-          <EntitySet Name="TblQualityCertificateCCCLProcesses" EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess" />
-          <AssociationSet Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCLs" />
-            <End Role="TblQualityCertificateCCCLProcess" EntitySet="TblQualityCertificateCCCLProcesses" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" Association="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCLs" />
-            <End Role="tblStoreOrderOperating" EntitySet="tblStoreOrderOperatings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
-            <End Role="TblQualityCertificateCCCL" EntitySet="TblQualityCertificateCCCLs" />
-            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificates" />
-          </AssociationSet>
-          <EntitySet Name="tblTypeProductCallToGatewayConfigs" EntityType="XHTD_SERVICES.Data.Entities.tblTypeProductCallToGatewayConfig" />
-          <AssociationSet Name="FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" Association="XHTD_SERVICES.Data.Entities.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId">
-            <End Role="tblCallToGatewayConfig" EntitySet="tblCallToGatewayConfigs" />
-            <End Role="tblTypeProductCallToGatewayConfig" EntitySet="tblTypeProductCallToGatewayConfigs" />
-          </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
             <PropertyRef Name="Id" />
@@ -2478,42 +2376,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="PartnerId" Type="Int32" />
           <Property Name="PartnerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CCCLCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="TblQualityCertificateCCCL" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificate" ToRole="TblQualityCertificateCCCL" />
-        </EntityType>
-        <EntityType Name="TblQualityCertificateCCCL">
-          <Key>
-            <PropertyRef Name="Code" />
-          </Key>
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="FromDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="ToDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="ItemCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="State" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Source" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CreateDay" Type="DateTime" Precision="7" />
-          <Property Name="CreateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UpdateDay" Type="DateTime" Precision="7" />
-          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ReferenceId" Type="Guid" />
+          <Property Name="Source" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="TempReferenceId" Type="Guid" />
-          <NavigationProperty Name="TblQualityCertificateCCCLProcesses" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="TblQualityCertificateCCCLProcess" />
-          <NavigationProperty Name="tblStoreOrderOperatings" Relationship="XHTD_SERVICES.Data.Entities.FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="tblStoreOrderOperating" />
-          <NavigationProperty Name="TblQualityCertificates" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCL" ToRole="TblQualityCertificate" />
-        </EntityType>
-        <EntityType Name="TblQualityCertificateCCCLProcess">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Log" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="AttachmentId" Type="Int32" />
-          <Property Name="CCCLCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TempAttachmentId" Type="Int32" />
-          <NavigationProperty Name="TblQualityCertificateCCCL" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode" FromRole="TblQualityCertificateCCCLProcess" ToRole="TblQualityCertificateCCCL" />
         </EntityType>
         <Association Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
           <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Role="TblQualityCertificateCCCL" Multiplicity="1">
@@ -2550,28 +2415,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             </Principal>
             <Dependent Role="TblQualityCertificate">
               <PropertyRef Name="CCCLCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="tblTypeProductCallToGatewayConfig">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TypeProductCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="MaxVehicleNumber" Type="Int32" />
-          <Property Name="CallToGatewayConfigId" Type="Int32" />
-          <NavigationProperty Name="tblCallToGatewayConfig" Relationship="XHTD_SERVICES.Data.Entities.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" FromRole="tblTypeProductCallToGatewayConfig" ToRole="tblCallToGatewayConfig" />
-        </EntityType>
-        <Association Name="FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId">
-          <End Type="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" Role="tblCallToGatewayConfig" Multiplicity="0..1" />
-          <End Type="XHTD_SERVICES.Data.Entities.tblTypeProductCallToGatewayConfig" Role="tblTypeProductCallToGatewayConfig" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tblCallToGatewayConfig">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="tblTypeProductCallToGatewayConfig">
-              <PropertyRef Name="CallToGatewayConfigId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2994,7 +2837,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
-                <ScalarProperty Name="CCCLCode" ColumnName="CCCLCode" />
                 <ScalarProperty Name="ErrorLog" ColumnName="ErrorLog" />
                 <ScalarProperty Name="RealNumber" ColumnName="RealNumber" />
                 <ScalarProperty Name="PrintTroughCode" ColumnName="PrintTroughCode" />
@@ -3514,7 +3356,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblQualityCertificates">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificate">
               <MappingFragment StoreEntitySet="TblQualityCertificate">
-                <ScalarProperty Name="CCCLCode" ColumnName="CCCLCode" />
+                <ScalarProperty Name="TempReferenceId" ColumnName="TempReferenceId" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
                 <ScalarProperty Name="PartnerName" ColumnName="PartnerName" />
                 <ScalarProperty Name="PartnerId" ColumnName="PartnerId" />
                 <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
@@ -3529,38 +3373,6 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
                 <ScalarProperty Name="ToDate" ColumnName="ToDate" />
                 <ScalarProperty Name="FromDate" ColumnName="FromDate" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TblQualityCertificateCCCLs">
-            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL">
-              <MappingFragment StoreEntitySet="TblQualityCertificateCCCL">
-                <ScalarProperty Name="TempReferenceId" ColumnName="TempReferenceId" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="UpdateBy" ColumnName="UpdateBy" />
-                <ScalarProperty Name="UpdateDay" ColumnName="UpdateDay" />
-                <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
-                <ScalarProperty Name="CreateDay" ColumnName="CreateDay" />
-                <ScalarProperty Name="Source" ColumnName="Source" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
-                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
-                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
-                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TblQualityCertificateCCCLProcesses">
-            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess">
-              <MappingFragment StoreEntitySet="TblQualityCertificateCCCLProcess">
-                <ScalarProperty Name="TempAttachmentId" ColumnName="TempAttachmentId" />
-                <ScalarProperty Name="CCCLCode" ColumnName="CCCLCode" />
-                <ScalarProperty Name="AttachmentId" ColumnName="AttachmentId" />
-                <ScalarProperty Name="Log" ColumnName="Log" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
