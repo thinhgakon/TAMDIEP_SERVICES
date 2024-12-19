@@ -888,6 +888,15 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
           <Property Name="UpdateDay" Type="datetime" />
           <Property Name="UpdateBy" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="tblTypeProductCallToGatewayConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TypeProductCode" Type="nvarchar(max)" />
+          <Property Name="MaxVehicleNumber" Type="int" />
+          <Property Name="CallToGatewayConfigId" Type="int" />
+        </EntityType>
         <EntityType Name="tblVehicle">
           <Key>
             <PropertyRef Name="IDVehicle" />
@@ -1060,6 +1069,18 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId">
+          <End Role="tblCallToGatewayConfig" Type="Self.tblCallToGatewayConfig" Multiplicity="0..1" />
+          <End Role="tblTypeProductCallToGatewayConfig" Type="Self.tblTypeProductCallToGatewayConfig" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tblCallToGatewayConfig">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tblTypeProductCallToGatewayConfig">
+              <PropertyRef Name="CallToGatewayConfigId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="XHTD_SERVICESDataEntitiesStoreContainer">
           <EntitySet Name="ItemFormulas" EntityType="Self.ItemFormulas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
@@ -1107,6 +1128,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySet Name="tblTrough" EntityType="Self.tblTrough" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblTroughTypeProduct" EntityType="Self.tblTroughTypeProduct" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblTypeProduct" EntityType="Self.tblTypeProduct" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tblTypeProductCallToGatewayConfig" EntityType="Self.tblTypeProductCallToGatewayConfig" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblVehicle" EntityType="Self.tblVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblCompany" EntityType="Self.tblCompany" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1182,6 +1204,10 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct" Association="Self.FK_tblTroughTypeProduct_tblTypeProduct_TypeProduct">
             <End Role="tblTypeProduct" EntitySet="tblTypeProduct" />
             <End Role="tblTroughTypeProduct" EntitySet="tblTroughTypeProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" Association="Self.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId">
+            <End Role="tblCallToGatewayConfig" EntitySet="tblCallToGatewayConfig" />
+            <End Role="tblTypeProductCallToGatewayConfig" EntitySet="tblTypeProductCallToGatewayConfig" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -2154,6 +2180,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="Status" Type="Int32" />
           <Property Name="SourceDocumentId" Type="Int32" />
           <Property Name="SourceDocumentName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="tblTypeProductCallToGatewayConfigs" Relationship="XHTD_SERVICES.Data.Entities.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" FromRole="tblCallToGatewayConfig" ToRole="tblTypeProductCallToGatewayConfig" />
         </EntityType>
         <EntityType Name="tblExportPlan">
           <Key>
@@ -2353,7 +2380,45 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="Source" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="TempReferenceId" Type="Guid" />
         </EntityType>
-        </Schema>
+        <Association Name="FK_TblQualityCertificateCCCLProcess_TblQualityCertificateCCCL_CCCLCode">
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Role="TblQualityCertificateCCCL" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCLProcess" Role="TblQualityCertificateCCCLProcess" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificateCCCL">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblQualityCertificateCCCLProcess">
+              <PropertyRef Name="CCCLCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tblStoreOrderOperating_TblQualityCertificateCCCL_CCCLCode">
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Role="TblQualityCertificateCCCL" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating" Role="tblStoreOrderOperating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificateCCCL">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="tblStoreOrderOperating">
+              <PropertyRef Name="CCCLCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TblQualityCertificate_TblQualityCertificateCCCL_CCCLCode">
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificateCCCL" Role="TblQualityCertificateCCCL" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Role="TblQualityCertificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblQualityCertificateCCCL">
+              <PropertyRef Name="Code" />
+            </Principal>
+            <Dependent Role="TblQualityCertificate">
+              <PropertyRef Name="CCCLCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -3308,6 +3373,16 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
                 <ScalarProperty Name="ToDate" ColumnName="ToDate" />
                 <ScalarProperty Name="FromDate" ColumnName="FromDate" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tblTypeProductCallToGatewayConfigs">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblTypeProductCallToGatewayConfig">
+              <MappingFragment StoreEntitySet="tblTypeProductCallToGatewayConfig">
+                <ScalarProperty Name="CallToGatewayConfigId" ColumnName="CallToGatewayConfigId" />
+                <ScalarProperty Name="MaxVehicleNumber" ColumnName="MaxVehicleNumber" />
+                <ScalarProperty Name="TypeProductCode" ColumnName="TypeProductCode" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
