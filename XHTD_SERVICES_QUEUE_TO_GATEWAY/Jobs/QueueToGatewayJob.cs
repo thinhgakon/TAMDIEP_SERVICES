@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Quartz;
+using RoundRobin;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -34,17 +35,25 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
             {
                 WriteLogInfo($"--------------- START JOB ---------------");
 
-                var typeProductCount = 10;
+                var typeProductList = new List<string>();
                 using (var db = new XHTD_Entities())
                 {
-                    var typeProductList = db.tblTypeProducts.Where(x => x.State == true).Select(x => x.Code).ToList();
-                    typeProductCount = typeProductList.Count;
+                    typeProductList = db.tblTypeProducts.Where(x => x.State == true).Select(x => x.Code).ToList();
                 }
 
-                for (int i = 0; i < typeProductCount; i++)
+                if (typeProductList != null && typeProductList.Count > 0)
                 {
-                    var typeProduct = Program.roundRobinList.Next().ToUpper();
-                    QueueToCallProccess(typeProduct);
+                    for (int i = 0; i < typeProductList.Count; i++)
+                    {
+                        var typeProduct = typeProductList[i];
+                        QueueToCallProccess(typeProduct);
+                    }
+                }
+
+                else
+                {
+                    WriteLogInfo("Không tìm thấy chủng loại sản phẩm đang ACTIVE => Kết thúc");
+                    return;
                 }
             });
         }
@@ -53,19 +62,6 @@ namespace XHTD_SERVICES_QUEUE_TO_GATEWAY.Jobs
         {
             try
             {
-                //var IsCall = true;
-                //using (var db = new XHTD_Entities())
-                //{
-                //    var isCallConfig = db.tblSystemParameters.FirstOrDefault(x => x.Code == $"IS_CALL_{typeProduct}");
-                //    IsCall = isCallConfig.Value == "1" ? true : false;
-                //}
-
-                //if (!IsCall)
-                //{
-                //    WriteLogInfo($@"Cấu hình gọi loa đang OFF. Kiểm tra IsCall trong tblSystemParameters");
-                //    return;
-                //}
-
                 using (var db = new XHTD_Entities())
                 {
                     var callConfigs = db.tblCallToGatewayConfigs.Where(x => x.Status == 1).ToList();
