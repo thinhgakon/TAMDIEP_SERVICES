@@ -497,6 +497,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
 
                 var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+                
+                using (var dbContext = new XHTD_Entities())
+                {
+                    currentOrder.ErrorLog = pushMessage;
+                    await dbContext.SaveChangesAsync();
+                }
+
                 SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
@@ -626,6 +633,13 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
 
                 var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+
+                using (var dbContext = new XHTD_Entities())
+                {
+                    currentOrder.ErrorLog = pushMessage;
+                    await dbContext.SaveChangesAsync();
+                }
+
                 SendNotificationByRight(RightCode.CONFIRM, pushMessage);
 
                 var driverUserName = currentOrder.DriverUserName;
@@ -1046,26 +1060,19 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
         public int? GetMaxVehicle(tblCallToGatewayConfig config, string typeProduct)
         {
-            switch (typeProduct.ToUpper())
+            using (var db = new XHTD_Entities())
             {
-                case "PCB30":
-                    return config.MaxVehiclePcb30;
-                case "PCB40":
-                    return config.MaxVehiclePcb40;
-                case "CLINKER":
-                    return config.MaxVehicleClinker;
-                case "ROI":
-                    return config.MaxVehicleRoi;
-                case "C91":
-                    return config.MaxVehicleC91;
-                case "JUMBO":
-                    return config.MaxVehicleJumbo;
-                case "SLING":
-                    return config.MaxVehicleSling;
-                case "OTHER":
-                    return config.MaxVehicleOther;
-                default:
-                    return 0;
+                var typeProductConfig = db.tblTypeProductCallToGatewayConfigs
+                                          .FirstOrDefault(x => x.CallToGatewayConfigId == config.Id && 
+                                                               x.TypeProductCode.ToUpper() == typeProduct.ToUpper());
+
+                // Nếu chưa cấu hình xe tối đa của loại sp, mặc định là 5
+                if (typeProductConfig == null || (typeProductConfig != null && typeProductConfig.MaxVehicleNumber == null))
+                {
+                    return 5;
+                }
+
+                return typeProductConfig.MaxVehicleNumber;
             }
         }
     }

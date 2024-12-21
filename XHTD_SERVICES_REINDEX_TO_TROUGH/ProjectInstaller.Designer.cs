@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "HPReindexToTroughService";
+            this.serviceInstaller1.ServiceName = "PROD_Service_Reindex_To_Trough";
             // 
             // ProjectInstaller
             // 

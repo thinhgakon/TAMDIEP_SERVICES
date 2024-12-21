@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using XHTD_SERVICES.Data.Entities;
 
 namespace XHTD_SERVICES_QUEUE_TO_GATEWAY
 {

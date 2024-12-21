@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "XHTD_Service_CLK_Trough_1";
+            this.serviceInstaller1.ServiceName = "PROD_Service_CLK_Trough_1";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

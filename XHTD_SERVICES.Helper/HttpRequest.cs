@@ -980,7 +980,7 @@ namespace XHTD_SERVICES.Helper
 
             var apiUrl = ConfigurationManager.GetSection("API_Scale/Url") as NameValueCollection;
             var client = new RestClient($"{apiUrl["UpdateLotNumber"]}?delivery_code={deliveryCode}&lot_number={lotNumber}");
-            
+
             var request = new RestRequest();
             request.Method = Method.POST;
             request.AddHeader("Accept", "application/json");

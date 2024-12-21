@@ -324,12 +324,12 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.SumNumber = (decimal?)websaleOrder.bookQuantity;
                             order.OrderDate = orderDate;
 
-                            order.DocNum = websaleOrder.docnum;
-
+                            order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                             order.RealNumber = (decimal?)websaleOrder.orderQuantity;
 
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
+                            order.MoocCode = websaleOrder.moocCode;
 
                             order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc;
 
@@ -429,7 +429,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
                     order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                     order.SealDes = websaleOrder.topSealDes;
-                    order.DocNum = websaleOrder.docnum;
+                    order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                     order.RealNumber = websaleOrder.orderQuantity;
                     order.MoocCode = websaleOrder.moocCode;
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
@@ -541,7 +541,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
                         order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                         order.SealDes = websaleOrder.topSealDes;
-                        order.DocNum = websaleOrder.docnum;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
@@ -608,7 +608,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {syncTime};";
                         order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                         order.SealDes = websaleOrder.topSealDes;
-                        order.DocNum = websaleOrder.docnum;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
 
@@ -673,7 +673,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {syncTime};";
                         order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                         order.SealDes = websaleOrder.topSealDes;
-                        order.DocNum = websaleOrder.docnum;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
 
