@@ -61,7 +61,7 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Schedules
                 .WithPriority(1)
                  .StartNow()
                  .WithSimpleSchedule(x => x
-                     .WithIntervalInHours(Convert.ToInt32(ConfigurationManager.AppSettings.Get("Gateway_Module_Interval_In_Hours")))
+                     .WithIntervalInSeconds(10)
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(ledJob, ledTrigger);

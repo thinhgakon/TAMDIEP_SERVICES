@@ -52,56 +52,31 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
             }
         }
 
-        public async void LEDProcess()
+        public void LEDProcess()
         {
             try
             {
-                tblCallToTrough callToTrough = null;
-                tblStoreOrderOperating order = null;
-                string previousDeliveryCode = null;
+                string dataCode = DEFAULT_LED_CODE;
 
-                using (var db = new XHTD_Entities())
+                if (Program.CurrentOrder != null)
                 {
-                    while (true)
+                    dataCode = $"*[H1][C1]{Program.CurrentOrder.ItemAlias}[H2][C1][1]BSX[2]{Program.CurrentOrder.Vehicle}[H3][C1][1]MSGH[2]{Program.CurrentOrder.DeliveryCode}[H4][C1][1]DAT[2]{Program.CurrentOrder.SumNumber}[!]";
+                }
+
+                if (Program.CurrentOrder.DeliveryCode != Program.PreviousOrder.DeliveryCode)
+                {
+                    DisplayScreenLed(dataCode);
+
+                    if (dataCode != DEFAULT_LED_CODE)
                     {
-                        callToTrough = await db.tblCallToTroughs
-                                                .Where(x => x.Machine == TROUGH_CODE
-                                                            &&
-                                                            (x.IsDone == null || x.IsDone == false)
-                                                      )
-                                                .OrderBy(x => x.IndexTrough)
-                                                .FirstOrDefaultAsync();
-
-                        if (callToTrough != null)
-                        {
-                            order = await db.tblStoreOrderOperatings
-                                            .FirstOrDefaultAsync(x => x.DeliveryCode == callToTrough.DeliveryCode &&
-                                                                      x.IsVoiced == false);
-                        }
-
-                        string dataCode = DEFAULT_LED_CODE;
-
-                        if (callToTrough != null && order != null)
-                        {
-                            dataCode = $"*[H1][C1]{order.ItemAlias}[H2][C1][1]BSX[2]{order.Vehicle}[H3][C1][1]MSGH[2]{order.DeliveryCode}[H4][C1][1]DAT[2]{order.SumNumber}[!]";
-                        }
-
-                        if (callToTrough != null && callToTrough.DeliveryCode != previousDeliveryCode)
-                        {
-                            DisplayScreenLed(dataCode);
-
-                            if (dataCode != DEFAULT_LED_CODE)
-                            {
-                                TurnOnRedTrafficLight();
-                            }
-                            else
-                            {
-                                TurnOnGreenTrafficLight();
-                            }
-
-                            previousDeliveryCode = callToTrough.DeliveryCode;
-                        }
+                        TurnOnRedTrafficLight();
                     }
+                    else
+                    {
+                        TurnOnGreenTrafficLight();
+                    }
+
+                    Program.PreviousOrder = Program.CurrentOrder;
                 }
             }
             catch (Exception ex)
