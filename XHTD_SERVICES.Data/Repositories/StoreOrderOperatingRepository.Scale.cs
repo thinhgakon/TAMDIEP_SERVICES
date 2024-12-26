@@ -523,11 +523,18 @@ namespace XHTD_SERVICES.Data.Repositories
                             break;
                     }
 
+                    var item = dbContext.Items.FirstOrDefault(x => x.Code == order.ItemId.ToString());
+
+                    if(item == null)
+                    {
+                        return null;
+                    }
+
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
                     .Where(x => x.PartnerId == order.IDDistributorSyn)
-                    .Where(x => x.ItemCode == order.ItemId.ToString())
                     .Where(x=>x.Source == source)
+                    .Where(x=>x.GroupId == item.GroupId)
                     .ToList();
 
                     if (lotData == null || lotData.Count == 0)
@@ -535,7 +542,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         lotData = dbContext.TblQualityCertificates
                             .Where(x => x.State == "CHUA_KHOA")
                             .Where(x => x.PartnerId == null)
-                            .Where(x => x.ItemCode == order.ItemId.ToString())
+                            .Where(x => x.GroupId == item.GroupId)
                             .Where(x => x.Source == source)
                             .ToList();
                     }

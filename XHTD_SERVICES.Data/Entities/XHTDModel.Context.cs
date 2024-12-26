@@ -75,5 +75,6 @@ namespace XHTD_SERVICES.Data.Entities
         public virtual DbSet<tblStoreOrderOperatingHistory> tblStoreOrderOperatingHistories { get; set; }
         public virtual DbSet<TblQualityCertificate> TblQualityCertificates { get; set; }
         public virtual DbSet<tblTypeProductCallToGatewayConfig> tblTypeProductCallToGatewayConfigs { get; set; }
+        public virtual DbSet<TblItemGroup> TblItemGroups { get; set; }
     }
 }

@@ -67,6 +67,9 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="3.375" PointX="19.375" PointY="10.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTypeProductCallToGatewayConfig" Width="1.5" PointX="15.625" PointY="24.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblItemGroup" Width="1.5" PointX="11.125" PointY="21.375" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_Items_TblItemGroup_GroupId" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblItemGroup_GroupId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

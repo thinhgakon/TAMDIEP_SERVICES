@@ -22,7 +22,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Code" Type="nvarchar(max)" />
+          <Property Name="Code" Type="nvarchar" MaxLength="450" />
           <Property Name="Name" Type="nvarchar(max)" />
           <Property Name="Unit_Code" Type="nvarchar(max)" />
           <Property Name="Unit_Name" Type="nvarchar(max)" />
@@ -42,6 +42,7 @@
           <Property Name="Admixture" Type="float" />
           <Property Name="Water" Type="float" />
           <Property Name="ItemFormula_Id" Type="uniqueidentifier" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="tblAccount">
           <Key>
@@ -428,6 +429,13 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ItemIdSyn" Type="int" />
           <Property Name="TypeProductCode" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="TblItemGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
         <EntityType Name="tblLongVehicle">
           <Key>
             <PropertyRef Name="Id" />
@@ -545,8 +553,8 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="FromDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="ToDate" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="ExpectNumber" Type="float" Nullable="false" />
-          <Property Name="ItemCode" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="ItemName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ItemCode" Type="varchar" MaxLength="50" />
+          <Property Name="ItemName" Type="nvarchar" MaxLength="255" />
           <Property Name="State" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Note" Type="nvarchar(max)" />
           <Property Name="CreateDay" Type="datetime2" Precision="7" />
@@ -558,6 +566,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="ReferenceId" Type="uniqueidentifier" />
           <Property Name="Source" Type="varchar" MaxLength="20" />
           <Property Name="TempReferenceId" Type="uniqueidentifier" />
+          <Property Name="GroupId" Type="int" />
         </EntityType>
         <EntityType Name="tblRfid">
           <Key>
@@ -934,6 +943,20 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Items_TblItemGroup_GroupId">
+          <End Role="TblItemGroup" Type="Self.TblItemGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Items" Type="Self.Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblItemGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tblCheckInOut_tblAttachment">
           <End Role="tblAttachment" Type="Self.tblAttachment" Multiplicity="0..1" />
           <End Role="tblCheckInOut" Type="Self.tblCheckInOut" Multiplicity="*" />
@@ -1038,6 +1061,18 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblStoreOrderOperatingVoice' does
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TblQualityCertificate_TblItemGroup_GroupId">
+          <End Role="TblItemGroup" Type="Self.TblItemGroup" Multiplicity="0..1" />
+          <End Role="TblQualityCertificate" Type="Self.TblQualityCertificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblItemGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblQualityCertificate">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <!--Errors Found During Generation:
 warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
         <Association Name="FK_tblStoreOrderOperating_TblQualityCertificate_LotNumber" />-->
@@ -1107,6 +1142,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySet Name="tblExportPlanDetail" EntityType="Self.tblExportPlanDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblFunction" EntityType="Self.tblFunction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblItemConfig" EntityType="Self.tblItemConfig" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblItemGroup" EntityType="Self.TblItemGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblLongVehicle" EntityType="Self.tblLongVehicle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tblMachine" EntityType="Self.tblMachine" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TblMachineTrough" EntityType="Self.TblMachineTrough" Schema="dbo" store:Type="Tables" />
@@ -1165,6 +1201,10 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <End Role="ItemFormulas" EntitySet="ItemFormulas" />
             <End Role="Items" EntitySet="Items" />
           </AssociationSet>
+          <AssociationSet Name="FK_Items_TblItemGroup_GroupId" Association="Self.FK_Items_TblItemGroup_GroupId">
+            <End Role="TblItemGroup" EntitySet="TblItemGroup" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
           <AssociationSet Name="FK_tblCheckInOut_tblAttachment" Association="Self.FK_tblCheckInOut_tblAttachment">
             <End Role="tblAttachment" EntitySet="tblAttachment" />
             <End Role="tblCheckInOut" EntitySet="tblCheckInOut" />
@@ -1196,6 +1236,10 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <AssociationSet Name="FK_tblNotification_TblNotificationGroup_NotificationGroupId" Association="Self.FK_tblNotification_TblNotificationGroup_NotificationGroupId">
             <End Role="TblNotificationGroup" EntitySet="TblNotificationGroup" />
             <End Role="tblNotification" EntitySet="tblNotification" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblQualityCertificate_TblItemGroup_GroupId" Association="Self.FK_TblQualityCertificate_TblItemGroup_GroupId">
+            <End Role="TblItemGroup" EntitySet="TblItemGroup" />
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificate" />
           </AssociationSet>
           <AssociationSet Name="FK_tblTroughTypeProduct_tblTrough_TroughCode" Association="Self.FK_tblTroughTypeProduct_tblTrough_TroughCode">
             <End Role="tblTrough" EntitySet="tblTrough" />
@@ -2016,6 +2060,15 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <End Role="tblCallToGatewayConfig" EntitySet="tblCallToGatewayConfigs" />
             <End Role="tblTypeProductCallToGatewayConfig" EntitySet="tblTypeProductCallToGatewayConfigs" />
           </AssociationSet>
+          <EntitySet Name="TblItemGroups" EntityType="XHTD_SERVICES.Data.Entities.TblItemGroup" />
+          <AssociationSet Name="FK_Items_TblItemGroup_GroupId" Association="XHTD_SERVICES.Data.Entities.FK_Items_TblItemGroup_GroupId">
+            <End Role="TblItemGroup" EntitySet="TblItemGroups" />
+            <End Role="Item" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TblQualityCertificate_TblItemGroup_GroupId" Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblItemGroup_GroupId">
+            <End Role="TblItemGroup" EntitySet="TblItemGroups" />
+            <End Role="TblQualityCertificate" EntitySet="TblQualityCertificates" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="tblCheckInOut">
           <Key>
@@ -2253,7 +2306,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="450" FixedLength="false" Unicode="true" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Unit_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Unit_Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -2274,6 +2327,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="Water" Type="Double" />
           <Property Name="ItemFormula_Id" Type="Guid" />
           <NavigationProperty Name="ItemFormula" Relationship="XHTD_SERVICES.Data.Entities.FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id" FromRole="Item" ToRole="ItemFormula" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="TblItemGroup" Relationship="XHTD_SERVICES.Data.Entities.FK_Items_TblItemGroup_GroupId" FromRole="Item" ToRole="TblItemGroup" />
         </EntityType>
         <EntityType Name="tblConfigOperating">
           <Key>
@@ -2371,8 +2426,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="FromDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="ToDate" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="ExpectNumber" Type="Double" Nullable="false" />
-          <Property Name="ItemCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ItemName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ItemCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreateDay" Type="DateTime" Precision="7" />
@@ -2384,6 +2439,8 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="ReferenceId" Type="Guid" />
           <Property Name="Source" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="TempReferenceId" Type="Guid" />
+          <Property Name="GroupId" Type="Int32" />
+          <NavigationProperty Name="TblItemGroup" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblItemGroup_GroupId" FromRole="TblQualityCertificate" ToRole="TblItemGroup" />
         </EntityType>
         <EntityType Name="tblTypeProductCallToGatewayConfig">
           <Key>
@@ -2404,6 +2461,41 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
             </Principal>
             <Dependent Role="tblTypeProductCallToGatewayConfig">
               <PropertyRef Name="CallToGatewayConfigId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TblItemGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Items" Relationship="XHTD_SERVICES.Data.Entities.FK_Items_TblItemGroup_GroupId" FromRole="TblItemGroup" ToRole="Item" />
+          <NavigationProperty Name="TblQualityCertificates" Relationship="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblItemGroup_GroupId" FromRole="TblItemGroup" ToRole="TblQualityCertificate" />
+        </EntityType>
+        <Association Name="FK_Items_TblItemGroup_GroupId">
+          <End Type="XHTD_SERVICES.Data.Entities.TblItemGroup" Role="TblItemGroup" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="XHTD_SERVICES.Data.Entities.Item" Role="Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblItemGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Item">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TblQualityCertificate_TblItemGroup_GroupId">
+          <End Type="XHTD_SERVICES.Data.Entities.TblItemGroup" Role="TblItemGroup" Multiplicity="0..1" />
+          <End Type="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Role="TblQualityCertificate" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TblItemGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblQualityCertificate">
+              <PropertyRef Name="GroupId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3251,6 +3343,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="Items">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.Item">
               <MappingFragment StoreEntitySet="Items">
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="ItemFormula_Id" ColumnName="ItemFormula_Id" />
                 <ScalarProperty Name="Water" ColumnName="Water" />
                 <ScalarProperty Name="Admixture" ColumnName="Admixture" />
@@ -3345,6 +3438,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblQualityCertificates">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblQualityCertificate">
               <MappingFragment StoreEntitySet="TblQualityCertificate">
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="TempReferenceId" ColumnName="TempReferenceId" />
                 <ScalarProperty Name="Source" ColumnName="Source" />
                 <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
@@ -3372,6 +3466,14 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
                 <ScalarProperty Name="CallToGatewayConfigId" ColumnName="CallToGatewayConfigId" />
                 <ScalarProperty Name="MaxVehicleNumber" ColumnName="MaxVehicleNumber" />
                 <ScalarProperty Name="TypeProductCode" ColumnName="TypeProductCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblItemGroups">
+            <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblItemGroup">
+              <MappingFragment StoreEntitySet="TblItemGroup">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

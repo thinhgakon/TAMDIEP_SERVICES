@@ -32,5 +32,8 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<System.Guid> ReferenceId { get; set; }
         public string Source { get; set; }
         public Nullable<System.Guid> TempReferenceId { get; set; }
+        public Nullable<int> GroupId { get; set; }
+    
+        public virtual TblItemGroup TblItemGroup { get; set; }
     }
 }

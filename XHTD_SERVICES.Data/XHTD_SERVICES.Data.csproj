@@ -152,6 +152,9 @@
     <Compile Include="Entities\tblItemConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblItemGroup.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblLongVehicle.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
