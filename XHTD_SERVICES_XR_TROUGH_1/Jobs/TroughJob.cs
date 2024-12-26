@@ -342,6 +342,8 @@ namespace XHTD_SERVICES_XR_TROUGH_1.Jobs
                         return;
                     }
 
+                    Program.CurrentOrder = currentOrder;
+
                     await _callToTroughRepository.AddItem(currentOrder.Id, currentOrder.DeliveryCode, vehicleCodeCurrent, TROUGH_CODE, currentOrder.SumNumber ?? 0);
                     _logger.LogInfo($"3. Thêm xe vào máng {TROUGH_CODE} thành công!");
 
