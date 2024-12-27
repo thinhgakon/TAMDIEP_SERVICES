@@ -103,16 +103,6 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                 if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE || Program.IsLockingRfid == true)
                 {
                     Program.IsEnabledRfid = false;
-
-                    SendMessage($"{SCALE_BALANCE}", "");
-                    SendMessageAPI($"{SCALE_BALANCE}", "   ");
-
-                    SendMessageAPI($"{VEHICLE_STATUS}", "    ");
-                    SendMessageAPI($"{SCALE_DELIVERY_CODE}", "  ");
-                    SendMessageAPI("Notification", "    ");
-                    SendMessageAPI("WarningNotification", "    ");
-                    SendMessageAPI($"{SCALE_IS_LOCKING_RFID}", "  ");
-                    await ReleaseScale();
                 }
 
                 if (currentScaleValue < ScaleConfig.MIN_WEIGHT_TO_SCALE)
