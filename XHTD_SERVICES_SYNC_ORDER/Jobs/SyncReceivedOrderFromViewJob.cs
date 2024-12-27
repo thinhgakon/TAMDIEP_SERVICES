@@ -123,7 +123,8 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                        ITEM_CATEGORY, LOCATION_CODE_TGC, ORDER_REQ_ID, BLANKET_ID, INVENTORY_ITEM_ID, CUSTOMER_ID,
                                        ITEM_ALIAS, NET_WEIGHT, TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC, DOC_NUM, BOOK_QUANTITY
                                 FROM APPS.DEV_SALES_ORDERS_MBF_V
-                                WHERE CREATION_DATE BETWEEN :startDate AND :endDate
+                                WHERE CREATION_DATE BETWEEN :startDate AND :endDate AND
+                                      STATUS = 'RECEIVED'
                                 ORDER BY STATUS ASC";
 
             var startDate = DateTime.Now.AddHours(-1 * numberHoursSearchOrder);
@@ -165,34 +166,12 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
         {
-            bool isSynced = false;
+            bool isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
 
-            var stateId = 0;
-            switch (websaleOrder.status.ToUpper())
+            if (isSynced)
             {
-                case "BOOKED":
-                    stateId = (int)OrderState.DA_DAT_HANG;
-                    break;
-                case "VOIDED":
-                    stateId = (int)OrderState.DA_HUY_DON;
-                    break;
-                case "RECEIVING":
-                    stateId = (int)OrderState.DANG_LAY_HANG;
-                    break;
-                case "RECEIVED":
-                    stateId = (int)OrderState.DA_XUAT_HANG;
-                    break;
-            }
-
-            if (stateId == (int)OrderState.DA_XUAT_HANG)
-            {
-                isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
-
-                if (isSynced)
-                {
-                    var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
-                    await _vehicleRepository.CreateAsync(vehicleCode);
-                }
+                var vehicleCode = websaleOrder.vehicleCode.Replace("-", "").Replace("  ", "").Replace(" ", "").Replace("/", "").Replace(".", "").ToUpper();
+                await _vehicleRepository.CreateAsync(vehicleCode);
             }
 
             return isSynced;
