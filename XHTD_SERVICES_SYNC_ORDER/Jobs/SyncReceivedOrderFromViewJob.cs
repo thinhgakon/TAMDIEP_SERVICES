@@ -166,7 +166,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task<bool> SyncWebsaleOrderToDMS(OrderItemResponse websaleOrder)
         {
-            bool isSynced = await _storeOrderOperatingRepository.CreateAsync(websaleOrder);
+            bool isSynced = await _storeOrderOperatingRepository.UpdateReceivedOrder(websaleOrder);
 
             if (isSynced)
             {
