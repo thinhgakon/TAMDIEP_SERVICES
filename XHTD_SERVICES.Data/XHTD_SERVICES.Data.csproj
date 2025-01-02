@@ -152,6 +152,9 @@
     <Compile Include="Entities\tblItemConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TblItemGroup.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\tblLongVehicle.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
@@ -177,9 +180,6 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\TblQualityCertificate.cs">
-      <DependentUpon>XHTDModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TblQualityCertificatePartner.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblRfid.cs">
@@ -219,6 +219,9 @@
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblTypeProduct.cs">
+      <DependentUpon>XHTDModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\tblTypeProductCallToGatewayConfig.cs">
       <DependentUpon>XHTDModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\tblVehicle.cs">

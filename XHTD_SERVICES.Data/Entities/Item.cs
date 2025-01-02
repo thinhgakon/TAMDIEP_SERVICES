@@ -35,7 +35,9 @@ namespace XHTD_SERVICES.Data.Entities
         public Nullable<double> Admixture { get; set; }
         public Nullable<double> Water { get; set; }
         public Nullable<System.Guid> ItemFormula_Id { get; set; }
+        public int GroupId { get; set; }
     
         public virtual ItemFormula ItemFormula { get; set; }
+        public virtual TblItemGroup TblItemGroup { get; set; }
     }
 }

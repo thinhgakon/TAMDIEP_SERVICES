@@ -46,18 +46,12 @@ namespace XHTD_SERVICES_CANRA_2.Business
 
         public async Task<DesicionScaleResponse> UpdateLotNumber(string deliveryCode)
         {
-            bool isSucess = await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
+            var lotNumber = await _storeOrderOperatingRepository.UpdateLotNumber(deliveryCode);
 
             // Nếu cập nhật số lô thành công thì gọi api ERP cập nhật lại số lô
-            if (isSucess)
+            if (!string.IsNullOrEmpty(lotNumber))
             {
-                var order = new tblStoreOrderOperating();
-                using (var dbContext = new XHTD_Entities())
-                {
-                    order = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.DeliveryCode == deliveryCode);
-                }
-
-                var updateResponse = HttpRequest.UpdateLotNumber(deliveryCode, order.LotNumber);
+                var updateResponse = HttpRequest.UpdateLotNumber(deliveryCode, lotNumber);
                 if (updateResponse.StatusDescription.Equals("Unauthorized"))
                 {
                     var unauthorizedResponse = new DesicionScaleResponse();

@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.ServiceName = "XHTD_SERVICES_GATEWAY_PRINT";
+            this.serviceInstaller1.ServiceName = "PROD_SERVICES_GATEWAY_PRINT";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

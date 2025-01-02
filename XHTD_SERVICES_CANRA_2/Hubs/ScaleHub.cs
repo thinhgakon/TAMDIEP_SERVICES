@@ -306,6 +306,7 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                     WriteLogInfo($"5.1. Lưu giá trị cân thành công");
 
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
+                                    SendMessageAPI("IsAutoScaleSuccess", $"OK");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
                                     // 6. Update gia tri can va trang thai Can vao
@@ -346,6 +347,7 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                 {
                                     // Lưu giá trị cân thất bại
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("IsAutoScaleSuccess", $"FAILED");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
@@ -402,6 +404,7 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                     WriteLogInfo($"4.1. Lưu giá trị cân thành công");
 
                                     SendMessage("Notification", $"{scaleInfoResult.Message}");
+                                    SendMessageAPI("IsAutoScaleSuccess", $"OK");
                                     SendMessageAPI("Notification", $"{scaleInfoResult.Message}");
 
                                     // 5. Update gia tri can va trang thai Can ra
@@ -425,15 +428,25 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
 
-                                    var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(scaleInfo.DeliveryCode);
-                                    var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
-                                    SendMessage(notificationType, updateLotNumberResponse.Message);
-                                    WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
+                                    bool updateLotNumberResult = true;
+                                    foreach (var deliveryCode in deliveryCodes.Split(';'))
+                                    {
+                                        var updateLotNumberResponse = await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateLotNumber(deliveryCode);
+                                        var notificationType = updateLotNumberResponse.Code == "01" ? "Notification" : "WarningNotification";
+                                        SendMessage(notificationType, updateLotNumberResponse.Message);
+                                        WriteLogInfo($"9. Cập nhật số lô, kết quả: {updateLotNumberResponse.Message}");
+
+                                        if (updateLotNumberResponse.Code == "02")
+                                        {
+                                            updateLotNumberResult = false;
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
+                                    SendMessageAPI("IsAutoScaleSuccess", $"FAILED");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";

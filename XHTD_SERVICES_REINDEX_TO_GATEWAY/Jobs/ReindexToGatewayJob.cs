@@ -185,6 +185,13 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                     }
 
                     // Hủy xác thực các đơn hàng vượt quá số lần gọi
+                    var callVehicleStatusCancel = await db.tblCallVehicleStatus
+                                                          .Where(x => x.CallType == CallType.CONG &&
+                                                                      x.CountToCancel == 3 &&
+                                                                      x.ModifiledOn <= last5Min &&
+                                                                      x.IsDone == false)
+                                                          .ToListAsync();
+
                     var ordersToCancel = await (from orders in db.tblStoreOrderOperatings
                                                 join callVehicleStatus in db.tblCallVehicleStatus
                                                 on orders.Id equals callVehicleStatus.StoreOrderOperatingId
@@ -201,6 +208,11 @@ namespace XHTD_SERVICES_REINDEX_TO_GATEWAY.Jobs
                     else
                     {
                         _reindexToGatewayLogger.LogInfo($"3. Hủy xác thực các đơn {string.Join(",", ordersToCancel.Select(x => x.DeliveryCode))}");
+
+                        foreach(var callVehicleStatus in callVehicleStatusCancel)
+                        {
+                            callVehicleStatus.IsDone = true;
+                        }
 
                         foreach (var order in ordersToCancel)
                         {

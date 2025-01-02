@@ -324,12 +324,12 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.SumNumber = (decimal?)websaleOrder.bookQuantity;
                             order.OrderDate = orderDate;
 
-                            order.DocNum = websaleOrder.docnum;
-
+                            order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                             order.RealNumber = (decimal?)websaleOrder.orderQuantity;
 
                             order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                             order.SealDes = websaleOrder.topSealDes;
+                            order.MoocCode = websaleOrder.moocCode;
 
                             order.DeliveryCodeTgc = websaleOrder.deliveryCodeTgc;
 
@@ -373,22 +373,22 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateReceivingOrder(int? orderId, string timeIn, string loadweightnull, int? sealCount, string sealDes, string docNum, decimal? realNumber)
+        public async Task<bool> UpdateReceivingOrder(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
 
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            var weightIn = !string.IsNullOrEmpty(loadweightnull) ? Double.Parse(loadweightnull) : 0.0;
+            var weightIn = !string.IsNullOrEmpty(websaleOrder.loadweightnull) ? Double.Parse(websaleOrder.loadweightnull) : 0.0;
 
             try
             {
-                DateTime timeInDate = !string.IsNullOrEmpty(timeIn) ? 
-                                       DateTime.ParseExact(timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder.timeIn) ? 
+                                       DateTime.ParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
                                        DateTime.MinValue;
 
                 var order = _appDbContext.tblStoreOrderOperatings
-                            .FirstOrDefault(x => x.OrderId == orderId
+                            .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                 &&
                                                 (
                                                     x.Step < (int)OrderStep.DA_CAN_VAO
@@ -407,7 +407,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {orderId} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
+                    log.Info($@"===== Update Receiving Order {websaleOrder.id} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
@@ -425,17 +425,13 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-
                     order.WeightIn = (int)(weightIn * 1000);
                     order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
-
-                    order.SealCount = sealCount;
-                    order.SealDes = sealDes;
-
-                    order.DocNum = docNum;
-
-                    order.RealNumber = realNumber;
-
+                    order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
+                    order.SealDes = websaleOrder.topSealDes;
+                    order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
+                    order.RealNumber = websaleOrder.orderQuantity;
+                    order.MoocCode = websaleOrder.moocCode;
                     order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
                     order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
@@ -450,25 +446,25 @@ namespace XHTD_SERVICES.Data.Repositories
                     var message = $"Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
                     await ReindexOrder(order.TypeProduct, message);
 
-                    var newHistory = new tblStoreOrderOperatingHistory
-                    {
-                        DeliveryCode = order.DeliveryCode,
-                        Vehicle = order.Vehicle,
-                        TypeProduct = order.TypeProduct,
-                        SumNumber = order.SumNumber,
-                        NameDistributor = order.NameDistributor,
-                        OrderDate = order.OrderDate,
-                        LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
-                        TimeChange = DateTime.Now
-                    };
-                    _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                    //var newHistory = new tblStoreOrderOperatingHistory
+                    //{
+                    //    DeliveryCode = order.DeliveryCode,
+                    //    Vehicle = order.Vehicle,
+                    //    TypeProduct = order.TypeProduct,
+                    //    SumNumber = order.SumNumber,
+                    //    NameDistributor = order.NameDistributor,
+                    //    OrderDate = order.OrderDate,
+                    //    LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
+                    //    TimeChange = DateTime.Now
+                    //};
+                    //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                     await _appDbContext.SaveChangesAsync();
 
-                    Console.WriteLine($@"Update Receiving Order {orderId}");
-                    log.Info($@"Update Receiving Order {orderId}");
+                    Console.WriteLine($@"Update Receiving Order {websaleOrder.id}");
+                    log.Info($@"Update Receiving Order {websaleOrder.id}");
 
-                    SendOrderHistory(newHistory);
+                    //SendOrderHistory(newHistory);
 
                     isSynced = true;
                 }
@@ -477,32 +473,32 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Receiving Order {orderId} Error: " + ex.Message + " ====== " + ex.StackTrace + "==============" + ex.InnerException);
-                Console.WriteLine($@"Update Receiving Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Update Receiving Order {websaleOrder.id} Error: " + ex.Message + " ====== " + ex.StackTrace + "==============" + ex.InnerException);
+                Console.WriteLine($@"Update Receiving Order {websaleOrder.id} Error: " + ex.Message);
 
                 return isSynced;
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(int? orderId, string timeOut, string loadweightfull, int? sealCount, string sealDes, string docnum, decimal? realNumber)
+        public async Task<bool> UpdateReceivedOrder(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
 
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            var weightOut = !string.IsNullOrEmpty(loadweightfull) ? Double.Parse(loadweightfull) : 0.0;
+            var weightOut = !string.IsNullOrEmpty(websaleOrder.loadweightfull) ? Double.Parse(websaleOrder.loadweightfull) : 0.0;
 
             try
             {
-                DateTime timeOutDate = !string.IsNullOrEmpty(timeOut) ?
-                                        DateTime.ParseExact(timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
+                DateTime timeOutDate = !string.IsNullOrEmpty(websaleOrder.timeOut) ?
+                                        DateTime.ParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
                                         DateTime.MinValue;
 
                 // TODO: nếu thời gian cân ra > hiện tại 1 tiếng thì step = DA_HOAN_THANH
                 if (timeOutDate > DateTime.Now.AddMinutes(-30))
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
-                                .FirstOrDefault(x => x.OrderId == orderId
+                                .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                     &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_CAN_RA
@@ -523,7 +519,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order != null)
                     {
-                        log.Info($@"===== Update Received Order {orderId} timeOut={timeOutDate} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
+                        log.Info($@"===== Update Received Order {websaleOrder.id} timeOut={timeOutDate} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
@@ -541,39 +537,36 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-
                         order.WeightOut = (int)(weightOut * 1000);
                         order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
-
-                        order.SealCount = sealCount;
-                        order.SealDes = sealDes;
-
-                        order.DocNum = docnum;
-
-                        order.RealNumber = realNumber;
-
+                        order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
+                        order.SealDes = websaleOrder.topSealDes;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
+                        order.RealNumber = websaleOrder.orderQuantity;
+                        order.MoocCode = websaleOrder.moocCode;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
+                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull,out int i) ? i*1000 : order.WeightIn;
 
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng cân ra lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng cân ra lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {orderId}");
-                        log.Info($@"Sync Update Received => DA_CAN_RA Order {orderId}");
+                        Console.WriteLine($@"Sync Update Received => DA_CAN_RA Order {websaleOrder.id}");
+                        log.Info($@"Sync Update Received => DA_CAN_RA Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -581,7 +574,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 else if (timeOutDate > DateTime.Now.AddMinutes(-60))
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
-                                .FirstOrDefault(x => x.OrderId == orderId
+                                .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                     &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_HOAN_THANH
@@ -614,33 +607,32 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Ra cổng lúc {syncTime};";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Ra cổng lúc {syncTime};";
+                        order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
+                        order.SealDes = websaleOrder.topSealDes;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
+                        order.RealNumber = websaleOrder.orderQuantity;
+                        order.MoocCode = websaleOrder.moocCode;
+                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull, out int i) ? i * 1000 : order.WeightIn;
 
-                        order.SealCount = sealCount;
-                        order.SealDes = sealDes;
-
-                        order.DocNum = docnum;
-
-                        order.RealNumber = realNumber;
-
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng ra cổng lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng ra cổng lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
-                        log.Info($@"Sync Update Received => DA_HOAN_THANH Order {orderId}");
+                        Console.WriteLine($@"Sync Update Received => DA_HOAN_THANH Order {websaleOrder.id}");
+                        log.Info($@"Sync Update Received => DA_HOAN_THANH Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -648,7 +640,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 else
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
-                                .FirstOrDefault(x => x.OrderId == orderId
+                                .FirstOrDefault(x => x.OrderId == websaleOrder.id
                                                     && 
                                                     (
                                                         x.Step < (int)OrderStep.DA_GIAO_HANG
@@ -681,33 +673,33 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Đã giao hàng lúc {syncTime};";
+                        order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
+                        order.SealDes = websaleOrder.topSealDes;
+                        order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
+                        order.RealNumber = websaleOrder.orderQuantity;
+                        order.MoocCode = websaleOrder.moocCode;
+                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull, out int i) ? i * 1000 : order.WeightIn;
 
-                        order.SealCount = sealCount;
-                        order.SealDes = sealDes;
 
-                        order.DocNum = docnum;
-
-                        order.RealNumber = realNumber;
-
-                        var newHistory = new tblStoreOrderOperatingHistory
-                        {
-                            DeliveryCode = order.DeliveryCode,
-                            Vehicle = order.Vehicle,
-                            TypeProduct = order.TypeProduct,
-                            SumNumber = order.SumNumber,
-                            NameDistributor = order.NameDistributor,
-                            OrderDate = order.OrderDate,
-                            LogChange = $"Đơn hàng được giao lúc {DateTime.Now} ",
-                            TimeChange = DateTime.Now
-                        };
-                        _appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                        //var newHistory = new tblStoreOrderOperatingHistory
+                        //{
+                        //    DeliveryCode = order.DeliveryCode,
+                        //    Vehicle = order.Vehicle,
+                        //    TypeProduct = order.TypeProduct,
+                        //    SumNumber = order.SumNumber,
+                        //    NameDistributor = order.NameDistributor,
+                        //    OrderDate = order.OrderDate,
+                        //    LogChange = $"Đơn hàng được giao lúc {DateTime.Now} ",
+                        //    TimeChange = DateTime.Now
+                        //};
+                        //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
                         await _appDbContext.SaveChangesAsync();
 
-                        Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {orderId}");
-                        log.Info($@"Update Received => DA_GIAO_HANG Order {orderId}");
+                        Console.WriteLine($@"Update Received => DA_GIAO_HANG Order {websaleOrder.id}");
+                        log.Info($@"Update Received => DA_GIAO_HANG Order {websaleOrder.id}");
 
-                        SendOrderHistory(newHistory);
+                        //SendOrderHistory(newHistory);
 
                         isSynced = true;
                     }
@@ -717,8 +709,8 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Received Order {orderId} Error: " + ex.Message + " ============ " + ex.StackTrace + " ==== " + ex.InnerException);
-                Console.WriteLine($@"Update Received Order {orderId} Error: " + ex.Message);
+                log.Error($@"=========================== Update Received Order {websaleOrder.id} Error: " + ex.Message + " ============ " + ex.StackTrace + " ==== " + ex.InnerException);
+                Console.WriteLine($@"Update Received Order {websaleOrder.id} Error: " + ex.Message);
 
                 return isSynced;
             }

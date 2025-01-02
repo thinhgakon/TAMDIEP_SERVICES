@@ -8,6 +8,7 @@ using log4net;
 using System.Data.Entity;
 using XHTD_SERVICES.Data.Models.Values;
 using XHTD_SERVICES.Data.Common;
+using System.Data.Entity.Migrations;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
@@ -489,7 +490,7 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> UpdateLotNumber(string deliveryCode)
+        public async Task<string> UpdateLotNumber(string deliveryCode)
         {
             using (var dbContext = new XHTD_Entities())
             {
@@ -501,36 +502,77 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     if (order == null)
                     {
-                        return false;
+                        return null;
+                    }
+
+                    string source = "TAM_DIEP";
+
+                    switch (order.IDDistributorSyn)
+                    {
+                        case 1065:
+                            source = "BIM_SON";
+                            break;
+                        case 1067:
+                            source = "HAI_PHONG";
+                            break;
+                        case 1072:
+                            source = "HOANG_THACH";
+                            break;
+                        case 1058:
+                            source = "BUT_SON";
+                            break;
+                    }
+
+                    var item = dbContext.Items.FirstOrDefault(x => x.Code == order.ItemId.ToString());
+
+                    if(item == null)
+                    {
+                        return null;
                     }
 
                     var lotData = dbContext.TblQualityCertificates
                     .Where(x => x.State == "CHUA_KHOA")
-                    .Where(x => x.ItemCode == order.ItemId.ToString())
+                    .Where(x => x.PartnerId == order.IDDistributorSyn)
+                    .Where(x=>x.Source == source)
+                    .Where(x=>x.GroupId == item.GroupId)
                     .ToList();
+
+                    if (lotData == null || lotData.Count == 0)
+                    {
+                        lotData = dbContext.TblQualityCertificates
+                            .Where(x => x.State == "CHUA_KHOA")
+                            .Where(x => x.PartnerId == null)
+                            .Where(x => x.GroupId == item.GroupId)
+                            .Where(x => x.Source == source)
+                            .ToList();
+                    }
+
 
                     var lot = lotData.Where(X => X.FromDate.Date <= DateTime.Now.Date)
                     .Where(x => x.ToDate.Date >= DateTime.Now.Date).FirstOrDefault();
 
                     if (lot == null)
                     {
-                        return false;
+                        return null;
                     }
 
                     if (string.IsNullOrEmpty(lot?.Code))
                     {
-                        return false;
+                        return null;
                     }
 
                     order.LotNumber = lot.Code;
 
+                    dbContext.tblStoreOrderOperatings.AddOrUpdate(order);
+
                     await dbContext.SaveChangesAsync();
-                    return true;
+                    log.Info($"Cập nhật số lô {deliveryCode} - {lot.Code}");
+                    return lot.Code;
                 }
                 catch (Exception ex)
                 {
                     log.Error($@"Cập nhật số lô {deliveryCode} Error: " + ex.Message);
-                    return false;
+                    return null;
                 }
             }
         }

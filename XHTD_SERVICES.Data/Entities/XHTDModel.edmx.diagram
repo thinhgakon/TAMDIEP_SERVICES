@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1" ZoomLevel="76">
+      <Diagram DiagramId="16853a9eb71944d499be68b3c5cef66f" Name="Diagram1" ZoomLevel="71">
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccount" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroup" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblAccountGroupFunction" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
@@ -53,7 +53,6 @@
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportHistory_tblStoreOrderOperating_OrderId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblCallToGatewayConfig" Width="1.5" PointX="13.375" PointY="17.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlan" Width="1.5" PointX="19.375" PointY="6" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="1.5" PointX="19.375" PointY="10.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblExportPlanDetail" Width="1.5" PointX="21.625" PointY="5.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblExportPlanDetail_tblExportPlan_PlanId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.ItemFormula" Width="1.5" PointX="19.375" PointY="17.375" />
@@ -61,12 +60,16 @@
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblConfigOperating" Width="1.5" PointX="15.375" PointY="19.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblItemConfig" Width="1.5" PointX="20.375" PointY="0.75" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblNotificationGroup" Width="1.5" PointX="2.5" PointY="26.25" />
-        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificatePartner" Width="1.5" PointX="21.625" PointY="11.375" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblSendTroughStatu" Width="1.5" PointX="5.375" PointY="20.75" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_dbo_Items_dbo_ItemFormulas_ItemFormula_Id" />
         <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblNotification_TblNotificationGroup_NotificationGroupId" />
-        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificatePartner_TblQualityCertificate_QualityCertificateId" />
         <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblStoreOrderOperatingHistory" Width="1.5" PointX="17.375" PointY="20.75" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblQualityCertificate" Width="3.375" PointX="19.375" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.tblTypeProductCallToGatewayConfig" Width="1.5" PointX="15.625" PointY="24.75" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_tblTypeProductCallToGatewayConfig_tblCallToGatewayConfig_CallToGatewayConfigId" />
+        <EntityTypeShape EntityType="XHTD_SERVICES.Data.Entities.TblItemGroup" Width="1.5" PointX="11.125" PointY="21.375" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_Items_TblItemGroup_GroupId" />
+        <AssociationConnector Association="XHTD_SERVICES.Data.Entities.FK_TblQualityCertificate_TblItemGroup_GroupId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

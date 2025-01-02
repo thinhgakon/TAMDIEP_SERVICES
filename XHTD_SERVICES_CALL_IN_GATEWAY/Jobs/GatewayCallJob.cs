@@ -224,6 +224,9 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
             {
                 using (var db = new XHTD_Entities())
                 {
+                    // Lấy ra các chủng loại sp
+                    var typeProductList = db.tblTypeProducts.Where(x => x.State == true).Select(x => x.Code).ToList();
+
                     // Gọi xe được thêm vào hàng đợi thủ công vào trước
                     callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.ToUpper() == "MANUAL").OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
@@ -240,12 +243,33 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 1 && x.CallType.ToUpper() == CallType.CHUA_NHAN_DON).OrderBy(x => x.Id).FirstOrDefault();
                     if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
 
-                    for (int i = 0; i < 10; i++)
+                    if (typeProductList != null && typeProductList.Count > 0)
                     {
-                        // Tự động
-                        var typeCurrent = Program.roundRobinList.Next();
-                        callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && (x.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(x.CallType))).OrderByDescending(x => x.Id).FirstOrDefault();
-                        if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
+                        for (int i = 0; i < typeProductList.Count; i++)
+                        {
+                            // Tự động
+                            var typeCurrent = typeProductList[i];
+                            //callVehicleItem = db.tblCallVehicleStatus.Where(x => x.IsDone == false && x.CountTry < 3 && x.TypeProduct.Equals(typeCurrent) && (x.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(x.CallType))).FirstOrDefault();
+
+                            callVehicleItem = (from callVehicleStatus in db.tblCallVehicleStatus
+                                               join storeOrderOperating in db.tblStoreOrderOperatings
+                                               on callVehicleStatus.StoreOrderOperatingId equals storeOrderOperating.Id
+                                               where callVehicleStatus.IsDone == false &&
+                                                     callVehicleStatus.CountTry < 3 &&
+                                                     callVehicleStatus.TypeProduct.Equals(typeCurrent) &&
+                                                    (callVehicleStatus.CallType.ToUpper() == CallType.CONG || string.IsNullOrEmpty(callVehicleStatus.CallType)) &&
+                                                    (storeOrderOperating.Step == (int)OrderStep.CHO_GOI_XE || storeOrderOperating.Step == (int)OrderStep.DANG_GOI_XE)
+                                               select callVehicleStatus)
+                                               .OrderByDescending(x => x.Id)
+                                               .FirstOrDefault();
+
+                            if (callVehicleItem != null && callVehicleItem.Id > 0) return callVehicleItem;
+                        }
+                    }
+
+                    else
+                    {
+                        _gatewayCallLogger.LogInfo("Không tìm thấy chủng loại sản phẩm đang ACTIVE => Kết thúc");
                     }
                 }
             }
@@ -363,11 +387,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                     else if (count == 3)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1200);
                     }
                     else
                     {
-                        Thread.Sleep(600);
+                        Thread.Sleep(700);
                     }
                 }
 
@@ -423,11 +447,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                     else if (count == 3)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1200);
                     }
                     else
                     {
-                        Thread.Sleep(600);
+                        Thread.Sleep(700);
                     }
                 }
 
@@ -483,11 +507,11 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                     else if (count == 3)
                     {
-                        Thread.Sleep(1000);
+                        Thread.Sleep(1200);
                     }
                     else
                     {
-                        Thread.Sleep(600);
+                        Thread.Sleep(700);
                     }
                 }
 
