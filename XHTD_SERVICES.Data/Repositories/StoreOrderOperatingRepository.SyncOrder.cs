@@ -338,6 +338,14 @@ namespace XHTD_SERVICES.Data.Repositories
                             order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Update lúc {syncTime}; ";
                             order.LogJobAttach = $@"{order.LogJobAttach} #Sync Update lúc {syncTime}; ";
 
+                            if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                            {
+                                if (weightIn > 0)
+                                {
+                                    order.WeightIn = (int)(weightIn * 1000);
+                                }
+                            }
+
                             var newHistory = new tblStoreOrderOperatingHistory
                             {
                                 DeliveryCode = order.DeliveryCode,
@@ -546,7 +554,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.MoocCode = websaleOrder.moocCode;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
-                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull,out int i) ? i*1000 : order.WeightIn;
+                        if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                        {
+                            if (weightIn > 0)
+                            {
+                                order.WeightIn = (int)(weightIn * 1000);
+                            }
+                        }
 
                         //var newHistory = new tblStoreOrderOperatingHistory
                         //{
@@ -612,8 +626,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
-                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull, out int i) ? i * 1000 : order.WeightIn;
-
+                        if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                        {
+                            if (weightIn > 0)
+                            {
+                                order.WeightIn = (int)(weightIn * 1000);
+                            }
+                        }
                         //var newHistory = new tblStoreOrderOperatingHistory
                         //{
                         //    DeliveryCode = order.DeliveryCode,
@@ -678,8 +697,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
-                        order.WeightIn = int.TryParse(websaleOrder?.loadweightnull, out int i) ? i * 1000 : order.WeightIn;
-
+                        if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                        {
+                            if (weightIn > 0)
+                            {
+                                order.WeightIn = (int)(weightIn * 1000);
+                            }
+                        }
 
                         //var newHistory = new tblStoreOrderOperatingHistory
                         //{
