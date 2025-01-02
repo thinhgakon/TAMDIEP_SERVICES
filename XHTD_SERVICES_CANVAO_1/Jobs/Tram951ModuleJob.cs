@@ -409,6 +409,16 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 }
             }
 
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALE_IN");
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable("SCALE_IN", "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                return;
+            }
+
             #region Kiểm tra đang có dữ liệu đơn đang cân không
             if (scaleInfo != null
                     && (bool)scaleInfo.IsScaling
