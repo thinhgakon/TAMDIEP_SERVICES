@@ -380,6 +380,16 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
 
+            var currentScaleIn = Environment.GetEnvironmentVariable(SCALE_CODE);
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable(SCALE_CODE, "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                return;
+            }
+
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
 

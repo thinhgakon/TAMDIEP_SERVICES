@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_CANRA_1.Business
 
         public async Task<bool> ReleaseScale(string scaleCode)
         {
+            Environment.SetEnvironmentVariable(scaleCode, "0", EnvironmentVariableTarget.Machine);
             return await _scaleOperatingRepository.ReleaseScale(scaleCode);
         }
     }

@@ -21,6 +21,7 @@ namespace XHTD_SERVICES_CANVAO_2.Business
 
         public async Task<bool> ReleaseScale(string scaleCode)
         {
+            Environment.SetEnvironmentVariable(scaleCode, "0", EnvironmentVariableTarget.Machine);
             return await _scaleOperatingRepository.ReleaseScale(scaleCode);
         }
     }
