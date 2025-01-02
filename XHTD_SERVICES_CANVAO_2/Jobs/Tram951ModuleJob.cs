@@ -380,10 +380,10 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
 
-            var currentScaleIn = Environment.GetEnvironmentVariable(SCALE_CODE);
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
             if (currentScaleIn == "0")
             {
-                Environment.SetEnvironmentVariable(SCALE_CODE, "1", EnvironmentVariableTarget.Machine);
+                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
             }
             else
             {

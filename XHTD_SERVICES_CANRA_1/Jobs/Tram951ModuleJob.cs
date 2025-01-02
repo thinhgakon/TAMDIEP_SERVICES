@@ -381,10 +381,10 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
             _logger.LogInfo("--------------------------------------------------------");
 
 
-            var currentScaleIn = Environment.GetEnvironmentVariable(SCALE_CODE);
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
             if (currentScaleIn == "0")
             {
-                Environment.SetEnvironmentVariable(SCALE_CODE, "1", EnvironmentVariableTarget.Machine);
+                Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
             }
             else
             {
