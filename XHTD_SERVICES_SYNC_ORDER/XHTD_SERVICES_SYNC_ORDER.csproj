@@ -149,7 +149,6 @@
     <Compile Include="Jobs\SyncInProgressOrderFromViewJob.cs" />
     <Compile Include="Jobs\SyncInProgressOrderJob.cs" />
     <Compile Include="Jobs\SyncOutSourceOrderFromViewJob.cs" />
-    <Compile Include="Jobs\SyncReceivedOrderFromViewJob.cs" />
     <Compile Include="Models\Request\HTOrderRequest.cs" />
     <Compile Include="Models\Response\MachineResponse.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
