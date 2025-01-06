@@ -33,7 +33,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 var itemConfig = _appDbContext.tblItemConfigs.FirstOrDefault(x => x.ItemIdSyn == productId);
                 typeProduct = itemConfig?.TypeProductCode ?? OrderTypeProductCode.OTHER;
 
-                if(typeProduct == OrderTypeProductCode.JUMBO)
+                if (typeProduct == OrderTypeProductCode.JUMBO)
                 {
                     typeXK = OrderTypeXKCode.JUMBO;
                 }
@@ -301,7 +301,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             log.Info($@"Sync Update before orderId={order.OrderId} Vehicle={order.Vehicle} DriverName={order.DriverName} CardNo={order.CardNo} SumNumber={order.SumNumber}");
 
-                            if(order.Step < (int)OrderStep.DA_CAN_VAO)
+                            if (order.Step < (int)OrderStep.DA_CAN_VAO)
                             {
                                 order.Vehicle = vehicleCode;
                                 order.DriverName = websaleOrder.driverName;
@@ -343,6 +343,24 @@ namespace XHTD_SERVICES.Data.Repositories
                                 if (weightIn > 0)
                                 {
                                     order.WeightIn = (int)(weightIn * 1000);
+
+                                    if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                    {
+                                        order.WeightInTime = d;
+                                    }
+                                }
+                            }
+
+                            if (double.TryParse(websaleOrder.loadweightfull, out double weightOut))
+                            {
+                                if (weightOut > 0)
+                                {
+                                    order.WeightOut = (int)(weightOut * 1000);
+
+                                    if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                    {
+                                        order.WeightOutTime = d;
+                                    }
                                 }
                             }
 
@@ -391,7 +409,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
             try
             {
-                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder.timeIn) ? 
+                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder.timeIn) ?
                                        DateTime.ParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
                                        DateTime.MinValue;
 
@@ -419,15 +437,15 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if(order.Step < (int)OrderStep.DA_CAN_VAO 
-                      || 
+                    if (order.Step < (int)OrderStep.DA_CAN_VAO
+                      ||
                       order.Step == (int)OrderStep.DA_XAC_THUC
                       ||
                       order.Step == (int)OrderStep.CHO_GOI_XE
                       ||
                       order.Step == (int)OrderStep.DANG_GOI_XE
-                      ) 
-                    { 
+                      )
+                    {
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
@@ -448,6 +466,32 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.TimeConfirm2 = DateTime.Now.AddMinutes(-1);
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Đặt lại time vào cổng lúc {syncTime}; ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
+                    }
+
+                    if (double.TryParse(websaleOrder.loadweightnull, out double weightIn1))
+                    {
+                        if (weightIn1 > 0)
+                        {
+                            order.WeightIn = (int)(weightIn1 * 1000);
+
+                            if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightInTime = d;
+                            }
+                        }
+                    }
+
+                    if (double.TryParse(websaleOrder.loadweightfull, out double weightOut))
+                    {
+                        if (weightOut > 0)
+                        {
+                            order.WeightOut = (int)(weightOut * 1000);
+
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
+                            }
+                        }
                     }
 
                     // Xếp lại lốt
@@ -520,8 +564,8 @@ namespace XHTD_SERVICES.Data.Repositories
                                                         x.WeightOut == null
                                                         ||
                                                         x.WeightOut == 0
-                                                        //||
-                                                        //x.DocNum == null
+                                                    //||
+                                                    //x.DocNum == null
                                                     )
                                                );
 
@@ -531,8 +575,8 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_CAN_RA 
-                           || 
+                        if (order.Step < (int)OrderStep.DA_CAN_RA
+                           ||
                            order.Step == (int)OrderStep.DA_XAC_THUC
                            ||
                            order.Step == (int)OrderStep.CHO_GOI_XE
@@ -559,6 +603,24 @@ namespace XHTD_SERVICES.Data.Repositories
                             if (weightIn > 0)
                             {
                                 order.WeightIn = (int)(weightIn * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightInTime = d;
+                                }
+                            }
+                        }
+
+                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        {
+                            if (weightOut1 > 0)
+                            {
+                                order.WeightOut = (int)(weightOut1 * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightOutTime = d;
+                                }
                             }
                         }
 
@@ -605,8 +667,8 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         order.TimeConfirm8 = DateTime.Now;
 
-                        if (order.Step < (int)OrderStep.DA_HOAN_THANH 
-                           || 
+                        if (order.Step < (int)OrderStep.DA_HOAN_THANH
+                           ||
                            order.Step == (int)OrderStep.DA_XAC_THUC
                            ||
                            order.Step == (int)OrderStep.CHO_GOI_XE
@@ -631,6 +693,24 @@ namespace XHTD_SERVICES.Data.Repositories
                             if (weightIn > 0)
                             {
                                 order.WeightIn = (int)(weightIn * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightInTime = d;
+                                }
+                            }
+                        }
+
+                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        {
+                            if (weightOut1 > 0)
+                            {
+                                order.WeightOut = (int)(weightOut1 * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightOutTime = d;
+                                }
                             }
                         }
                         //var newHistory = new tblStoreOrderOperatingHistory
@@ -660,7 +740,7 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     var order = _appDbContext.tblStoreOrderOperatings
                                 .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                                                    && 
+                                                    &&
                                                     (
                                                         x.Step < (int)OrderStep.DA_GIAO_HANG
                                                         ||
@@ -687,7 +767,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             order.Step = (int)OrderStep.DA_GIAO_HANG;
                         }
-                        
+
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Đã giao hàng lúc {syncTime};";
@@ -702,6 +782,24 @@ namespace XHTD_SERVICES.Data.Repositories
                             if (weightIn > 0)
                             {
                                 order.WeightIn = (int)(weightIn * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightInTime = d;
+                                }
+                            }
+                        }
+
+                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        {
+                            if (weightOut1 > 0)
+                            {
+                                order.WeightOut = (int)(weightOut1 * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightOutTime = d;
+                                }
                             }
                         }
 
@@ -749,8 +847,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 string syncTime = DateTime.Now.ToString();
 
                 var order = _appDbContext.tblStoreOrderOperatings
-                                            .FirstOrDefault(x => x.OrderId == orderId 
-                                                                && x.IsVoiced != true 
+                                            .FirstOrDefault(x => x.OrderId == orderId
+                                                                && x.IsVoiced != true
                                                                 && x.Step != (int)OrderStep.DA_HOAN_THANH
                                                                 && x.Step != (int)OrderStep.DA_GIAO_HANG
                                                                 );
