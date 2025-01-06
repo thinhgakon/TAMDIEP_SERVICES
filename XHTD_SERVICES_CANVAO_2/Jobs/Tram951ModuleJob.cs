@@ -380,6 +380,16 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
 
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                return;
+            }
+
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
 
@@ -407,16 +417,6 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     Program.InProgressDeliveryCode = null;
                     Program.InProgressVehicleCode = null;
                 }
-            }
-
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALE_IN");
-            if (currentScaleIn == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALE_IN", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
-            {
-                return;
             }
 
             #region Kiểm tra đang có dữ liệu đơn đang cân không
