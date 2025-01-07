@@ -386,6 +386,39 @@ namespace XHTD_SERVICES.Data.Repositories
                             isSynced = true;
                         }
                     }
+                    else
+                    {
+                        order = _appDbContext.tblStoreOrderOperatings
+                              .FirstOrDefault(x => x.OrderId == websaleOrder.id);
+
+                        if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                        {
+                            if (weightIn > 0)
+                            {
+                                order.WeightIn = (int)(weightIn * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightInTime = d;
+                                }
+                            }
+                        }
+
+                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        {
+                            if (weightOut1 > 0)
+                            {
+                                order.WeightOut = (int)(weightOut1 * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightOutTime = d;
+                                }
+                            }
+                        }
+
+                        await _appDbContext.SaveChangesAsync();
+                    }
                 }
 
                 return isSynced;
@@ -436,6 +469,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     log.Info($@"===== Update Receiving Order {websaleOrder.id} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
+                    order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
                     if (order.Step < (int)OrderStep.DA_CAN_VAO
                       ||
@@ -452,7 +486,6 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
                     order.WeightIn = (int)(weightIn * 1000);
-                    order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
                     order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                     order.SealDes = websaleOrder.topSealDes;
                     order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
@@ -520,6 +553,39 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     isSynced = true;
                 }
+                else
+                {
+                    order = _appDbContext.tblStoreOrderOperatings
+                          .FirstOrDefault(x => x.OrderId == websaleOrder.id);
+
+                    if (double.TryParse(websaleOrder.loadweightnull, out double weightIn1))
+                    {
+                        if (weightIn1 > 0)
+                        {
+                            order.WeightIn = (int)(weightIn1 * 1000);
+
+                            if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightInTime = d;
+                            }
+                        }
+                    }
+
+                    if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                    {
+                        if (weightOut1 > 0)
+                        {
+                            order.WeightOut = (int)(weightOut1 * 1000);
+
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
+                            }
+                        }
+                    }
+
+                    await _appDbContext.SaveChangesAsync();
+                }
 
                 return isSynced;
             }
@@ -574,6 +640,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         log.Info($@"===== Update Received Order {websaleOrder.id} timeOut={timeOutDate} lúc {syncTime}: WeightOut {order.WeightOutAuto} ==>> {weightOut * 1000}");
 
                         order.TimeConfirm7 = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
+                        order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
 
                         if (order.Step < (int)OrderStep.DA_CAN_RA
                            ||
@@ -590,7 +657,6 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
                         order.WeightOut = (int)(weightOut * 1000);
-                        order.WeightOutTime = timeOutDate > DateTime.MinValue ? timeOutDate : DateTime.Now;
                         order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                         order.SealDes = websaleOrder.topSealDes;
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
@@ -824,6 +890,40 @@ namespace XHTD_SERVICES.Data.Repositories
                         //SendOrderHistory(newHistory);
 
                         isSynced = true;
+                    }
+
+                    else
+                    {
+                        order = _appDbContext.tblStoreOrderOperatings
+                              .FirstOrDefault(x => x.OrderId == websaleOrder.id);
+
+                        if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
+                        {
+                            if (weightIn > 0)
+                            {
+                                order.WeightIn = (int)(weightIn * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightInTime = d;
+                                }
+                            }
+                        }
+
+                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        {
+                            if (weightOut1 > 0)
+                            {
+                                order.WeightOut = (int)(weightOut1 * 1000);
+
+                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                                {
+                                    order.WeightOutTime = d;
+                                }
+                            }
+                        }
+
+                        await _appDbContext.SaveChangesAsync();
                     }
                 }
 
