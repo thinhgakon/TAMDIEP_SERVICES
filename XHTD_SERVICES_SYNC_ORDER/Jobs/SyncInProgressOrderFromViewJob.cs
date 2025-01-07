@@ -189,7 +189,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                      TRANSPORT_METHOD_ID, LAST_UPDATE_DATE, ITEM_CATEGORY, DOC_NUM, ORDER_REQ_ID, BLANKET_ID, 
                                      TOP_SEAL_COUNT, TOP_SEAL_DES, DELIVERY_CODE_TGC, BOOK_QUANTITY
                             FROM apps.dev_sales_orders_mbf_v 
-                            WHERE STATUS = 'RECEIVING'";
+                            WHERE LAST_UPDATE_DATE >= SYSTIMESTAMP - INTERVAL '{numberHoursSearchOrder}' HOUR";
 
             OrderItemResponse mapFunc(IDataReader reader) => new OrderItemResponse
             {
