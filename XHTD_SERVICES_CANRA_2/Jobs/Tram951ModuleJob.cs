@@ -326,6 +326,17 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
+
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                return;
+            }
+
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
             SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
@@ -379,16 +390,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             _logger.LogInfo("--------------------------------------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
-
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
-            if (currentScaleIn == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
-            {
-                return;
-            }
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
