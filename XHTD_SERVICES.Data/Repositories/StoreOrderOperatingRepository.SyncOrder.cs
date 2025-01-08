@@ -11,11 +11,18 @@ using XHTD_SERVICES.Data.Common;
 using RestSharp;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Data.Entity;
+using log4net;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
     public partial class StoreOrderOperatingRepository
+
     {
+        protected readonly SystemParameterRepository _systemParameterRepository;
+        protected const string SERVICE_ACTIVE_CODE = "AUTO_QUEUE_TO_TROUGH_ACTIVE";
+        private static bool isActiveService = true;
+        protected readonly CallToTroughRepository _callToTroughRepository;
         public async Task<bool> CreateAsync(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
@@ -376,50 +383,28 @@ namespace XHTD_SERVICES.Data.Repositories
         public async Task<bool> UpdateReceivingOrder(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
-
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
             var weightIn = !string.IsNullOrEmpty(websaleOrder.loadweightnull) ? Double.Parse(websaleOrder.loadweightnull) : 0.0;
 
             try
             {
-                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder.timeIn) ? 
+                DateTime timeInDate = !string.IsNullOrEmpty(websaleOrder.timeIn) ?
                                        DateTime.ParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
                                        DateTime.MinValue;
 
-                var order = _appDbContext.tblStoreOrderOperatings
-                            .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                                                &&
-                                                (
-                                                    x.Step < (int)OrderStep.DA_CAN_VAO
-                                                    ||
-                                                    x.Step == (int)OrderStep.DA_XAC_THUC
-                                                    ||
-                                                    x.Step == (int)OrderStep.CHO_GOI_XE
-                                                    ||
-                                                    x.Step == (int)OrderStep.DANG_GOI_XE
-                                                    ||
-                                                    x.WeightIn == null
-                                                    ||
-                                                    x.WeightIn == 0
-                                                )
-                                            );
+                var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == websaleOrder.id);
 
                 if (order != null)
                 {
-                    log.Info($@"===== Update Receiving Order {websaleOrder.id} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
+                    Console.WriteLine($"===== Update Receiving Order {websaleOrder.id} timeIn={timeInDate} lúc {syncTime}: WeightIn {order.WeightInAuto} ==>> {weightIn * 1000}");
 
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if(order.Step < (int)OrderStep.DA_CAN_VAO 
-                      || 
-                      order.Step == (int)OrderStep.DA_XAC_THUC
-                      ||
-                      order.Step == (int)OrderStep.CHO_GOI_XE
-                      ||
-                      order.Step == (int)OrderStep.DANG_GOI_XE
-                      ) 
-                    { 
+                    if (order.Step < (int)OrderStep.DA_CAN_VAO
+                       || order.Step == (int)OrderStep.DA_XAC_THUC
+                       || order.Step == (int)OrderStep.CHO_GOI_XE
+                       || order.Step == (int)OrderStep.DANG_GOI_XE)
+                    {
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
 
@@ -432,40 +417,74 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                     order.RealNumber = websaleOrder.orderQuantity;
                     order.MoocCode = websaleOrder.moocCode;
-                    order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
-                    order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
+                    order.LogProcessOrder = $"{order.LogProcessOrder} #Sync Cân vào lúc {syncTime}; ";
+                    order.LogJobAttach = $"{order.LogJobAttach} #Sync Cân vào lúc {syncTime}; ";
 
                     if (order.TimeConfirm2 == null)
                     {
                         order.TimeConfirm2 = DateTime.Now.AddMinutes(-1);
-                        order.LogProcessOrder = $@"{order.LogProcessOrder} #Đặt lại time vào cổng lúc {syncTime}; ";
-                        order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
+                        order.LogProcessOrder = $"{order.LogProcessOrder} #Đặt lại time vào cổng lúc {syncTime}; ";
+                        order.LogJobAttach = $"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
                     }
 
                     // Xếp lại lốt
                     var message = $"Đơn hàng số hiệu {order.DeliveryCode} cân vào lúc {order.WeightInTime}";
                     await ReindexOrder(order.TypeProduct, message);
 
-                    //var newHistory = new tblStoreOrderOperatingHistory
-                    //{
-                    //    DeliveryCode = order.DeliveryCode,
-                    //    Vehicle = order.Vehicle,
-                    //    TypeProduct = order.TypeProduct,
-                    //    SumNumber = order.SumNumber,
-                    //    NameDistributor = order.NameDistributor,
-                    //    OrderDate = order.OrderDate,
-                    //    LogChange = $"Đơn hàng cân vào lúc {DateTime.Now} ",
-                    //    TimeChange = DateTime.Now
-                    //};
-                    //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
+                    // xếp xe vào máng
+                        using (var dbContext = new XHTD_Entities())
+                        {
+                            var parameters = await dbContext.tblSystemParameters.ToListAsync();
+                            var activeParameter = parameters.FirstOrDefault(x => x.Code.ToUpper().Trim() == SERVICE_ACTIVE_CODE.ToUpper().Trim());
+                            bool isActiveService = activeParameter != null && activeParameter.Value != "0";
 
+                            if (isActiveService)
+                            {
+                                var vehicle = order.Vehicle;
+                                var sumNumber = (decimal)order.SumNumber;
+
+                                var selectedMachineCode = await GetMinQuantityTrough(order.TypeProduct, OrderProductCategoryCode.XI_BAO);
+
+                                if (!string.IsNullOrEmpty(selectedMachineCode) && selectedMachineCode != "0")
+                                {
+                                     var existingMachine = await dbContext.tblCallToTroughs
+                                            .Where(x => x.Vehicle == vehicle && x.IsDone == false) 
+                                            .Select(x => x.Machine)
+                                            .FirstOrDefaultAsync();
+
+                                    selectedMachineCode = !string.IsNullOrEmpty(existingMachine) ? existingMachine : selectedMachineCode;
+
+                                    var existedTrough = await dbContext.tblCallToTroughs
+                                        .AnyAsync(x => x.Vehicle == vehicle && x.Machine == selectedMachineCode && x.IsDone == false); 
+
+
+                                    if (!existedTrough)
+                                    {
+                                        Console.WriteLine($"Thêm orderId {order.OrderId} vào máy {selectedMachineCode}");
+               
+                                         await _callToTroughRepository.AddItem(order.OrderId ?? 0, order.DeliveryCode, vehicle, selectedMachineCode, sumNumber);
+                                        order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                        order.TimeConfirm5 = DateTime.Now;
+                                        order.LogProcessOrder += $"#Xe được xếp vào máng {selectedMachineCode} lúc {DateTime.Now}.";
+                                        await dbContext.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"OrderId {order.OrderId} đã ở trong máng {selectedMachineCode}.");
+                                    }
+                                }
+                            }
+                        else
+                        {
+                            Console.WriteLine("Service is not active. Skipping trough allocation.");
+                            order.LogProcessOrder += $"#Bỏ qua xếp máng lúc {syncTime} vì dịch vụ không hoạt động.";
+                        }
+                    }
+
+               
                     await _appDbContext.SaveChangesAsync();
-
-                    Console.WriteLine($@"Update Receiving Order {websaleOrder.id}");
-                    log.Info($@"Update Receiving Order {websaleOrder.id}");
-
-                    //SendOrderHistory(newHistory);
-
+                    Console.WriteLine($"Cập nhật đơn hàng {websaleOrder.id}");
+                    log.Info($"Cập nhật đơn hàng {websaleOrder.id}");
                     isSynced = true;
                 }
 
@@ -473,15 +492,72 @@ namespace XHTD_SERVICES.Data.Repositories
             }
             catch (Exception ex)
             {
-                log.Error($@"=========================== Update Receiving Order {websaleOrder.id} Error: " + ex.Message + " ====== " + ex.StackTrace + "==============" + ex.InnerException);
-                Console.WriteLine($@"Update Receiving Order {websaleOrder.id} Error: " + ex.Message);
+                log.Error($"=========================== Update Receiving Order {websaleOrder.id} Error: " + ex.Message + " ====== " + ex.StackTrace + "==============" + ex.InnerException);
+                Console.WriteLine($"Update Receiving Order {websaleOrder.id} Error: " + ex.Message);
 
                 return isSynced;
             }
         }
 
-        public async Task<bool> UpdateReceivedOrder(OrderItemResponse websaleOrder)
+
+
+
+   
+   
+        public async Task<string> GetMinQuantityTrough(string typeProduct, string productCategory)
         {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = await (from trough in dbContext.tblTroughs
+
+                                   join machineTrough in dbContext.TblMachineTroughs.Where(x => x.Status == true)
+                                   on trough.Code equals machineTrough.TroughCode
+                                   into machineTroughs
+
+                                   from machineTrough in machineTroughs
+
+                                   join machine in dbContext.tblMachines.Where(x => x.State == true)
+                                   on machineTrough.MachineCode equals machine.Code
+
+                                   join machineTypeProduct in dbContext.tblMachineTypeProducts
+                                   on machine.Code equals machineTypeProduct.MachineCode
+                                   into machineTypeProducts
+
+                                   join callToTrough in dbContext.tblCallToTroughs.Where(x => x.IsDone == null || x.IsDone == false)
+                                   on trough.Code equals callToTrough.Machine
+                                   into callToTroughs
+
+                                   where machine.ProductCategory == productCategory &&
+                                         machineTypeProducts.Any(mtp => mtp.TypeProduct == typeProduct) &&
+                                         trough.State == true
+
+                                   select new
+                                   {
+                                       trough.Code,
+                                       callToTroughs
+                                   })
+                                   .ToListAsync();
+
+                var record = query.Select(x => new
+                {
+                    x.Code,
+                    SumNumber = x.callToTroughs.Sum(y => y.SumNumber ?? 0)
+                })
+                .OrderBy(t => t.SumNumber)
+                .FirstOrDefault();
+
+                return record.Code;
+            }
+        }
+
+
+
+
+        public async Task<bool> UpdateReceivedOrder(OrderItemResponse websaleOrder)
+
+
+        {
+
             bool isSynced = false;
 
             var syncTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
