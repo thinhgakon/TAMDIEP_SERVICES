@@ -51,7 +51,11 @@ namespace XHTD_SERVICES_CANRA_1.Business
                 Message = "Cân thất bại"
             };
 
-            weight = (int)Math.Round((decimal)weight, -1);
+            int remainder = weight % 10;
+            if (remainder != 0)
+            {
+                weight = weight + 10 - remainder;
+            }
 
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
