@@ -49,35 +49,62 @@ namespace XHTD_SERVICES_CANRA_1.Devices
 
         public bool TurnOnGreenTrafficLight(string scaleCode)
         {
-            var ipAddress = GetIpAddress(scaleCode);
+            try
+            {
+                var ipAddress = GetIpAddress(scaleCode);
 
-            _logger.Info($"IP đèn: {ipAddress}");
+                _logger.Info($"IP đèn: {ipAddress}");
 
-            _trafficLight.Connect(ipAddress);
+                _trafficLight.Connect(ipAddress);
 
-            return _trafficLight.TurnOnGreenOffRed();
+                return _trafficLight.TurnOnGreenOffRed();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Có lỗi xảy ra khi bật đèn XANH - {ex.Message}");
+
+                return false;
+            }
         }
 
         public bool TurnOnRedTrafficLight(string scaleCode)
         {
-            var ipAddress = GetIpAddress(scaleCode);
+            try
+            {
+                var ipAddress = GetIpAddress(scaleCode);
 
-            _logger.Info($"IP đèn: {ipAddress}");
+                _logger.Info($"IP đèn: {ipAddress}");
 
-            _trafficLight.Connect(ipAddress);
+                _trafficLight.Connect(ipAddress);
 
-            return _trafficLight.TurnOffGreenOnRed();
+                return _trafficLight.TurnOffGreenOnRed();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Có lỗi xảy ra khi bật đèn ĐỎ - {ex.Message}");
+
+                return false;
+            }
         }
 
         public bool TurnOffTrafficLight(string scaleCode)
         {
-            var ipAddress = GetIpAddress(scaleCode);
+            try
+            {
+                var ipAddress = GetIpAddress(scaleCode);
 
-            _logger.Info($"IP đèn: {ipAddress}");
+                _logger.Info($"IP đèn: {ipAddress}");
 
-            _trafficLight.Connect(ipAddress);
+                _trafficLight.Connect(ipAddress);
 
-            return _trafficLight.TurnOffGreenOffRed();
+                return _trafficLight.TurnOffGreenOffRed();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Có lỗi xảy ra khi tắt đèn - {ex.Message}");
+
+                return false;
+            }
         }
     }
 }
