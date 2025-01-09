@@ -456,19 +456,17 @@ namespace XHTD_SERVICES.Data.Repositories
                         bool isActiveService = activeParameter != null && activeParameter.Value != "0";
 
 
-                        var typeProduct = RoundRobinHelper.RoundTypeProduct();
-                        var typeProductOrders = _appDbContext.tblStoreOrderOperatings.Where(x => x.TypeProduct.ToUpper() == typeProduct.ToUpper() && x.OrderId == websaleOrder.id).ToList();
+                      
                         if (isActiveService)
                         {
-                            foreach (var currentOrder in typeProductOrders)
-                            {
-                                var orderId = (int)currentOrder.OrderId;
-                                var deliveryCode = currentOrder.DeliveryCode ?? string.Empty;
-                                var vehicle = currentOrder.Vehicle ?? string.Empty;
-                                var sumNumber = (decimal)currentOrder.SumNumber;
+                         
+                                var orderId = (int)order.OrderId;
+                                var deliveryCode = order.DeliveryCode ?? string.Empty;
+                                var vehicle = order.Vehicle ?? string.Empty;
+                                var sumNumber = (decimal)order.SumNumber;
 
                                 // Tìm mã máy có số lượng nhỏ nhất phù hợp với loại sản phẩm và danh mục sản phẩm
-                                var selectedMachineCode = await GetMinQuantityTrough(currentOrder.TypeProduct, OrderProductCategoryCode.XI_BAO);
+                                var selectedMachineCode = await GetMinQuantityTrough(order.TypeProduct, OrderProductCategoryCode.XI_BAO);
 
                                 // Tìm đơn hàng trong máng với điều kiện xe và chưa hoàn thành
                                 var existingOrderInTrough = (from callToTrough in dbContext.tblCallToTroughs
@@ -476,44 +474,44 @@ namespace XHTD_SERVICES.Data.Repositories
                                                              on callToTrough.OrderId equals storeOrderOperating.Id
                                                              where callToTrough.IsDone == false
                                                              && callToTrough.Vehicle == vehicle
-                                                             && storeOrderOperating.TypeProduct.ToUpper() == currentOrder.TypeProduct.ToUpper()
+                                                             && storeOrderOperating.TypeProduct.ToUpper() == order.TypeProduct.ToUpper()
                                                              select callToTrough.Machine).ToList();
 
                                 // Kiểm tra nếu có đơn hàng trùng loại sản phẩm và xe trong máng
 
                                 if (existingOrderInTrough.Any())
                                 {
-                                    // Kiểm tra xem loại sản phẩm có trùng với loại sản phẩm của đơn hàng hiện tại không
+                                    
                                     var matchedProductType = existingOrderInTrough.FirstOrDefault();
 
                                     // Kiểm tra nếu sản phẩm trùng và xe trùng
-                                    if (matchedProductType.Equals(currentOrder.TypeProduct, StringComparison.OrdinalIgnoreCase))
+                                    if (matchedProductType.Equals(order.TypeProduct, StringComparison.OrdinalIgnoreCase))
                                     {
                                         // Xếp vào máng hiện tại (cùng máng với đơn trùng)
-                                        _logger.Info($"OrderId {currentOrder.OrderId} xếp vào máng {matchedProductType}.");
+                                        _logger.Info($"OrderId {order.OrderId} xếp vào máng {matchedProductType}.");
 
                                         var newCallToTrough = new tblCallToTrough
                                         {
-                                            OrderId = (int)currentOrder.OrderId,
-                                            DeliveryCode = currentOrder.DeliveryCode,
-                                            Vehicle = currentOrder.Vehicle,
+                                            OrderId = (int)order.OrderId,
+                                            DeliveryCode = order.DeliveryCode,
+                                            Vehicle = order.Vehicle,
                                             Machine = matchedProductType,
-                                            SumNumber = currentOrder.SumNumber,
+                                            SumNumber = order.SumNumber,
                                             IsDone = false,
                                         };
 
-                                        dbContext.tblCallToTroughs.Add(newCallToTrough); 
-                                        currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
-                                        currentOrder.TimeConfirm5 = DateTime.Now;
-                                        currentOrder.LogProcessOrder += $"#Xe được xếp vào máng {matchedProductType} lúc {DateTime.Now}.";
+                                        dbContext.tblCallToTroughs.Add(newCallToTrough);
+                                    order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                    order.TimeConfirm5 = DateTime.Now;
+                                    order.LogProcessOrder += $"#Xe được xếp vào máng {matchedProductType} lúc {DateTime.Now}.";
 
                                         await dbContext.SaveChangesAsync(); 
 
-                                        _logger.Info($"Thành công xếp {currentOrder.OrderId} vào máng {matchedProductType}.");
+                                        _logger.Info($"Thành công xếp {order.OrderId} vào máng {matchedProductType}.");
                                     }
                                     else
                                     {
-                                        _logger.Info($"Xe {vehicle} đã có xe với loại sản phẩm khác, bỏ qua OrderId {currentOrder.OrderId}.");
+                                        _logger.Info($"Xe {vehicle} đã có xe với loại sản phẩm khác, bỏ qua OrderId {order.OrderId}.");
                                     }
                                 }
 
@@ -521,7 +519,7 @@ namespace XHTD_SERVICES.Data.Repositories
                                 else if (!string.IsNullOrEmpty(selectedMachineCode) && selectedMachineCode != "0")
                                 {
                                       
-                                        _logger.Info($"Thêm OrderId {currentOrder.OrderId} vào máng {selectedMachineCode}");
+                                        _logger.Info($"Thêm OrderId {order.OrderId} vào máng {selectedMachineCode}");
 
                                         var newCallToTrough = new tblCallToTrough
                                         {
@@ -536,24 +534,23 @@ namespace XHTD_SERVICES.Data.Repositories
                                         dbContext.tblCallToTroughs.Add(newCallToTrough); 
                                         await dbContext.SaveChangesAsync();
 
-                                        currentOrder.Step = (int)OrderStep.DANG_LAY_HANG;
-                                        currentOrder.TimeConfirm5 = DateTime.Now;
-                                        currentOrder.LogProcessOrder += $"#Xe được xếp vào máng {selectedMachineCode} lúc {DateTime.Now}.";
+                                order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                order.TimeConfirm5 = DateTime.Now;
+                                order.LogProcessOrder += $"#Xe được xếp vào máng {selectedMachineCode} lúc {DateTime.Now}.";
                                         await dbContext.SaveChangesAsync(); 
 
-                                        _logger.Info($"Thành công xếp {currentOrder.OrderId} vào máy {selectedMachineCode}");
+                                        _logger.Info($"Thành công xếp {order.OrderId} vào máy {selectedMachineCode}");
                                  
                                 }
 
-                            }
+                           
                         }
                         else
                         {
                             _logger.Info("Dịch vụ không hoạt động. Bỏ qua việc xếp máng.");
-                            foreach (var currentOrder in typeProductOrders)
-                            {
-                                currentOrder.LogProcessOrder += $"#Bỏ qua xếp máng lúc {syncTime} vì dịch vụ không hoạt động.";
-                            }
+
+                            order.LogProcessOrder += $"#Bỏ qua xếp máng lúc {syncTime} vì dịch vụ không hoạt động.";
+                            
                         }
 
                         await _appDbContext.SaveChangesAsync(); // Lưu thay đổi
