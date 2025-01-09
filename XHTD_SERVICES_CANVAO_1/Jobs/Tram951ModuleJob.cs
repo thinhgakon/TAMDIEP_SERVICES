@@ -387,6 +387,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
             else
             {
+                _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                 return;
             }
 
@@ -404,6 +405,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                     )
                 {
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
+                    Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                     return;
                 }
                 else
@@ -429,7 +431,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpPendingCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             #endregion
@@ -449,7 +451,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -467,7 +469,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
@@ -482,7 +484,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_XAC_THUC)
@@ -497,7 +499,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO)
@@ -512,7 +514,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else
@@ -595,6 +597,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                     _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
                 }
             }
+            Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
         }
 
         public void TurnOnRedTrafficLight()
