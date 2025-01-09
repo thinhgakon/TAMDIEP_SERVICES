@@ -53,6 +53,8 @@ namespace XHTD_SERVICES_CANVAO_2.Business
                 Message = "Cân thất bại"
             };
 
+            weight = (int)Math.Round((decimal)weight, -1);
+
             var order = await _storeOrderOperatingRepository.GetDetail(deliveryCode);
 
             // Chỉ kiểm tra vi phạm độ lệch khối lượng với xi măng bao
