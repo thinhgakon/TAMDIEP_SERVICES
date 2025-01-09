@@ -422,16 +422,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                 }
             }
 
-            var currentScaleOut = Environment.GetEnvironmentVariable("SCALE_OUT");
-            if (currentScaleOut == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALE_OUT", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
-            {
-                return;
-            }
-
             #region Kiểm tra đang có dữ liệu đơn đang cân không
             if (scaleInfo != null
                     && (bool)scaleInfo.IsScaling
