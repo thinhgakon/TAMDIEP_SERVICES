@@ -11,11 +11,22 @@ using XHTD_SERVICES.Data.Common;
 using RestSharp;
 using System.Collections.Specialized;
 using System.Configuration;
+using log4net;
+using System.Data.Entity;
 
 namespace XHTD_SERVICES.Data.Repositories
 {
     public partial class StoreOrderOperatingRepository
     {
+        ILog _logger = LogManager.GetLogger("FileAppender");
+
+        protected readonly SystemParameterRepository _systemParameterRepository;
+
+        protected const string SERVICE_ACTIVE_CODE = "AUTO_QUEUE_TO_TROUGH_ACTIVE";
+
+        private static bool isActiveService = true;
+
+        protected readonly CallToTroughRepository _callToTroughRepository;
         public async Task<bool> CreateAsync(OrderItemResponse websaleOrder)
         {
             bool isSynced = false;
@@ -544,12 +555,16 @@ namespace XHTD_SERVICES.Data.Repositories
                     //};
                     //_appDbContext.tblStoreOrderOperatingHistories.Add(newHistory);
 
+
+
                     await _appDbContext.SaveChangesAsync();
 
                     Console.WriteLine($@"Update Receiving Order {websaleOrder.id}");
                     log.Info($@"Update Receiving Order {websaleOrder.id}");
 
                     //SendOrderHistory(newHistory);
+
+                    await ProcessTroughAssignment(websaleOrder);
 
                     isSynced = true;
                 }
@@ -1021,5 +1036,227 @@ namespace XHTD_SERVICES.Data.Repositories
 
             return response;
         }
+
+        public bool IsInProgress(int orderId)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var record = dbContext.tblCallToTroughs.FirstOrDefault(x => x.OrderId == orderId && x.IsDone == false);
+                if (record != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+
+
+        public async Task<string> GetMinQuantityTrough(string typeProduct, string productCategory)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var query = await (from trough in dbContext.tblTroughs
+
+                                   join machineTrough in dbContext.TblMachineTroughs.Where(x => x.Status == true)
+                                   on trough.Code equals machineTrough.TroughCode
+                                   into machineTroughs
+
+                                   from machineTrough in machineTroughs
+
+                                   join machine in dbContext.tblMachines.Where(x => x.State == true)
+                                   on machineTrough.MachineCode equals machine.Code
+
+                                   join machineTypeProduct in dbContext.tblMachineTypeProducts
+                                   on machine.Code equals machineTypeProduct.MachineCode
+                                   into machineTypeProducts
+
+                                   join callToTrough in dbContext.tblCallToTroughs.Where(x => x.IsDone == null || x.IsDone == false)
+                                   on trough.Code equals callToTrough.Machine
+                                   into callToTroughs
+
+                                   where machine.ProductCategory == productCategory &&
+                                         machineTypeProducts.Any(mtp => mtp.TypeProduct == typeProduct) &&
+                                         trough.State == true
+
+                                   select new
+                                   {
+                                       trough.Code,
+                                       callToTroughs
+                                   })
+                                   .ToListAsync();
+
+                var record = query.Select(x => new
+                {
+                    x.Code,
+                    SumNumber = x.callToTroughs.Sum(y => y.SumNumber ?? 0)
+                })
+                .OrderBy(t => t.SumNumber)
+                .FirstOrDefault();
+
+                return record.Code;
+            }
+        }
+        public async Task<int> GetMaxIndexByCode(string code)
+        {
+            using (var dbContext = new XHTD_Entities())
+            {
+                var order = await dbContext.tblCallToTroughs
+                                .Where(x => x.Machine == code && x.IsDone == false)
+                                .OrderByDescending(x => x.IndexTrough)
+                                .FirstOrDefaultAsync();
+
+                if (order != null)
+                {
+                    return (int)order.IndexTrough;
+                }
+
+                return 0;
+            }
+        }
+
+        public async Task<bool> ProcessTroughAssignment(OrderItemResponse websaleOrder)
+        {
+            var order = _appDbContext.tblStoreOrderOperatings
+                       .FirstOrDefault(x => x.OrderId == websaleOrder.id
+                                           &&
+                                           (
+                                               x.Step < (int)OrderStep.DA_CAN_VAO
+                                               ||
+                                               x.Step == (int)OrderStep.DA_XAC_THUC
+                                               ||
+                                               x.Step == (int)OrderStep.CHO_GOI_XE
+                                               ||
+                                               x.Step == (int)OrderStep.DANG_GOI_XE
+                                               ||
+                                               x.WeightIn == null
+                                               ||
+                                               x.WeightIn == 0
+                                           )
+                                       );
+
+            if (order != null)
+            {
+                using (var dbContext = new XHTD_Entities())
+                {
+                    var parameters = await dbContext.tblSystemParameters.ToListAsync();
+                    var activeParameter = parameters.FirstOrDefault(x => x.Code.ToUpper().Trim() == SERVICE_ACTIVE_CODE.ToUpper().Trim());
+                    bool isActiveService = activeParameter != null && activeParameter.Value != "0";
+
+                    if (isActiveService)
+                    {
+                        // Lấy thông tin từ OrderItemResponse
+                        var orderId = order.OrderId;
+                        var deliveryCode = order.DeliveryCode ?? string.Empty;
+                        var vehicle = order.Vehicle ?? string.Empty;
+                        var sumNumber = order.SumNumber;
+
+                        // Tìm mã máy có số lượng nhỏ nhất phù hợp với loại sản phẩm và danh mục sản phẩm
+                        var selectedMachineCode = await GetMinQuantityTrough(order.TypeProduct, OrderProductCategoryCode.XI_BAO);
+
+                        // Kiểm tra đơn hàng đã tồn tại trong máng
+                        var existingOrderInTrough = (from callToTrough in dbContext.tblCallToTroughs
+                                                     join storeOrderOperating in dbContext.tblStoreOrderOperatings
+                                                     on callToTrough.OrderId equals storeOrderOperating.Id
+                                                     where callToTrough.IsDone == false
+                                                     && callToTrough.Vehicle == vehicle
+                                                     && storeOrderOperating.ItemId == order.ItemId
+                                                     select callToTrough.Machine).ToList();
+
+                        // Kiểm tra nếu có đơn hàng trùng loại sản phẩm và xe trong máng
+                        if (existingOrderInTrough.Any())
+                        {
+                            var matchedProductType = existingOrderInTrough.FirstOrDefault();
+
+                            // Kiểm tra nếu sản phẩm trùng và xe trùng
+                            if (matchedProductType.Equals(order.ItemId.ToString(), StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (!IsInProgress((int)order.OrderId))
+                                {
+                                    var indexTrough = await GetMaxIndexByCode(matchedProductType);
+                                    var newCallToTrough = new tblCallToTrough
+                                    {
+                                        OrderId = (int)order.OrderId,
+                                        DeliveryCode = order.DeliveryCode ?? string.Empty,
+                                        Vehicle = order.Vehicle ?? string.Empty,
+                                        Machine = matchedProductType,
+                                        SumNumber = (decimal)order.SumNumber,
+                                        IsDone = false,
+                                        IndexTrough = indexTrough + 1,
+                                        CountTry = 0,
+                                        CountReindex = 0,
+                                        CallLog = $@"#Xe được tự động xếp vào máng lúc {DateTime.Now}.",
+                                        CreateDay = DateTime.Now,
+                                        UpdateDay = DateTime.Now,
+                                    };
+
+                                    dbContext.tblCallToTroughs.Add(newCallToTrough);
+                                    order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                    order.TimeConfirm5 = DateTime.Now;
+                                    order.LogProcessOrder += $"#Xe được xếp vào máng {matchedProductType} lúc {DateTime.Now}.";
+
+                                    await dbContext.SaveChangesAsync();
+                                    _logger.Info($"Thành công xếp {order.OrderId} vào máng {matchedProductType}.");
+                                    return true;
+                                }
+                                else
+                                {
+                                    _logger.Error($"Đã tồn tại bản ghi đang xử lý cho OrderId {order.OrderId} trong máng {matchedProductType}.");
+                                    return false;
+                                }
+                            }
+                        }
+                        else if (!string.IsNullOrEmpty(selectedMachineCode) && selectedMachineCode != "0")
+                        {
+                            _logger.Info($"Thêm OrderId {order.OrderId} vào máng {selectedMachineCode}");
+                            if (!IsInProgress((int)order.OrderId))
+                            {
+                                var indexTrough = await GetMaxIndexByCode(selectedMachineCode);
+                                var newCallToTrough = new tblCallToTrough
+                                {
+                                    OrderId = (int)order.OrderId,
+                                    DeliveryCode = deliveryCode,
+                                    Vehicle = vehicle,
+                                    Machine = selectedMachineCode,
+                                    SumNumber = sumNumber,
+                                    IsDone = false,
+                                    IndexTrough = indexTrough + 1,
+                                    CountTry = 0,
+                                    CountReindex = 0,
+                                    CallLog = $@"#Xe được tự động xếp vào máng lúc {DateTime.Now}.",
+                                    CreateDay = DateTime.Now,
+                                    UpdateDay = DateTime.Now,
+                                };
+
+                                dbContext.tblCallToTroughs.Add(newCallToTrough);
+
+                                order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                order.TimeConfirm5 = DateTime.Now;
+                                order.LogProcessOrder += $"#Xe được xếp vào máng {selectedMachineCode} lúc {DateTime.Now}.";
+
+                                await dbContext.SaveChangesAsync();
+
+                                _logger.Info($"Thành công xếp {order.OrderId} vào máy {selectedMachineCode}");
+                                return true;
+                            }
+                            else
+                            {
+                                _logger.Error($"Đã tồn tại bản ghi đang xử lý cho OrderId {order.OrderId} trong máng {selectedMachineCode}.");
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _logger.Info("Dịch vụ không hoạt động. Bỏ qua việc xếp máng.");
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+
+
+
     }
 }
