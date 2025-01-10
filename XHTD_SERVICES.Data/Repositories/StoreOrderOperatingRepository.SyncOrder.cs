@@ -563,7 +563,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     log.Info($@"Update Receiving Order {websaleOrder.id}");
 
                     //SendOrderHistory(newHistory);
-
+                    
                     await ProcessTroughAssignment(websaleOrder);
 
                     isSynced = true;
@@ -1119,7 +1119,7 @@ namespace XHTD_SERVICES.Data.Repositories
         {
             var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == websaleOrder.id);
 
-            if (order != null)
+            if (order != null && order.TypeProduct.ToUpper() == "XI_BAO")
             {
                 using (var dbContext = new XHTD_Entities())
                 {
