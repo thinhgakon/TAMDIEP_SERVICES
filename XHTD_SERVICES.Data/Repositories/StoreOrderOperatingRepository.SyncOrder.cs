@@ -563,8 +563,9 @@ namespace XHTD_SERVICES.Data.Repositories
                     log.Info($@"Update Receiving Order {websaleOrder.id}");
 
                     //SendOrderHistory(newHistory);
+                    if(order.CatId == OrderCatIdCode.XI_MANG_BAO)
+                    { await ProcessTroughAssignment(order); }
                     
-                    await ProcessTroughAssignment(websaleOrder);
 
                     isSynced = true;
                 }
@@ -1115,11 +1116,11 @@ namespace XHTD_SERVICES.Data.Repositories
             }
         }
 
-        public async Task<bool> ProcessTroughAssignment(OrderItemResponse websaleOrder)
+        public async Task<bool> ProcessTroughAssignment(tblStoreOrderOperating order)
         {
-            var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == websaleOrder.id);
+           
 
-            if (order != null && order.TypeProduct.ToUpper() == "XI_BAO")
+            if (order != null )
             {
                 using (var dbContext = new XHTD_Entities())
                 {
