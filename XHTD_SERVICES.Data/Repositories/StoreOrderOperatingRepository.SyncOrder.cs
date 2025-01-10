@@ -1117,23 +1117,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
         public async Task<bool> ProcessTroughAssignment(OrderItemResponse websaleOrder)
         {
-            var order = _appDbContext.tblStoreOrderOperatings
-                       .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                                           &&
-                                           (
-                                               x.Step < (int)OrderStep.DA_CAN_VAO
-                                               ||
-                                               x.Step == (int)OrderStep.DA_XAC_THUC
-                                               ||
-                                               x.Step == (int)OrderStep.CHO_GOI_XE
-                                               ||
-                                               x.Step == (int)OrderStep.DANG_GOI_XE
-                                               ||
-                                               x.WeightIn == null
-                                               ||
-                                               x.WeightIn == 0
-                                           )
-                                       );
+            var order = _appDbContext.tblStoreOrderOperatings.FirstOrDefault(x => x.OrderId == websaleOrder.id);
 
             if (order != null)
             {
@@ -1160,26 +1144,27 @@ namespace XHTD_SERVICES.Data.Repositories
                                                      on callToTrough.OrderId equals storeOrderOperating.Id
                                                      where callToTrough.IsDone == false
                                                      && callToTrough.Vehicle == vehicle
-                                                     && storeOrderOperating.ItemId == order.ItemId
-                                                     select callToTrough.Machine).ToList();
+                                                     select callToTrough)
+                                                     .FirstOrDefault();
 
-                        // Kiểm tra nếu có đơn hàng trùng loại sản phẩm và xe trong máng
-                        if (existingOrderInTrough.Any())
+                        // Kiểm tra nếu có xe trong máng
+                        if (existingOrderInTrough != null)
                         {
-                            var matchedProductType = existingOrderInTrough.FirstOrDefault();
+                            //var matchedProductType = existingOrderInTrough.FirstOrDefault();
+                            var existOrder = await dbContext.tblStoreOrderOperatings.FirstOrDefaultAsync(x => x.OrderId == existingOrderInTrough.OrderId);
 
                             // Kiểm tra nếu sản phẩm trùng và xe trùng
-                            if (matchedProductType.Equals(order.ItemId.ToString(), StringComparison.OrdinalIgnoreCase))
+                            if (existOrder.TypeProduct.ToUpper() == order.TypeProduct.ToUpper())
                             {
                                 if (!IsInProgress((int)order.OrderId))
                                 {
-                                    var indexTrough = await GetMaxIndexByCode(matchedProductType);
+                                    var indexTrough = await GetMaxIndexByCode(order.TypeProduct);
                                     var newCallToTrough = new tblCallToTrough
                                     {
                                         OrderId = (int)order.OrderId,
                                         DeliveryCode = order.DeliveryCode ?? string.Empty,
                                         Vehicle = order.Vehicle ?? string.Empty,
-                                        Machine = matchedProductType,
+                                        Machine = existingOrderInTrough.Machine,
                                         SumNumber = (decimal)order.SumNumber,
                                         IsDone = false,
                                         IndexTrough = indexTrough + 1,
@@ -1193,20 +1178,21 @@ namespace XHTD_SERVICES.Data.Repositories
                                     dbContext.tblCallToTroughs.Add(newCallToTrough);
                                     order.Step = (int)OrderStep.DANG_LAY_HANG;
                                     order.TimeConfirm5 = DateTime.Now;
-                                    order.LogProcessOrder += $"#Xe được xếp vào máng {matchedProductType} lúc {DateTime.Now}.";
+                                    order.LogProcessOrder += $"#Xe được xếp vào máng {existingOrderInTrough.Machine} lúc {DateTime.Now}.";
 
                                     await dbContext.SaveChangesAsync();
-                                    _logger.Info($"Thành công xếp {order.OrderId} vào máng {matchedProductType}.");
+                                    _logger.Info($"Thành công xếp {order.OrderId} vào máng {existingOrderInTrough.Machine}.");
                                     return true;
                                 }
                                 else
                                 {
-                                    _logger.Error($"Đã tồn tại bản ghi đang xử lý cho OrderId {order.OrderId} trong máng {matchedProductType}.");
+                                    _logger.Error($"Đã tồn tại bản ghi đang xử lý cho OrderId {order.OrderId} trong máng {existingOrderInTrough.Machine}.");
                                     return false;
                                 }
                             }
                         }
-                        else if (!string.IsNullOrEmpty(selectedMachineCode) && selectedMachineCode != "0")
+
+                        else
                         {
                             _logger.Info($"Thêm OrderId {order.OrderId} vào máng {selectedMachineCode}");
                             if (!IsInProgress((int)order.OrderId))
@@ -1248,7 +1234,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     }
                     else
                     {
-                        _logger.Info("Dịch vụ không hoạt động. Bỏ qua việc xếp máng.");
+                        _logger.Info("Cấu hình tự động xếp xe vào máng đang TẮT => Bỏ qua");
                         return false;
                     }
                 }
