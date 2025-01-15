@@ -39,10 +39,10 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly string MACHINE_3_CODE = MachineCode.MACHINE_XI_BAO_3;
         protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
-        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
+        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_2;
         protected readonly string DEFAULT_LED_CODE = "*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
-        public Led34XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led12XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _machineRepository = machineRepository;
             _troughRepository = troughRepository;
@@ -60,7 +60,7 @@ namespace XHTD_SERVICES_LED.Jobs
             {
                 await Task.Run(async () =>
                 {
-                    WriteLogInfo($"--------------- START JOB REALTIME - IP: {PLC_IP_ADDRESS} ---------------");
+                    WriteLogInfo($"--------------- START JOB - IP: {PLC_IP_ADDRESS} ---------------");
 
                     await ConnectPLC();
                 });
@@ -122,11 +122,24 @@ namespace XHTD_SERVICES_LED.Jobs
                     }
 
                     Thread.Sleep(200);
+
+                    await ReadMDBData(machineCodes);
+                }
+                else
+                {
+                    WriteLogInfo($"Trough Job MDB 3|4: Ket noi that bai --- IP: {PLC_IP_ADDRESS} --- PORT: {PLC_PORT_NUMBER}");
                 }
             }
             catch (Exception ex)
             {
                 WriteLogInfo($"Ket noi that bai: {ex.Message} --- {ex.InnerException} -- {ex.StackTrace}");
+            }
+            finally
+            {
+                if (client != null)
+                {
+                    client.Disconnect();
+                }
             }
         }
 
@@ -140,7 +153,6 @@ namespace XHTD_SERVICES_LED.Jobs
                 foreach (var troughCode in troughCodes)
                 {
                     WriteLogInfo($"Máng {troughCode}");
-
                     var command = $"*[Count][MX][{troughCode}]#GET[!]";
 
                     WriteLogInfo($"Gửi lệnh: {command}");
@@ -185,13 +197,13 @@ namespace XHTD_SERVICES_LED.Jobs
                             }
 
                             planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
-                            
+
                             if (!String.IsNullOrEmpty(order.ItemAlias))
                             {
                                 typeProduct = order.ItemAlias;
                             }
-                            else 
-                            { 
+                            else
+                            {
                                 typeProduct = !String.IsNullOrEmpty(order.TypeProduct) ? order.TypeProduct : "---";
                             }
                         }
@@ -219,6 +231,7 @@ namespace XHTD_SERVICES_LED.Jobs
                             }
 
                             var planQuantity = 0;
+
                             planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
 
                             var typeProduct = "---";
@@ -232,6 +245,7 @@ namespace XHTD_SERVICES_LED.Jobs
                             }
 
                             decimal? exportedNumber = 0;
+
                             exportedNumber = order.ExportedNumber != null ? order.ExportedNumber * 1000 / (decimal)orderNetWeight : 0;
 
                             sendCode = $"*[H1][C1]{vehicleCode}[H2][C1][1]{machine.CurrentDeliveryCode}[2]{typeProduct}[H3][C1][1]DAT[2]{planQuantity}[H4][C1][1]XUAT[2]{exportedNumber}[!]";
@@ -299,7 +313,7 @@ namespace XHTD_SERVICES_LED.Jobs
                             {
                                 orderNetWeight = order.NetWeight;
                             }
-                           
+
                             planQuantity = (int)((double)order.SumNumber * 1000 / orderNetWeight);
 
                             if (!String.IsNullOrEmpty(order.ItemAlias))
