@@ -39,10 +39,10 @@ namespace XHTD_SERVICES_LED.Jobs
 
         protected readonly string MACHINE_3_CODE = MachineCode.MACHINE_XI_BAO_3;
         protected readonly string MACHINE_4_CODE = MachineCode.MACHINE_XI_BAO_4;
-        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_2;
+        protected readonly string MACHINE_MDB_CODE = MachineCode.MACHINE_MDB_1;
         protected readonly string DEFAULT_LED_CODE = "*[H1][C1]VICEM TAM DIEP[H2][C1]HE THONG XUAT HANG KHONG DUNG[H3][C1]XIN MOI LAI XE[H4][C1]KIEM TRA VA XAC NHAN DON HANG[!]";
 
-        public Led12XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
+        public Led34XiBaoJob(MachineRepository machineRepository, TroughRepository troughRepository, StoreOrderOperatingRepository storeOrderOperatingRepository)
         {
             _machineRepository = machineRepository;
             _troughRepository = troughRepository;
@@ -123,6 +123,7 @@ namespace XHTD_SERVICES_LED.Jobs
 
                     Thread.Sleep(200);
 
+                    var machineCodes = new List<string> { "3", "4" };
                     await ReadMDBData(machineCodes);
                 }
                 else
