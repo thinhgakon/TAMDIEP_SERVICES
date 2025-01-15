@@ -122,9 +122,6 @@ namespace XHTD_SERVICES_LED.Jobs
                     }
 
                     Thread.Sleep(200);
-
-                    var machineCodes = new List<string> { "3", "4" };
-                    await ReadMDBData(machineCodes);
                 }
                 else
                 {
