@@ -342,7 +342,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             {
                                 if (weightIn > 0)
                                 {
-                                    order.WeightIn = (int)(weightIn * 1000);
+                                    order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                     if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                     {
@@ -395,7 +395,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             if (weightIn > 0)
                             {
-                                order.WeightIn = (int)(weightIn * 1000);
+                                order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                 if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                 {
@@ -485,7 +485,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
-                    order.WeightIn = (int)(weightIn * 1000);
+                    order.WeightIn = Convert.ToInt32((weightIn * 1000));
                     order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                     order.SealDes = websaleOrder.topSealDes;
                     order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
@@ -505,7 +505,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         if (weightIn1 > 0)
                         {
-                            order.WeightIn = (int)(weightIn1 * 1000);
+                            order.WeightIn = Convert.ToInt32((weightIn1 * 1000));
 
                             if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                             {
@@ -562,7 +562,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         if (weightIn1 > 0)
                         {
-                            order.WeightIn = (int)(weightIn1 * 1000);
+                            order.WeightIn = Convert.ToInt32((weightIn1 * 1000));
 
                             if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                             {
@@ -668,7 +668,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             if (weightIn > 0)
                             {
-                                order.WeightIn = (int)(weightIn * 1000);
+                                order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                 if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                 {
@@ -758,7 +758,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             if (weightIn > 0)
                             {
-                                order.WeightIn = (int)(weightIn * 1000);
+                                order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                 if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                 {
@@ -847,7 +847,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             if (weightIn > 0)
                             {
-                                order.WeightIn = (int)(weightIn * 1000);
+                                order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                 if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                 {
