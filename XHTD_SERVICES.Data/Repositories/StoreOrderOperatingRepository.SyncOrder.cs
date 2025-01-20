@@ -355,7 +355,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             {
                                 if (weightOut > 0)
                                 {
-                                    order.WeightOut = (int)(weightOut * 1000);
+                                    order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
                                     if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                     {
@@ -518,7 +518,7 @@ namespace XHTD_SERVICES.Data.Repositories
                     {
                         if (weightOut > 0)
                         {
-                            order.WeightOut = (int)(weightOut * 1000);
+                            order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
                             if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                             {
@@ -656,7 +656,7 @@ namespace XHTD_SERVICES.Data.Repositories
 
                         order.IndexOrder = 0;
                         order.CountReindex = 0;
-                        order.WeightOut = (int)(weightOut * 1000);
+                        order.WeightOut = Convert.ToInt32((weightOut * 1000));
                         order.SealCount = !string.IsNullOrEmpty(websaleOrder.topSealCount) ? int.Parse(websaleOrder.topSealCount) : 0;
                         order.SealDes = websaleOrder.topSealDes;
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
