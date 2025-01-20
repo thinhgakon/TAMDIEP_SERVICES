@@ -901,7 +901,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         {
                             if (weightIn > 0)
                             {
-                                order.WeightIn = (int)(weightIn * 1000);
+                                order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
                                 if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
                                 {
@@ -910,16 +910,13 @@ namespace XHTD_SERVICES.Data.Repositories
                             }
                         }
 
-                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        if (weightOut > 0)
                         {
-                            if (weightOut1 > 0)
-                            {
-                                order.WeightOut = (int)(weightOut1 * 1000);
+                            order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
-                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                                {
-                                    order.WeightOutTime = d;
-                                }
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
                             }
                         }
 
