@@ -501,16 +501,13 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
                     }
 
-                    if (double.TryParse(websaleOrder.loadweightnull, out double weightIn1))
+                    if (weightIn > 0)
                     {
-                        if (weightIn1 > 0)
-                        {
-                            order.WeightIn = Convert.ToInt32((weightIn1 * 1000));
+                        order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
-                            if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                            {
-                                order.WeightInTime = d;
-                            }
+                        if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                        {
+                            order.WeightInTime = d;
                         }
                     }
 
@@ -558,16 +555,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     order = _appDbContext.tblStoreOrderOperatings
                           .FirstOrDefault(x => x.OrderId == websaleOrder.id);
 
-                    if (double.TryParse(websaleOrder.loadweightnull, out double weightIn1))
+                    if (weightIn > 0)
                     {
-                        if (weightIn1 > 0)
-                        {
-                            order.WeightIn = Convert.ToInt32((weightIn1 * 1000));
+                        order.WeightIn = Convert.ToInt32((weightIn * 1000));
 
-                            if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                            {
-                                order.WeightInTime = d;
-                            }
+                        if (DateTime.TryParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                        {
+                            order.WeightInTime = d;
                         }
                     }
 
