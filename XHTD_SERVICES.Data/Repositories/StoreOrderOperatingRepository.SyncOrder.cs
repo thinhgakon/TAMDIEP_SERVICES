@@ -658,6 +658,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.MoocCode = websaleOrder.moocCode;
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Sync Cân ra lúc {syncTime} ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Sync Cân ra lúc {syncTime}; ";
+
                         if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
                         {
                             if (weightIn > 0)
