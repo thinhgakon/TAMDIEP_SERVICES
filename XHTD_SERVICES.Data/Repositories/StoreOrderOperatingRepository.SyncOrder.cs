@@ -677,16 +677,13 @@ namespace XHTD_SERVICES.Data.Repositories
                             }
                         }
 
-                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        if (weightOut > 0)
                         {
-                            if (weightOut1 > 0)
-                            {
-                                order.WeightOut = Convert.ToInt32((weightOut1 * 1000));
+                            order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
-                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                                {
-                                    order.WeightOutTime = d;
-                                }
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
                             }
                         }
 
@@ -754,6 +751,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
+
                         if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
                         {
                             if (weightIn > 0)
@@ -767,18 +765,16 @@ namespace XHTD_SERVICES.Data.Repositories
                             }
                         }
 
-                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        if (weightOut > 0)
                         {
-                            if (weightOut1 > 0)
-                            {
-                                order.WeightOut = Convert.ToInt32((weightOut1 * 1000));
+                            order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
-                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                                {
-                                    order.WeightOutTime = d;
-                                }
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
                             }
                         }
+
                         //var newHistory = new tblStoreOrderOperatingHistory
                         //{
                         //    DeliveryCode = order.DeliveryCode,
@@ -843,6 +839,7 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.DocNum = string.IsNullOrEmpty(websaleOrder.docnum) ? order.DocNum : websaleOrder.docnum;
                         order.RealNumber = websaleOrder.orderQuantity;
                         order.MoocCode = websaleOrder.moocCode;
+
                         if (double.TryParse(websaleOrder.loadweightnull, out double weightIn))
                         {
                             if (weightIn > 0)
@@ -856,16 +853,13 @@ namespace XHTD_SERVICES.Data.Repositories
                             }
                         }
 
-                        if (double.TryParse(websaleOrder.loadweightfull, out double weightOut1))
+                        if (weightOut > 0)
                         {
-                            if (weightOut1 > 0)
-                            {
-                                order.WeightOut = Convert.ToInt32((weightOut1 * 1000));
+                            order.WeightOut = Convert.ToInt32((weightOut * 1000));
 
-                                if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
-                                {
-                                    order.WeightOutTime = d;
-                                }
+                            if (DateTime.TryParseExact(websaleOrder.timeOut, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                            {
+                                order.WeightOutTime = d;
                             }
                         }
 
