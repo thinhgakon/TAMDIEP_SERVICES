@@ -935,8 +935,8 @@ namespace XHTD_SERVICES.Data.Repositories
                 var order = _appDbContext.tblStoreOrderOperatings
                                             .FirstOrDefault(x => x.OrderId == orderId
                                                                 && x.IsVoiced != true
-                                                                && x.Step != (int)OrderStep.DA_HOAN_THANH
-                                                                && x.Step != (int)OrderStep.DA_GIAO_HANG
+                                                                //&& x.Step != (int)OrderStep.DA_HOAN_THANH
+                                                                //&& x.Step != (int)OrderStep.DA_GIAO_HANG
                                                                 );
                 if (order != null)
                 {
