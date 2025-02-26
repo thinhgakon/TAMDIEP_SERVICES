@@ -11,6 +11,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
         private static readonly ILog _logger = LogManager.GetLogger(typeof(S71200Control));
 
         protected readonly S71200PLCBarrier _barrier;
+        protected readonly S71200Sensor _sensor;
 
         private const string IP_ADDRESS = "192.168.13.166";
         private const short RACK = 0;
@@ -22,6 +23,7 @@ namespace XHTD_SERVICES_GATEWAY.Devices
         {
             var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
             _barrier = new S71200PLCBarrier(plc);
+            _sensor = new S71200Sensor(plc);
         }
 
         public void ResetAllOutputPorts()
@@ -200,5 +202,30 @@ namespace XHTD_SERVICES_GATEWAY.Devices
             }
         }
 
+        public bool ReadInputPort(string variable)
+        {
+            try
+            {
+                if (_sensor.IsConnected == false)
+                {
+                    Console.WriteLine("Can not connect sensor!");
+                    _sensor.Close();
+                    return false;
+                }
+
+                var status = _sensor.ReadInputPort(variable);
+
+                Thread.Sleep(500);
+
+                _sensor.Close();
+
+                return status;
+            }
+            catch (Exception ex)
+            {
+                _logger.Info($"ReadInputPort Error: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                return false;
+            }
+        }
     }
 }

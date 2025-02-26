@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Autofac;
+using log4net;
 using Quartz;
 using S7.Net;
 using System;
@@ -14,7 +15,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
     {
         private static readonly ILog logger = LogManager.GetLogger(typeof(CaptureInOutJob));
 
-        protected readonly S71200Sensor _sensor;
+        //protected readonly S71200Sensor _sensor;
 
         private const string IP_ADDRESS = "192.168.13.166";
         private const short RACK = 0;
@@ -36,9 +37,9 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public CaptureInOutJob(AttachmentRepository attachmentRepository, CheckInOutRepository checkInOutRepository, GatewayLogger gatewayLogger)
         {
-            var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
-            _sensor = new S71200Sensor(plc);
-            this._attachmentRepository = attachmentRepository;
+            //var plc = new Plc(CpuType.S71200, IP_ADDRESS, RACK, SLOT);
+            //_sensor = new S71200Sensor(plc);
+            _attachmentRepository = attachmentRepository;
             _checkInOutRepository = checkInOutRepository;
             _gatewayLogger = gatewayLogger;
         }
@@ -58,6 +59,11 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
 
         public void Capture()
         {
+            if (Program.IsLockingRfidIn)
+            {
+                return;
+            }
+
             if (Program.IsCapturing)
             {
                 Console.WriteLine("Capturing...");
@@ -67,15 +73,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
             Program.IsCapturing = true;
             try
             {
-                _sensor.Open();
-                if (_sensor.IsConnected == false)
-                {
-                    Console.WriteLine("Can not connect sensor!");
-                    _sensor.Close();
-                    Program.IsCapturing = false;
-                    return;
-                }
-                var status = _sensor.ReadInputPort(GATE_IN);
+                var status = DIBootstrapper.Init().Resolve<S71200Control>().ReadInputPort(GATE_IN);
 
                 if (status)
                 {
@@ -84,6 +82,7 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                 else
                 {
                     Program.IsBarrierOpen = false;
+                    Program.IsCapturing = false;
                 }
 
                 if (Program.IsBarrierOpen)
@@ -99,7 +98,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         if (string.IsNullOrEmpty(img))
                         {
                             Console.WriteLine($"Capture fail");
-                            _sensor.Close();
                             Program.IsCapturing = false;
                             return;
                         }
@@ -115,7 +113,6 @@ namespace XHTD_SERVICES_GATEWAY.Jobs
                         if (attachmentId == 0)
                         {
                             Console.WriteLine($"Add attachment fail");
-                            _sensor.Close();
                             Program.IsCapturing = false;
                             return;
                         }
