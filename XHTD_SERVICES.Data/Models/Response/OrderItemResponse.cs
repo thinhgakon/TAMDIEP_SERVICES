@@ -70,6 +70,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string description { get; set; }
         public string sourceDocumentId { get; set; }
         public string sourceDocumentType { get; set; }
+        public string sourceDocumentName { get; set; }
         public string driverIndex { get; set; }
         public string packType { get; set; }
         public string bagType { get; set; }
@@ -97,5 +98,7 @@ namespace XHTD_SERVICES.Data.Models.Response
         public string netweight { get; set; }
         public int? sideSealCount { get; set; }
         public string sideSealDes { get; set; }
+        public int? type {  get; set; }
+
     }
 }
