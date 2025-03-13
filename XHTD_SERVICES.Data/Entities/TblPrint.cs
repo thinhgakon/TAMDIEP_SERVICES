@@ -19,5 +19,6 @@ namespace XHTD_SERVICES.Data.Entities
         public string InvoiceNo { get; set; }
         public string Status { get; set; }
         public string ErpOrderId { get; set; }
+        public System.DateTime CreateDate { get; set; }
     }
 }

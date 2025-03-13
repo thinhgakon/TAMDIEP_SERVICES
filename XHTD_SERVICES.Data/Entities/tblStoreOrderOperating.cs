@@ -151,6 +151,9 @@ namespace XHTD_SERVICES.Data.Entities
         public string PrintTroughCode { get; set; }
         public Nullable<decimal> RealNumber { get; set; }
         public string ErrorLog { get; set; }
+        public string AreaCode { get; set; }
+        public string SourceDocumentName { get; set; }
+        public Nullable<int> Type { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tblExportHistory> tblExportHistories { get; set; }

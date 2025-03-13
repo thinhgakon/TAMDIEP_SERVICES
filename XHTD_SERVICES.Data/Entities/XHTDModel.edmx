@@ -531,6 +531,7 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="InvoiceNo" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Status" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="ErpOrderId" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="tblPrintConfig">
           <Key>
@@ -782,6 +783,9 @@ warning 6002: The table/view 'TAMDIEP_XHTD.dbo.tblCompany' does not have a prima
           <Property Name="PrintTroughCode" Type="nvarchar(max)" />
           <Property Name="RealNumber" Type="decimal" Precision="18" Scale="2" />
           <Property Name="ErrorLog" Type="nvarchar(max)" />
+          <Property Name="AreaCode" Type="nvarchar" MaxLength="255" />
+          <Property Name="SourceDocumentName" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Type" Type="int" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingHistory">
           <Key>
@@ -1785,6 +1789,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="PrintTroughCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="RealNumber" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="ErrorLog" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AreaCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="SourceDocumentName" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" />
         </EntityType>
         <EntityType Name="tblStoreOrderOperatingPriority">
           <Key>
@@ -2155,6 +2162,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <Property Name="InvoiceNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ErpOrderId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="7" />
         </EntityType>
         <Association Name="FK_tblMachineTypeProduct_tblMachine_MachineCode">
           <End Type="XHTD_SERVICES.Data.Entities.tblMachine" Role="tblMachine" Multiplicity="1">
@@ -2918,6 +2926,9 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="tblStoreOrderOperatings">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.tblStoreOrderOperating">
               <MappingFragment StoreEntitySet="tblStoreOrderOperating">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="SourceDocumentName" ColumnName="SourceDocumentName" />
+                <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
                 <ScalarProperty Name="ErrorLog" ColumnName="ErrorLog" />
                 <ScalarProperty Name="RealNumber" ColumnName="RealNumber" />
                 <ScalarProperty Name="PrintTroughCode" ColumnName="PrintTroughCode" />
@@ -3243,6 +3254,7 @@ warning 6035: The relationship 'FK_tblStoreOrderOperating_TblQualityCertificate_
           <EntitySetMapping Name="TblPrints">
             <EntityTypeMapping TypeName="XHTD_SERVICES.Data.Entities.TblPrint">
               <MappingFragment StoreEntitySet="TblPrint">
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="ErpOrderId" ColumnName="ErpOrderId" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
