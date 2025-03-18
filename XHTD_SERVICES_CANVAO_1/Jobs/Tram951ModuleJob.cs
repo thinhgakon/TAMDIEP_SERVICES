@@ -80,6 +80,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         private List<CardNoLog> tmpPendingCardNoLst = new List<CardNoLog>();
 
+        private List<VehicleLog> vehicleList = new List<VehicleLog>();
+
         private tblCategoriesDevice c3400;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
@@ -371,6 +373,11 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 return;
             }
 
+            if (vehicleList.Count > 25)
+            {
+                vehicleList.RemoveAll(x => x.DateTime > DateTime.Now.AddSeconds(-30));
+            }
+
             _rfidlogger.Info($"1. Tiến hành xử lý rfid => Xem main log");
 
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
@@ -532,6 +539,36 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 _logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
             }
+
+            if (vehicleList.Count < 25)
+            {
+                vehicleList.Add(new VehicleLog { Vehicle = vehicleCodeCurrent, DateTime = DateTime.Now });
+
+                _logger.LogInfo($"2. Hàng đợi chưa đủ 25 bản ghi ({vehicleList.Count}/25) => Thêm xe và kết thúc");
+                return;
+            }
+
+            // Khi hàng đợi đủ 25 bản ghi
+            var distinctVehicles = vehicleList.Select(v => v.Vehicle).Distinct().Count();
+            if (distinctVehicles > 1)
+            {
+                _logger.LogInfo($"2. Hàng đợi có nhiều hơn 1 xe khác biệt ({distinctVehicles} xe) => Kết thúc");
+                return;
+            }
+
+            // Nếu chỉ có 1 xe duy nhất trong hàng đợi
+            var firstVehicleTime = vehicleList.First().DateTime ?? DateTime.Now;
+            var lastVehicleTime = vehicleList.Last().DateTime ?? DateTime.Now;
+            var timeGap = (lastVehicleTime - firstVehicleTime).TotalSeconds;
+
+            if (timeGap < 20)
+            {
+                _logger.LogInfo($"2. Thời gian giữa bản ghi đầu và cuối: ({timeGap}s) => Chưa đủ 20s => Tiếp tục đợi");
+                return;
+            }
+
+            // Nếu đủ điều kiện (1 xe và >= 20s)
+            _logger.LogInfo($"3. Hàng đợi chỉ có 1 xe ({vehicleCodeCurrent}) và thời gian >= 20s ({timeGap}s) => Hợp lệ");
 
             // 3. Xác định xe vào hay ra
             var isLuongVao = true;
