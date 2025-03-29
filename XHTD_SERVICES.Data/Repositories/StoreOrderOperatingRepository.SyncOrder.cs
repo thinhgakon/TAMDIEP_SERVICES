@@ -158,7 +158,12 @@ namespace XHTD_SERVICES.Data.Repositories
                         SealDes = websaleOrder.topSealDes,
                         DeliveryCodeTgc = websaleOrder.deliveryCodeTgc,
                         DocNum = websaleOrder.docnum,
-                        RealNumber = (decimal?)websaleOrder.orderQuantity
+                        RealNumber = (decimal?)websaleOrder.orderQuantity,
+                        Type = websaleOrder.type,
+                        AreaId  = !string.IsNullOrEmpty(websaleOrder.areaId) ? int.Parse(websaleOrder.areaId) : 0,
+                        AreaCode = websaleOrder.areaCode,
+                        AreaName = websaleOrder.areaName,
+                        SourceDocumentName = websaleOrder.sourceDocumentName
                     };
 
                     _appDbContext.tblStoreOrderOperatings.Add(newOrderOperating);
