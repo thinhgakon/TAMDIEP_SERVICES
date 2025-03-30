@@ -398,7 +398,6 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
-
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);
