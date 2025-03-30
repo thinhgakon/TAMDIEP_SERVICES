@@ -49,6 +49,9 @@ namespace XHTD_SERVICES_CANRA_2
 
         public static int CountToSendFailOpenPort = 0;
 
+        public static string PendingVehicle = null;
+        public static int PendingCounter = 0;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;

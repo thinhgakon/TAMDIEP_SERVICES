@@ -48,6 +48,9 @@ namespace XHTD_SERVICES_CANVAO_1
         public static Dictionary<string, int> DeviceFailCount = new Dictionary<string, int>();
         public static Dictionary<string, DateTime?> DeviceLastFailPingTime = new Dictionary<string, DateTime?>();
 
+        public static string PendingVehicle = null;
+        public static int PendingCounter = 0;
+
         static void Main()
         {
             ServiceBase[] ServicesToRun;
