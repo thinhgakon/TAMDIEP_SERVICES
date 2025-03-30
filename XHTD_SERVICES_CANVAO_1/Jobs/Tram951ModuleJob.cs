@@ -326,6 +326,17 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
+                return;
+            }
+
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
             SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
@@ -379,17 +390,6 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             _logger.LogInfo("--------------------------------------------------------");
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
-
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
-            if (currentScaleIn == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
-            {
-                _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
-                return;
-            }
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
