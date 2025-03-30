@@ -80,8 +80,6 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         private List<CardNoLog> tmpPendingCardNoLst = new List<CardNoLog>();
 
-        private List<VehicleLog> vehicleList = new List<VehicleLog>();
-
         private tblCategoriesDevice c3400;
 
         [DllImport(@"C:\\Windows\\System32\\plcommpro.dll", EntryPoint = "Connect")]
@@ -328,6 +326,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
+            Thread.Sleep(50);
+
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
             SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
@@ -373,11 +373,6 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 return;
             }
 
-            if (vehicleList.Count > 25)
-            {
-                vehicleList.RemoveAll(x => x.DateTime > DateTime.Now.AddSeconds(-30));
-            }
-
             _rfidlogger.Info($"1. Tiến hành xử lý rfid => Xem main log");
 
             SendNotificationHub(SCALE_CURRENT_RFID, cardNoCurrent);
@@ -400,7 +395,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
-            
+
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);
@@ -462,6 +457,41 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                 return;
             }
 
+            if (string.IsNullOrEmpty(Program.PendingVehicle))
+            {
+                Program.PendingVehicle = vehicleCodeCurrent;
+                Program.PendingCounter = 1;
+                _logger.LogInfo($"2. Xe mới {vehicleCodeCurrent} được thêm vào hàng đợi vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter = 1");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+            else if (Program.PendingVehicle.ToUpper() == vehicleCodeCurrent.ToUpper())
+            {
+                Program.PendingCounter++;
+                _logger.LogInfo($"2. Xe {vehicleCodeCurrent} tiếp tục được phát hiện. Counter = {Program.PendingCounter}");
+            }
+            else
+            {
+                Program.PendingVehicle = vehicleCodeCurrent;
+                Program.PendingCounter = 1;
+                _logger.LogInfo($"2. ============================== Xe {vehicleCodeCurrent} bị chèn vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter reset về {Program.PendingCounter}");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+
+            if (Program.PendingCounter >= 15)
+            {
+                Program.PendingVehicle = null;
+                Program.PendingCounter = 0;
+                _logger.LogInfo($"2. Xe {vehicleCodeCurrent} đạt Counter = 15 => Đã xác định được xe đang cân => Xử lý cân");
+            }
+            else
+            {
+                _logger.LogInfo($"2. Chưa đủ 15 lần đếm => Tiếp tục chờ");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+
             // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
             var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
             //var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
@@ -511,7 +541,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO)
             {
-                _logger.LogInfo($"2. ag KHONG co don hang hop le: xi rời đã cân vào => Ket thuc");
+                _logger.LogInfo($"2. Tag KHONG co don hang hop le: xi rời đã cân vào => Ket thuc");
 
                 SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
@@ -539,36 +569,6 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
                 _logger.LogInfo($"2. Tag co don hang hop le DeliveryCode = {currentOrder.DeliveryCode}");
             }
-
-            if (vehicleList.Count < 25)
-            {
-                vehicleList.Add(new VehicleLog { Vehicle = vehicleCodeCurrent, DateTime = DateTime.Now });
-
-                _logger.LogInfo($"2. Hàng đợi chưa đủ 25 bản ghi ({vehicleList.Count}/25) => Thêm xe và kết thúc");
-                return;
-            }
-
-            // Khi hàng đợi đủ 25 bản ghi
-            var distinctVehicles = vehicleList.Select(v => v.Vehicle).Distinct().Count();
-            if (distinctVehicles > 1)
-            {
-                _logger.LogInfo($"2. Hàng đợi có nhiều hơn 1 xe khác biệt ({distinctVehicles} xe) => Kết thúc");
-                return;
-            }
-
-            // Nếu chỉ có 1 xe duy nhất trong hàng đợi
-            var firstVehicleTime = vehicleList.First().DateTime ?? DateTime.Now;
-            var lastVehicleTime = vehicleList.Last().DateTime ?? DateTime.Now;
-            var timeGap = (lastVehicleTime - firstVehicleTime).TotalSeconds;
-
-            if (timeGap < 20)
-            {
-                _logger.LogInfo($"2. Thời gian giữa bản ghi đầu và cuối: ({timeGap}s) => Chưa đủ 20s => Tiếp tục đợi");
-                return;
-            }
-
-            // Nếu đủ điều kiện (1 xe và >= 20s)
-            _logger.LogInfo($"3. Hàng đợi chỉ có 1 xe ({vehicleCodeCurrent}) và thời gian >= 20s ({timeGap}s) => Hợp lệ");
 
             // 3. Xác định xe vào hay ra
             var isLuongVao = true;

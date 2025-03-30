@@ -326,6 +326,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
+            Thread.Sleep(50);
 
             var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
             if (currentScaleIn == "0")
@@ -459,6 +460,41 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 return;
             }
 
+            if (string.IsNullOrEmpty(Program.PendingVehicle))
+            {
+                Program.PendingVehicle = vehicleCodeCurrent;
+                Program.PendingCounter = 1;
+                _logger.LogInfo($"2. Xe mới {vehicleCodeCurrent} được thêm vào hàng đợi vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter = 1");
+                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+            else if (Program.PendingVehicle.ToUpper() == vehicleCodeCurrent.ToUpper())
+            {
+                Program.PendingCounter++;
+                _logger.LogInfo($"2. Xe {vehicleCodeCurrent} tiếp tục được phát hiện. Counter = {Program.PendingCounter}");
+            }
+            else
+            {
+                Program.PendingVehicle = vehicleCodeCurrent;
+                Program.PendingCounter = 1;
+                _logger.LogInfo($"2. ============================== Xe {vehicleCodeCurrent} bị chèn vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter reset về {Program.PendingCounter}");
+                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+
+            if (Program.PendingCounter >= 15)
+            {
+                Program.PendingVehicle = null;
+                Program.PendingCounter = 0;
+                _logger.LogInfo($"2. Xe {vehicleCodeCurrent} đạt Counter = 15 => Đã xác định được xe đang cân => Xử lý cân");
+            }
+            else
+            {
+                _logger.LogInfo($"2. Chưa đủ 15 lần đếm => Tiếp tục chờ");
+                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                return;
+            }
+
             // 2. Kiểm tra cardNoCurrent có đang chứa đơn hàng hợp lệ không
             var currentOrder = await _storeOrderOperatingRepository.GetCurrentOrderScaleStation(vehicleCodeCurrent);
             //var isValidCardNo = OrderValidator.IsValidOrderScaleStation(currentOrder);
@@ -508,7 +544,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO)
             {
-                _logger.LogInfo($"2. ag KHONG co don hang hop le: xi rời đã cân vào => Ket thuc");
+                _logger.LogInfo($"2. Tag KHONG co don hang hop le: xi rời đã cân vào => Ket thuc");
 
                 SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} Đơn hàng xi rời vui lòng cân ra thủ công");
