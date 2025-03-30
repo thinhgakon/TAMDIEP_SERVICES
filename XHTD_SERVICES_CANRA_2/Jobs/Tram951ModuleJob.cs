@@ -326,7 +326,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         public async void ReadDataProcess(string cardNoCurrent)
         {
-
             var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
             if (currentScaleIn == "0")
             {
