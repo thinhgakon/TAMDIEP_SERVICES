@@ -194,19 +194,19 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     switch (type)
                     {
                         case CallType.CONG:
-                            CallInGatewayBySystem(vehiceCode);
+                            await CallInGatewayBySystem(vehiceCode);
                             break;
 
                         case CallType.BAI_CHO:
-                            CallInYardBySystem(vehiceCode);
+                            await CallInYardBySystem(vehiceCode);
                             break;
 
                         case CallType.CHUA_CO_DON:
-                            OrderNotExistBySystem(vehiceCode);
+                            await OrderNotExistBySystem(vehiceCode);
                             break;
 
                         case CallType.CHUA_NHAN_DON:
-                            OrderNotReceiveBySystem(vehiceCode);
+                            await OrderNotReceiveBySystem(vehiceCode);
                             break;
                     }
                 }
