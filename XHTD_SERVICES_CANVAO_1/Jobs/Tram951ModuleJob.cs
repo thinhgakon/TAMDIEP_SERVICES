@@ -328,6 +328,17 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
         {
             Thread.Sleep(50);
 
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
+            if (currentScaleIn == "0")
+            {
+                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
+            }
+            else
+            {
+                _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
+                return;
+            }
+
             SendNotificationHub($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
             SendNotificationAPI($"{SCALE_IS_LOCKING_RFID}", $"{cardNoCurrent}");
 
@@ -335,7 +346,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             {
                 _rfidlogger.Info($"1. Đang khóa nhận diện IsEnabledRfid={Program.IsEnabledRfid} => Kết thúc");
                 _rfidlogger.Info($"2. Chi tiết khóa nhận diện IsLockingRfid={Program.IsLockingRfid} --  scaleValue={Program.scaleValuesForResetLight.LastOrDefault()} -- EnabledRfidTime={Program.EnabledRfidTime} => Kết thúc");
-
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -348,6 +359,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
                 _rfidlogger.Info($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -359,6 +371,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             if (tmpPendingCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
                 _rfidlogger.Info($@"1. Tag PENDING khi có xe đang cân da duoc check truoc do => Ket thuc.");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -370,6 +383,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
                 _rfidlogger.Info($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
+                Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -382,20 +396,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             _logger.LogInfo($"Tag: {cardNoCurrent}");
             _logger.LogInfo("--------------------------------------------------------");
 
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
-            if (currentScaleIn == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALEIN", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
-            {
-                _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
-                return;
-            }
-
             // Nếu đang cân xe khác thì bỏ qua RFID hiện tại
             var scaleInfo = _scaleOperatingRepository.GetDetail(SCALE_CODE);
-
             if (Program.IsScalling)
             {
                 var timeToRelease = DateTime.Now.AddMinutes(-5);

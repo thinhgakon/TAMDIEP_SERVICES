@@ -521,6 +521,9 @@ namespace XHTD_SERVICES.Data.Repositories
                         case 1058:
                             source = "BUT_SON";
                             break;
+                        case 32537:
+                            source = "SONG_THAO";
+                            break;
                     }
 
                     var item = dbContext.Items.FirstOrDefault(x => x.Code == order.ItemId.ToString());
