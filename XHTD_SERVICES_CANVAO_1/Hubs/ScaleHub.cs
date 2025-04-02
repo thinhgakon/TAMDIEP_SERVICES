@@ -384,6 +384,17 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                     return;
                                 }
 
+                                if (Math.Abs(currentScaleValue - unladenWeight) < 1000)
+                                {
+                                    WriteLogInfo($"2.3. Trọng lượng hàng không đủ 1 tấn. Vui lòng xử lý thủ công!");
+
+                                    SendMessage("WarningNotification", $"Phát hiện khối lượng cân không hợp lệ, trọng lượng hàng không đủ 1 tấn. Vui lòng xử lý thủ công!");
+
+                                    Thread.Sleep(TIME_TO_RELEASE_SCALE);
+                                    await ReleaseScale();
+                                    return;
+                                }
+
                                 // 4. Gọi iERP API lưu giá trị cân
                                 WriteLogInfo($"4. Goi iERP API luu gia tri can");
 
