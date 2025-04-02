@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quartz;
-using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
-using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
-using System.Threading;
 using XHTD_SERVICES.Data.Entities;
-using System.Data.SqlClient;
 using XHTD_SERVICES.Data.Models.Values;
 using System.Data.Entity;
 
@@ -283,7 +274,6 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
         // Gọi vào cổng
         public async Task CallInGatewayBySystem(string vehicle)
         {
-            WMPLib.WindowsMediaPlayer wplayer = null;
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
@@ -291,30 +281,28 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaonhanhang.wav";
 
-                wplayer = new WMPLib.WindowsMediaPlayer();
-
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 30;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 30;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 70;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 70;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileInvite;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileInvite;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
                 var count = 0;
                 foreach (char c in vehicle)
                 {
                     count++;
-                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
-                    wplayer.settings.volume = 100;
-                    wplayer.controls.play();
+                    Program.wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    Program.wplayer.settings.volume = 100;
+                    Program.wplayer.controls.play();
                     if (count < 3)
                     {
                         await Task.Delay(700);
@@ -329,29 +317,20 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                 }
 
-                wplayer.URL = VoiceFileInOut;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
-                await Task.Delay(1200);
+                Program.wplayer.URL = VoiceFileInOut;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
+                await Task.Delay(3000);
             }
             catch (Exception ex)
             {
                 _gatewayCallLogger.LogError($"Lỗi trong CallInGatewayBySystem: {ex.Message}, StackTrace: {ex.StackTrace}");
-            }
-            finally
-            {
-                if (wplayer != null)
-                {
-                    wplayer.controls.stop();
-                    wplayer.close();
-                }
             }
         }
 
         // Gọi vào bãi chờ
         public async Task CallInYardBySystem(string vehicle)
         {
-            WMPLib.WindowsMediaPlayer wplayer = null;
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
@@ -360,35 +339,33 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 string VoiceFileInvite = $@"{PathAudioLib}/audio_generer/moixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/vaobaicho.wav";
 
-                wplayer = new WMPLib.WindowsMediaPlayer();
-
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 30;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 30;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 70;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 70;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileStart;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileStart;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(1500);
 
-                wplayer.URL = VoiceFileInvite;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileInvite;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
                 var count = 0;
                 foreach (char c in vehicle)
                 {
                     count++;
-                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
-                    wplayer.settings.volume = 100;
-                    wplayer.controls.play();
+                    Program.wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    Program.wplayer.settings.volume = 100;
+                    Program.wplayer.controls.play();
                     if (count < 3)
                     {
                         await Task.Delay(700);
@@ -403,29 +380,20 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                 }
 
-                wplayer.URL = VoiceFileInOut;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileInOut;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(3000);
             }
             catch (Exception ex)
             {
                 _gatewayCallLogger.LogError($"Lỗi trong CallInYardBySystem: {ex.Message}, StackTrace: {ex.StackTrace}");
             }
-            finally
-            {
-                if (wplayer != null)
-                {
-                    wplayer.controls.stop();
-                    wplayer.close();
-                }
-            }
         }
 
         // Chưa có đơn hàng
         public async Task OrderNotExistBySystem(string vehicle)
         {
-            WMPLib.WindowsMediaPlayer wplayer = null;
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
@@ -433,30 +401,28 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/xe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/chuacodonhang.wav";
 
-                wplayer = new WMPLib.WindowsMediaPlayer();
-
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 30;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 30;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 70;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 70;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileStart;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileStart;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(1500);
 
                 var count = 0;
                 foreach (char c in vehicle)
                 {
                     count++;
-                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
-                    wplayer.settings.volume = 100;
-                    wplayer.controls.play();
+                    Program.wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    Program.wplayer.settings.volume = 100;
+                    Program.wplayer.controls.play();
                     if (count < 3)
                     {
                         await Task.Delay(700);
@@ -471,29 +437,20 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                 }
 
-                wplayer.URL = VoiceFileInOut;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileInOut;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(3000);
             }
             catch (Exception ex)
             {
                 _gatewayCallLogger.LogError($"Lỗi trong OrderNotExistBySystem: {ex.Message}, StackTrace: {ex.StackTrace}");
             }
-            finally
-            {
-                if (wplayer != null)
-                {
-                    wplayer.controls.stop();
-                    wplayer.close();
-                }
-            }
         }
 
         // Chưa nhận đơn hàng
         public async Task OrderNotReceiveBySystem(string vehicle)
         {
-            WMPLib.WindowsMediaPlayer wplayer = null;
             try
             {
                 var PathAudioLib = $@"D:/ThuVienGoiLoa/AudioNormal";
@@ -501,30 +458,28 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                 string VoiceFileStart = $@"{PathAudioLib}/audio_generer/laixe.wav";
                 string VoiceFileInOut = $@"{PathAudioLib}/audio_generer/chuanhandonhang.wav";
 
-                wplayer = new WMPLib.WindowsMediaPlayer();
-
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 30;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 30;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileDing;
-                wplayer.settings.volume = 70;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileDing;
+                Program.wplayer.settings.volume = 70;
+                Program.wplayer.controls.play();
                 await Task.Delay(1200);
 
-                wplayer.URL = VoiceFileStart;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileStart;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(1500);
 
                 var count = 0;
                 foreach (char c in vehicle)
                 {
                     count++;
-                    wplayer.URL = $@"{PathAudioLib}/{c}.wav";
-                    wplayer.settings.volume = 100;
-                    wplayer.controls.play();
+                    Program.wplayer.URL = $@"{PathAudioLib}/{c}.wav";
+                    Program.wplayer.settings.volume = 100;
+                    Program.wplayer.controls.play();
                     if (count < 3)
                     {
                         await Task.Delay(700);
@@ -539,22 +494,14 @@ namespace XHTD_SERVICES_CALL_IN_GATEWAY.Jobs
                     }
                 }
 
-                wplayer.URL = VoiceFileInOut;
-                wplayer.settings.volume = 100;
-                wplayer.controls.play();
+                Program.wplayer.URL = VoiceFileInOut;
+                Program.wplayer.settings.volume = 100;
+                Program.wplayer.controls.play();
                 await Task.Delay(3000);
             }
             catch (Exception ex)
             {
                 _gatewayCallLogger.LogError($"Lỗi trong OrderNotReceiveBySystem: {ex.Message}, StackTrace: {ex.StackTrace}");
-            }
-            finally
-            {
-                if (wplayer != null)
-                {
-                    wplayer.controls.stop();
-                    wplayer.close();
-                }
             }
         }
     }

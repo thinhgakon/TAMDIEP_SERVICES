@@ -1,13 +1,6 @@
-﻿using Quartz.Impl;
-using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Quartz;
 using log4net;
 using XHTD_SERVICES_CALL_IN_GATEWAY.Jobs;
-using System.Configuration;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY.Schedules
 {
