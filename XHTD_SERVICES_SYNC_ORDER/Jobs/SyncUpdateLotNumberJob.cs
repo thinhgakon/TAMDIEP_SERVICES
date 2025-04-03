@@ -46,15 +46,17 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             try
             {
+                var timeStamp = DateTime.Now.AddDays(-2);
+
                 using (var dbContext = new XHTD_Entities())
                 {
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => (x.Step == (int)OrderStep.DA_CAN_RA ||
                                                              x.Step == (int)OrderStep.DA_HOAN_THANH ||
                                                              x.Step == (int)OrderStep.DA_GIAO_HANG) && 
-                                                             x.IsVoiced == false &&
-                                                             x.OrderDate >= DateTime.Now.AddDays(-2) &&
-                                                             string.IsNullOrEmpty(x.LotNumber))
+                                                             x.OrderDate >= timeStamp &&
+                                                             string.IsNullOrEmpty(x.LotNumber) &&
+                                                             x.IsVoiced == false)
                                                 .ToListAsync();
 
                     if (orders == null || orders.Count == 0)
