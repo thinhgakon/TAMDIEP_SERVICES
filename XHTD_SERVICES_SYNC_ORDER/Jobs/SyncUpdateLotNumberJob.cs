@@ -55,10 +55,15 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                                                              string.IsNullOrEmpty(x.LotNumber))
                                                 .ToListAsync();
 
+                    if (orders == null || orders.Count == 0)
+                    {
+                        _syncOrderLogger.LogInfo($"Không tìm thấy đơn hàng không có số lô => Kết thúc");
+                        return;
+                    }
+
                     foreach (var order in orders)
                     {
                         await _storeOrderOperatingRepository.UpdateLotNumber(order.DeliveryCode);
-
                         _syncOrderLogger.LogInfo($"Cập nhật số lô cho đơn {order.DeliveryCode} - {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     }
                 }
