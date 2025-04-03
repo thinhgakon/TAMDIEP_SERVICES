@@ -470,10 +470,12 @@ namespace XHTD_SERVICES.Data.Repositories
                 //                            );
 
                 var order = _appDbContext.tblStoreOrderOperatings
-                            .FirstOrDefault(x => x.OrderId == websaleOrder.id &&
-                                                 x.Step != (int)OrderStep.DA_CAN_VAO &&
-                                                 x.Step != (int)OrderStep.DANG_LAY_HANG &&
-                                                 x.Step != (int)OrderStep.DA_LAY_HANG);
+                            .FirstOrDefault(x => (x.OrderId == websaleOrder.id &&
+                                                  x.Step != (int)OrderStep.DA_CAN_VAO &&
+                                                  x.Step != (int)OrderStep.DANG_LAY_HANG &&
+                                                  x.Step != (int)OrderStep.DA_LAY_HANG) || 
+                                                  x.WeightIn == null ||
+                                                  x.WeightIn == 0);
 
                 if (order != null)
                 {
