@@ -451,23 +451,24 @@ namespace XHTD_SERVICES.Data.Repositories
                                        DateTime.ParseExact(websaleOrder.timeIn, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture) :
                                        DateTime.MinValue;
 
+                //var order = _appDbContext.tblStoreOrderOperatings
+                //            .FirstOrDefault(x => x.OrderId == websaleOrder.id
+                //                                &&
+                //                                (x.Step < (int)OrderStep.DA_CAN_VAO ||
+                //                                 x.Step == (int)OrderStep.DA_XAC_THUC ||
+                //                                 x.Step == (int)OrderStep.CHO_GOI_XE ||
+                //                                 x.Step == (int)OrderStep.DANG_GOI_XE ||
+                //                                 x.WeightIn == null ||
+                //                                 x.WeightIn == 0)
+                //                            );
+
                 var order = _appDbContext.tblStoreOrderOperatings
-                            .FirstOrDefault(x => x.OrderId == websaleOrder.id
-                                                &&
-                                                (
-                                                    x.Step < (int)OrderStep.DA_CAN_VAO
-                                                    ||
-                                                    x.Step == (int)OrderStep.DA_XAC_THUC
-                                                    ||
-                                                    x.Step == (int)OrderStep.CHO_GOI_XE
-                                                    ||
-                                                    x.Step == (int)OrderStep.DANG_GOI_XE
-                                                    ||
-                                                    x.WeightIn == null
-                                                    ||
-                                                    x.WeightIn == 0
-                                                )
-                                            );
+                            .FirstOrDefault(x => x.OrderId == websaleOrder.id &&
+                                               ((x.Step != (int)OrderStep.DA_CAN_VAO &&
+                                                 x.Step != (int)OrderStep.DANG_LAY_HANG &&
+                                                 x.Step != (int)OrderStep.DA_LAY_HANG) ||
+                                                 x.WeightIn == null ||
+                                                 x.WeightIn == 0));
 
                 if (order != null)
                 {
@@ -476,14 +477,9 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
                     order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    if (order.Step < (int)OrderStep.DA_CAN_VAO
-                      ||
-                      order.Step == (int)OrderStep.DA_XAC_THUC
-                      ||
-                      order.Step == (int)OrderStep.CHO_GOI_XE
-                      ||
-                      order.Step == (int)OrderStep.DANG_GOI_XE
-                      )
+                    if (order.Step != (int)OrderStep.DA_CAN_VAO && 
+                        order.Step != (int)OrderStep.DANG_LAY_HANG && 
+                        order.Step != (int)OrderStep.DA_LAY_HANG)
                     {
                         order.Step = (int)OrderStep.DA_CAN_VAO;
                     }
@@ -504,6 +500,12 @@ namespace XHTD_SERVICES.Data.Repositories
                         order.TimeConfirm2 = DateTime.Now.AddMinutes(-1);
                         order.LogProcessOrder = $@"{order.LogProcessOrder} #Đặt lại time vào cổng lúc {syncTime}; ";
                         order.LogJobAttach = $@"{order.LogJobAttach} #Đặt lại time vào cổng lúc {syncTime}; ";
+                    }
+
+                    if (order.WeightOut != null || order.WeightOutTime != null)
+                    {
+                        order.WeightOut = null;
+                        order.WeightOutTime = null;
                     }
 
                     if (weightIn > 0)
