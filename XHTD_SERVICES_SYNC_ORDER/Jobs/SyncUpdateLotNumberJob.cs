@@ -51,7 +51,9 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     var orders = await dbContext.tblStoreOrderOperatings
                                                 .Where(x => (x.Step == (int)OrderStep.DA_CAN_RA ||
                                                              x.Step == (int)OrderStep.DA_HOAN_THANH ||
-                                                             x.Step == (int)OrderStep.DA_GIAO_HANG) &&
+                                                             x.Step == (int)OrderStep.DA_GIAO_HANG) && 
+                                                             x.IsVoiced == false &&
+                                                             x.OrderDate >= DateTime.Now.AddDays(-2) &&
                                                              string.IsNullOrEmpty(x.LotNumber))
                                                 .ToListAsync();
 
