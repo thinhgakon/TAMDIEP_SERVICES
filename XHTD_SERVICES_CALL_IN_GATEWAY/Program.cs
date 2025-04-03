@@ -1,20 +1,10 @@
-﻿using RoundRobin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ServiceProcess;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY
 {
-    internal static class Program
+    static class Program
     {
-        public static readonly RoundRobinList<string> roundRobinList = new RoundRobinList<string>(
-                    new List<string>{
-                        "PCB30", "PCB40", "C91", "ROI", "CLINKER", "SLING", "JUMBO", "OTHER"
-                    }
-                );
+        public static WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
 
         /// <summary>
         /// The main entry point for the application.

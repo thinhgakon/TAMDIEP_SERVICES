@@ -5,7 +5,6 @@ using XHTD_SERVICES_CALL_IN_GATEWAY.Schedules;
 using XHTD_SERVICES.Data.Repositories;
 using XHTD_SERVICES_CALL_IN_GATEWAY.Jobs;
 using XHTD_SERVICES.Data.Entities;
-using XHTD_SERVICES.Helper;
 
 namespace XHTD_SERVICES_CALL_IN_GATEWAY
 {
