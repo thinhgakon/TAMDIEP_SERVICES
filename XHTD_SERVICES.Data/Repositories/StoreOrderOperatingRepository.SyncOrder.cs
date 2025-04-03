@@ -479,19 +479,13 @@ namespace XHTD_SERVICES.Data.Repositories
                     order.TimeConfirm3 = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
                     order.WeightInTime = timeInDate > DateTime.MinValue ? timeInDate : DateTime.Now;
 
-                    //if (order.Step < (int)OrderStep.DA_CAN_VAO
-                    //  ||
-                    //  order.Step == (int)OrderStep.DA_XAC_THUC
-                    //  ||
-                    //  order.Step == (int)OrderStep.CHO_GOI_XE
-                    //  ||
-                    //  order.Step == (int)OrderStep.DANG_GOI_XE
-                    //  )
-                    //{
-                    //    order.Step = (int)OrderStep.DA_CAN_VAO;
-                    //}
+                    if (order.Step != (int)OrderStep.DA_CAN_VAO && 
+                        order.Step != (int)OrderStep.DANG_LAY_HANG && 
+                        order.Step != (int)OrderStep.DA_LAY_HANG)
+                    {
+                        order.Step = (int)OrderStep.DA_CAN_VAO;
+                    }
 
-                    order.Step = (int)OrderStep.DA_CAN_VAO;
                     order.IndexOrder = 0;
                     order.CountReindex = 0;
                     order.WeightIn = Convert.ToInt32((weightIn * 1000));
