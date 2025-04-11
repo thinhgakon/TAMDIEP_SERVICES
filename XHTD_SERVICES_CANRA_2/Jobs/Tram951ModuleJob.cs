@@ -332,12 +332,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
         {
             Thread.Sleep(50);
 
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
-            if (currentScaleIn == "0")
-            {
-                Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
-            }
-            else
+            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT", EnvironmentVariableTarget.Machine);
+            if (currentScaleIn == "1")
             {
                 _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                 return;
@@ -350,7 +346,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             {
                 _rfidlogger.Info($"1. Đang khóa nhận diện IsEnabledRfid={Program.IsEnabledRfid} => Kết thúc");
                 _rfidlogger.Info($"2. Chi tiết khóa nhận diện IsLockingRfid={Program.IsLockingRfid} --  scaleValue={Program.scaleValuesForResetLight.LastOrDefault()} -- EnabledRfidTime={Program.EnabledRfidTime} => Kết thúc");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -363,7 +358,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             if (tmpInvalidCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddSeconds(-30)))
             {
                 _rfidlogger.Info($@"1. Tag KHONG HOP LE da duoc check truoc do => Ket thuc.");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -375,7 +369,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             if (tmpPendingCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-3)))
             {
                 _rfidlogger.Info($@"1. Tag PENDING khi có xe đang cân da duoc check truoc do => Ket thuc.");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -387,7 +380,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             if (tmpCardNoLst.Exists(x => x.CardNo.Equals(cardNoCurrent) && x.DateTime > DateTime.Now.AddMinutes(-7)))
             {
                 _rfidlogger.Info($"1. Tag HOP LE da duoc check truoc do => Ket thuc.");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -414,7 +406,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     )
                 {
                     _logger.LogInfo($"== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
-                    Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                     return;
                 }
                 else
@@ -440,7 +431,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpPendingCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             #endregion
@@ -460,7 +450,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
 
@@ -469,7 +458,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 Program.PendingVehicle = vehicleCodeCurrent;
                 Program.PendingCounter = 1;
                 _logger.LogInfo($"2. Xe mới {vehicleCodeCurrent} được thêm vào hàng đợi vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter = 1");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
@@ -484,7 +472,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 Program.PendingVehicle = vehicleCodeCurrent;
                 Program.PendingCounter = 1;
                 _logger.LogInfo($"2. ============================== Xe {vehicleCodeCurrent} bị chèn vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter reset về {Program.PendingCounter}");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
@@ -499,7 +486,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             else
             {
                 _logger.LogInfo($"2. Chưa đủ 15 lần đếm => Tiếp tục chờ");
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
@@ -518,7 +504,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_NHAN_DON)
@@ -533,7 +518,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.CHUA_XAC_THUC)
@@ -548,7 +532,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else if (checkValidCardNoResult == CheckValidRfidResultCode.XI_ROI_DA_CAN_VAO)
@@ -563,7 +546,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
                 var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
                 tmpInvalidCardNoLst.Add(newCardNoLog);
-                Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
                 return;
             }
             else
@@ -646,7 +628,6 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
                 }
             }
-            Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
         }
 
         public void TurnOnRedTrafficLight()
