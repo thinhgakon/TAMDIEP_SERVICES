@@ -628,7 +628,6 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     _logger.LogInfo($@"4. Lưu thông tin xe đang cân THẤT BẠI");
                 }
             }
-            Environment.SetEnvironmentVariable("SCALEIN", "0", EnvironmentVariableTarget.Machine);
         }
 
         public void TurnOnRedTrafficLight()
