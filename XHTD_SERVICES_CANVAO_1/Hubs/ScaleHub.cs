@@ -687,5 +687,19 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
             Console.WriteLine(message);
             _logger.Info(message);
         }
+
+        public void SetManualScaleInEnvironmentVariable(int value)
+        {
+            _logger.Info($"Set Manual Scale In Environment Variable: {value}");
+
+            Environment.SetEnvironmentVariable("SCALEIN", $"{value}", EnvironmentVariableTarget.Machine);
+        }
+
+        public void SetManualScaleOutEnvironmentVariable(int value)
+        {
+            _logger.Info($"Set Manual Scale Out Environment Variable: {value}");
+
+            Environment.SetEnvironmentVariable("SCALEOUT", $"{value}", EnvironmentVariableTarget.Machine);
+        }
     }
 }
