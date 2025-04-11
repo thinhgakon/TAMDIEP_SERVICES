@@ -424,7 +424,6 @@ namespace XHTD_SERVICES_CANRA_2.Hubs
                                     await DIBootstrapper.Init().Resolve<WeightBusiness>().UpdateWeightOut(scaleInfo.DeliveryCode, currentScaleValue);
 
                                     WriteLogInfo($"5.2. Update trạng thái cân ra");
-                                    //await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7(scaleInfo.DeliveryCode);
                                     await DIBootstrapper.Init().Resolve<StepBusiness>().UpdateOrderConfirm7ByVehicleCode(scaleInfo.Vehicle);
 
                                     //WriteLogInfo($"5.3. Gửi phiếu xuất kho");
