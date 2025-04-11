@@ -291,6 +291,7 @@
     <Compile Include="Jobs\LedJob.cs" />
     <Compile Include="Jobs\ReconnectPegasusJob.cs" />
     <Compile Include="Jobs\ScaleSocketJob.cs" />
+    <Compile Include="Jobs\ScaleStatusJob.cs" />
     <Compile Include="Jobs\SensorJob.cs" />
     <Compile Include="Jobs\TrafficLightJob.cs" />
     <Compile Include="Jobs\Tram951ModuleJob.cs" />
