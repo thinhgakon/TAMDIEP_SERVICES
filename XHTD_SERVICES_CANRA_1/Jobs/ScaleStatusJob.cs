@@ -43,14 +43,16 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
         public void SendScaleStatus()
         {
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEOUT");
-            SendNotificationHub(SCALE_ENV, currentScaleIn);
-            SendNotificationAPI(SCALE_ENV, currentScaleIn);
-        }
-
-        private void SendNotificationHub(string name, string message)
-        {
-            new ScaleHub().SendMessage(name, message);
+            try
+            {
+                var currentScaleOut = Environment.GetEnvironmentVariable("SCALEOUT", EnvironmentVariableTarget.Machine);
+                _logger.LogInfo($"ENV ========= SCALEOUT ========= {currentScaleOut}");
+                SendNotificationAPI(SCALE_ENV, currentScaleOut);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"ENV ========= SCALEOUT ========= {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+            }
         }
 
         private void SendNotificationAPI(string name, string message)
@@ -61,7 +63,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI SCALE_ENV ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
