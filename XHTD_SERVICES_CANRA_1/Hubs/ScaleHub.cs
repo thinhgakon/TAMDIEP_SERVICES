@@ -346,14 +346,14 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                 else
                                 {
                                     // Lưu giá trị cân thất bại
-                                    WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
-
                                     SendMessage("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
                                     SendMessageAPI("IsAutoScaleSuccess", $"FAILED");
                                     SendMessageAPI("WarningNotification", $"{scaleInfoResult.Message}. Vui lòng xử lý thủ công!");
 
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thất bại , khối lượng {currentScaleValue} kg, vui lòng cân thủ công, trân trọng! Chi tiết: {scaleInfoResult.Message}";
                                     SendNotificationByRight(RightCode.SCALE, pushMessage);
+
+                                    WriteLogInfo($"5.1. Lưu giá trị cân thất bại: Code={scaleInfoResult.Code} Message={scaleInfoResult.Message}");
 
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 }
