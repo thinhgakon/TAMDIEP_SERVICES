@@ -43,14 +43,16 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         public void SendScaleStatus()
         {
-            var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN");
-            SendNotificationHub(SCALE_ENV, currentScaleIn);
-            SendNotificationAPI(SCALE_ENV, currentScaleIn);
-        }
-
-        private void SendNotificationHub(string name, string message)
-        {
-            new ScaleHub().SendMessage(name, message);
+            try
+            {
+                var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN", EnvironmentVariableTarget.Machine);
+                _logger.LogInfo($"ENV ========= SCALEIN ========= {currentScaleIn}");
+                SendNotificationAPI(SCALE_ENV, currentScaleIn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"ENV ========= SCALEIN ========= {ex.Message} --- {ex.StackTrace} --- {ex.InnerException}");
+            }
         }
 
         private void SendNotificationAPI(string name, string message)
@@ -61,7 +63,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
             catch (Exception ex)
             {
-                _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+                _logger.LogInfo($"SendNotificationAPI SCALE_ENV ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
     }
