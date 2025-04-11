@@ -12,7 +12,7 @@ namespace XHTD_SERVICES.Data.Common
 
         public static readonly string SIGNALR_START_ON_GATEWAY_OUT_SERVICE_URL = "http://192.168.128.73:8081";
 
-        public static readonly string SIGNALR_START_ON_TRAM951_1_SERVICE_URL = "http://10.0.1.41:8083";
+        public static readonly string SIGNALR_START_ON_TRAM951_1_SERVICE_URL = "http://192.168.128.73:8082";
 
         public static readonly string SIGNALR_START_ON_TRAM951_2_SERVICE_URL = "http://10.0.1.41:8084";
 
