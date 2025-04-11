@@ -317,7 +317,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
                         }
                     }
                 }
-                catch (Exception err) 
+                catch (Exception err)
                 {
                     _logger.LogError($@"ReadDataFromPegasus ERROR: {err.StackTrace} -- {err.Message} -- {err.InnerException}");
                     Program.UHFConnected = false;
