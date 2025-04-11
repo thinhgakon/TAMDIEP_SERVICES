@@ -102,6 +102,16 @@ namespace XHTD_SERVICES_CANRA_1.Schedules
                     .RepeatForever())
                 .Build();
             await _scheduler.ScheduleJob(sensorJob, sensorTrigger);
+
+            IJobDetail scaleStatusJob = JobBuilder.Create<ScaleStatusJob>().Build();
+            ITrigger scaleStatusTrigger = TriggerBuilder.Create()
+                .WithPriority(1)
+                 .StartNow()
+                 .WithSimpleSchedule(x => x
+                     .WithIntervalInSeconds(1)
+                    .RepeatForever())
+                .Build();
+            await _scheduler.ScheduleJob(scaleStatusJob, scaleStatusTrigger);
         }
     }
 }

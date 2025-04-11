@@ -25,7 +25,7 @@ namespace XHTD_SERVICES.Helper
             var responseData = JsonConvert.DeserializeObject<GetDMSTokenResponse>(content);
             string strToken = responseData.access_token;
 
-            if(strToken != "")
+            if (strToken != "")
             {
                 HttpRequest.SendDMSMsg(strToken, notification);
             }
@@ -250,7 +250,7 @@ namespace XHTD_SERVICES.Helper
 
         public void SendScale1Sensor(string sensorCode, string status)
         {
-            HttpRequest.SendScale1Sensor(sensorCode,status);
+            HttpRequest.SendScale1Sensor(sensorCode, status);
         }
 
         public void SendScale1Info(DateTime time, string value)
@@ -261,6 +261,16 @@ namespace XHTD_SERVICES.Helper
         public void SendScale1Message(string name, string message)
         {
             HttpRequest.SendScale1Message(name, message);
+        }
+
+        public void SendScale1CountingVehicle(string name, string vehicle, int counter)
+        {
+            HttpRequest.SendScale1CountingVehicle(name, vehicle, counter);
+        }
+
+        public void SendScale2CountingVehicle(string name, string vehicle, int counter)
+        {
+            HttpRequest.SendScale2CountingVehicle(name, vehicle, counter);
         }
 
         public void SendScale2Sensor(string sensorCode, string status)

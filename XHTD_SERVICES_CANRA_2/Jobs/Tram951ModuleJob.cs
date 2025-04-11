@@ -68,6 +68,10 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_2_CURRENT_RFID";
 
+        protected readonly string IS_PENDING_VEHICLE_SCALE = "IS_PENDING_VEHICLE_SCALE_2";
+
+        protected readonly string IS_CONFIRM_VEHICLE_SCALE = "IS_CONFIRM_VEHICLE_SCALE_2";
+
         private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -466,12 +470,14 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 Program.PendingCounter = 1;
                 _logger.LogInfo($"2. Xe mới {vehicleCodeCurrent} được thêm vào hàng đợi vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter = 1");
                 Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
             else if (Program.PendingVehicle.ToUpper() == vehicleCodeCurrent.ToUpper())
             {
                 Program.PendingCounter++;
                 _logger.LogInfo($"2. Xe {vehicleCodeCurrent} tiếp tục được phát hiện. Counter = {Program.PendingCounter}");
+                SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
             }
             else
             {
@@ -479,6 +485,7 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 Program.PendingCounter = 1;
                 _logger.LogInfo($"2. ============================== Xe {vehicleCodeCurrent} bị chèn vào lúc {DateTime.Now.ToString("HH:mm:ss")}. Counter reset về {Program.PendingCounter}");
                 Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
 
@@ -487,11 +494,13 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 Program.PendingVehicle = null;
                 Program.PendingCounter = 0;
                 _logger.LogInfo($"2. Xe {vehicleCodeCurrent} đạt Counter = 15 => Đã xác định được xe đang cân => Xử lý cân");
+                SendCountingVehicle(IS_CONFIRM_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
             }
             else
             {
                 _logger.LogInfo($"2. Chưa đủ 15 lần đếm => Tiếp tục chờ");
                 Environment.SetEnvironmentVariable("SCALEOUT", "0", EnvironmentVariableTarget.Machine);
+                SendCountingVehicle(IS_PENDING_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
                 return;
             }
 
@@ -679,6 +688,18 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
             catch (Exception ex)
             {
                 _logger.LogInfo($"SendNotificationAPI ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
+            }
+        }
+
+        private void SendCountingVehicle(string name, string vehicle, int number)
+        {
+            try
+            {
+                _notification.SendScale2CountingVehicle(name, vehicle, number);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInfo($"SendScale2CountingVehicle ERR: {ex.Message} == {ex.StackTrace} == {ex.InnerException}");
             }
         }
 

@@ -832,6 +832,24 @@ namespace XHTD_SERVICES.Helper
             return response;
         }
 
+        public static IRestResponse SendScale1CountingVehicle(string name, string vehicle, int counter)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendScale1CountingVehicle"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new { name, vehicle, counter });
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
         public static IRestResponse SendScale2Sensor(string sensorCode, string status)
         {
             var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
@@ -877,6 +895,24 @@ namespace XHTD_SERVICES.Helper
 
             request.Method = Method.POST;
             request.AddJsonBody(new { name, message });
+            request.AddHeader("Accept", "application/json");
+            request.AddHeader("Content-Type", "application/json");
+            request.RequestFormat = DataFormat.Json;
+
+            IRestResponse response = client.Execute(request);
+
+            return response;
+        }
+
+        public static IRestResponse SendScale2CountingVehicle(string name, string vehicle, int counter)
+        {
+            var apiUrl = ConfigurationManager.GetSection("API_DMS/Url") as NameValueCollection;
+
+            var client = new RestClient(apiUrl["SendScale2CountingVehicle"]);
+            var request = new RestRequest();
+
+            request.Method = Method.POST;
+            request.AddJsonBody(new { name, vehicle, counter });
             request.AddHeader("Accept", "application/json");
             request.AddHeader("Content-Type", "application/json");
             request.RequestFormat = DataFormat.Json;
