@@ -111,8 +111,6 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                     Program.EnabledRfidTime = null;
 
                     Program.IsLockingScale = false;
-
-                    await ReleaseScale();
                 }
 
                 if (Program.IsEnabledRfid && Program.EnabledRfidTime != null && Program.EnabledRfidTime < time.AddSeconds(-1 * TIME_TO_READ_RFID))
