@@ -450,7 +450,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                                         {
                                             updateLotNumberResult = false;
                                         }
-
                                     }
                                 }
                                 else
