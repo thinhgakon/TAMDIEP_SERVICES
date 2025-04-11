@@ -334,7 +334,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             var currentScaleIn = Environment.GetEnvironmentVariable("SCALEIN", EnvironmentVariableTarget.Machine);
             if (currentScaleIn == "1")
-            { 
+            {
                 _logger.LogInfo($"ENV== Can {SCALE_CODE} dang hoat dong => Ket thuc ==");
                 return;
             }
@@ -567,8 +567,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             // 3. Xác định xe vào hay ra
             var isLuongVao = true;
 
-            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO 
-                || currentOrder.Step == (int)OrderStep.DA_XAC_THUC 
+            if (currentOrder.Step < (int)OrderStep.DA_CAN_VAO
+                || currentOrder.Step == (int)OrderStep.DA_XAC_THUC
                 || currentOrder.Step == (int)OrderStep.CHO_GOI_XE
                 || currentOrder.Step == (int)OrderStep.DANG_GOI_XE
                 )
