@@ -592,6 +592,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                     // 5. Đánh dấu trạng thái đang cân
                     _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
@@ -615,6 +616,7 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
 
                     // 5. Đánh dấu trạng thái đang cân
                     _logger.LogInfo($@"5. Đánh dấu CAN đang hoạt động: IsScalling = true");
+                    Environment.SetEnvironmentVariable("SCALEOUT", "1", EnvironmentVariableTarget.Machine);
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
