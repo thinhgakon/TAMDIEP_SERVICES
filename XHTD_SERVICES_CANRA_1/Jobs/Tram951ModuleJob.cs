@@ -24,6 +24,7 @@ using System.Net.NetworkInformation;
 
 namespace XHTD_SERVICES_CANRA_1.Jobs
 {
+    [DisallowConcurrentExecution]
     public class Tram951ModuleJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
