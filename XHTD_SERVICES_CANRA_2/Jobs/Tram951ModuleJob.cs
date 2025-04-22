@@ -69,6 +69,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_2_CURRENT_RFID";
 
+        protected readonly string SCALE_CURRENT_VEHICLE = "SCALE_2_CURRENT_VEHICLE";
+
         protected readonly string IS_PENDING_VEHICLE_SCALE = "IS_PENDING_VEHICLE_SCALE_2";
 
         protected readonly string IS_CONFIRM_VEHICLE_SCALE = "IS_CONFIRM_VEHICLE_SCALE_2";
@@ -453,6 +455,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 tmpInvalidCardNoLst.Add(newCardNoLog);
                 return;
             }
+
+            SendNotificationAPI(SCALE_CURRENT_VEHICLE, vehicleCodeCurrent);
 
             if (string.IsNullOrEmpty(Program.PendingVehicle))
             {
