@@ -133,9 +133,10 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
 
         static (string, string, string, string) GetStringValue(string input)
         {
-            string pattern = $@"\[1\](?<gt1>ON|OFF)\[2\](?<gt2>ON|OFF)\[3\](?<gt3>ON|OFF)\[4\](?<gt4>ON|OFF)\[!\]";
-            Match match = Regex.Match(input, pattern);
+            string pattern1 = $@"\[1\](?<gt1>ON|OFF)\[2\](?<gt2>ON|OFF)\[3\](?<gt3>ON|OFF)\[4\](?<gt4>ON|OFF)\[!\]";
+            string pattern2 = $@"\[1\](?<gt1>ON|OFF)\[2\](?<gt2>ON|OFF)\[!\]";
 
+            Match match = Regex.Match(input, pattern1);
             if (match.Success)
             {
                 return (
@@ -143,6 +144,17 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                     match.Groups["gt2"].Value,
                     match.Groups["gt3"].Value,
                     match.Groups["gt4"].Value
+                );
+            }
+
+            match = Regex.Match(input, pattern2);
+            if (match.Success)
+            {
+                return (
+                    match.Groups["gt1"].Value,
+                    match.Groups["gt2"].Value,
+                    string.Empty,
+                    string.Empty
                 );
             }
 
