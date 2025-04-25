@@ -24,6 +24,7 @@ using System.Net.NetworkInformation;
 
 namespace XHTD_SERVICES_CANRA_2.Jobs
 {
+    [DisallowConcurrentExecution]
     public class Tram951ModuleJob : IJob
     {
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
@@ -67,6 +68,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
         protected const string SERVICE_BARRIER_ACTIVE_CODE = "TRAM951_2_BARRIER_ACTIVE";
 
         protected readonly string SCALE_CURRENT_RFID = "SCALE_2_CURRENT_RFID";
+
+        protected readonly string SCALE_CURRENT_VEHICLE = "SCALE_2_CURRENT_VEHICLE";
 
         protected readonly string IS_PENDING_VEHICLE_SCALE = "IS_PENDING_VEHICLE_SCALE_2";
 
@@ -452,6 +455,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 tmpInvalidCardNoLst.Add(newCardNoLog);
                 return;
             }
+
+            SendNotificationAPI(SCALE_CURRENT_VEHICLE, vehicleCodeCurrent);
 
             if (string.IsNullOrEmpty(Program.PendingVehicle))
             {
