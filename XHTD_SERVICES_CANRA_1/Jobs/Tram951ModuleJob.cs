@@ -605,10 +605,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
-
-                    //// 6. Bat den do
-                    //_logger.LogInfo($"6. Bật đèn đỏ");
-                    //TurnOnRedTrafficLight();
                 }
                 else
                 {
@@ -629,10 +625,6 @@ namespace XHTD_SERVICES_CANRA_1.Jobs
                     Program.IsScalling = true;
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
-
-                    //// 6. Bat den do
-                    //_logger.LogInfo($"6. Bật đèn đỏ");
-                    //TurnOnRedTrafficLight();
                 }
                 else
                 {
