@@ -144,7 +144,7 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                     SendMessageAPI($"{VEHICLE_STATUS}", "    ");
                     SendMessageAPI($"{SCALE_DELIVERY_CODE}", "  ");
                     SendMessageAPI("Notification", "    ");
-                    SendMessageAPI("WarningNotification ", "    ");
+                    SendMessageAPI("WarningNotification", "    ");
                     SendMessageAPI($"{SCALE_IS_LOCKING_RFID}", "  ");
 
                     Program.scaleValues.Clear();
@@ -233,7 +233,7 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                             {
                                 WriteLogInfo($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
-                                SendMessage("WarningNotification ", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
+                                SendMessage("WarningNotification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
                                 SendMessageAPI("WarningNotification ", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);

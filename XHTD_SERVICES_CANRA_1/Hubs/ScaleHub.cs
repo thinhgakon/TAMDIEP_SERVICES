@@ -336,7 +336,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     }
 
                                     // 8. Bật đèn xanh
-                                    WriteLogInfo($"8. Bat den xanh");
+                                    WriteLogInfo($"8. Bật đèn xanh");
                                     TurnOnGreenTrafficLight();
 
                                     WriteLogInfo($"9. Gửi thông báo qua app");
