@@ -389,7 +389,7 @@ namespace XHTD_SERVICES_CANRA_1.Hubs
                                     WriteLogInfo($"2.3. Trọng lượng hàng không đủ 1 tấn. Vui lòng xử lý thủ công!");
 
                                     SendMessage("WarningNotification", $"Phát hiện khối lượng cân không hợp lệ, trọng lượng hàng không đủ 1 tấn. Vui lòng xử lý thủ công!");
-                                    
+
                                     Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                     await ReleaseScale();
                                     return;
