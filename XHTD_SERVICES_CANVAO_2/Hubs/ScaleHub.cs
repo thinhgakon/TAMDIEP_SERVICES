@@ -234,7 +234,7 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                                 WriteLogInfo($"2. Khong co thong tin xe dang can trong table Scale voi code = {SCALE_CODE}");
 
                                 SendMessage("WarningNotification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
-                                SendMessageAPI("WarningNotification ", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
+                                SendMessageAPI("WarningNotification", $"Không có thông tin xe đang cân. Vui lòng xử lý thủ công!");
 
                                 Thread.Sleep(TIME_TO_RELEASE_SCALE);
                                 await ReleaseScale();
