@@ -487,6 +487,10 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 Program.PendingCounter = 0;
                 _logger.LogInfo($"2. Xe {vehicleCodeCurrent} đạt Counter = 15 => Đã xác định được xe đang cân => Xử lý cân");
                 SendCountingVehicle(IS_CONFIRM_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
+
+                // Bat den do
+                _logger.LogInfo($"Bật đèn đỏ");
+                TurnOnRedTrafficLight();
             }
             else
             {
@@ -602,9 +606,9 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
 
-                    // 6. Bat den do
-                    _logger.LogInfo($"6. Bật đèn đỏ");
-                    TurnOnRedTrafficLight();
+                    //// 6. Bat den do
+                    //_logger.LogInfo($"6. Bật đèn đỏ");
+                    //TurnOnRedTrafficLight();
                 }
                 else
                 {
@@ -626,9 +630,9 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                     Program.InProgressDeliveryCode = currentOrder.DeliveryCode;
                     Program.InProgressVehicleCode = currentOrder.Vehicle;
 
-                    // 6. Bat den do
-                    _logger.LogInfo($"6. Bật đèn đỏ");
-                    TurnOnRedTrafficLight();
+                    //// 6. Bat den do
+                    //_logger.LogInfo($"6. Bật đèn đỏ");
+                    //TurnOnRedTrafficLight();
                 }
                 else
                 {
