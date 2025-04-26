@@ -616,7 +616,7 @@ namespace XHTD_SERVICES_CANVAO_2.Hubs
                 if (isHasNotification)
                 {
                     SendMessage("Notification", $"Tắt đèn chiều ra thành công");
-                    SendMessageAPI("Notification", $"BTắt đèn chiều ra thành công");
+                    SendMessageAPI("Notification", $"Tắt đèn chiều ra thành công");
                 }
                 WriteLogInfo($@"Bật thành công");
             }
