@@ -22,9 +22,13 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
 
         protected readonly string SCALE_CODE = ScaleCode.CODE_SCALE_1;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
+        protected readonly string SCALE_1_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
+        protected readonly string SCALE_1_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
+
+        protected readonly string SCALE_2_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
+
+        protected readonly string SCALE_2_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
 
         protected readonly string SCALE_STATUS = "SCALE_1_STATUS";
 
@@ -337,7 +341,7 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
 
                                     // 8. Bật đèn xanh
                                     WriteLogInfo($"8. Bật đèn xanh");
-                                    TurnOnGreenTrafficLight();
+                                    TurnOnGreenTrafficLight(SCALE_1_DGT_IN_CODE, SCALE_1_DGT_OUT_CODE);
 
                                     WriteLogInfo($"9. Gửi thông báo qua app");
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân vào tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển đến bãi chờ lấy hàng, trân trọng!";
@@ -432,7 +436,7 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
 
                                     // 7. Bật đèn xanh
                                     WriteLogInfo($"7. Bat den xanh");
-                                    TurnOnGreenTrafficLight();
+                                    TurnOnGreenTrafficLight(SCALE_1_DGT_IN_CODE, SCALE_1_DGT_OUT_CODE);
 
                                     WriteLogInfo($"8. Gửi thông báo qua app");
                                     var pushMessage = $"Đơn hàng {deliveryCodes} phương tiện {currentOrder.Vehicle} cân ra tự động thành công, khối lượng {currentScaleValue} kg, vui lòng di chuyển ra cổng bảo vệ, trân trọng!";
@@ -496,10 +500,10 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
             await DIBootstrapper.Init().Resolve<ScaleBusiness>().ReleaseScale(SCALE_CODE);
         }
 
-        public void TurnOnGreenTrafficLight(bool isHasNotification = false)
+        public void TurnOnGreenTrafficLight(string trafficLightIn, string trafficLightOut, bool isHasNotification = false)
         {
             WriteLogInfo($@"Bật đèn xanh chiều vào");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_IN_CODE))
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(trafficLightIn))
             {
                 if (isHasNotification)
                 {
@@ -521,7 +525,7 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
             Thread.Sleep(500);
 
             WriteLogInfo($@"Bật đèn xanh chiều ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(SCALE_DGT_OUT_CODE))
+            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnGreenTrafficLight(trafficLightOut))
             {
                 if (isHasNotification)
                 {
@@ -536,96 +540,6 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
                 {
                     SendMessage("Notification", $"Bật đèn xanh chiều ra thất bại");
                     SendMessageAPI("Notification", $"Bật đèn xanh chiều ra thất bại");
-                }
-                WriteLogInfo($@"Bật thất bại");
-            }
-        }
-
-        public void TurnOnRedTrafficLight(bool isHasNotification = false)
-        {
-            WriteLogInfo($@"Bật đèn đỏ chiều vào");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_IN_CODE))
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Bật đèn đỏ chiều vào thành công");
-                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều vào thành công");
-                }
-                WriteLogInfo($@"Bật thành công");
-            }
-            else
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Bật đèn đỏ chiều vào thất bại");
-                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều vào thất bại");
-                }
-                WriteLogInfo($@"Bật thất bại");
-            }
-
-            Thread.Sleep(500);
-
-            WriteLogInfo($@"Bật đèn đỏ chiều ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOnRedTrafficLight(SCALE_DGT_OUT_CODE))
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Bật đèn đỏ chiều ra thành công");
-                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều ra thành công");
-                }
-                WriteLogInfo($@"Bật thành công");
-            }
-            else
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Bật đèn đỏ chiều ra thất bại");
-                    SendMessageAPI("Notification", $"Bật đèn đỏ chiều ra thất bại");
-                }
-                WriteLogInfo($@"Bật thất bại");
-            }
-        }
-
-        public void TurnOffTrafficLight(bool isHasNotification = false)
-        {
-            WriteLogInfo($@"Tắt đèn chiều vào");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_IN_CODE))
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Tắt đèn chiều vào thành công");
-                    SendMessageAPI("Notification", $"Tắt đèn chiều vào thành công");
-                }
-                WriteLogInfo($@"Bật thành công");
-            }
-            else
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Tắt đèn chiều vào thất bại");
-                    SendMessageAPI("Notification", $"Tắt đèn chiều vào thất bại");
-                }
-                WriteLogInfo($@"Bật thất bại");
-            }
-
-            Thread.Sleep(500);
-
-            WriteLogInfo($@"Tắt đèn chiều ra");
-            if (DIBootstrapper.Init().Resolve<TrafficLightControl>().TurnOffTrafficLight(SCALE_DGT_OUT_CODE))
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Tắt đèn chiều ra thành công");
-                    SendMessageAPI("Notification", $"Tắt đèn chiều ra thành công");
-                }
-                WriteLogInfo($@"Bật thành công");
-            }
-            else
-            {
-                if (isHasNotification)
-                {
-                    SendMessage("Notification", $"Tắt đèn chiều ra thất bại");
-                    SendMessageAPI("Notification", $"Tắt đèn chiều ra thất bại");
                 }
                 WriteLogInfo($@"Bật thất bại");
             }
@@ -699,6 +613,16 @@ namespace XHTD_SERVICES_CANVAO_1.Hubs
             _logger.Info($"Set Manual Scale Out Environment Variable: {value}");
 
             Environment.SetEnvironmentVariable("SCALEOUT", $"{value}", EnvironmentVariableTarget.Machine);
+        }
+
+        public void TurnOnGreenTrafficLightScaleInManual()
+        {
+            TurnOnGreenTrafficLight(SCALE_1_DGT_IN_CODE, SCALE_1_DGT_OUT_CODE);
+        }
+
+        public void TurnOnGreenTrafficLightScaleOutManual()
+        {
+            TurnOnGreenTrafficLight(SCALE_2_DGT_IN_CODE, SCALE_2_DGT_OUT_CODE);
         }
     }
 }
