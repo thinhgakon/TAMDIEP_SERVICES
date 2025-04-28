@@ -488,6 +488,7 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
                 _logger.LogInfo($"2. Xe {vehicleCodeCurrent} đạt Counter = 15 => Đã xác định được xe đang cân => Xử lý cân");
                 SendCountingVehicle(IS_CONFIRM_VEHICLE_SCALE, vehicleCodeCurrent, Program.PendingCounter);
 
+                Program.IsLockingRfid = true;
                 // Bat den do
                 _logger.LogInfo($"Bật đèn đỏ");
                 TurnOnRedTrafficLight();
@@ -559,8 +560,6 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             }
             else
             {
-                Program.IsLockingRfid = true;
-
                 SendNotificationHub($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} có đơn hàng hợp lệ");
                 SendNotificationAPI($"{VEHICLE_STATUS}", $"{vehicleCodeCurrent} có đơn hàng hợp lệ");
 
