@@ -16,13 +16,21 @@ namespace XHTD_SERVICES_CANVAO_2.Devices
 
         protected readonly TCPTrafficLight _trafficLight;
 
-        protected readonly string SCALE_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
+        protected readonly string SCALE_1_DGT_IN_CODE = ScaleCode.CODE_SCALE_1_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
+        protected readonly string SCALE_1_DGT_OUT_CODE = ScaleCode.CODE_SCALE_1_DGT_OUT;
 
-        protected readonly string SCALE_DGT_IN_URL = "192.168.13.178";
+        protected readonly string SCALE_2_DGT_IN_CODE = ScaleCode.CODE_SCALE_2_DGT_IN;
 
-        protected readonly string SCALE_DGT_OUT_URL = "192.168.13.185";
+        protected readonly string SCALE_2_DGT_OUT_CODE = ScaleCode.CODE_SCALE_2_DGT_OUT;
+
+        protected readonly string SCALE_1_DGT_IN_URL = "192.168.13.178";
+
+        protected readonly string SCALE_1_DGT_OUT_URL = "192.168.13.185";
+
+        protected readonly string SCALE_2_DGT_IN_URL = "192.168.13.184";
+
+        protected readonly string SCALE_2_DGT_OUT_URL = "192.168.13.179";
 
         public TrafficLightControl(
             TCPTrafficLight trafficLight
@@ -33,15 +41,23 @@ namespace XHTD_SERVICES_CANVAO_2.Devices
 
         public string GetIpAddress(string scaleCode)
         {
-            var ipAddress = SCALE_DGT_IN_URL;
+            var ipAddress = SCALE_1_DGT_IN_URL;
 
-            if (scaleCode == SCALE_DGT_IN_CODE)
+            if (scaleCode == SCALE_1_DGT_IN_CODE)
             {
-                ipAddress = SCALE_DGT_IN_URL;
+                ipAddress = SCALE_1_DGT_IN_URL;
             }
-            else if (scaleCode == SCALE_DGT_OUT_CODE)
+            else if (scaleCode == SCALE_1_DGT_OUT_CODE)
             {
-                ipAddress = SCALE_DGT_OUT_URL;
+                ipAddress = SCALE_1_DGT_OUT_URL;
+            }
+            else if (scaleCode == SCALE_2_DGT_IN_CODE)
+            {
+                ipAddress = SCALE_2_DGT_IN_URL;
+            }
+            else if (scaleCode == SCALE_2_DGT_OUT_CODE)
+            {
+                ipAddress = SCALE_2_DGT_OUT_URL;
             }
 
             return ipAddress;
