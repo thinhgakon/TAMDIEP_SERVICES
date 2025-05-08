@@ -620,8 +620,8 @@ namespace XHTD_SERVICES_CANRA_2.Jobs
                 }
             }
 
-             if (isLuongVao)
-             {
+            if (isLuongVao)
+            {
                 // 4. Lưu thông tin xe đang cân
                 var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                 if (isUpdatedOrder)
