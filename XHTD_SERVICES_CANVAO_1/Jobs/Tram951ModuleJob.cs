@@ -75,7 +75,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         protected readonly string IS_CONFIRM_VEHICLE_SCALE = "IS_CONFIRM_VEHICLE_SCALE_1";
 
-        protected readonly string SERVICE_DIRECTION_CANVAO_1 = "DIRECTION_CANVAO_1";
+        protected readonly string SERVICE_DIRECTION_SCALE = "DIRECTION_CANVAO_1";
 
         protected static string directionScale = null;
 
@@ -181,7 +181,7 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var sensorActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_SENSOR_ACTIVE_CODE);
             var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
-            var directionParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_DIRECTION_CANVAO_1);
+            var directionParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_DIRECTION_SCALE);
 
             directionScale = directionParameter?.Value ?? null;
 
