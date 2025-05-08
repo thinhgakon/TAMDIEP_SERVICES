@@ -75,6 +75,10 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
         protected readonly string IS_CONFIRM_VEHICLE_SCALE = "IS_CONFIRM_VEHICLE_SCALE_1";
 
+        protected readonly string SERVICE_DIRECTION_CANVAO_1 = "DIRECTION_CANVAO_1";
+
+        protected static string directionScale = null;
+
         private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -177,6 +181,9 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var sensorActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_SENSOR_ACTIVE_CODE);
             var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
+            var directionParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_DIRECTION_CANVAO_1);
+
+            directionScale = directionParameter?.Value ?? null;
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -592,6 +599,29 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
 
             if (isLuongVao)
             {
+                if (directionScale == "OUT")
+                {
+                    _logger.LogInfo($"Không cho cân ngược chiều => Ket thuc");
+
+                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                    tmpInvalidCardNoLst.Add(newCardNoLog);
+                    return;
+                }
+            }
+            else
+            {
+                if (directionScale == "IN")
+                {
+                    _logger.LogInfo($"Không cho cân ngược chiều => Ket thuc");
+
+                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                    tmpInvalidCardNoLst.Add(newCardNoLog);
+                    return;
+                }
+            }
+
+            if (isLuongVao)
+            {
                 // 4. Lưu thông tin xe đang cân
                 var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmEntrace(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                 if (isUpdatedOrder)
@@ -612,8 +642,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
             else
             {
-                // 4. Lưu thông tin xe đang cân
-                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                    // 4. Lưu thông tin xe đang cân
+                    var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                 if (isUpdatedOrder)
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
