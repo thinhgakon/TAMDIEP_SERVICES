@@ -75,6 +75,10 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
 
         protected readonly string IS_CONFIRM_VEHICLE_SCALE = "IS_CONFIRM_VEHICLE_SCALE_1";
 
+        protected readonly string SERVICE_DIRECTION_SCALE = "DIRECTION_CANVAO_2";
+
+        protected static string directionScale = null;
+
         private static bool isActiveService = true;
 
         private IntPtr h21 = IntPtr.Zero;
@@ -177,6 +181,9 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             var activeParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_ACTIVE_CODE);
             var sensorActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_SENSOR_ACTIVE_CODE);
             var barrierActiveParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_BARRIER_ACTIVE_CODE);
+            var directionParameter = parameters.FirstOrDefault(x => x.Code == SERVICE_DIRECTION_SCALE);
+
+            directionScale = directionParameter?.Value ?? null;
 
             if (activeParameter == null || activeParameter.Value == "0")
             {
@@ -588,6 +595,29 @@ namespace XHTD_SERVICES_CANVAO_2.Jobs
             {
                 isLuongVao = false;
                 _logger.LogInfo($"3. Xe can RA");
+            }
+
+            if (isLuongVao)
+            {
+                if (directionScale == "OUT")
+                {
+                    _logger.LogInfo($"Không cho cân ngược chiều => Ket thuc");
+
+                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                    tmpInvalidCardNoLst.Add(newCardNoLog);
+                    return;
+                }
+            }
+            else
+            {
+                if (directionScale == "IN")
+                {
+                    _logger.LogInfo($"Không cho cân ngược chiều => Ket thuc");
+
+                    var newCardNoLog = new CardNoLog { CardNo = cardNoCurrent, DateTime = DateTime.Now };
+                    tmpInvalidCardNoLst.Add(newCardNoLog);
+                    return;
+                }
             }
 
             if (isLuongVao)
