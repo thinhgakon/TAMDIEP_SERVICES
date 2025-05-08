@@ -642,8 +642,8 @@ namespace XHTD_SERVICES_CANVAO_1.Jobs
             }
             else
             {
-                    // 4. Lưu thông tin xe đang cân
-                    var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
+                // 4. Lưu thông tin xe đang cân
+                var isUpdatedOrder = await _scaleOperatingRepository.UpdateWhenConfirmExit(SCALE_CODE, currentOrder.DeliveryCode, currentOrder.Vehicle, currentOrder.CardNo);
                 if (isUpdatedOrder)
                 {
                     _logger.LogInfo($"4. Lưu thông tin xe đang cân thành công");
