@@ -479,6 +479,15 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
                 Program.IsLockingRfid = true;
             }
 
+            try
+            {
+
+            }
+            catch (Exception ex) {
+                Program.IsLockingRfid = false;
+                _logger.LogInfo($"10. ERROR DATA: {ex.Message} -- {ex.InnerException} -- {ex.StackTrace}");
+            }
+
             var currentDeliveryCode = currentOrder.DeliveryCode;
             _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
