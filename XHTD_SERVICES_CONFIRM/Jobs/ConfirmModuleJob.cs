@@ -481,188 +481,187 @@ namespace XHTD_SERVICES_CONFIRM.Jobs
 
             try
             {
+                var currentDeliveryCode = currentOrder.DeliveryCode;
+                _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
 
+                // Gọi API ERP kiểm tra điều kiện xác thực
+                var orders = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
+                var currentDeliveryCodes = String.Empty;
+                if (orders != null && orders.Count != 0)
+                {
+                    currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
+                }
+
+                var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
+                if (erpValidateResponse.Code == "02")
+                {
+                    SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
+                    SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
+
+                    var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
+
+                    using (var dbContext = new XHTD_Entities())
+                    {
+                        currentOrder.ErrorLog = pushMessage;
+                        await dbContext.SaveChangesAsync();
+                    }
+
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+
+                    var driverUserName = currentOrder.DriverUserName;
+                    if (driverUserName != null)
+                    {
+                        SendPushNotification(currentOrder.DriverUserName, pushMessage);
+                    }
+
+                    _logger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
+
+                    return;
+                }
+
+                // Xác thực
+                bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
+
+                // Xác thực thành công
+                if (isConfirmSuccess)
+                {
+                    // Xếp số
+                    this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
+
+                    SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+                    SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
+
+                    #region Điều hướng gọi loa
+                    _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
+
+                    var typeProduct = currentOrder.TypeProduct.ToUpper();
+                    var sourceDocumentId = currentOrder.SourceDocumentId ?? 0;
+
+                    var currentNumberWaitingVehicleInFactory = 0;
+                    int? maxVehicle = 0;
+
+                    using (var db = new XHTD_Entities())
+                    {
+                        try
+                        {
+                            var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == sourceDocumentId && x.Status == 1);
+                            if (config == null)
+                            {
+                                _logger.LogInfo($"Don hang thuoc cau hinh ke hoach chung");
+
+                                config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
+                                var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, 0);
+                                currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
+                            }
+                            else
+                            {
+                                _logger.LogInfo($"Don hang co cau hinh ke hoach rieng");
+                                var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
+                                currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
+                            }
+
+                            _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
+
+                            maxVehicle = GetMaxVehicle(config, typeProduct);
+
+                            _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
+
+                            if (currentNumberWaitingVehicleInFactory >= maxVehicle)
+                            {
+                                _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
+
+                                var newTblVehicleStatus = new tblCallVehicleStatu
+                                {
+                                    StoreOrderOperatingId = currentOrder.Id,
+                                    CountTry = 0,
+                                    TypeProduct = currentOrder.TypeProduct,
+                                    CreatedOn = DateTime.Now,
+                                    ModifiledOn = DateTime.Now,
+                                    LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
+                                    IsDone = false,
+                                    CallType = CallType.BAI_CHO
+                                };
+
+                                db.tblCallVehicleStatus.Add(newTblVehicleStatus);
+                                db.SaveChanges();
+
+                                _logger.LogInfo($"Them vao hang doi goi vao BAI CHO thanh cong");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
+                        }
+                    }
+                    #endregion
+
+                    #region Gửi thông báo notification
+                    var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
+                                      $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
+                                      $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+
+                    var driverUserName = currentOrder.DriverUserName;
+                    if (driverUserName != null)
+                    {
+                        SendPushNotification(driverUserName, pushMessage);
+                    }
+                    #endregion
+
+                    // Bật đèn xanh - đỏ
+                    TurnOnTrafficLight();
+
+                    #region Cập nhật trạng thái in phiếu
+                    var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
+                    if (erpUpdateStatusResponse.Code == "01")
+                    {
+                        var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
+                        SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
+
+                        _logger.LogInfo($"{pushMessagePrintStatus}");
+                    }
+                    else if (erpUpdateStatusResponse.Code == "02")
+                    {
+                        var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
+                        SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
+
+                        _logger.LogInfo($"{pushMessagePrintStatus}");
+                    }
+                    #endregion
+                }
+                else
+                {
+                    SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+                    SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
+
+                    var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
+
+                    using (var dbContext = new XHTD_Entities())
+                    {
+                        currentOrder.ErrorLog = pushMessage;
+                        await dbContext.SaveChangesAsync();
+                    }
+
+                    SendNotificationByRight(RightCode.CONFIRM, pushMessage);
+
+                    var driverUserName = currentOrder.DriverUserName;
+                    if (driverUserName != null)
+                    {
+                        SendPushNotification(driverUserName, pushMessage);
+                    }
+
+                    _logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
+                }
+
+                _logger.LogInfo($"10. Giai phong RFID IN");
+
+                Program.IsLockingRfid = false;
             }
-            catch (Exception ex) {
+            catch (Exception ex) 
+            {
                 Program.IsLockingRfid = false;
                 _logger.LogInfo($"10. ERROR DATA: {ex.Message} -- {ex.InnerException} -- {ex.StackTrace}");
             }
-
-            var currentDeliveryCode = currentOrder.DeliveryCode;
-            _logger.LogInfo($"4. Tag co don hang hop le DeliveryCode = {currentDeliveryCode}");
-
-            // Gọi API ERP kiểm tra điều kiện xác thực
-            var orders = await _storeOrderOperatingRepository.GetOrdersConfirmationPoint(vehicleCodeCurrent);
-            var currentDeliveryCodes = String.Empty;
-            if (orders != null && orders.Count != 0)
-            {
-                currentDeliveryCodes = string.Join(";", orders.Select(x => x.DeliveryCode).Distinct().ToList());
-            }
-            
-            var erpValidateResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().CheckOrderValidate(currentDeliveryCodes);
-            if (erpValidateResponse.Code == "02")
-            {
-                SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
-                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại: {erpValidateResponse.Message}");
-
-                var pushMessage = $"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng! Chi tiết: {erpValidateResponse.Message}";
-                
-                using (var dbContext = new XHTD_Entities())
-                {
-                    currentOrder.ErrorLog = pushMessage;
-                    await dbContext.SaveChangesAsync();
-                }
-
-                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
-
-                var driverUserName = currentOrder.DriverUserName;
-                if (driverUserName != null)
-                {
-                    SendPushNotification(currentOrder.DriverUserName, pushMessage);
-                }
-
-                _logger.LogInfo($"Phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, {erpValidateResponse.Message} - DeliveryCode: {currentDeliveryCodes}!");
-
-                return;
-            }
-
-            // Xác thực
-            bool isConfirmSuccess = await this._storeOrderOperatingRepository.UpdateBillOrderConfirm10(vehicleCodeCurrent);
-
-            // Xác thực thành công
-            if (isConfirmSuccess)
-            {
-                // Xếp số
-                this._storeOrderOperatingRepository.UpdateIndexOrderForNewConfirm(vehicleCodeCurrent);
-
-                SendNotificationHub("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-                SendNotificationAPI("CONFIRM_RESULT", 1, cardNoCurrent, $"Xác thực thành công", vehicleCodeCurrent);
-
-                #region Điều hướng gọi loa
-                _logger.LogInfo($"Dieu huong goi loa vao cong hoac bai cho");
-
-                var typeProduct = currentOrder.TypeProduct.ToUpper();
-                var sourceDocumentId = currentOrder.SourceDocumentId ?? 0;
-
-                var currentNumberWaitingVehicleInFactory = 0;
-                int? maxVehicle = 0;
-
-                using (var db = new XHTD_Entities())
-                {
-                    try
-                    {
-                        var config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == sourceDocumentId && x.Status == 1);
-                        if (config == null)
-                        {
-                            _logger.LogInfo($"Don hang thuoc cau hinh ke hoach chung");
-
-                            config = await db.tblCallToGatewayConfigs.FirstOrDefaultAsync(x => x.SourceDocumentId == 0);
-                            var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, 0);
-                            currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
-                        }
-                        else
-                        {
-                            _logger.LogInfo($"Don hang co cau hinh ke hoach rieng");
-                            var ordersInFactory = _storeOrderOperatingRepository.CountStoreOrderWaitingIntoTroughByTypeAndExportPlan(typeProduct, sourceDocumentId);
-                            currentNumberWaitingVehicleInFactory = ordersInFactory?.Select(x => x.Vehicle).Distinct().ToList().Count ?? 0;
-                        }
-
-                        _logger.LogInfo($"So xe {typeProduct} hien tai: {currentNumberWaitingVehicleInFactory}");
-
-                        maxVehicle = GetMaxVehicle(config, typeProduct);
-
-                        _logger.LogInfo($"So xe {typeProduct} cau hinh toi da: {maxVehicle}");
-
-                        if (currentNumberWaitingVehicleInFactory >= maxVehicle)
-                        {
-                            _logger.LogInfo($"Them vao hang doi goi vao BAI CHO");
-
-                            var newTblVehicleStatus = new tblCallVehicleStatu
-                            {
-                                StoreOrderOperatingId = currentOrder.Id,
-                                CountTry = 0,
-                                TypeProduct = currentOrder.TypeProduct,
-                                CreatedOn = DateTime.Now,
-                                ModifiledOn = DateTime.Now,
-                                LogCall = $@"Đưa xe vào bãi chờ lúc {DateTime.Now}. ",
-                                IsDone = false,
-                                CallType = CallType.BAI_CHO
-                            };
-
-                            db.tblCallVehicleStatus.Add(newTblVehicleStatus);
-                            db.SaveChanges();
-
-                            _logger.LogInfo($"Them vao hang doi goi vao BAI CHO thanh cong");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogInfo($"ERROR BAI CHO: {ex.Message} -- {ex.StackTrace} -- {ex.InnerException}");
-                    }
-                }
-                #endregion
-
-                #region Gửi thông báo notification
-                var pushMessage = currentNumberWaitingVehicleInFactory < maxVehicle ?
-                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào cổng lấy hàng, trân trọng!" :
-                                  $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thành công, lái xe vui lòng di chuyển vào bãi chờ, trân trọng!";
-                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
-
-                var driverUserName = currentOrder.DriverUserName;
-                if (driverUserName != null)
-                {
-                    SendPushNotification(driverUserName, pushMessage);
-                }
-                #endregion
-
-                // Bật đèn xanh - đỏ
-                TurnOnTrafficLight();
-
-                #region Cập nhật trạng thái in phiếu
-                var erpUpdateStatusResponse = DIBootstrapper.Init().Resolve<SaleOrdersApiLib>().UpdateOrderStatus(currentDeliveryCodes);
-                if (erpUpdateStatusResponse.Code == "01")
-                {
-                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thành công!";
-                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
-
-                    _logger.LogInfo($"{pushMessagePrintStatus}");
-                }
-                else if (erpUpdateStatusResponse.Code == "02")
-                {
-                    var pushMessagePrintStatus = $"Đơn hàng {currentDeliveryCodes} phương tiện {vehicleCodeCurrent} cập nhật trạng thái in phiếu thất bại! Chi tiết: {erpUpdateStatusResponse.Message}!";
-                    SendNotificationByRight(RightCode.CONFIRM, pushMessagePrintStatus);
-
-                    _logger.LogInfo($"{pushMessagePrintStatus}");
-                }
-                #endregion
-            }
-            else
-            {
-                SendNotificationHub("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-                SendNotificationAPI("CONFIRM_RESULT", 0, cardNoCurrent, $"Xác thực thất bại");
-
-                var pushMessage = $"Đơn hàng {currentDeliveryCode} phương tiện {vehicleCodeCurrent} xác thực xếp số tự động thất bại, lái xe vui lòng liên hệ bộ phận điều hành để được hỗ trợ, trân trọng!";
-
-                using (var dbContext = new XHTD_Entities())
-                {
-                    currentOrder.ErrorLog = pushMessage;
-                    await dbContext.SaveChangesAsync();
-                }
-
-                SendNotificationByRight(RightCode.CONFIRM, pushMessage);
-
-                var driverUserName = currentOrder.DriverUserName;
-                if (driverUserName != null)
-                {
-                    SendPushNotification(driverUserName, pushMessage);
-                }
-
-                _logger.LogError($"Co loi xay ra khi xac thuc rfid: {cardNoCurrent}");
-            }
-
-            _logger.LogInfo($"10. Giai phong RFID IN");
-
-            Program.IsLockingRfid = false;
         }
 
         public string ByteArrayToString(byte[] b)
