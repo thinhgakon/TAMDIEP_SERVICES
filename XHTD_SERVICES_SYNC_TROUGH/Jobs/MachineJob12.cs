@@ -245,7 +245,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         {
             try
             {
-                _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus);
+                _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus, string.Empty);
             }
             catch (Exception ex)
             {
