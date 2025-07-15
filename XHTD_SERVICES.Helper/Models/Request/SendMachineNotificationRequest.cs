@@ -17,5 +17,7 @@ namespace XHTD_SERVICES.Helper.Models.Request
         public string StopStatus { get; set; }
 
         public string DeliveryCode { get; set; }
+
+        public int? Quantity { get; set; }
     }
 }
