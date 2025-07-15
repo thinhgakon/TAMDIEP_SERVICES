@@ -1,13 +1,10 @@
 ﻿using Quartz;
 using System;
-using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using XHTD_SERVICES.Data.Repositories;
 using System.Threading;
-using System.Timers;
 using System.Collections.Generic;
 using XHTD_SERVICES.Data.Entities;
 using SuperSimpleTcp;

@@ -5,21 +5,11 @@ using System.Threading.Tasks;
 using Quartz;
 using log4net;
 using XHTD_SERVICES.Data.Repositories;
-using RestSharp;
-using XHTD_SERVICES_SYNC_TROUGH.Models.Response;
-using XHTD_SERVICES.Data.Models.Response;
-using Newtonsoft.Json;
-using XHTD_SERVICES_SYNC_TROUGH.Models.Values;
 using XHTD_SERVICES.Helper;
-using XHTD_SERVICES.Helper.Models.Request;
 using System.Threading;
-using XHTD_SERVICES.Data.Entities;
 using System.Text;
-using System.Net.Sockets;
-using System.IO;
 using XHTD_SERVICES.Data.Models.Values;
 using System.Text.RegularExpressions;
-using System.Runtime.InteropServices.ComTypes;
 using SuperSimpleTcp;
 
 namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
@@ -30,15 +20,10 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
         ILog _logger = LogManager.GetLogger("Sync12FileAppender");
 
         protected readonly StoreOrderOperatingRepository _storeOrderOperatingRepository;
-
         protected readonly MachineRepository _machineRepository;
-
         protected readonly TroughRepository _troughRepository;
-
         protected readonly CallToTroughRepository _callToTroughRepository;
-
         protected readonly SystemParameterRepository _systemParameterRepository;
-
         protected readonly Notification _notification;
 
         private const string IP_ADDRESS = "192.168.13.189";
@@ -160,6 +145,7 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     }
 
                     var machineResult = GetInfo(MachineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
+                    SendPLCNotification("PLC", machineCode, machineResult.Item4, null);
 
                     var status = machineResult.Item4 == "Run" ? "True" : "False";
                     var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
@@ -264,6 +250,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     client.Disconnect();
                 }
             }
+        }
+
+        public void SendPLCNotification(string machineType, string machineCode, string startStatus, string stopStatus)
+        {
+            _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus);
         }
 
         private void SendNotificationHub(string troughType, string deliveryCode, string machineCode, string troughCode, int? firstQuantity, int? lastQuantity)
