@@ -147,11 +147,11 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
                     var machineResult = GetInfo(MachineResponse.Replace("\0", "").Replace("##", "#"), "MDB");
                     var plcStatus = machineResult.Item4;
                     var deliveryCode = machineResult.Item3;
+                    var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
 
-                    SendPLCNotification("PLC", machineCode, plcStatus, null, deliveryCode);
+                    SendPLCNotification("PLC", machineCode, plcStatus, null, deliveryCode, (int?)firstSensorQuantity);
 
                     var status = plcStatus == "Run" ? "True" : "False";
-                    var firstSensorQuantity = (Double.TryParse(machineResult.Item2, out double j) ? j : 0);
                     if (firstSensorQuantity == 0)
                     {
                         continue;
@@ -252,9 +252,9 @@ namespace XHTD_SERVICES_SYNC_TROUGH.Jobs
             }
         }
 
-        public void SendPLCNotification(string machineType, string machineCode, string startStatus, string stopStatus, string deliveryCode)
+        public void SendPLCNotification(string machineType, string machineCode, string startStatus, string stopStatus, string deliveryCode, int? quantity)
         {
-            _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus, deliveryCode);
+            _notification.SendMachineNotification(machineType, machineCode, startStatus, stopStatus, deliveryCode, quantity);
         }
 
         private void SendNotificationHub(string troughType, string deliveryCode, string machineCode, string troughCode, int? firstQuantity, int? lastQuantity)

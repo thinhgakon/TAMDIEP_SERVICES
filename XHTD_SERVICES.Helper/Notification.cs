@@ -122,7 +122,7 @@ namespace XHTD_SERVICES.Helper
             HttpRequest.SendDMSMsgForTroughData(data);
         }
 
-        public void SendMachineNotification(string machineType, string machineCode, string startStatus, string stopStatus, string deliveryCode)
+        public void SendMachineNotification(string machineType, string machineCode, string startStatus, string stopStatus, string deliveryCode, int? quantity)
         {
             SendMachineNotificationRequest notification = new SendMachineNotificationRequest
             {
@@ -130,7 +130,8 @@ namespace XHTD_SERVICES.Helper
                 MachineCode = machineCode,
                 StartStatus = startStatus,
                 StopStatus = stopStatus,
-                DeliveryCode = deliveryCode
+                DeliveryCode = deliveryCode,
+                Quantity = quantity
             };
 
             HttpRequest.SendMachineNotification(notification);
