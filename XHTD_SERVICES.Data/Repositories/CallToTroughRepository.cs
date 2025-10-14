@@ -314,7 +314,13 @@ namespace XHTD_SERVICES.Data.Repositories
                 {
                     if (!IsInProgress(orderId))
                     {
-                        var indexTrough = await GetMaxIndexByCode(machineCode);
+                        var maxIndex = await dbContext.tblCallToTroughs
+                                        .Where(x => x.Machine == machineCode && x.IsDone == false)
+                                        .OrderByDescending(x => x.IndexTrough)
+                                        .Select(x => x.IndexTrough)
+                                        .FirstOrDefaultAsync();
+
+                        int newIndex = (maxIndex ?? 0) + 1;
 
                         var newItem = new tblCallToTrough
                         {
@@ -323,7 +329,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             Vehicle = vehicle,
                             SumNumber = sumNumber,
                             Machine = machineCode,
-                            IndexTrough = indexTrough + 1,
+                            IndexTrough = maxIndex + 1,
                             CountTry = 0,
                             CountReindex = 0,
                             IsDone = false,

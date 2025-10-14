@@ -11,6 +11,7 @@ using XHTD_SERVICES.Data.Repositories;
 
 namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
 {
+    [DisallowConcurrentExecution]
     public class QueueToTroughXibaoJob : IJob
     {
         ILog _logger = LogManager.GetLogger("FileAppender");
@@ -81,13 +82,14 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
         {
             _logger.Info("Start process QueueToCall XI BAO service");
             
-            try { 
+            try 
+            { 
                 // 1. Lay danh sach don hang chua duoc xep vao may xuat
-                var orders = await _storeOrderOperatingRepository.GetXiMangBaoOrdersAddToQueueToCall();
-                if (orders == null || orders.Count == 0)
-                {
-                    return;
-                }
+                //var orders = await _storeOrderOperatingRepository.GetXiMangBaoOrdersAddToQueueToCall();
+                //if (orders == null || orders.Count == 0)
+                //{
+                //    return;
+                //}
 
                 // 2. Voi moi don hang o B1 thi thuc hien
                 // 3. Tim may xuat hien tai co it khoi luong don nhat (tuong ung voi type product)
@@ -95,54 +97,67 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                 // 5. Them don hang vao may o B3 voi index = maxIndex + 1
                 using (var dbContext = new XHTD_Entities())
                 {
-                    for (int i = 0; i < 10; i++)
+                    var ordersInQueue = await dbContext.tblCallToTroughs
+                                    .Where(x => x.IsDone == false)
+                                    .Select(x => x.DeliveryCode)
+                                    .ToListAsync();
+
+                    var timeToAdd = DateTime.Now.AddMinutes(-1);
+
+                    var orders = await dbContext.tblStoreOrderOperatings
+                                        .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
+                                                    && x.CatId == OrderCatIdCode.XI_MANG_BAO
+                                                    && x.TypeXK != OrderTypeXKCode.JUMBO
+                                                    && x.TypeXK != OrderTypeXKCode.SLING
+                                                    && x.IsVoiced == false
+                                                    && x.TimeConfirm3 < timeToAdd
+                                                    && !ordersInQueue.Contains(x.DeliveryCode))
+                                        .OrderBy(x => x.TimeConfirm3)
+                                        .ToListAsync();
+
+                    foreach (var order in orders)
                     {
-                        // Tự động
-                        var typeProduct = Program.roundRobinList.Next();
-                        var typeProductOrders = orders.Where(x => x.TypeProduct.ToUpper() == typeProduct.ToUpper());
+                        var orderId = (int)order.OrderId;
+                        var deliveryCode = order.DeliveryCode;
+                        var vehicle = order.Vehicle;
+                        var sumNumber = (decimal)order.SumNumber;
+                        var typeProduct = order.TypeProduct;
 
-                        foreach (var order in typeProductOrders)
+                        var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.DeliveryCode != order.DeliveryCode &&
+                                                                                             x.IDDistributorSyn == order.IDDistributorSyn &&
+                                                                                             x.ItemId == order.ItemId &&
+                                                                                             x.Vehicle == order.Vehicle &&
+                                                                                             x.Step == (int)OrderStep.DA_CAN_VAO &&
+                                                                                             x.IsVoiced == false)
+                                                                                 .ToListAsync();
+
+                        var machineCode = await _troughRepository.GetMinQuantityTrough(typeProduct, OrderProductCategoryCode.XI_BAO);
+
+                        if (!string.IsNullOrEmpty(machineCode) && machineCode != "0")
                         {
-                            var orderId = (int)order.OrderId;
-                            var deliveryCode = order.DeliveryCode;
-                            var vehicle = order.Vehicle;
-                            var sumNumber = (decimal)order.SumNumber;
+                            var existedTrough = await dbContext.tblCallToTroughs.AnyAsync(x => x.Vehicle == order.Vehicle &&
+                                                                                               x.Machine != machineCode &&
+                                                                                               x.IsDone == false);
 
-                            var splitOrders = await dbContext.tblStoreOrderOperatings.Where(x => x.IDDistributorSyn == order.IDDistributorSyn &&
-                                                                                                 x.ItemId == order.ItemId &&
-                                                                                                 x.Vehicle == order.Vehicle &&
-                                                                                                 x.Step == (int)OrderStep.DA_CAN_VAO &&
-                                                                                                 x.IsVoiced == false)
-                                                                                     .ToListAsync();
-
-                            var machineCode = await _troughRepository.GetMinQuantityTrough(typeProduct, OrderProductCategoryCode.XI_BAO);
-
-                            if (!String.IsNullOrEmpty(machineCode) && machineCode != "0")
+                            if (!existedTrough)
                             {
-                                var existedTrough = await dbContext.tblCallToTroughs.AnyAsync(x => x.Vehicle == order.Vehicle &&
-                                                                                                   x.Machine != machineCode &&
-                                                                                                   x.IsDone == false);
+                                _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
+                                await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
+                                order.Step = (int)OrderStep.DANG_LAY_HANG;
+                                order.TimeConfirm5 = DateTime.Now;
+                                order.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
+                                await dbContext.SaveChangesAsync();
 
-                                if (!existedTrough)
+                                if (splitOrders != null && splitOrders.Count > 0)
                                 {
-                                    _logger.Info($"Thuc hien them orderId {orderId} deliveryCode {deliveryCode} vao may {machineCode}");
-                                    await _callToTroughRepository.AddItem(orderId, deliveryCode, vehicle, machineCode, sumNumber);
-                                    order.Step = (int)OrderStep.DANG_LAY_HANG;
-                                    order.TimeConfirm5 = DateTime.Now;
-                                    order.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
-
-                                    if (splitOrders != null && splitOrders.Count > 0)
+                                    foreach (var splitOrder in splitOrders)
                                     {
-                                        foreach (var splitOrder in splitOrders)
-                                        {
-                                            _logger.Info($"Thuc hien them orderId {splitOrder.OrderId} deliveryCode {splitOrder.DeliveryCode} vao may {machineCode}");
-                                            await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
-                                            splitOrder.Step = (int)OrderStep.DANG_LAY_HANG;
-                                            splitOrder.TimeConfirm5 = DateTime.Now;
-                                            splitOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
-                                        }
+                                        _logger.Info($"Thuc hien them orderId {splitOrder.OrderId} deliveryCode {splitOrder.DeliveryCode} vao may {machineCode}");
+                                        await _callToTroughRepository.AddItem((int)splitOrder.OrderId, splitOrder.DeliveryCode, splitOrder.Vehicle, machineCode, (decimal)splitOrder.SumNumber);
+                                        splitOrder.Step = (int)OrderStep.DANG_LAY_HANG;
+                                        splitOrder.TimeConfirm5 = DateTime.Now;
+                                        splitOrder.LogProcessOrder += $"#Xe được tự động xếp vào máng lúc {DateTime.Now}.";
                                     }
-
                                     await dbContext.SaveChangesAsync();
                                 }
                             }
