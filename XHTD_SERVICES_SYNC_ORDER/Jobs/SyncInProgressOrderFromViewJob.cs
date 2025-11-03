@@ -116,9 +116,7 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
         public async Task SyncOrderProcess()
         {
-            _syncOrderLogger.LogInfo($"Start Sync In Progress Order From View: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")} Updated");
-
-            //GetToken();
+            _syncOrderLogger.LogInfo($"Start Sync InProgress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
 
             List<OrderItemResponse> websaleOrders = GetWebsaleOrderFromView();
 
@@ -132,7 +130,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
 
             foreach (var websaleOrder in websaleOrders)
             {
-                // Không đồng bộ các đơn tại sông Thao
                 if (websaleOrder.shippointId != "13")
                 {
                     bool isSynced = await SyncWebsaleOrderToDMS(websaleOrder);
@@ -140,42 +137,6 @@ namespace XHTD_SERVICES_SYNC_ORDER.Jobs
                     if (!isChanged) isChanged = isSynced;
                 }
             }
-
-            //_syncOrderLogger.LogInfo($"Done Sync In Progress Order: {DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-        }
-
-        public void GetToken()
-        {
-            try
-            {
-                IRestResponse response = HttpRequest.GetWebsaleToken();
-
-                var content = response.Content;
-
-                var responseData = JsonConvert.DeserializeObject<GetTokenResponse>(content);
-                strToken = responseData.access_token;
-            }
-            catch (Exception ex)
-            {
-                _syncOrderLogger.LogInfo("getToken error: " + ex.Message);
-            }
-        }
-
-        public List<OrderItemResponse> GetWebsaleOrder()
-        {
-            IRestResponse response = HttpRequest.GetWebsaleOrderByUpdated(strToken, numberHoursSearchOrder);
-            var content = response.Content;
-
-            if (response.StatusDescription.Equals("Unauthorized"))
-            {
-                _syncOrderLogger.LogInfo("Unauthorized GetWebsaleOrder");
-
-                return null;
-            }
-
-            var responseData = JsonConvert.DeserializeObject<SearchOrderResponse>(content);
-
-            return responseData.collection.OrderBy(x => x.id).ToList();
         }
 
         public List<OrderItemResponse> GetWebsaleOrderFromView()
