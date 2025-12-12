@@ -102,7 +102,7 @@ namespace XHTD_SERVICES_QUEUE_TO_TROUGH.Jobs
                                     .Select(x => x.DeliveryCode)
                                     .ToListAsync();
 
-                    var timeToAdd = DateTime.Now.AddMinutes(-1);
+                    var timeToAdd = DateTime.Now.AddSeconds(-10);
 
                     var orders = await dbContext.tblStoreOrderOperatings
                                         .Where(x => x.Step == (int)OrderStep.DA_CAN_VAO
