@@ -329,7 +329,7 @@ namespace XHTD_SERVICES.Data.Repositories
                             Vehicle = vehicle,
                             SumNumber = sumNumber,
                             Machine = machineCode,
-                            IndexTrough = maxIndex + 1,
+                            IndexTrough = newIndex,
                             CountTry = 0,
                             CountReindex = 0,
                             IsDone = false,
